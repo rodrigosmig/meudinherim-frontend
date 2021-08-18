@@ -1,0 +1,34 @@
+
+import { ReactElement } from 'react';
+import { Flex } from '@chakra-ui/react';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
+
+interface LayoutProps {
+  children: ReactElement
+}
+
+export const Layout = ({ children }: LayoutProps) => {
+  return (
+    <>
+      <Flex
+        flexDir={['column']}
+        h={["100vh"]}
+      >        
+        <Header />
+        <Flex
+          w={['100%']}
+          maxW={[1480]}
+          mx={['auto']}
+          my={[6]}
+          px={[6]}
+        >
+          <Sidebar />
+
+          { children }
+
+        </Flex>
+      </Flex>
+    </>
+  )
+}

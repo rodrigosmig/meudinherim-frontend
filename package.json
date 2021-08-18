@@ -6,15 +6,42 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "yarn jest"
   },
   "dependencies": {
+    "@chakra-ui/core": "^0.8.0",
+    "@chakra-ui/react": "^1.6.5",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "@hookform/resolvers": "^2.7.1",
+    "axios": "^0.21.1",
+    "framer-motion": "^4.1.17",
     "next": "11.0.1",
+    "nookies": "^2.5.2",
+    "nprogress": "^0.2.0",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-hook-form": "^7.12.0",
+    "react-icons": "^4.2.0",
+    "react-query": "^3.19.1",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@testing-library/dom": "^8.1.0",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@types/node": "^16.4.1",
+    "@types/nprogress": "^0.2.0",
+    "@types/react": "^17.0.15",
+    "babel-jest": "^27.0.6",
     "eslint": "7.31.0",
-    "eslint-config-next": "11.0.1"
+    "eslint-config-next": "11.0.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "jest": "^27.0.6",
+    "jest-dom": "^4.0.0",
+    "mutationobserver-shim": "^0.3.7",
+    "ts-jest": "^27.0.4",
+    "typescript": "^4.3.5"
   }
 }
