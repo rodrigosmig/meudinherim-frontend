@@ -24,6 +24,8 @@ This project consumes the [MeuDinherim](https://github.com/rodrigosmig/new_meudi
 * [React](https://pt-br.reactjs.org/E)
 * [Next.js](https://nextjs.org/)
 * [Chakra UI](https://chakra-ui.com/)
+* [React-Query](https://react-query.tanstack.com/)
+* [React Hook Form](https://react-hook-form.com/)
 
 ## License <a name="License"></a>
 
