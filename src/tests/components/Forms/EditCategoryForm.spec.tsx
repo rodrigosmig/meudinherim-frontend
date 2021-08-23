@@ -10,7 +10,7 @@ const mockProfile = jest.fn((user) => {
   return Promise.resolve({ user });
 });
 
-describe('ProfileForm Component', () => {
+describe('EditCategoryForm Component', () => {
   beforeEach(() => {
     render(<ProfileForm updateUser={mockProfile}/>)
   });

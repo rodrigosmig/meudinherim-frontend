@@ -2,16 +2,20 @@ import { ReactElement } from "react"
 import { 
 	Box, 
 	Flex, 
-	Heading 
+	Heading, 
 } from "@chakra-ui/react"
+import { AddButton } from "../Buttons/Add"
 
 interface CardProps {
   title?: string;
-  options?: string;
+  label?: string,
+  button?: {
+    onClick: () => void
+  }
   children: ReactElement;
 }
 
-export const Card = ({ title, options, children }: CardProps) => {
+export const Card = ({ title, label, button, children }: CardProps) => {
 	return (
 		<Box flex='1' borderRadius={8} bg="gray.800" p="8">
       <Flex mb={[6, 6, 8]} justify="space-between" align="center">
@@ -19,8 +23,15 @@ export const Card = ({ title, options, children }: CardProps) => {
           { title ?? '' }             
         </Heading>            
 
-        <Heading size="lg" fontWeight="normal">
-          { options ?? '' }             
+        <Heading fontSize={['lg', 'lg', 'xl']} fontWeight="normal">
+          { label 
+            ? label
+            : button
+              ? (
+                <AddButton onClick={button.onClick} />
+              )
+              : ''
+          }             
         </Heading>
       </Flex>
       

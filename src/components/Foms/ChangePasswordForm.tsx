@@ -5,7 +5,7 @@ import { Input } from "../Inputs/Input";
 import { AuthContext } from "../../contexts/AuthContext";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { SubmitButton } from "../Inputs/SubmitButton";
+import { SubmitButton } from "../Buttons/Submit";
 import { profileService } from "../../services/ApiService/ProfileService";
 
 type PasswordFormData = {

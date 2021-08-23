@@ -41,7 +41,7 @@ export const Avatar = ({ showProfileData }: AvatarProps) => {
         
       <Menu isLazy>
         <MenuButton >
-          <ChakraAvatar size="md" name={user?.name} src={user?.avatar} mr={[4, 4, "auto"]} />
+          <ChakraAvatar size="md" name={user?.name} src={user?.avatar} mr={["auto"]} />
         </MenuButton>
         
         <MenuList color='gray.900'>
