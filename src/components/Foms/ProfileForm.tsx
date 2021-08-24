@@ -3,7 +3,7 @@ import { Flex, Stack, useToast } from "@chakra-ui/react";
 import { profileService } from '../../services/ApiService/ProfileService';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../Inputs/Input';
-import { SubmitButton } from "../Inputs/SubmitButton";
+import { SubmitButton } from "../Buttons/Submit";
 import { Switch } from "../Inputs/Switch";
 import { AuthContext } from '../../contexts/AuthContext';
 import * as yup from 'yup';
@@ -93,11 +93,11 @@ export function ProfileForm({ updateUser }: ProfileFormProps) {
 
   return (
     <Flex 
-    as="form"
-    w={['100%']}
-    flexDir={["column"]}
-    bg="gray.800"
-    onSubmit={handleSubmit(handleUpdateProfile)}
+      as="form"
+      w={['100%']}
+      flexDir={["column"]}
+      bg="gray.800"
+      onSubmit={handleSubmit(handleUpdateProfile)}
     >
       <Stack spacing={[4]}>
         <Input 
