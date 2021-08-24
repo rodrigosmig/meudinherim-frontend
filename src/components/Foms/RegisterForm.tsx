@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { Box, Flex, Stack, useToast } from "@chakra-ui/react";
 import { Input } from '../Inputs/Input';
 import { authService } from '../../services/ApiService/AuthService';
-import { SubmitButton } from '../Inputs/SubmitButton';
+import { SubmitButton } from '../Buttons/Submit';
 import { Switch } from "../Inputs/Switch";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';

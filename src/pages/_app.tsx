@@ -1,11 +1,13 @@
-import { AppProps } from 'next/app'
+import { AppProps } from 'next/app';
 import Router from 'next/router';
-import { ChakraProvider } from '@chakra-ui/react';
-import { theme } from '../styles/theme';
 import NProgress from 'nprogress';
+import { theme } from '../styles/theme';
 
-import { SidebarDrawerProvider } from '../contexts/SidebarDrawerContext';
 import { AuthProvider } from '../contexts/AuthContext';
+import { ChakraProvider } from '@chakra-ui/react';
+import { SidebarDrawerProvider } from '../contexts/SidebarDrawerContext';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 import 'nprogress/nprogress.css';
 
@@ -13,12 +15,17 @@ Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
 
+const queryClient = new QueryClient()
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
       <ChakraProvider theme={theme}>
         <SidebarDrawerProvider>
-          <Component {...pageProps} />
+          <QueryClientProvider client={queryClient}>
+            <Component {...pageProps} />
+            <ReactQueryDevtools/>
+          </QueryClientProvider>
         </SidebarDrawerProvider>
       </ChakraProvider>
     </AuthProvider>
