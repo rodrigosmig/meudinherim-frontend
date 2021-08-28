@@ -10,8 +10,9 @@ import {
   DrawerOverlay, 
   useBreakpointValue 
 } from "@chakra-ui/react";
+import { memo } from "react";
 
-export const Sidebar = () => {
+const SidebarComponent = () => {
   const { isOpen, onClose } = useSidebarDrawer();
 
   const isDrawerSidebar = useBreakpointValue({
@@ -41,3 +42,5 @@ export const Sidebar = () => {
     </Box>
   )
 }
+
+export const Sidebar = memo(SidebarComponent);

@@ -1,5 +1,5 @@
 
-import { ReactElement } from 'react';
+import { memo, ReactElement } from 'react';
 import { Flex } from '@chakra-ui/react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
@@ -8,7 +8,7 @@ interface LayoutProps {
   children: ReactElement
 }
 
-export const Layout = ({ children }: LayoutProps) => {
+const LayoutComponent = ({ children }: LayoutProps) => {
   return (
     <>
       <Flex
@@ -32,3 +32,5 @@ export const Layout = ({ children }: LayoutProps) => {
     </>
   )
 }
+
+export const Layout = memo(LayoutComponent);

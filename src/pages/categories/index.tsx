@@ -13,7 +13,6 @@ import {
   Th, 
   Thead, 
   Tr,
-  useDisclosure,
   useToast, 
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
@@ -26,34 +25,18 @@ import { AddButton } from "../../components/Buttons/Add";
 import { useCategories } from "../../hooks/useCategories";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
-import { ModalEditCategory } from "../../components/Modals/categories/ModalEditCategory";
 import { useMutation } from "react-query";
 import { queryClient } from "../../services/queryClient";
 import { useRouter } from "next/router";
-
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
 
 export default function Categories() {
   const toast = useToast();
   const router = useRouter()
   const [categoryType, setCategoryType] = useState("");
-  const [category, setCategory] = useState<Category>();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType);
 
   const handleAddCategory = () => {
-    console.log("Categoria adicionada")
     router.push('/categories/create');
-
-  }
-
-  const handleEditCategory = (editedCategory: Category) => {
-    setCategory(editedCategory);
-    onOpen();
   }
 
   const handleChangeCategoryType = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -98,14 +81,8 @@ export default function Categories() {
     }
   });
 
-  const handleCloseModal = () => {
-    onClose();
-    refetch();
-  }
-
   return (
     <>
-      <ModalEditCategory isOpen={isOpen} onClose={handleCloseModal} category={category} />
       <Head>
         <title>Categorias | Meu Dinherim</title>
       </Head>
@@ -158,7 +135,7 @@ export default function Categories() {
                       </Td>
                       <Td>
                         <HStack spacing={[2]}>
-                          <EditButton onClick={() => handleEditCategory(category)} />
+                          <EditButton href={`/categories/${category.id}`} />
                           <DeleteButton 
                             onDelete={() => handleDeleteCategory(category.id)} 
                             resource="Categoria"

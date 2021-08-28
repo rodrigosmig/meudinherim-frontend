@@ -1,3 +1,5 @@
+import { memo } from "react";
+import { useRouter } from "next/router";
 import { 
   Box,
   Button,
@@ -10,14 +12,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../Buttons/Submit";
 import { Input } from "../Inputs/Input";
-import { queryClient } from "../../services/queryClient";
 import { useMutation } from "react-query";
 import { categoryService } from "../../services/ApiService/CategoryService";
 import { Select } from "../Inputs/Select";
+import Link from "next/link";
+import { queryClient } from "../../services/queryClient";
 
 interface EditCategoryFormProps {
   category: Category;
-  closeModal: () => void;
 }
 
 interface Category {
@@ -31,21 +33,31 @@ interface FormData {
   name: string;
 }
 
+type ResponseError = {
+  type: string[];
+  name: string[];
+}
+
+type Key = keyof ResponseError
+
 const validationSchema = yup.object().shape({
   type: yup.string().required("O campo tipo é obrigatório"),
-  name: yup.string().required("O campo nome é obrigatório").min(5, "O campo nome deve ter no mínimo 3 caracteres"),
+  name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps) => {
+const EditCategoryFormComponent = ({ category }: EditCategoryFormProps) => {
   const toast = useToast();
-  const { register, handleSubmit, setValue, setError, formState } = useForm({
+  const router = useRouter();
+
+  const { register, handleSubmit, setError, formState } = useForm({
+    defaultValues: {
+      type: category.type,
+      name: category.name
+    },
     resolver: yupResolver(validationSchema)
   });
 
   const { errors } = formState;
-
-  setValue('type', category?.type)
-  setValue('name', category?.name)
 
   const { isLoading, mutateAsync } = useMutation(async (values: FormData) => {
     const data = {
@@ -58,6 +70,10 @@ export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps
     const response = await categoryService.update(data)
   
     return response.data;
+  },  {
+    onSuccess: () => {
+      queryClient.invalidateQueries('categories')
+    }
   });
 
   const handleEditCategory: SubmitHandler<FormData> = async (values) => {
@@ -73,11 +89,14 @@ export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps
         isClosable: true,
       })
 
-      closeModal();
+      router.push('/categories')
+
     } catch (error) {
       if (error.response?.status === 422) {
-        const data = error.response.data;
-        for (const key in data) {          
+        const data: ResponseError = error.response.data;
+
+        let key: Key        
+        for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})
           })
@@ -101,6 +120,7 @@ export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps
           name="type"
           label="Tipo"
           options={options}
+          error={errors.type}
           {...register('type')}
         />
 
@@ -121,17 +141,20 @@ export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps
           mr={[4]}
           label="Salvar"
           size="md"
-          isLoading={formState.isSubmitting}
+          isLoading={isLoading}
         />
 
-        <Button
-          onClick={closeModal} 
-          variant="outline"
-          isDisabled={isLoading}
-        >
-          Cancelar
-        </Button>
+        <Link href={"/categories"}>
+          <Button
+            variant="outline"
+            isDisabled={isLoading}
+          >
+            Cancelar
+          </Button>
+        </Link>
       </Flex>
     </Box>
   )
 }
+
+export const EditCategoryForm = memo(EditCategoryFormComponent);

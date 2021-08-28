@@ -15,7 +15,6 @@ import { useMutation } from "react-query";
 import { categoryService } from "../../services/ApiService/CategoryService";
 import { Select } from "../Inputs/Select";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 interface FormData {
   type: number;
@@ -30,7 +29,9 @@ const validationSchema = yup.object().shape({
 export const CreateCategoryForm = () => {
   const toast = useToast();
 
-  const { register, reset, handleSubmit, setError, formState } = useForm();
+  const { register, reset, handleSubmit, setError, formState } = useForm({
+    resolver: yupResolver(validationSchema)
+  });
 
   const { errors } = formState;
 
@@ -86,6 +87,7 @@ export const CreateCategoryForm = () => {
           name="type"
           label="Tipo"
           options={options}
+          error={errors.type}
           {...register('type')}
         />        
 @
