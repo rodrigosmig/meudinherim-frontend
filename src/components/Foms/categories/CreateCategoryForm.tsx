@@ -8,12 +8,12 @@ import {
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../Buttons/Submit";
-import { Input } from "../Inputs/Input";
-import { queryClient } from "../../services/queryClient";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Input } from "../../Inputs/Input";
+import { queryClient } from "../../../services/queryClient";
 import { useMutation } from "react-query";
-import { categoryService } from "../../services/ApiService/CategoryService";
-import { Select } from "../Inputs/Select";
+import { categoryService } from "../../../services/ApiService/CategoryService";
+import { Select } from "../../Inputs/Select";
 import Link from "next/link";
 
 interface FormData {

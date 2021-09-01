@@ -4,7 +4,7 @@ import {
   Heading, 
 } from "@chakra-ui/react";
 import Head from "next/head";
-import { CreateCategoryForm } from "../../components/Foms/CreateCategoryForm";
+import { CreateCategoryForm } from "../../components/Foms/categories/CreateCategoryForm";
 import { Layout } from "../../components/Layout";
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";

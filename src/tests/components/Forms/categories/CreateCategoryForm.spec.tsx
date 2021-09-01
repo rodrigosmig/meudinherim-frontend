@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { useMutation } from "react-query";
 import { act } from "react-dom/test-utils";
-import { CreateCategoryForm } from "../../../../components/Foms/CreateCategoryForm";
+import { CreateCategoryForm } from "../../../../components/Foms/categories/CreateCategoryForm";
 
 const useMutationMocked = useMutation as jest.Mock<any>;
 

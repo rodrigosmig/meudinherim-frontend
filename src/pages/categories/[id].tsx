@@ -1,6 +1,6 @@
 import { Box, Flex, Heading } from "@chakra-ui/react";
 import Head from "next/head";
-import { EditCategoryForm } from "../../components/Foms/EditCategoryForm";
+import { EditCategoryForm } from "../../components/Foms/categories/EditCategoryForm";
 import { Layout } from "../../components/Layout";
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";

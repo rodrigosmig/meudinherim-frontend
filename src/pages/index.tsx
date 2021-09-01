@@ -1,6 +1,6 @@
 import { Flex, Heading, Icon, Image, Text } from "@chakra-ui/react";
 import { withSsrGuest } from '../utils/withSSRGuest';
-import { LoginForm } from "../components/Foms/LoginForm";
+import { LoginForm } from "../components/Foms/auth/LoginForm";
 import Head from "next/head";
 
 export default function SignIn() {

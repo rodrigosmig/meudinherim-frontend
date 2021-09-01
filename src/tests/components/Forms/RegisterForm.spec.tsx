@@ -1,7 +1,7 @@
 import { act } from "react-dom/test-utils";
 import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
 import { mocked } from 'ts-jest/utils';
-import { RegisterForm } from "../../../components/Foms/RegisterForm";
+import { RegisterForm } from "../../../components/Foms/auth/RegisterForm";
 import { authService } from "../../../services/ApiService/AuthService";
 
 jest.mock('../../../services/ApiService/AuthService')
