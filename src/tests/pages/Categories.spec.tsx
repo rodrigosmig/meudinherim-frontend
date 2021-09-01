@@ -33,6 +33,21 @@ jest.mock('next/router', () => {
   }
 })
 
+const data = {
+  categories: [
+    {id: 1, type: 1, name: "Income Category Test"},
+    {id: 2, type: 2, name: "Expense Category Test"}
+  ],
+  meta: {
+    from: 1,
+    to: 10,
+    current_page: 1,
+    last_page: 5,
+    per_page: 10,
+    total: 50
+  }
+}
+
 describe('Categories Component', () => {
     beforeEach(() => {
       useCategoriesMocked.mockImplementation(() => ({ isLoading: true }));
@@ -73,22 +88,17 @@ describe('Categories Component', () => {
 	});
 
   it("Displays categories", () => {
-    const categories = [
-      {id: 1, type: 1, name: 'Sales'},
-      {id: 2, type: 2, name: 'Orders'}
-    ]
-
 		useCategoriesMocked.mockImplementation(() => ({
 			isLoading: false,
-      data: categories
+      data
 		}));
 
 		render(
       <Categories />
     )
 
-		expect(screen.getByText("Sales")).toBeInTheDocument();
-    expect(screen.getByText("Orders")).toBeInTheDocument();
+		expect(screen.getByText("Income Category Test")).toBeInTheDocument();
+    expect(screen.getByText("Expense Category Test")).toBeInTheDocument();
 	});
 
   it("Displays delete confirmation", async () => {
@@ -98,7 +108,17 @@ describe('Categories Component', () => {
 
 		useCategoriesMocked.mockImplementation(() => ({
 			isLoading: false,
-      data: categories
+      data: {
+        categories: categories,
+        meta: {
+          from: 1,
+          to: 10,
+          current_page: 1,
+          last_page: 5,
+          per_page: 10,
+          total: 50
+        }
+      }
 		}));
 
     useMutationMocked.mockImplementation(() => ({
