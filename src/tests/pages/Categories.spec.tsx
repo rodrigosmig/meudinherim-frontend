@@ -3,12 +3,11 @@ import { useMutation } from "react-query";
 import { useCategories } from "../../hooks/useCategories";
 import Categories from "../../pages/categories";
 
-const useProductMocked = useCategories as jest.Mock<any>; 
+const useCategoriesMocked = useCategories as jest.Mock<any>; 
 const useMutationMocked = useMutation as jest.Mock<any>; 
 
 jest.mock('../../hooks/useCategories')
 jest.mock('react-query')
-
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -34,9 +33,24 @@ jest.mock('next/router', () => {
   }
 })
 
+const data = {
+  categories: [
+    {id: 1, type: 1, name: "Income Category Test"},
+    {id: 2, type: 2, name: "Expense Category Test"}
+  ],
+  meta: {
+    from: 1,
+    to: 10,
+    current_page: 1,
+    last_page: 5,
+    per_page: 10,
+    total: 50
+  }
+}
+
 describe('Categories Component', () => {
     beforeEach(() => {
-      useProductMocked.mockImplementation(() => ({ isLoading: true }));
+      useCategoriesMocked.mockImplementation(() => ({ isLoading: true }));
       useMutationMocked.mockImplementation(() => ({ isLoading: true }));
     });
 
@@ -49,7 +63,7 @@ describe('Categories Component', () => {
       <Categories />
     )
 
-    expect(useProductMocked).toHaveBeenCalled();
+    expect(useCategoriesMocked).toHaveBeenCalled();
   });
 
   it('Displays loading indicator', () => {
@@ -61,7 +75,7 @@ describe('Categories Component', () => {
   });
 
   it("Displays error message", () => {
-		useProductMocked.mockImplementation(() => ({
+		useCategoriesMocked.mockImplementation(() => ({
 			isLoading: false,
 			isError: true,
 		}));
@@ -74,49 +88,17 @@ describe('Categories Component', () => {
 	});
 
   it("Displays categories", () => {
-    const categories = [
-      {id: 1, type: 1, name: 'Sales'},
-      {id: 2, type: 2, name: 'Orders'}
-    ]
-
-		useProductMocked.mockImplementation(() => ({
+		useCategoriesMocked.mockImplementation(() => ({
 			isLoading: false,
-      data: categories
+      data
 		}));
 
 		render(
       <Categories />
     )
 
-		expect(screen.getByText("Sales")).toBeInTheDocument();
-    expect(screen.getByText("Orders")).toBeInTheDocument();
-	});
-
-  it("Displays edit modal", async () => {
-    const categories = [
-      {id: 1, type: 1, name: 'Sales'},
-    ]
-
-		useProductMocked.mockImplementation(() => ({
-			isLoading: false,
-      data: categories
-		}));
-
-    useMutationMocked.mockImplementation(() => ({
-			isLoading: false,
-      mutateAsync: jest.fn()
-		}));    
-
-		render(
-      <Categories />
-    )
-
-    await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Edit category'}));
-    })
-
-		expect(useMutationMocked).toHaveBeenCalled();
-    expect(screen.getByText("Editar Categoria")).toBeInTheDocument();
+		expect(screen.getByText("Income Category Test")).toBeInTheDocument();
+    expect(screen.getByText("Expense Category Test")).toBeInTheDocument();
 	});
 
   it("Displays delete confirmation", async () => {
@@ -124,9 +106,19 @@ describe('Categories Component', () => {
       {id: 1, type: 1, name: 'Sales'},
     ]
 
-		useProductMocked.mockImplementation(() => ({
+		useCategoriesMocked.mockImplementation(() => ({
 			isLoading: false,
-      data: categories
+      data: {
+        categories: categories,
+        meta: {
+          from: 1,
+          to: 10,
+          current_page: 1,
+          last_page: 5,
+          per_page: 10,
+          total: 50
+        }
+      }
 		}));
 
     useMutationMocked.mockImplementation(() => ({
@@ -144,5 +136,6 @@ describe('Categories Component', () => {
 
     expect(screen.getByText("Deletar")).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Deletar'})).toBeInTheDocument();
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
 	});
 })

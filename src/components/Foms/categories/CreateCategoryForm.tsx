@@ -8,23 +8,13 @@ import {
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../Buttons/Submit";
-import { Input } from "../Inputs/Input";
-import { queryClient } from "../../services/queryClient";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Input } from "../../Inputs/Input";
+import { queryClient } from "../../../services/queryClient";
 import { useMutation } from "react-query";
-import { categoryService } from "../../services/ApiService/CategoryService";
-import { Select } from "../Inputs/Select";
-
-interface EditCategoryFormProps {
-  category: Category;
-  closeModal: () => void;
-}
-
-interface Category {
-  id: number;
-  type: 1 | 2;
-  name: string;
-}
+import { categoryService } from "../../../services/ApiService/CategoryService";
+import { Select } from "../../Inputs/Select";
+import Link from "next/link";
 
 interface FormData {
   type: number;
@@ -36,44 +26,39 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(5, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps) => {
+export const CreateCategoryForm = () => {
   const toast = useToast();
-  const { register, handleSubmit, setValue, setError, formState } = useForm({
+
+  const { register, reset, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
   });
 
   const { errors } = formState;
 
-  setValue('type', category?.type)
-  setValue('name', category?.name)
-
-  const { isLoading, mutateAsync } = useMutation(async (values: FormData) => {
-    const data = {
-      categoryId: category.id,
-      data: {
-        type: values.type,
-        name: values.name,
-      }
-    }
-    const response = await categoryService.update(data)
+  const createCategory = useMutation(async (values: FormData) => {
+    const response = await categoryService.create(values)
   
     return response.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('categories')
+    }
   });
 
-  const handleEditCategory: SubmitHandler<FormData> = async (values) => {
+  const handleCreateCategory: SubmitHandler<FormData> = async (values) => {
     try {
-      await mutateAsync(values);
+      await createCategory.mutateAsync(values);
       
       toast({
         title: "Sucesso",
-        description: "Alteração realizada com sucesso",
+        description: `Categoria ${values.name} criada com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
       })
 
-      closeModal();
+      reset();
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;
@@ -87,6 +72,7 @@ export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps
   }
 
   const options = [
+    {value: "", label: "Selecione um tipo"},
     {value: "1", label: "Entrada"},
     {value: "2", label: "Saída"}
   ]
@@ -94,16 +80,17 @@ export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleEditCategory)}
+      onSubmit={handleSubmit(handleCreateCategory)}
       >
       <Stack spacing={[4]}>
         <Select
           name="type"
           label="Tipo"
           options={options}
+          error={errors.type}
           {...register('type')}
-        />
-
+        />        
+@
         <Input
           name="name"
           type="text"
@@ -121,16 +108,18 @@ export const EditCategoryForm = ({ category, closeModal }: EditCategoryFormProps
           mr={[4]}
           label="Salvar"
           size="md"
-          isLoading={formState.isSubmitting}
+          isLoading={createCategory.isLoading}
         />
 
-        <Button
-          onClick={closeModal} 
-          variant="outline"
-          isDisabled={isLoading}
-        >
-          Cancelar
-        </Button>
+        <Link href="/categories" passHref>
+          <Button
+            variant="outline"
+            isDisabled={createCategory.isLoading}
+          >
+            Cancelar
+          </Button>
+        
+        </Link>
       </Flex>
     </Box>
   )

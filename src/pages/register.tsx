@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import Head from "next/head";
 
-import { RegisterForm } from "../components/Foms/RegisterForm";
+import { RegisterForm } from "../components/Foms/auth/RegisterForm";
 
 export default function Register() {  
   return (

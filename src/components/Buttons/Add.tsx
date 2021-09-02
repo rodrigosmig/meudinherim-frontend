@@ -1,11 +1,12 @@
 import { Button, Icon, IconButton, Tooltip, useBreakpointValue } from "@chakra-ui/react"
+import { memo } from "react"
 import { RiAddLine } from "react-icons/ri"
 
 interface AddButtonProps {
   onClick: () => void
 }
 
-export const AddButton = ({ onClick }: AddButtonProps) => {
+const AddButtonComponent = ({ onClick }: AddButtonProps) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -38,3 +39,5 @@ export const AddButton = ({ onClick }: AddButtonProps) => {
     )
   )
 }
+
+export const AddButton = memo(AddButtonComponent);

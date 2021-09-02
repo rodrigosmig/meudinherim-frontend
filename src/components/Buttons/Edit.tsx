@@ -1,11 +1,13 @@
+import { memo } from "react"
 import { Button, Icon, IconButton, Tooltip, useBreakpointValue } from "@chakra-ui/react"
 import { RiPencilLine } from "react-icons/ri"
+import Link from "next/link"
 
 interface EditButtonProps {
-  onClick: () => void
+  href: string
 }
 
-export const EditButton = ({ onClick }: EditButtonProps) => {
+const EditButtonComponent = ({ href }: EditButtonProps) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -15,26 +17,29 @@ export const EditButton = ({ onClick }: EditButtonProps) => {
   return (
     isWideVersion 
     ? (
-      <Button
-        size="sm"
-        fontSize="sm"
-        colorScheme="purple"
-        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-        onClick={onClick}
-      >
-        Editar
-      </Button>
+      <Link href={href}>
+        <Button
+          size="sm"
+          fontSize="sm"
+          colorScheme="purple"
+          leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+        >
+          Editar
+        </Button>
+      
+      </Link>
       )
     : (
-      <Tooltip label="Editar" aria-label="A tooltip">
+      <Link href={href}>
         <IconButton
           size="sm"
           aria-label="Edit category"
           colorScheme="purple" 
           icon={<RiPencilLine />} 
-          onClick={onClick}
         />
-      </Tooltip>
+      </Link>
     )
   )
 }
+
+export const EditButton = memo(EditButtonComponent)

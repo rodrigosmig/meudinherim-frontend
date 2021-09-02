@@ -2,9 +2,9 @@ import { useState, useContext } from "react";
 import Link from "next/link";
 import { Box, Flex, Stack, useToast } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Input } from '../Inputs/Input';
-import { AuthContext } from '../../contexts/AuthContext';
-import { SubmitButton } from '../Buttons/Submit';
+import { Input } from '../../Inputs/Input';
+import { AuthContext } from '../../../contexts/AuthContext';
+import { SubmitButton } from '../../Buttons/Submit';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 

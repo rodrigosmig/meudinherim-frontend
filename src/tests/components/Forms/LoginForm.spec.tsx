@@ -1,5 +1,5 @@
 import { act } from "react-dom/test-utils";
-import { LoginForm } from "../../../components/Foms/LoginForm";
+import { LoginForm } from "../../../components/Foms/auth/LoginForm";
 import { fireEvent, render, screen } from "../../../utils/test-utils";
 
 describe('LoginForm Component', () => {
