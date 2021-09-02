@@ -4,8 +4,9 @@ import { NotificationsNav } from "./NotificationsNav";
 import { Avatar } from './Avatar';
 import { useSidebarDrawer } from "../../../contexts/SidebarDrawerContext";
 import { RiMenuLine } from "react-icons/ri";
+import { memo } from "react";
 
-export const Header = () => {
+const HeaderComponent = () => {
   const { onOpen } = useSidebarDrawer();
 
   const isWideVersion = useBreakpointValue({
@@ -50,3 +51,5 @@ export const Header = () => {
     </Flex>
   )
 }
+
+export const Header = memo(HeaderComponent);

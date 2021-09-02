@@ -1,11 +1,11 @@
 import { ChangeEvent, useContext, useState } from 'react';
 import { Flex, Stack, useToast } from "@chakra-ui/react";
-import { profileService } from '../../services/ApiService/ProfileService';
+import { profileService } from '../../../services/ApiService/ProfileService';
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Input } from '../Inputs/Input';
-import { SubmitButton } from "../Buttons/Submit";
-import { Switch } from "../Inputs/Switch";
-import { AuthContext } from '../../contexts/AuthContext';
+import { Input } from '../../Inputs/Input';
+import { SubmitButton } from "../../Buttons/Submit";
+import { Switch } from "../../Inputs/Switch";
+import { AuthContext } from '../../../contexts/AuthContext';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 

@@ -10,7 +10,7 @@ import {
   IconButton, 
   Tooltip, 
   useBreakpointValue } from "@chakra-ui/react"
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { RiDeleteBin2Line } from "react-icons/ri"
 
 interface DeleteButtonProps {
@@ -19,7 +19,7 @@ interface DeleteButtonProps {
   loading: boolean;
 }
 
-export const DeleteButton = ({ loading, resource, onDelete }: DeleteButtonProps) => {
+const DeleteButtonComponent = ({ loading, resource, onDelete }: DeleteButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const cancelRef = useRef();
   const onClose = () => setIsOpen(false);
@@ -98,3 +98,5 @@ export const DeleteButton = ({ loading, resource, onDelete }: DeleteButtonProps)
     </>
   )
 }
+
+export const DeleteButton = memo(DeleteButtonComponent);

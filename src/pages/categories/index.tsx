@@ -13,7 +13,6 @@ import {
   Th, 
   Thead, 
   Tr,
-  useDisclosure,
   useToast, 
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
@@ -26,34 +25,22 @@ import { AddButton } from "../../components/Buttons/Add";
 import { useCategories } from "../../hooks/useCategories";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
-import { ModalEditCategory } from "../../components/Modals/categories/ModalEditCategory";
 import { useMutation } from "react-query";
 import { queryClient } from "../../services/queryClient";
 import { useRouter } from "next/router";
-
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
+import { Pagination } from "../../components/Pagination";
 
 export default function Categories() {
   const toast = useToast();
-  const router = useRouter()
+  const router = useRouter();
+
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [categoryType, setCategoryType] = useState("");
-  const [category, setCategory] = useState<Category>();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType);
+  const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType, page, perPage);
 
   const handleAddCategory = () => {
-    console.log("Categoria adicionada")
     router.push('/categories/create');
-
-  }
-
-  const handleEditCategory = (editedCategory: Category) => {
-    setCategory(editedCategory);
-    onOpen();
   }
 
   const handleChangeCategoryType = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -87,6 +74,12 @@ export default function Categories() {
       })
     }
   }
+
+  const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(event.target.value)
+    setPage(1)
+    setPerPage(value)
+  }
   
   const deleteCategory = useMutation(async (id: number) => {
     const response = await categoryService.delete(id);
@@ -98,14 +91,8 @@ export default function Categories() {
     }
   });
 
-  const handleCloseModal = () => {
-    onClose();
-    refetch();
-  }
-
   return (
     <>
-      <ModalEditCategory isOpen={isOpen} onClose={handleCloseModal} category={category} />
       <Head>
         <title>Categorias | Meu Dinherim</title>
       </Head>
@@ -122,54 +109,90 @@ export default function Categories() {
             </Heading>
           </Flex>
 
-          <Select
-            variant="unstyled"
-            maxW={[240]}
-            mb={[6]}
-            onChange={event => handleChangeCategoryType(event)}
+          <Flex 
+            justify="space-between" 
+            align="center"
+            mb={[6, 6, 8]}
           >
-            <option value="">Todas</option>
-            <option value="1">Entrada</option>
-            <option value="2">Saída</option>
-          </Select>
+            <Flex align="center">
+              <Select
+                variant="unstyled"
+                w={[14]}
+                onChange={event => handleChangePerPage(event)}
+              >
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </Select>
+              <Box fontSize={['sm']}>Resultados por página</Box>
+            </Flex>
+
+            <Flex align="center">
+              <Select
+                variant="unstyled"
+                maxW={[150]}
+                onChange={event => handleChangeCategoryType(event)}
+              >
+                <option value="">Todas</option>
+                <option value="1">Entrada</option>
+                <option value="2">Saída</option>
+              </Select>
+
+            </Flex>
+            
+          </Flex>
+
 
           { isLoading ? (
               <Loading />
             ) : isError ? (
               <Flex justify="center">Falha ao obter as categorias</Flex>
             ) : (
-              <Table colorScheme="whiteAlpha">
-                <Thead>
-                  <Tr>
-                    <Th>Nome da Categoria</Th>
-                    <Th>Tipo</Th>
-                    <Th w="8"></Th>
-                  </Tr>
-                </Thead>
-
-                <Tbody>
-                  { data.map(category => (
-                    <Tr key={category.id}>
-                      <Td>
-                        <Text fontWeight="bold">{category.name}</Text>
-                      </Td>
-                      <Td>
-                        { category.type === 1 ? 'Entrada' : 'Saída' }
-                      </Td>
-                      <Td>
-                        <HStack spacing={[2]}>
-                          <EditButton onClick={() => handleEditCategory(category)} />
-                          <DeleteButton 
-                            onDelete={() => handleDeleteCategory(category.id)} 
-                            resource="Categoria"
-                            loading={deleteCategory?.isLoading}
-                          />
-                        </HStack>
-                      </Td>
+              <>
+                <Table colorScheme="whiteAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th>Nome da Categoria</Th>
+                      <Th>Tipo</Th>
+                      <Th w="8"></Th>
                     </Tr>
-                  )) }
-                </Tbody>
-              </Table>
+                  </Thead>
+
+                  <Tbody>
+                    { data.categories.map(category => (
+                      <Tr key={category.id}>
+                        <Td>
+                          <Text fontWeight="bold">{category.name}</Text>
+                        </Td>
+                        <Td>
+                          { category.type === 1 ? 'Entrada' : 'Saída' }
+                        </Td>
+                        <Td>
+                          <HStack spacing={[2]}>
+                            <EditButton href={`/categories/${category.id}`} />
+                            <DeleteButton 
+                              onDelete={() => handleDeleteCategory(category.id)} 
+                              resource="Categoria"
+                              loading={deleteCategory?.isLoading}
+                            />
+                          </HStack>
+                        </Td>
+                      </Tr>
+                    )) }
+                  </Tbody>
+                </Table>
+
+                <Pagination
+                  from={data.meta.from}
+                  to={data.meta.to}
+                  lastPage={data.meta.last_page}
+                  currentPage={page}
+                  totalRegisters={data.meta.total}
+                  onPageChange={setPage}
+                />
+
+              </>
             )}
         </Box>
       </Layout>

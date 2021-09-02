@@ -1,4 +1,4 @@
-import { FormControl, FormErrorMessage, FormLabel, Select as ChakraSelect, SelectProps as ChakraSelectProps  } from "@chakra-ui/react";
+import { FormControl, FormErrorMessage, FormLabel, Select as ChakraSelect, SelectProps as ChakraSelectProps, Text  } from "@chakra-ui/react";
 import { forwardRef, ForwardRefRenderFunction } from "react";
 import { FieldError } from "react-hook-form";
 
@@ -33,7 +33,7 @@ export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps
         {...rest}
       >
         {options.map(option => (
-          <option key={option.value} value={option.value}>{option.label}</option>
+          <Text as="option" key={option.value} value={option.value} color="gray.900">{option.label}</Text>
         ))}
       </ChakraSelect>
 

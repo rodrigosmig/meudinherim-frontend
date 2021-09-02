@@ -1,19 +1,25 @@
-import { 
-  Box, 
-  Flex, 
-  Heading, 
-} from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import Head from "next/head";
-import { CreateCategoryForm } from "../../components/Foms/categories/CreateCategoryForm";
+import { EditCategoryForm } from "../../components/Foms/categories/EditCategoryForm";
 import { Layout } from "../../components/Layout";
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-export default function CreateCategory() {
+interface Category {
+  id: number,
+  type: 1 | 2,
+  name: string,
+}
+
+interface EditCategoryProps {
+  category: Category
+}
+
+export default function EditCategory({ category }: EditCategoryProps) {
   return (
     <>
       <Head>
-        <title>Nova categoria | Meu Dinherim</title>
+        <title>Editar categoria | Meu Dinherim</title>
       </Head>
 
       <Layout>
@@ -27,11 +33,11 @@ export default function CreateCategory() {
         >
           <Flex mb={[6, 6, 8]} justify="space-between" align="center">
             <Heading fontSize={['xl', 'xl', '2xl']} fontWeight="normal">
-              Nova Categoria
+              Editar Categoria
             </Heading>
           </Flex>
 
-          <CreateCategoryForm />
+          <EditCategoryForm category={category} />
           
         </Box>
       </Layout>
@@ -41,10 +47,16 @@ export default function CreateCategory() {
 
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
+
+  const {id} = context.params
   
-  const response = await apiClient.get('/categories');
+  const response = await apiClient.get(`/categories/${id}`);
+
+  const category = response.data
 
   return {
-    props: {}
+    props: {
+      category
+    }
   }
 })

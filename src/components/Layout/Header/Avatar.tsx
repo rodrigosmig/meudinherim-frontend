@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { memo, useContext } from "react";
 import Link from 'next/link';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { 
@@ -17,7 +17,7 @@ interface AvatarProps {
   showProfileData: boolean
 }
 
-export const Avatar = ({ showProfileData }: AvatarProps) => {
+const AvatarComponent = ({ showProfileData }: AvatarProps) => {
   const { user, signOut } = useContext(AuthContext)
 
   const handleSignOut = () => {
@@ -61,3 +61,5 @@ export const Avatar = ({ showProfileData }: AvatarProps) => {
     </Flex>
   )
 }
+
+export const Avatar = memo(AvatarComponent);

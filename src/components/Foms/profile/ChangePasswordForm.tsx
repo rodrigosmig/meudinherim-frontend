@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
 import { Flex, Stack, useToast } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Input } from "../Inputs/Input";
-import { AuthContext } from "../../contexts/AuthContext";
+import { Input } from "../../Inputs/Input";
+import { AuthContext } from "../../../contexts/AuthContext";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { SubmitButton } from "../Buttons/Submit";
-import { profileService } from "../../services/ApiService/ProfileService";
+import { SubmitButton } from "../../Buttons/Submit";
+import { profileService } from "../../../services/ApiService/ProfileService";
 
 type PasswordFormData = {
     current_password: string

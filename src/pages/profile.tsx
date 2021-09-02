@@ -17,9 +17,9 @@ import {
   Tabs, 
   Text 
 } from '@chakra-ui/react';
-import { ProfileForm } from '../components/Foms/ProfileForm';
+import { ProfileForm } from '../components/Foms/profile/ProfileForm';
 import { Loading } from '../components/Loading/index';
-import { ChangePasswordForm } from '../components/Foms/ChangePasswordForm';
+import { ChangePasswordForm } from '../components/Foms/profile/ChangePasswordForm';
 
 interface User {
   id: number;
