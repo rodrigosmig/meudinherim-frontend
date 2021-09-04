@@ -13,6 +13,7 @@ import {
   Th, 
   Thead, 
   Tr,
+  useBreakpointValue,
   useToast, 
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
@@ -34,10 +35,18 @@ export default function Categories() {
   const toast = useToast();
   const router = useRouter();
 
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    md: false,
+    lg: true 
+  });
+
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [categoryType, setCategoryType] = useState("");
   const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType, page, perPage);
+
+  const sizeProps = isWideVersion ? 'md' : 'sm';
 
   const handleAddCategory = () => {
     router.push('/categories/create');
@@ -98,13 +107,18 @@ export default function Categories() {
       </Head>
 
       <Layout>
-        <Box flex='1' borderRadius={8} bg="gray.800" p="8">
+        <Box
+          w={"full"}
+          flex='1' 
+          borderRadius={8} 
+          bg="gray.800" p="8"
+        >
           <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-            <Heading fontSize={['xl', 'xl', '2xl']} fontWeight="normal">
+            <Heading fontSize={['md', '2xl']} fontWeight="normal">
               Categorias
               { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
             </Heading>
-            <Heading fontSize={['lg', 'lg', 'xl']} fontWeight="normal">
+            <Heading fontSize={['md', 'xl']} fontWeight="normal">
               <AddButton onClick={handleAddCategory} />
             </Heading>
           </Flex>
@@ -125,11 +139,14 @@ export default function Categories() {
                 <option value="25">25</option>
                 <option value="50">50</option>
               </Select>
-              <Box fontSize={['sm']}>Resultados por página</Box>
+              { isWideVersion && (
+                <Box fontSize={['sm']}>Resultados por página</Box>
+              ) }
             </Flex>
 
             <Flex align="center">
               <Select
+                size={sizeProps}
                 variant="unstyled"
                 maxW={[150]}
                 onChange={event => handleChangeCategoryType(event)}
@@ -150,7 +167,7 @@ export default function Categories() {
               <Flex justify="center">Falha ao obter as categorias</Flex>
             ) : (
               <>
-                <Table colorScheme="whiteAlpha">
+                <Table size={sizeProps} colorScheme="whiteAlpha">
                   <Thead>
                     <Tr>
                       <Th>Nome da Categoria</Th>
@@ -162,13 +179,13 @@ export default function Categories() {
                   <Tbody>
                     { data.categories.map(category => (
                       <Tr key={category.id}>
-                        <Td>
+                        <Td fontSize={["xs", "md"]}>
                           <Text fontWeight="bold">{category.name}</Text>
                         </Td>
-                        <Td>
+                        <Td fontSize={["xs", "md"]}>
                           { category.type === 1 ? 'Entrada' : 'Saída' }
                         </Td>
-                        <Td>
+                        <Td fontSize={["xs", "md"]}>
                           <HStack spacing={[2]}>
                             <EditButton href={`/categories/${category.id}`} />
                             <DeleteButton 

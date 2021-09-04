@@ -1,12 +1,12 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useMutation } from "react-query";
-import { useCategories } from "../../hooks/useCategories";
-import Categories from "../../pages/categories";
+import { useAccounts } from "../../hooks/useAccounts";
+import Accounts from "../../pages/accounts";
 
-const useCategoriesMocked = useCategories as jest.Mock<any>; 
+const useAccountsMocked = useAccounts as jest.Mock<any>; 
 const useMutationMocked = useMutation as jest.Mock<any>; 
 
-jest.mock('../../hooks/useCategories')
+jest.mock('../../hooks/useAccounts')
 jest.mock('react-query')
 
 Object.defineProperty(window, 'matchMedia', {
@@ -27,98 +27,71 @@ jest.mock('next/router', () => {
   return {
     useRouter() {
       return {
-        asPath: '/categories'
+        asPath: '/accounts'
       }
     }
   }
 })
 
-const data = {
-  categories: [
-    {id: 1, type: 1, name: "Income Category Test"},
-    {id: 2, type: 2, name: "Expense Category Test"}
-  ],
-  meta: {
-    from: 1,
-    to: 10,
-    current_page: 1,
-    last_page: 5,
-    per_page: 10,
-    total: 50
-  }
-}
+const data = [
+  {id: 1, type: {id: "money", desc: "Money"}, name: "Account Test", balance: 50},
+  {id: 2, type: {id: "savings", desc: "Savings"}, name: "Account Savings", balance: 150}
+]
 
-describe('Categories Component', () => {
+describe('Accounts Component', () => {
     beforeEach(() => {
-      useCategoriesMocked.mockImplementation(() => ({ isLoading: true }));
+      useAccountsMocked.mockImplementation(() => ({ isLoading: true }));
       useMutationMocked.mockImplementation(() => ({ isLoading: true }));
     });
 
     afterEach(() => {
       jest.clearAllMocks();
     });
-  
-  it('Renders without crashing', () => {
-    render(
-      <Categories />
-    )
-
-    expect(useCategoriesMocked).toHaveBeenCalled();
-  });
 
   it('Displays loading indicator', () => {
     render(
-      <Categories />
+      <Accounts />
     )
-
+    
+    expect(useAccountsMocked).toHaveBeenCalled();
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
   it("Displays error message", () => {
-		useCategoriesMocked.mockImplementation(() => ({
+		useAccountsMocked.mockImplementation(() => ({
 			isLoading: false,
 			isError: true,
 		}));
 
 		render(
-      <Categories />
+      <Accounts />
     )
 
-		expect(screen.getByText("Falha ao obter as categorias")).toBeInTheDocument();
+		expect(screen.getByText("Falha ao obter as contas")).toBeInTheDocument();
 	});
 
-  it("Displays categories", () => {
-		useCategoriesMocked.mockImplementation(() => ({
+  it("Displays Accounts", () => {
+		useAccountsMocked.mockImplementation(() => ({
 			isLoading: false,
       data
 		}));
 
 		render(
-      <Categories />
+      <Accounts />
     )
 
-		expect(screen.getByText("Income Category Test")).toBeInTheDocument();
-    expect(screen.getByText("Expense Category Test")).toBeInTheDocument();
+    expect(screen.getByText("Account Test")).toBeInTheDocument();
+    expect(screen.getByText("Account Savings")).toBeInTheDocument();
 	});
 
   it("Displays delete confirmation", async () => {
-    const categories = [
-      {id: 1, type: 1, name: 'Sales'},
+    const accounts = [
+      {id: 1, type: {id: "money", desc: "Money"}, name: "Account Test", balance: 50},
     ]
 
-		useCategoriesMocked.mockImplementation(() => ({
+		useAccountsMocked.mockImplementation(() => ({
 			isLoading: false,
-      data: {
-        categories: categories,
-        meta: {
-          from: 1,
-          to: 10,
-          current_page: 1,
-          last_page: 5,
-          per_page: 10,
-          total: 50
-        }
-      }
+      data: accounts
 		}));
 
     useMutationMocked.mockImplementation(() => ({
@@ -127,13 +100,13 @@ describe('Categories Component', () => {
 		}));    
 
 		render(
-      <Categories />
+      <Accounts />
     )
 
     await waitFor(() => {
       fireEvent.click(screen.getByRole('button', {name: 'Delete'}));
     })
-
+//screen.debug(null, 30000)
     expect(screen.getByText("Deletar")).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Deletar'})).toBeInTheDocument();
     expect(screen.getByRole('alertdialog')).toBeInTheDocument();

@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+import Link from "next/link";
 import { 
   Box,
   Button,
@@ -10,60 +12,102 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { queryClient } from "../../../services/queryClient";
 import { useMutation } from "react-query";
-import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-interface FormData {
-  type: number;
-  name: string;
-}
+import { queryClient } from "../../../services/queryClient";
+import { accountService } from '../../../services/ApiService/AccountService';
 
 const validationSchema = yup.object().shape({
   type: yup.string().required("O campo tipo é obrigatório"),
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const CreateCategoryForm = () => {
+interface Account {
+  id: number;
+  type: {
+    id: 'money' | 'savings' | 'checking_account' | 'investment';
+    desc: string;
+  }
+  name: string;
+  balance: number;
+}
+
+interface EditAccountFormProps {
+  account: Account;
+}
+
+interface FormData {
+  type: string;
+  name: string;
+}
+
+type ResponseError = {
+  type: string[];
+  name: string[];
+}
+
+type Key = keyof ResponseError
+
+export const EditAccountForm = ({ account }: EditAccountFormProps) => {
   const toast = useToast();
   const router = useRouter();
 
   const { register, handleSubmit, setError, formState } = useForm({
+    defaultValues: {
+      type: account.type.id,
+      name: account.name
+    },
     resolver: yupResolver(validationSchema)
   });
 
   const { errors } = formState;
 
-  const createCategory = useMutation(async (values: FormData) => {
-    const response = await categoryService.create(values)
+  /* const { isLoading, mutateAsync } = useMutation(async (values: FormData) => {
+    const data = {
+      accountId: account.id,
+      data: {
+        type: values.type,
+        name: values.name,
+      }
+    }
+    const response = await accountService.update(data)
   
     return response.data;
-  }, {
+  },  {
     onSuccess: () => {
-      queryClient.invalidateQueries('categories')
-      router.push('/categories')
+      queryClient.invalidateQueries('accounts')
+      router.push('/accounts')
     }
-  });
+  }); */
 
-  const handleCreateCategory: SubmitHandler<FormData> = async (values) => {
+  const handleEditAccount: SubmitHandler<FormData> = async (values) => {
+    const data = {
+      accountId: account.id,
+      data: {
+        type: values.type,
+        name: values.name,
+      }
+    }
+
     try {
-      await createCategory.mutateAsync(values);
+      await accountService.update(data)
       
       toast({
         title: "Sucesso",
-        description: `Categoria ${values.name} criada com sucesso`,
+        description: "Alteração realizada com sucesso",
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
       })
+
+      router.push("/accounts");
     } catch (error) {
       if (error.response?.status === 422) {
-        const data = error.response.data;
-        for (const key in data) {          
+        const data: ResponseError = error.response.data;
+
+        let key: Key        
+        for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})
           })
@@ -73,15 +117,16 @@ export const CreateCategoryForm = () => {
   }
 
   const options = [
-    {value: "", label: "Selecione um tipo"},
-    {value: "1", label: "Entrada"},
-    {value: "2", label: "Saída"}
-  ]
+    {value: "money", label: "Dinheiro"},
+    {value: "savings", label: "Poupança"},
+    {value: "checking_account", label: "Conta Corrente"},
+    {value: "investment", label: "Investimentos"}
+  ];
 
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleCreateCategory)}
+      onSubmit={handleSubmit(handleEditAccount)}
       >
       <Stack spacing={[4]}>
         <Select
@@ -90,12 +135,12 @@ export const CreateCategoryForm = () => {
           options={options}
           error={errors.type}
           {...register('type')}
-        />        
-@
+        />
+
         <Input
           name="name"
           type="text"
-          label="Nome da Categoria"
+          label="Nome da Conta"
           error={errors.name}
           {...register('name')}
         />
@@ -109,17 +154,16 @@ export const CreateCategoryForm = () => {
           mr={[4]}
           label="Salvar"
           size="md"
-          isLoading={createCategory.isLoading}
+          isLoading={formState.isSubmitting}
         />
 
-        <Link href="/categories" passHref>
+        <Link href={"/accounts"}>
           <Button
             variant="outline"
-            isDisabled={createCategory.isLoading}
+            isDisabled={formState.isSubmitting}
           >
             Cancelar
           </Button>
-        
         </Link>
       </Flex>
     </Box>
