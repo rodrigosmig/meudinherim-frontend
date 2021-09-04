@@ -18,14 +18,18 @@ export const SidebarNav = () => {
         <NavLink href="/dashboard" icon={RiDashboardLine}>Dashboard</NavLink>
         <NavLink href="/categories" icon={RiPriceTag3Line}>Categorias</NavLink>
       </NavSection>
+
+      <NavSection title="Banco">
+          <NavLink href="/accounts" icon={RiBankLine}>Contas</NavLink>
+          <NavLink href="#" icon={GiReceiveMoney}>Extrato</NavLink>
+      </NavSection>
     
       <NavSection title="Cartão de Crédito">
           <NavLink href="#" icon={RiBankCard2Line}>Cartão de Crédito</NavLink>
           <NavLink href="#" icon={RiBankCard2Line}>Faturas</NavLink>
       </NavSection>
 
-      <NavSection title="Contas">
-          <NavLink href="#" icon={RiBankLine}>Bancos</NavLink>
+      <NavSection title="Agendamento">
           <NavLink href="#" icon={GiReceiveMoney}>Contas a Receber</NavLink>
           <NavLink href="#" icon={GiPayMoney}>Contas a Pagar</NavLink>
       </NavSection>

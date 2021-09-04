@@ -52,8 +52,8 @@ const DeleteButtonComponent = ({ loading, resource, onDelete }: DeleteButtonProp
       : (
         <Tooltip label="Deletar" aria-label="A tooltip">
           <IconButton
-            size="sm"
-            aria-label="Delete category"
+            size="xs"
+            aria-label={`Delete ${resource.toLowerCase()}`}
             colorScheme="purple" 
             icon={<RiDeleteBin2Line />} 
             onClick={() => setIsOpen(true)}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { 
   Box,
   Button,
@@ -10,15 +11,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { queryClient } from "../../../services/queryClient";
-import { useMutation } from "react-query";
-import { categoryService } from "../../../services/ApiService/CategoryService";
+import { accountService } from '../../../services/ApiService/AccountService';
 import { Select } from "../../Inputs/Select";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 
 interface FormData {
-  type: number;
+  type: string;
   name: string;
 }
 
@@ -27,7 +25,7 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const CreateCategoryForm = () => {
+export const CreateAccountForm = () => {
   const toast = useToast();
   const router = useRouter();
 
@@ -37,29 +35,20 @@ export const CreateCategoryForm = () => {
 
   const { errors } = formState;
 
-  const createCategory = useMutation(async (values: FormData) => {
-    const response = await categoryService.create(values)
-  
-    return response.data;
-  }, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('categories')
-      router.push('/categories')
-    }
-  });
-
-  const handleCreateCategory: SubmitHandler<FormData> = async (values) => {
+  const handleCreateAccount: SubmitHandler<FormData> = async (values) => {
     try {
-      await createCategory.mutateAsync(values);
+      await accountService.create(values)
       
       toast({
         title: "Sucesso",
-        description: `Categoria ${values.name} criada com sucesso`,
+        description: `Conta ${values.name} criada com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
-      })
+      });
+
+      router.push("/accounts");
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;
@@ -73,15 +62,16 @@ export const CreateCategoryForm = () => {
   }
 
   const options = [
-    {value: "", label: "Selecione um tipo"},
-    {value: "1", label: "Entrada"},
-    {value: "2", label: "Saída"}
-  ]
+    {value: "money", label: "Dinheiro"},
+    {value: "savings", label: "Poupança"},
+    {value: "checking_account", label: "Conta Corrente"},
+    {value: "investment", label: "Investimentos"}
+  ];
 
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleCreateCategory)}
+      onSubmit={handleSubmit(handleCreateAccount)}
       >
       <Stack spacing={[4]}>
         <Select
@@ -90,12 +80,12 @@ export const CreateCategoryForm = () => {
           options={options}
           error={errors.type}
           {...register('type')}
-        />        
-@
+        />
+
         <Input
           name="name"
           type="text"
-          label="Nome da Categoria"
+          label="Nome da Conta"
           error={errors.name}
           {...register('name')}
         />
@@ -109,17 +99,16 @@ export const CreateCategoryForm = () => {
           mr={[4]}
           label="Salvar"
           size="md"
-          isLoading={createCategory.isLoading}
+          isLoading={formState.isSubmitting}
         />
 
-        <Link href="/categories" passHref>
+        <Link href={"/accounts"}>
           <Button
             variant="outline"
-            isDisabled={createCategory.isLoading}
+            isDisabled={formState.isSubmitting}
           >
             Cancelar
           </Button>
-        
         </Link>
       </Flex>
     </Box>

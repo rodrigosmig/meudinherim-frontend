@@ -32,7 +32,7 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
     : (
       <Link href={href}>
         <IconButton
-          size="sm"
+          size="xs"
           aria-label="Edit category"
           colorScheme="purple" 
           icon={<RiPencilLine />} 
