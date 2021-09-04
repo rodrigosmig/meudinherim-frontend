@@ -104,9 +104,9 @@ describe('Accounts Component', () => {
     )
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Delete conta'}));
+      fireEvent.click(screen.getByRole('button', {name: 'Delete'}));
     })
-
+//screen.debug(null, 30000)
     expect(screen.getByText("Deletar")).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Deletar'})).toBeInTheDocument();
     expect(screen.getByRole('alertdialog')).toBeInTheDocument();

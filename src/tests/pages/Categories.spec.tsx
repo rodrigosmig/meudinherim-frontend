@@ -131,7 +131,7 @@ describe('Categories Component', () => {
     )
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Delete categoria'}));
+      fireEvent.click(screen.getByRole('button', {name: 'Delete'}));
     })
 
     expect(screen.getByText("Deletar")).toBeInTheDocument();
