@@ -12,9 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { useMutation } from "react-query";
 import { Select } from "../../Inputs/Select";
-import { queryClient } from "../../../services/queryClient";
 import { accountService } from '../../../services/ApiService/AccountService';
 
 const validationSchema = yup.object().shape({
@@ -61,24 +59,6 @@ export const EditAccountForm = ({ account }: EditAccountFormProps) => {
   });
 
   const { errors } = formState;
-
-  /* const { isLoading, mutateAsync } = useMutation(async (values: FormData) => {
-    const data = {
-      accountId: account.id,
-      data: {
-        type: values.type,
-        name: values.name,
-      }
-    }
-    const response = await accountService.update(data)
-  
-    return response.data;
-  },  {
-    onSuccess: () => {
-      queryClient.invalidateQueries('accounts')
-      router.push('/accounts')
-    }
-  }); */
 
   const handleEditAccount: SubmitHandler<FormData> = async (values) => {
     const data = {
