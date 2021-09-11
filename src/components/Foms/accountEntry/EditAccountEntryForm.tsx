@@ -12,9 +12,9 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import Link from "next/link";
-import { Datepicker } from "../../DatePicker";
+import { Datepicker } from "../../DatePicker/Datepicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
-import { format, isDate, parse, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 
 interface Category {

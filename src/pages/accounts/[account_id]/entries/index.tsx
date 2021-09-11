@@ -2,7 +2,8 @@ import { ChangeEvent, useState } from 'react';
 import Head from "next/head";
 import { useRouter } from 'next/router';
 import { 
-  Box, 
+  Box,
+  Button,
   Flex, 
   Heading, 
   HStack, 
@@ -30,7 +31,10 @@ import { Pagination } from '../../../../components/Pagination';
 import { useMutation } from 'react-query';
 import { accountEntriesService } from '../../../../services/ApiService/AccountEntriesService';
 import { queryClient } from '../../../../services/queryClient';
+import DatePicker from 'react-datepicker';
 
+import 'react-datepicker/dist/react-datepicker.css';
+import { DatepickerFilter } from '../../../../components/DatePicker/DatePickerFilter';
 interface Account {
   id: number;
   type: {
@@ -57,6 +61,10 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [startDate, endDate] = dateRange;
+
   const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, page, perPage);
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
@@ -131,6 +139,22 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
             </Heading>
           </Flex>
 
+          <HStack spacing={4}>
+            <DatepickerFilter 
+              startDate={startDate}
+              endDate={endDate}
+              onChange={(update) => {
+                setDateRange(update);
+              }}
+            />
+            <Button 
+              size={ isWideVersion ? "md" : "sm"}
+            >
+              Filtrar
+            </Button>
+
+          </HStack>
+          
           <Flex 
             justify="space-between" 
             align="center"
