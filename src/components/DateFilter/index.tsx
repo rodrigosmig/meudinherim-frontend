@@ -20,7 +20,7 @@ interface DatepickerFilterProps {
 
 const DateFilterComponent = ({ startDate, endDate, isWideVersion, onChange, onClick }: DatepickerFilterProps) => {
   return (
-    <HStack spacing={3} mb={[8]}>
+    <HStack spacing={3} mb={[6, 8]}>
       <Flex w={[200, 250]}>
         <StyledaDatepicker
             w={[200, 250]}

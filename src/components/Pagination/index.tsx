@@ -42,7 +42,7 @@ export const Pagination = ({
       justify="space-between"
       align="center"
     >      
-      <Box>
+      <Box fontSize={['sm', 'md']}>
         <strong>{from ? from : 0}</strong> - <strong>{to ? to : 0}</strong> de <strong>{totalRegisters}</strong>
       </Box>
       

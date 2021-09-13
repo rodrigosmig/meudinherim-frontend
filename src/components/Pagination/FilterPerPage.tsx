@@ -13,6 +13,8 @@ export const FilterPerPage = ({ onChange, isWideVersion }: FilterPerPageProps) =
         variant="unstyled"
         w={[14]}
         onChange={event => onChange(event)}
+        
+        size="sm"
       >
         <option value="10">10</option>
         <option value="15">15</option>

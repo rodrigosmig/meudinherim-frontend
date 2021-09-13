@@ -136,7 +136,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
           bg="gray.800" p="8" 
           h="max-content"
         >
-          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+          <Flex mb={[8]} justify="space-between" align="center">
             <Heading fontSize={['md', '2xl']} fontWeight="normal">
               {account.name}
               { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
@@ -170,6 +170,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
               <Flex justify="center">Falha ao obter as lançamentos</Flex>
             ) : (
               <>
+              <Box overflowX="auto">
                 <Table size={sizeProps} colorScheme="whiteAlpha">
                   <Thead>
                     <Tr>
@@ -215,6 +216,8 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                     )) }
                   </Tbody>
                 </Table>
+
+              </Box>
 
                 <Pagination
                   from={data.meta.from}

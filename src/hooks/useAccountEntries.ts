@@ -4,7 +4,6 @@ import { toBrDate, toCurrency } from '../utils/helpers';
 
 
 export const getAccountEntries = async (account_id: number, filterDate: [string, string], page: number, perPage: number) => {
-  console.log(filterDate)
   const response = await accountEntriesService.list(account_id, filterDate, page, perPage);
 
   const entries = response.data.data.map(entry => {
