@@ -30,7 +30,6 @@ export const Pagination = ({
   const previousPages = currentPage > 1
     ? generatePagesArray(currentPage - 1 - siblingsCount, currentPage - 1)
     : [];
-  
   const nextPages = currentPage < lastPage
     ? generatePagesArray(currentPage, Math.min(currentPage + siblingsCount, lastPage))
     : [];
@@ -44,7 +43,7 @@ export const Pagination = ({
       align="center"
     >      
       <Box>
-        <strong>{from}</strong> - <strong>{to}</strong> de <strong>{totalRegisters}</strong>
+        <strong>{from ? from : 0}</strong> - <strong>{to ? to : 0}</strong> de <strong>{totalRegisters}</strong>
       </Box>
       
       <Stack direction="row" spacing="2">

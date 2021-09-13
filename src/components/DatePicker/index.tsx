@@ -24,10 +24,9 @@ const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, DatepickerProps
         h={50}
         px={4}
         borderRadius="0.375rem"
-        focusBorderColor="white"
         bgColor="gray.900"        
-        _hover={{
-          bgColor: 'gray.900'
+        _focus={{
+          outline: '2px solid #D53F8C',
         }}
         dateFormat="dd/MM/yyyy"
         locale={ptBR}

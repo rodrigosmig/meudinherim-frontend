@@ -3,7 +3,6 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import { 
   Box,
-  Button,
   Flex, 
   Heading, 
   HStack, 
@@ -21,7 +20,7 @@ import {
 import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../../services/api';
-import { toCurrency } from '../../../../utils/helpers';
+import { toCurrency, toUsDate } from '../../../../utils/helpers';
 import { useAccountEntries } from '../../../../hooks/useAccountEntries';
 import { FilterPerPage } from '../../../../components/Pagination/FilterPerPage';
 import { Loading } from '../../../../components/Loading/index';
@@ -31,10 +30,9 @@ import { Pagination } from '../../../../components/Pagination';
 import { useMutation } from 'react-query';
 import { accountEntriesService } from '../../../../services/ApiService/AccountEntriesService';
 import { queryClient } from '../../../../services/queryClient';
-import DatePicker from 'react-datepicker';
 
-import 'react-datepicker/dist/react-datepicker.css';
-import { DatepickerFilter } from '../../../../components/DatePicker/DatePickerFilter';
+import { DateFilter } from '../../../../components/DateFilter';
+
 interface Account {
   id: number;
   type: {
@@ -61,11 +59,12 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  
+  const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
+  const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
 
-  const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, page, perPage);
+  const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, filterDate, page, perPage);
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
 
@@ -115,6 +114,14 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
     setPerPage(value)
   }
 
+  const handleClickFilter = () => {    
+    if (dateRange[0] && dateRange[1]) {
+      setFilterDate([toUsDate(dateRange[0]), toUsDate(dateRange[1])])
+    } else {
+      setFilterDate(['', ''])
+    }
+  } 
+
   return (
     <>
       <Head>
@@ -139,21 +146,15 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
             </Heading>
           </Flex>
 
-          <HStack spacing={4}>
-            <DatepickerFilter 
-              startDate={startDate}
-              endDate={endDate}
-              onChange={(update) => {
-                setDateRange(update);
-              }}
-            />
-            <Button 
-              size={ isWideVersion ? "md" : "sm"}
-            >
-              Filtrar
-            </Button>
-
-          </HStack>
+          <DateFilter
+            isWideVersion={isWideVersion}
+            startDate={startDate}
+            endDate={endDate}
+            onChange={(update: [Date | null, Date | null]) => {
+              setDateRange(update);
+            }}
+            onClick={handleClickFilter}
+          />
           
           <Flex 
             justify="space-between" 

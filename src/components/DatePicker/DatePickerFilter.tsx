@@ -12,10 +12,10 @@ const StyledaDatepicker = chakra(DatePicker);
 interface DatepickerFilterProps {
   startDate: Date;
   endDate: Date;
-  onChange: (date: Date) => void;
+  onChange: (date: [Date | null, Date | null]) => void;
 }
 
-const DatepickerFilterComponent = ({ startDate, endDate, onChange }: DatepickerFilterProps) => {
+const DateFilterComponent = ({ startDate, endDate, onChange }: DatepickerFilterProps) => {
   return (
     <Flex w={[200, 250]}>
       <StyledaDatepicker
@@ -42,4 +42,4 @@ const DatepickerFilterComponent = ({ startDate, endDate, onChange }: DatepickerF
   )
 }
 
-export const DatepickerFilter = memo(DatepickerFilterComponent);
+export const DatepickerFilter = memo(DateFilterComponent);

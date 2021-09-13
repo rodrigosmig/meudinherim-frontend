@@ -56,7 +56,7 @@ interface EditAccountEntryFormData {
 const apiClient = setupApiClient();
 
 export const accountEntriesService = {
-  list: (account_id: number, page: number, perPage: number): Promise<AxiosResponse<AccountEntryResponse>> => apiClient.get(`/accounts/${account_id}/entries?page=${page}&per_page=${perPage}`),
+  list: (account_id: number, filterDate, page: number, perPage: number): Promise<AxiosResponse<AccountEntryResponse>> => apiClient.get(`/accounts/${account_id}/entries?page=${page}&per_page=${perPage}&from=${filterDate[0]}&to=${filterDate[1]}`),
   update: (values: EditAccountEntryFormData): Promise<AxiosResponse<Category>> => apiClient.put(`/account-entries/${values.id}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/account-entries/${id}`),
 };

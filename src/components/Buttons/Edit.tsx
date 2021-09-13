@@ -16,7 +16,7 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
   return (
     isWideVersion 
     ? (
-      <Link href={href}>
+      <Link href={href} passHref>
         <Button
           size="sm"
           fontSize="sm"
@@ -29,7 +29,7 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
       </Link>
       )
     : (
-      <Link href={href}>
+      <Link href={href} passHref>
         <IconButton
           size="xs"
           aria-label="Edit"

@@ -17,7 +17,7 @@ const ExtractButtonComponent = ({ href }: ExtractButtonProps) => {
   return (
     isWideVersion 
     ? (
-      <Link href={href}>
+      <Link href={href} passHref>
         <Button
           size="sm"
           fontSize="sm"
@@ -30,7 +30,7 @@ const ExtractButtonComponent = ({ href }: ExtractButtonProps) => {
       </Link>
       )
     : (
-      <Link href={href}>
+      <Link href={href} passHref>
         <IconButton
           size="xs"
           aria-label="Extract"

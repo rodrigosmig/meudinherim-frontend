@@ -12,7 +12,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import Link from "next/link";
-import { Datepicker } from "../../DatePicker/Datepicker";
+import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
 import { format, parseISO } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
@@ -188,7 +188,7 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
           isLoading={formState.isSubmitting}
         />
 
-        <Link href={`/accounts/${entry.account.id}/entries`}>
+        <Link href={`/accounts/${entry.account.id}/entries`} passHref>
           <Button
             variant="outline"
             isDisabled={formState.isSubmitting}

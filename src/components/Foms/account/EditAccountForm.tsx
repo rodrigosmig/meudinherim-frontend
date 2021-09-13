@@ -137,7 +137,7 @@ export const EditAccountForm = ({ account }: EditAccountFormProps) => {
           isLoading={formState.isSubmitting}
         />
 
-        <Link href={"/accounts"}>
+        <Link href={"/accounts"} passHref>
           <Button
             variant="outline"
             isDisabled={formState.isSubmitting}

@@ -3,8 +3,9 @@ import { accountEntriesService } from "../services/ApiService/AccountEntriesServ
 import { toBrDate, toCurrency } from '../utils/helpers';
 
 
-export const getAccountEntries = async (account_id: number, page: number, perPage: number) => {
-  const response = await accountEntriesService.list(account_id, page, perPage);
+export const getAccountEntries = async (account_id: number, filterDate: [string, string], page: number, perPage: number) => {
+  console.log(filterDate)
+  const response = await accountEntriesService.list(account_id, filterDate, page, perPage);
 
   const entries = response.data.data.map(entry => {
     return {
@@ -32,8 +33,8 @@ export const getAccountEntries = async (account_id: number, page: number, perPag
   return data
 }
 
-export const useAccountEntries = (account_id: number, page: number, perPage: number) => {
-  return useQuery(['accountEntries', page, perPage], () => getAccountEntries(account_id, page, perPage), {
+export const useAccountEntries = (account_id: number, filterDate: [string, string], page: number, perPage: number) => {
+  return useQuery(['accountEntries', filterDate, page, perPage], () => getAccountEntries(account_id, filterDate, page, perPage), {
     staleTime: 1000 * 5
   })
 }

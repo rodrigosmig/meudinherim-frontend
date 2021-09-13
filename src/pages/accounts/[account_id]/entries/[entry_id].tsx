@@ -4,7 +4,6 @@ import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../../services/api';
 import { EditAccountEntryForm } from "../../../../components/Foms/accountEntry/EditAccountEntryForm";
-import { toBrDate } from "../../../../utils/helpers";
 
 interface Category {
   id: number,
