@@ -1,6 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "../../utils/test-utils";
 import { AuthContext } from "../../contexts/AuthContext";
 import Profile from "../../pages/profile";
+import { useAccountBalance } from "../../hooks/useAccountBalance";
+
+const useAccountBalanceMocked = useAccountBalance as jest.Mock<any>;
+
+jest.mock('../../hooks/useAccountBalance');
 
 const signIn = jest.fn();
 const signOut = jest.fn();
@@ -40,6 +45,8 @@ jest.mock('next/router', () => {
 
 describe('Profile Component', () => {
   it('renders inputs correctly', async () => {
+    useAccountBalanceMocked.mockImplementation(() => ({ isLoading: true }));
+    
     render(
       <AuthContext.Provider value={{signIn, signOut, setUser, user, isAuthenticated}}>
         <Profile userUpdated={user} />

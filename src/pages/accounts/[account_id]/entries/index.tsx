@@ -20,8 +20,9 @@ import {
 import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../../services/api';
-import { toCurrency, toUsDate } from '../../../../utils/helpers';
+import { toUsDate } from '../../../../utils/helpers';
 import { useAccountEntries } from '../../../../hooks/useAccountEntries';
+import { useAccountBalance } from '../../../../hooks/useAccountBalance';
 import { FilterPerPage } from '../../../../components/Pagination/FilterPerPage';
 import { Loading } from '../../../../components/Loading/index';
 import { EditButton } from '../../../../components/Buttons/Edit';
@@ -65,10 +66,9 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
 
   const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, filterDate, page, perPage);
+  const { data: dataBalance, isLoading: isLoadingBalance, refetch: refetchBalance } = useAccountBalance(account.id);
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
-
-  const color = account.balance > 0 ? "blue.500" : "red.500";
 
   const deleteEntry = useMutation(async (id: number) => {
     const response = await accountEntriesService.delete(id);
@@ -94,6 +94,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
       })
 
       refetch();
+      refetchBalance();
     } catch (error) {
       const data = error.response.data
 
@@ -136,13 +137,17 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
           bg="gray.800" p="8" 
           h="max-content"
         >
-          <Flex mb={[8]} justify="space-between" align="center">
+          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
             <Heading fontSize={['md', '2xl']} fontWeight="normal">
               {account.name}
               { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
             </Heading>
             <Heading fontSize={['md', '2xl']} fontWeight="normal">
-              <Box color={color}>{toCurrency(account.balance)}</Box>
+              { isLoadingBalance ? (
+                <Spinner size="sm" color="gray.500" ml="4" />
+              ) : (
+                <Box color={dataBalance?.balances[0].positive ? 'blue.500' : 'red.500'}>{ dataBalance?.balances[0].balance }</Box>
+              )}
             </Heading>
           </Flex>
 

@@ -33,7 +33,7 @@ export const getAccountEntries = async (account_id: number, filterDate: [string,
 }
 
 export const useAccountEntries = (account_id: number, filterDate: [string, string], page: number, perPage: number) => {
-  return useQuery(['accountEntries', filterDate, page, perPage], () => getAccountEntries(account_id, filterDate, page, perPage), {
+  return useQuery(['accountEntries', account_id, filterDate, page, perPage], () => getAccountEntries(account_id, filterDate, page, perPage), {
     staleTime: 1000 * 5
   })
 }

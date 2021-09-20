@@ -3,12 +3,7 @@ import {
   Box,
   Button,
   Flex,
-  Stack,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Stack, 
   useToast
 } from "@chakra-ui/react";
 import * as yup from 'yup';
@@ -19,14 +14,9 @@ import { Input } from "../../Inputs/Input";
 import Link from "next/link";
 import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
-
-interface Category {
-  id: number,
-  type: number | 1 | 2,
-  name: string,
-}
+import { Select } from "../../Inputs/Select";
 
 type CategoriesForForm = {
   income: {
@@ -39,31 +29,13 @@ type CategoriesForForm = {
   }[]
 }
 
-interface Account {
-  id: number;
-  name: string;
-  type: {
-    id: string | 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  balance: number;
-}
-
-interface AccountEntry {
-  id: number;
-  date: string;
-  category: Category;
-  description: string;
-  value: number;
-  account: Account;
-}
-
-interface EditAccountEntryFormProps {
-  entry: AccountEntry;
-  categories: CategoriesForForm;
+interface AccountForm {
+  value: string;
+  label: string;
 }
 
 interface FormData {
+  account_id: number;
   date: Date;
   category_id: number;
   description: string;
@@ -78,53 +50,55 @@ type ResponseError = {
 
 type Key = keyof ResponseError;
 
+interface CreateAccountEntryFormProps {
+  categories: CategoriesForForm;
+  formAccounts: AccountForm[]
+}
+
 const validationSchema = yup.object().shape({
+  account_id: yup.number().integer("Conta inválida").typeError("O campo conta é inválido"),
   date: yup.date().typeError("O campo data é obrigatório"),
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
-  //.transform((_value, originalValue) => Number(originalValue.replace(/,/, '.')))
 })
 
-export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryFormProps) => {  
+export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccountEntryFormProps) => {  
   const toast = useToast();
   const router = useRouter();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
-  defaultValues: {
-    date: parseISO(entry.date),
-    category_id: entry.category.id,
-    description: entry.description,
-    value: entry.value
-  },
-  resolver: yupResolver(validationSchema)
-});
+    defaultValues:{
+      date: new Date(),
+      account_id: "",
+      category_id: "",
+      description: "",
+      value: 0
+    },
+    resolver: yupResolver(validationSchema)
+  });
 
   const { errors } = formState;
 
-  const handleEditAccountEntry: SubmitHandler<FormData> = async (values) => {
+  const handleCreateAccountEntry: SubmitHandler<FormData> = async (values) => {
     const data = {
-      id: entry.id,
-      data: {
-        ...values,
-        account_id: entry.account.id,
+      ...values,
         date: values?.date ? format(values.date, 'Y-MM-dd') : ''
-      }
     }
-    
+
     try {
-      const response = await accountEntriesService.update(data)
-      
+      const response = await accountEntriesService.create(data)
+
       toast({
         title: "Sucesso",
-        description: "Alteração realizada com sucesso",
+        description: `Lançamento ${values.description} criado com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
       })
 
-      router.push(`/accounts/${entry.account.id}/entries`)
+      router.push(`/accounts/${response.data.account.id}/entries`)
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -143,9 +117,17 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleEditAccountEntry)}
+      onSubmit={handleSubmit(handleCreateAccountEntry)}
       >
       <Stack spacing={[4]}>
+        <Select
+          name="type"
+          label="Conta"
+          options={formAccounts}
+          error={errors.account_id}
+          {...register('account_id')}
+        />
+
         <Controller
           control={control}
             name="date"
@@ -195,7 +177,7 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
           isLoading={formState.isSubmitting}
         />
 
-        <Link href={`/accounts/${entry.account.id}/entries`} passHref>
+        <Link href={`/dashboard`} passHref>
           <Button
             variant="outline"
             isDisabled={formState.isSubmitting}

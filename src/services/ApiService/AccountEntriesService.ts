@@ -38,11 +38,6 @@ interface AccountEntryResponse {
   }
 }
 
-interface FormData {
-  type: string;
-  name: string;
-}
-
 interface EditAccountEntryFormData {
   id: number;
   data: {
@@ -53,10 +48,19 @@ interface EditAccountEntryFormData {
   }
 }
 
+interface CreateAccountEntryFormData {
+    account_id: number;
+    date: string;
+    category_id: number;
+    description: string;
+    value: number;
+}
+
 const apiClient = setupApiClient();
 
 export const accountEntriesService = {
   list: (account_id: number, filterDate, page: number, perPage: number): Promise<AxiosResponse<AccountEntryResponse>> => apiClient.get(`/accounts/${account_id}/entries?page=${page}&per_page=${perPage}&from=${filterDate[0]}&to=${filterDate[1]}`),
-  update: (values: EditAccountEntryFormData): Promise<AxiosResponse<Category>> => apiClient.put(`/account-entries/${values.id}`, values.data),
+  create: (data: CreateAccountEntryFormData): Promise<AxiosResponse<AccountEntry>> => apiClient.post(`/account-entries`, data),
+  update: (values: EditAccountEntryFormData): Promise<AxiosResponse<AccountEntry>> => apiClient.put(`/account-entries/${values.id}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/account-entries/${id}`),
 };

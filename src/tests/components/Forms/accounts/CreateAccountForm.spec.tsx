@@ -10,14 +10,6 @@ jest.mock('react-query')
 jest.mock('../../../../services/ApiService/AccountService')
 
 describe('CreateAccountForm Component', () => {
-  beforeEach(() => {
-    const accountServiceMocked = mocked(accountService.update);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-  
   it('renders corretly', async () => {
     render(<CreateAccountForm />)
 

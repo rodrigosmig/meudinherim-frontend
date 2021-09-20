@@ -1,5 +1,5 @@
 import { forwardRef, ForwardRefRenderFunction } from 'react';
-import { FormControl, FormErrorMessage, chakra } from '@chakra-ui/react';
+import { FormControl, FormLabel, FormErrorMessage, chakra } from '@chakra-ui/react';
 import { FieldError } from 'react-hook-form'
 import DatePicker, { registerLocale } from 'react-datepicker';
 import ptBR from "date-fns/locale/pt-BR";
@@ -12,15 +12,19 @@ const StyledaDatepicker = chakra(DatePicker);
 
 interface DatepickerProps {
   selected: Date;
+  label?: string;
   error?: FieldError;
   onChange: (date: Date) => void;
 }
 
-const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, DatepickerProps> = ({ selected, error=null, onChange, ...rest }, ref) => {
+const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, DatepickerProps> = ({ label, selected, error=null, onChange, ...rest }, ref) => {
   return (
     <FormControl isInvalid={!!error}>
+      { !!label && <FormLabel htmlFor={label}>{label}</FormLabel>}
+
       <StyledaDatepicker
-        w={240}
+        id={label}
+        w={"full"}
         h={50}
         px={4}
         borderRadius="0.375rem"

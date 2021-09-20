@@ -25,6 +25,15 @@ interface EditAccountFormData {
   data: FormData;
 }
 
+interface AccountBalanceResponse {
+  balances: {
+    account_id: number;
+    account_name: string;
+    balance: number;
+  }[];
+  total: number
+}
+
 const apiClient = setupApiClient();
 
 export const accountService = {
@@ -32,4 +41,5 @@ export const accountService = {
   create: (values: FormData): Promise<AxiosResponse<Account>> => apiClient.post(`/accounts`, values),
   update: (values: EditAccountFormData): Promise<AxiosResponse<Account>> => apiClient.put(`/accounts/${values.accountId}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/accounts/${id}`),
+  balance: (id: number | null): Promise<AxiosResponse<AccountBalanceResponse>> => apiClient.get(`/accounts/balance/${id}`),
 };
