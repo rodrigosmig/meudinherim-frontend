@@ -1,13 +1,17 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "../../utils/test-utils";
 import { useMutation } from "react-query";
 import { useCategories } from "../../hooks/useCategories";
 import Categories from "../../pages/categories";
+import React from "react";
+import { useAccountBalance } from "../../hooks/useAccountBalance";
 
-const useCategoriesMocked = useCategories as jest.Mock<any>; 
+const useCategoriesMocked = useCategories as jest.Mock<any>;
+const useAccountBalanceMocked = useAccountBalance as jest.Mock<any>;
 const useMutationMocked = useMutation as jest.Mock<any>; 
 
-jest.mock('../../hooks/useCategories')
-jest.mock('react-query')
+jest.mock('../../hooks/useCategories');
+jest.mock('../../hooks/useAccountBalance');
+jest.mock('react-query');
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -48,9 +52,15 @@ const data = {
   }
 }
 
+const data2 = [
+  {id: 1, type: {id: "money", desc: "Money"}, name: "Account Test", balance: 50},
+  {id: 2, type: {id: "savings", desc: "Savings"}, name: "Account Savings", balance: 150}
+]
+
 describe('Categories Component', () => {
     beforeEach(() => {
       useCategoriesMocked.mockImplementation(() => ({ isLoading: true }));
+      useAccountBalanceMocked.mockImplementation(() => ({ isLoading: true }));
       useMutationMocked.mockImplementation(() => ({ isLoading: true }));
     });
 
@@ -131,7 +141,7 @@ describe('Categories Component', () => {
     )
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Delete category'}));
+      fireEvent.click(screen.getByRole('button', {name: 'Delete'}));
     })
 
     expect(screen.getByText("Deletar")).toBeInTheDocument();

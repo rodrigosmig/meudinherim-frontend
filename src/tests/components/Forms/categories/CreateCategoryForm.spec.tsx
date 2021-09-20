@@ -8,7 +8,7 @@ const useMutationMocked = useMutation as jest.Mock<any>;
 
 jest.mock('react-query')
 
-describe('EditCategoryForm Component', () => {
+describe('CreateCategoryForm Component', () => {
   beforeEach(() => {
     useMutationMocked.mockImplementation(() => ({ isLoading: false }));
   });

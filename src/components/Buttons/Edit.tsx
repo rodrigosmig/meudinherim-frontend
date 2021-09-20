@@ -1,8 +1,7 @@
-import { memo } from "react"
-import { Button, Icon, IconButton, Tooltip, useBreakpointValue } from "@chakra-ui/react"
-import { RiPencilLine } from "react-icons/ri"
-import Link from "next/link"
-
+import { memo } from "react";
+import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
+import { RiPencilLine } from "react-icons/ri";
+import Link from "next/link";
 interface EditButtonProps {
   href: string
 }
@@ -17,7 +16,7 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
   return (
     isWideVersion 
     ? (
-      <Link href={href}>
+      <Link href={href} passHref>
         <Button
           size="sm"
           fontSize="sm"
@@ -30,10 +29,10 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
       </Link>
       )
     : (
-      <Link href={href}>
+      <Link href={href} passHref>
         <IconButton
-          size="sm"
-          aria-label="Edit category"
+          size="xs"
+          aria-label="Edit"
           colorScheme="purple" 
           icon={<RiPencilLine />} 
         />

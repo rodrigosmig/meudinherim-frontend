@@ -15,6 +15,7 @@ import { useMutation } from "react-query";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface FormData {
   type: number;
@@ -23,13 +24,14 @@ interface FormData {
 
 const validationSchema = yup.object().shape({
   type: yup.string().required("O campo tipo é obrigatório"),
-  name: yup.string().required("O campo nome é obrigatório").min(5, "O campo nome deve ter no mínimo 3 caracteres"),
+  name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
 export const CreateCategoryForm = () => {
   const toast = useToast();
+  const router = useRouter();
 
-  const { register, reset, handleSubmit, setError, formState } = useForm({
+  const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
   });
 
@@ -42,6 +44,7 @@ export const CreateCategoryForm = () => {
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('categories')
+      router.push('/categories')
     }
   });
 
@@ -57,8 +60,6 @@ export const CreateCategoryForm = () => {
         duration: 10000,
         isClosable: true,
       })
-
-      reset();
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;

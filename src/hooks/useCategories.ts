@@ -18,6 +18,14 @@ export const getCategories = async (type: string, page: number, perPage: number)
   return data
 }
 
+export const getCategoriesForForm = async () => {
+  const response = await categoryService.listForForm();
+
+  const data = response.data
+
+  return data;
+}
+
 export const useCategories = (type: string, page: number, perPage: number) => {
   return useQuery(['categories', type, page, perPage], () => getCategories(type, page, perPage), {
     staleTime: 1000 * 5

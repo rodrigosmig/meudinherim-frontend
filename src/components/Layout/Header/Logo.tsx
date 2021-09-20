@@ -4,6 +4,7 @@ export const Logo = () => {
   return (
     <>
       <Image
+        alt="Meu Dinherim"
         w={[6]}
         h={[6]}
         src="/icons/logo.png"

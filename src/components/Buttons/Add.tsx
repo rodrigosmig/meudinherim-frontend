@@ -29,8 +29,8 @@ const AddButtonComponent = ({ onClick }: AddButtonProps) => {
     : (
       <Tooltip label="Adicionar" aria-label="A tooltip">
         <IconButton
-          size="sm"
-          aria-label="Add category"
+          size="xs"
+          aria-label="Add"
           colorScheme="pink" 
           icon={<RiAddLine />} 
           onClick={onClick}
