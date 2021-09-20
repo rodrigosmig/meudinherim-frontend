@@ -19,6 +19,7 @@ export default function SignIn() {
       >
         <Flex justify="center" align="center" mb={[6]}>
           <Image
+            alt="Meu Dinherim"
             w={[10]}
             h={[10]}
             src="/icons/logo.png"

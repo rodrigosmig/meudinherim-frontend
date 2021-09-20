@@ -4,7 +4,7 @@ import { NavLink } from './NavLink';
 import { NavSection } from './NavSection';
 import { HiDocumentReport } from "react-icons/hi";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
-import { 
+import {
   RiPriceTag3Line, 
   RiBankCard2Line, 
   RiDashboardLine, 
@@ -13,32 +13,33 @@ import {
 
 export const SidebarNav = () => {
   return (
-    <Stack spacing="8" align="flex-start">
-      <NavSection title="Geral" >
-        <NavLink href="/dashboard" icon={RiDashboardLine}>Dashboard</NavLink>
-        <NavLink href="/categories" icon={RiPriceTag3Line}>Categorias</NavLink>
-      </NavSection>
+    <>
+      <Stack spacing="8" align="flex-start">
+        <NavSection title="Geral" >
+          <NavLink href="/dashboard" icon={RiDashboardLine}>Dashboard</NavLink>
+          <NavLink href="/categories" icon={RiPriceTag3Line}>Categorias</NavLink>
+        </NavSection>
 
-      <NavSection title="Banco">
-          <NavLink href="/accounts" icon={RiBankLine}>Contas</NavLink>
-          <NavLink href="#" icon={GiReceiveMoney}>Extrato</NavLink>
-      </NavSection>
-    
-      <NavSection title="Cartão de Crédito">
-          <NavLink href="#" icon={RiBankCard2Line}>Cartão de Crédito</NavLink>
-          <NavLink href="#" icon={RiBankCard2Line}>Faturas</NavLink>
-      </NavSection>
-
-      <NavSection title="Agendamento">
-          <NavLink href="#" icon={GiReceiveMoney}>Contas a Receber</NavLink>
-          <NavLink href="#" icon={GiPayMoney}>Contas a Pagar</NavLink>
-      </NavSection>
-
-
-      <NavSection title="Relatórios">
-          <NavLink href="#" icon={HiDocumentReport}>Relatórios</NavLink>
-      </NavSection>
+        <NavSection title="Banco">
+            <NavLink href="/accounts" icon={RiBankLine}>Contas</NavLink>
+        </NavSection>
       
-    </Stack>
+        <NavSection title="Cartão de Crédito">
+            <NavLink href="#" icon={RiBankCard2Line}>Cartão de Crédito</NavLink>
+            <NavLink href="#" icon={RiBankCard2Line}>Faturas</NavLink>
+        </NavSection>
+
+        <NavSection title="Agendamento">
+            <NavLink href="#" icon={GiReceiveMoney}>Contas a Receber</NavLink>
+            <NavLink href="#" icon={GiPayMoney}>Contas a Pagar</NavLink>
+        </NavSection>
+
+
+        <NavSection title="Relatórios">
+            <NavLink href="#" icon={HiDocumentReport}>Relatórios</NavLink>
+        </NavSection>
+        
+      </Stack>
+    </>
   )
 }

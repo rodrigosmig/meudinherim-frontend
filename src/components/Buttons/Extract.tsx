@@ -1,12 +1,13 @@
 import { memo } from "react";
 import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
-import { RiPencilLine } from "react-icons/ri";
 import Link from "next/link";
-interface EditButtonProps {
+import { FaMoneyBillAlt } from "react-icons/fa";
+
+interface ExtractButtonProps {
   href: string
 }
 
-const EditButtonComponent = ({ href }: EditButtonProps) => {
+const ExtractButtonComponent = ({ href }: ExtractButtonProps) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -21,9 +22,9 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
           size="sm"
           fontSize="sm"
           colorScheme="purple"
-          leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+          leftIcon={<Icon as={FaMoneyBillAlt} fontSize="16" />}
         >
-          Editar
+          Extrato
         </Button>
       
       </Link>
@@ -32,13 +33,13 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
       <Link href={href} passHref>
         <IconButton
           size="xs"
-          aria-label="Edit"
+          aria-label="Extract"
           colorScheme="purple" 
-          icon={<RiPencilLine />} 
+          icon={<FaMoneyBillAlt />} 
         />
       </Link>
     )
   )
 }
 
-export const EditButton = memo(EditButtonComponent)
+export const ExtractButton = memo(ExtractButtonComponent)

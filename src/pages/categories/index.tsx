@@ -30,6 +30,7 @@ import { useMutation } from "react-query";
 import { queryClient } from "../../services/queryClient";
 import { useRouter } from "next/router";
 import { Pagination } from "../../components/Pagination";
+import { FilterPerPage } from '../../components/Pagination/FilterPerPage';
 
 export default function Categories() {
   const toast = useToast();
@@ -128,21 +129,7 @@ export default function Categories() {
             align="center"
             mb={[6, 6, 8]}
           >
-            <Flex align="center">
-              <Select
-                variant="unstyled"
-                w={[14]}
-                onChange={event => handleChangePerPage(event)}
-              >
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-              </Select>
-              { isWideVersion && (
-                <Box fontSize={['sm']}>Resultados por página</Box>
-              ) }
-            </Flex>
+            <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />
 
             <Flex align="center">
               <Select
@@ -155,9 +142,7 @@ export default function Categories() {
                 <option value="1">Entrada</option>
                 <option value="2">Saída</option>
               </Select>
-
-            </Flex>
-            
+            </Flex>            
           </Flex>
 
 

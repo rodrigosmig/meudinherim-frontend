@@ -1,13 +1,16 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "../../utils/test-utils";
 import { useMutation } from "react-query";
+import { useAccountBalance } from "../../hooks/useAccountBalance";
 import { useAccounts } from "../../hooks/useAccounts";
 import Accounts from "../../pages/accounts";
 
-const useAccountsMocked = useAccounts as jest.Mock<any>; 
+const useAccountsMocked = useAccounts as jest.Mock<any>;
+const useAccountBalanceMocked = useAccountBalance as jest.Mock<any>;
 const useMutationMocked = useMutation as jest.Mock<any>; 
 
-jest.mock('../../hooks/useAccounts')
-jest.mock('react-query')
+jest.mock('../../hooks/useAccounts');
+jest.mock('../../hooks/useAccountBalance')
+jest.mock('react-query');
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -41,6 +44,7 @@ const data = [
 describe('Accounts Component', () => {
     beforeEach(() => {
       useAccountsMocked.mockImplementation(() => ({ isLoading: true }));
+      useAccountBalanceMocked.mockImplementation(() => ({ isLoading: true }));
       useMutationMocked.mockImplementation(() => ({ isLoading: true }));
     });
 
@@ -106,7 +110,7 @@ describe('Accounts Component', () => {
     await waitFor(() => {
       fireEvent.click(screen.getByRole('button', {name: 'Delete'}));
     })
-//screen.debug(null, 30000)
+
     expect(screen.getByText("Deletar")).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Deletar'})).toBeInTheDocument();
     expect(screen.getByRole('alertdialog')).toBeInTheDocument();

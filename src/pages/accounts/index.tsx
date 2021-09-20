@@ -1,8 +1,8 @@
 import Head from "next/head";
-import { 
-  Box, 
+import {
+  Box,
   Flex, 
-  Heading, 
+  Heading,
   HStack, 
   Spinner, 
   Table, 
@@ -25,6 +25,9 @@ import { Loading } from '../../components/Loading/index';
 import { useMutation } from 'react-query';
 import { accountService } from "../../services/ApiService/AccountService";
 import { queryClient } from '../../services/queryClient';
+import { ExtractButton } from '../../components/Buttons/Extract';
+import { withSSRAuth } from '../../utils/withSSRAuth';
+import { setupApiClient } from '../../services/api';
 
 export default function Accounts() {
   const toast = useToast();
@@ -138,6 +141,7 @@ export default function Accounts() {
                               resource="Conta"
                               loading={deleteAccount?.isLoading}
                             />
+                            <ExtractButton href={`/accounts/${account.id}/entries`} />
                           </HStack>
                         </Td>
                       </Tr>
@@ -151,3 +155,13 @@ export default function Accounts() {
     </>
   )
 }
+
+export const getServerSideProps = withSSRAuth(async (context) => {
+  const apiClient = setupApiClient(context);
+  
+  const response = await apiClient.get('/accounts');
+
+  return {
+    props: {}
+  }
+})

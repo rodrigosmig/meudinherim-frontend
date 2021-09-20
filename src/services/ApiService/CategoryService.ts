@@ -19,6 +19,17 @@ type CategoriesResponse = {
   }
 }
 
+type CategoriesForForm = {
+  income: {
+    id: number;
+    label: string
+  }[]
+  expense: {
+    id: number;
+    label: string
+  }[]
+}
+
 interface FormData {
   type: number;
   name: string;
@@ -33,6 +44,7 @@ const apiClient = setupApiClient();
 
 export const categoryService = {
   list: (type: string, page: number, perPage: number): Promise<AxiosResponse<CategoriesResponse>> => apiClient.get(`/categories?type=${type}&page=${page}&per_page=${perPage}`),
+  listForForm: (): Promise<AxiosResponse<CategoriesForForm>> => apiClient.get(`/categories?type=all`),
   update: (values: EditCategoryFormData): Promise<AxiosResponse<Category>> => apiClient.put(`/categories/${values.categoryId}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/categories/${id}`),
   create: (values: FormData): Promise<AxiosResponse<Category>> => apiClient.post(`/categories`, values)

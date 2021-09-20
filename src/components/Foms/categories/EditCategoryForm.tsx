@@ -144,7 +144,7 @@ const EditCategoryFormComponent = ({ category }: EditCategoryFormProps) => {
           isLoading={isLoading}
         />
 
-        <Link href={"/categories"}>
+        <Link href={"/categories"} passHref>
           <Button
             variant="outline"
             isDisabled={isLoading}

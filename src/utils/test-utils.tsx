@@ -1,6 +1,8 @@
 import { FC, ReactElement } from "react";
 import {render, RenderOptions} from '@testing-library/react'
 import { AuthContext } from "../contexts/AuthContext";
+import { ThemeProvider } from "@chakra-ui/react";
+import { theme } from "../styles/theme";
 
 const signIn = jest.fn();
 const signOut = jest.fn();
@@ -16,9 +18,12 @@ const user = {
 
 const AllTheProviders:FC = ({ children }) => {
   return (
+    <ThemeProvider theme={theme}>
       <AuthContext.Provider value={{ signIn, signOut, setUser, user, isAuthenticated }}>
         {children}
       </AuthContext.Provider>
+
+    </ThemeProvider>
   );
 };
 
