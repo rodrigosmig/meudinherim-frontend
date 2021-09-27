@@ -41,7 +41,7 @@ export default function Accounts() {
 
   const { data, isLoading, isFetching, isError, refetch } = useAccounts();
 
-  const tableSize = isWideVersion ? 'md' : 'sm'
+  const tableSize = isWideVersion ? 'md' : 'sm';
 
   const handleAddAccount = () => {
     router.push('/accounts/create');
