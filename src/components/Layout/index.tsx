@@ -17,8 +17,7 @@ const LayoutComponent = ({ children }: LayoutProps) => {
       >        
         <Header />
         <Flex
-          w={['100%']}
-          maxW={[1480]}
+          w={['full']}
           mx={['auto']}
           my={[6]}
           px={[6]}

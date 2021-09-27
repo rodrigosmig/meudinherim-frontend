@@ -19,7 +19,6 @@ const HeaderComponent = () => {
     <Flex
       as="header"
       w="full"
-      maxWidth={1480}
       mx="auto"
       mt="4"
       px="6"

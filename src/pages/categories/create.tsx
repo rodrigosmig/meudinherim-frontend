@@ -1,10 +1,11 @@
 import { 
-  Box, 
   Flex, 
-  Heading, 
+  Text, 
 } from "@chakra-ui/react";
 import Head from "next/head";
+import { Card } from "../../components/Card";
 import { CreateCategoryForm } from "../../components/Foms/categories/CreateCategoryForm";
+import { Heading } from "../../components/Heading";
 import { Layout } from "../../components/Layout";
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -17,23 +18,17 @@ export default function CreateCategory() {
       </Head>
 
       <Layout>
-        <Box
-          h={380}
-          flex='1' 
-          borderRadius={8} 
-          bg="gray.800" 
-          p="8"
+          <Card>
+            <>
+              <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+                <Heading>
+                  <Text>Nova Categoria</Text>
+                </Heading>
+              </Flex>
 
-        >
-          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-            <Heading fontSize={['xl', 'xl', '2xl']} fontWeight="normal">
-              Nova Categoria
-            </Heading>
-          </Flex>
-
-          <CreateCategoryForm />
-          
-        </Box>
+              <CreateCategoryForm />
+            </>
+          </Card>
       </Layout>
     </>
   )

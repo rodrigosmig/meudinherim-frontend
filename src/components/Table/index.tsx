@@ -1,4 +1,8 @@
-import { Box, Table as ChakraTable, TableProps as ChakraTableProps } from "@chakra-ui/react"
+import { 
+  Box, 
+  Table as ChakraTable, 
+  TableProps as ChakraTableProps 
+} from "@chakra-ui/react"
 import { ReactElement } from "react"
 
 interface TableProps extends ChakraTableProps {
