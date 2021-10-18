@@ -63,7 +63,6 @@ describe('CreateAccountEntryForm Component', () => {
     expect(screen.getByText("O campo data é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo categoria é inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo descrição é obrigatório")).toBeInTheDocument();
-    expect(screen.getByText("O campo descrição é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo valor é obrigatório")).toBeInTheDocument();
   })
 

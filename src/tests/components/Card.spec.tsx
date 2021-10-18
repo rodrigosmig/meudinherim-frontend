@@ -14,12 +14,11 @@ describe('Card Component', () => {
 
   it('renders correctly when there is title in card', () => {
     render(
-      <Card title="Title Test">
+      <Card>
         <h1>Home</h1>
       </Card>
     )
-  
+    
     expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('Title Test')).toBeInTheDocument()
   })
 })

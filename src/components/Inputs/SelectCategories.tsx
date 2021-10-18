@@ -34,7 +34,6 @@ export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectCateg
         _hover={{
           bgColor: 'gray.900'
         }}
-        size='lg'
         ref={ref}
         {...rest}
       >

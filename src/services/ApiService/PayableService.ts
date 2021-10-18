@@ -20,6 +20,13 @@ interface Payable {
 interface PayableResponse {
   data: Payable[];
 }
+interface FormData {
+  due_date: string;
+  category_id: number;
+  description: string;
+  value: number;
+  monthly: boolean
+}
 
 interface PayableResponse {
   data: Payable[];
@@ -35,4 +42,5 @@ const apiClient = setupApiClient();
 
 export const payableService = {
   list: (filterDate: [string, string], page: number, perPage: number, status: string): Promise<AxiosResponse<PayableResponse>> => apiClient.get(`/payables?page=${page}&per_page=${perPage}&from=${filterDate[0]}&to=${filterDate[1]}&status=${status}`),
+  create: (values: FormData): Promise<AxiosResponse<Payable>> => apiClient.post(`/payables`, values),
 };

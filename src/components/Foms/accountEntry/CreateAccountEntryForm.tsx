@@ -158,7 +158,7 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
 
         <Input
           name="value"
-          type="number"
+          type="text"
           label="Valor"
           error={errors.value}
           step="0.01"

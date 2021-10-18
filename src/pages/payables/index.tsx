@@ -31,6 +31,8 @@ import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
 import { toUsDate } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
+import { withSSRAuth } from '../../utils/withSSRAuth';
+import { setupApiClient } from '../../services/api';
 
 export default function Accounts() {
   const toast = useToast();
@@ -44,7 +46,7 @@ export default function Accounts() {
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [payableStatus, setPayableStatus] = useState("all");
+  const [payableStatus, setPayableStatus] = useState("open");
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
@@ -129,7 +131,7 @@ export default function Accounts() {
                 onChange={event => handleChangePayableStatus(event)}
               >
                 <option value="all">Todas</option>
-                <option value="open">Abertas</option>
+                <option value="open" selected>Abertas</option>
                 <option value="paid">Pagas</option>
               </Select>
             </Flex>          
@@ -213,3 +215,13 @@ export default function Accounts() {
     </>
   )
 }
+
+export const getServerSideProps = withSSRAuth(async (context) => {
+  const apiClient = setupApiClient(context);
+
+  const payablesResponse = await apiClient.get('/payables');
+
+  return {
+    props: {}
+  }
+})
