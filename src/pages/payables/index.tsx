@@ -34,7 +34,7 @@ import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
 
-export default function Accounts() {
+export default function AccountPayables() {
   const toast = useToast();
   const router = useRouter();
 
@@ -51,7 +51,7 @@ export default function Accounts() {
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
 
-  const { data, isLoading, isFetching, isError, refetch } = usePayables(filterDate, page, perPage, payableStatus);
+  const { data, isLoading, isFetching, isError } = usePayables(filterDate, page, perPage, payableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
@@ -184,7 +184,11 @@ export default function Accounts() {
                           </Td>
                           <Td fontSize={["xs", "md"]}>
                             <HStack spacing={[2]}>
-                              <EditButton href={`/accounts/${payable.id}`} />
+                              
+                              <EditButton 
+                                isDisabled={payable.is_parcel}
+                                href={`/payables/${payable.id}`}
+                              />
                               <DeleteButton 
                                 onDelete={() => handleDeleteAccount(payable.id)} 
                                 resource="Conta"

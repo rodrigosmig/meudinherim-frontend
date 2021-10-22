@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { 
   Box,
@@ -13,56 +14,47 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import Link from "next/link";
 import { Datepicker } from "../../DatePicker";
-import { SelectCategories } from "../../Inputs/SelectCategories";
 import { format, parseISO } from 'date-fns';
-import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
+import { payableService } from "../../../services/ApiService/PayableService";
+import { Select } from "../../Inputs/Select";
+import { Switch } from "../../Inputs/Switch";
 
 interface Category {
   id: number,
-  type: number | 1 | 2,
   name: string,
 }
 
 type CategoriesForForm = {
-  income: {
-    id: number;
-    label: string
-  }[]
-  expense: {
-    id: number;
-    label: string
-  }[]
+  value: string;
+  label: string;
 }
 
-interface Account {
+interface Payable {
   id: number;
-  name: string;
-  type: {
-    id: string | 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  balance: number;
-}
-
-interface AccountEntry {
-  id: number;
-  date: string;
-  category: Category;
+  due_date: string;
+  paid_date: string | null;
   description: string;
   value: number;
-  account: Account;
+  category: Category;
+  invoice_id: number | null;
+  paid: boolean;
+  monthly: boolean;
+  has_parcels: boolean;
+  is_parcel: boolean,
+  parcelable_id: number,
 }
 
-interface EditAccountEntryFormProps {
-  entry: AccountEntry;
-  categories: CategoriesForForm;
+interface EditPayableFormProps {
+  payable: Payable;
+  categories: CategoriesForForm[];
 }
 
 interface FormData {
-  date: Date;
+  due_date: Date;
   category_id: number;
   description: string;
   value: number;
+  monthly: boolean
 }
 
 type ResponseError = {
@@ -74,51 +66,54 @@ type ResponseError = {
 type Key = keyof ResponseError;
 
 const validationSchema = yup.object().shape({
-  date: yup.date().typeError("O campo data é obrigatório"),
+  due_date: yup.date().typeError("O campo vencimento é obrigatório"),
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
+  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
 })
 
-export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryFormProps) => {  
+export const EditPayableForm = ({payable, categories}: EditPayableFormProps) => {
   const toast = useToast();
   const router = useRouter();
 
+  const [ monthly, setMonthly ] = useState(payable.monthly);
+
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
-      date: parseISO(entry.date),
-      category_id: entry.category.id,
-      description: entry.description,
-      value: entry.value
+      due_date: parseISO(payable.due_date),
+      category_id: payable.category.id,
+      description: payable.description,
+      value: payable.value,
+      monthly: payable.monthly,
     },
     resolver: yupResolver(validationSchema)
   });
 
   const { errors } = formState;
 
-  const handleEditAccountEntry: SubmitHandler<FormData> = async (values) => {
+  const handleEditPayable: SubmitHandler<FormData> = async (values) => {
     const data = {
-      id: entry.id,
+      id: payable.id,
       data: {
         ...values,
-        account_id: entry.account.id,
-        date: values?.date ? format(values.date, 'Y-MM-dd') : ''
+        monthly: monthly,
+        due_date: values?.due_date ? format(values.due_date, 'Y-MM-dd') : ''
       }
     }
-    
+
     try {
-      const response = await accountEntriesService.update(data)
-      
+      await payableService.update(data)
+
       toast({
         title: "Sucesso",
-        description: "Alteração realizada com sucesso",
+        description: `Conta a Pagar adicionada com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
       })
 
-      router.push(`/accounts/${entry.account.id}/entries`)
+      router.push("/payables")
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -137,29 +132,30 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleEditAccountEntry)}
+      onSubmit={handleSubmit(handleEditPayable)}
       >
       <Stack spacing={[4]}>
         <Controller
           control={control}
-            name="date"
+            name="due_date"
             render={({ field }) => (
               <Datepicker
-                label="Data"
-                error={errors.date}
+                label="Vencimento"
+                error={errors.due_date}
                 selected={field.value}
                 onChange={(date) => field.onChange(date)}
               />
            )}
         />
 
-        <SelectCategories
+        <Select
           name="type"
           label="Categoria"
           options={categories}
           error={errors.category_id}
           {...register('category_id')}
         />
+
         <Input
           name="description"
           type="text"
@@ -176,7 +172,19 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
           step="0.01"
           {...register('value')}
         />
+
+        <Switch
+          size="lg"
+          id="monthly" 
+          name='monthly'
+          label="Mensal"
+          {...register('monthly')}
+          isChecked={monthly}
+          onChange={() => setMonthly(!monthly)}
+        />
+
       </Stack>
+
       <Flex
         mt={[10]}
         justify="flex-end"
@@ -189,7 +197,7 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
           isLoading={formState.isSubmitting}
         />
 
-        <Link href={`/accounts/${entry.account.id}/entries`} passHref>
+        <Link href={`/payables`} passHref>
           <Button
             variant="outline"
             isDisabled={formState.isSubmitting}

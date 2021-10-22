@@ -30,10 +30,16 @@ const accountsForm = [
   }
 ]
 
-describe('CreateAccountEntryForm Component', () => { 
-  it('renders corretly', async () => {
+describe('CreateAccountEntryForm Component', () => {
+  beforeEach(() => {
     render(<CreateAccountEntryForm categories={categoriesForm} formAccounts={accountsForm} />)
+  });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders corretly', async () => {
     expect(accountEntriesServiceMocked).toHaveBeenCalledTimes(0);
 
     expect(screen.getByText("Conta")).toBeInTheDocument();
@@ -47,8 +53,6 @@ describe('CreateAccountEntryForm Component', () => {
   })
 
   it('validates required fields inputs', async () => {
-    render(<CreateAccountEntryForm categories={categoriesForm} formAccounts={accountsForm} />)
-
     fireEvent.change(screen.getByLabelText('Conta'), {target: { value: "" }})
     fireEvent.change(screen.getByLabelText('Categoria'), {target: { value: "" }})
     fireEvent.change(screen.getByLabelText('Data'), {target: { value: "" }})
@@ -67,8 +71,6 @@ describe('CreateAccountEntryForm Component', () => {
   })
 
   it('validates user inputs', async () => {
-    render(<CreateAccountEntryForm categories={categoriesForm} formAccounts={accountsForm} />)
-
     fireEvent.change(screen.getByLabelText('Conta'), {target: { value: "1" }})
     fireEvent.change(screen.getByLabelText('Categoria'), {target: { value: "2" }})
     fireEvent.change(screen.getByLabelText('Data'), {target: { value: '01/09/2021'}})
@@ -87,8 +89,6 @@ describe('CreateAccountEntryForm Component', () => {
   })
 
   it('create account successfuly', async () => {
-    render(<CreateAccountEntryForm categories={categoriesForm} formAccounts={accountsForm} />)
-
     fireEvent.change(screen.getByLabelText('Conta'), {target: { value: "1" }})
     fireEvent.change(screen.getByLabelText('Categoria'), {target: { value: "2" }})
     fireEvent.change(screen.getByLabelText('Data'), {target: { value: '01/09/2021'}})
