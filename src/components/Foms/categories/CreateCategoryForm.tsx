@@ -105,22 +105,21 @@ export const CreateCategoryForm = () => {
         justify="flex-end"
         align="center"
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={createCategory.isLoading}
-        />
-
         <Link href="/categories" passHref>
           <Button
+            mr={[4]}
             variant="outline"
             isDisabled={createCategory.isLoading}
           >
             Cancelar
           </Button>
-        
         </Link>
+
+        <SubmitButton
+          label="Salvar"
+          size="md"
+          isLoading={createCategory.isLoading}
+        />
       </Flex>
     </Box>
   )

@@ -76,7 +76,7 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: PaymentFor
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       account_id: "",
-      paid_date: "",
+      paid_date: new Date(),
       value: payable.value
     },
     resolver: yupResolver(validationSchema)
@@ -206,20 +206,20 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: PaymentFor
             justify="flex-end"
             align="center"
           >
-            <SubmitButton
-              mr={[4]}
-              label="Pagar"
-              size="md"
-              isLoading={formState.isSubmitting}
-            />
-
             <Button
               variant="outline"
               isDisabled={formState.isSubmitting}
               onClick={onCancel}
+              mr={[4]}
             >
               Cancelar
             </Button>
+
+            <SubmitButton
+              label="Pagar"
+              size="md"
+              isLoading={formState.isSubmitting}
+            />
           </Flex>
         </Box>
     )

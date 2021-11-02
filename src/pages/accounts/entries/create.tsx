@@ -40,7 +40,7 @@ export default function CreateAccountEntry({ categories, formAccounts }: CreateA
           <>
             <Flex mb={[6, 6, 8]} justify="space-between" align="center">
               <Heading>
-                <Text>Nova Categoria</Text>
+                <Text>Novo Lançamento</Text>
               </Heading>
             </Flex>
 

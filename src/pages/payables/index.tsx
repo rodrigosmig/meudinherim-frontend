@@ -39,8 +39,8 @@ import { PopoverTotal } from '../../components/PopoverTotal';
 import { payableService } from '../../services/ApiService/PayableService';
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
-import { ModalPayment } from '../../components/Modals/ModalPayment';
 import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
+import { PaymentModal } from '../../components/Modals/PaymentModal';
 
 interface CancelPayableData {
   id: number, 
@@ -183,7 +183,7 @@ export default function AccountPayables() {
 
   return (
     <>
-      <ModalPayment 
+      <PaymentModal 
         accountId={payableId}
         parcelableId={parcelableId}
         isOpen={isOpen} 

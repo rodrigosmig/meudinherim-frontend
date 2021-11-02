@@ -92,7 +92,8 @@ const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false
               </Button>
               <Button 
                 colorScheme="red" 
-                onClick={handleOnDelete} ml={3}
+                onClick={handleOnDelete} 
+                ml={3}
                 isLoading={loading}
               >
                 Deletar

@@ -182,21 +182,21 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
         justify="flex-end"
         align="center"
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={formState.isSubmitting}
-        />
-
         <Link href={`/accounts/${entry.account.id}/entries`} passHref>
           <Button
+            mr={[4]}
             variant="outline"
             isDisabled={formState.isSubmitting}
           >
             Cancelar
           </Button>
         </Link>
+
+        <SubmitButton
+          label="Salvar"
+          size="md"
+          isLoading={formState.isSubmitting}
+        />
       </Flex>
     </Box>
   )

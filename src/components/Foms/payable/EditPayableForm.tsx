@@ -190,21 +190,21 @@ export const EditPayableForm = ({payable, categories}: EditPayableFormProps) => 
         justify="flex-end"
         align="center"
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={formState.isSubmitting}
-        />
-
         <Link href={`/payables`} passHref>
           <Button
+            mr={[4]}
             variant="outline"
             isDisabled={formState.isSubmitting}
           >
             Cancelar
           </Button>
         </Link>
+
+        <SubmitButton
+          label="Salvar"
+          size="md"
+          isLoading={formState.isSubmitting}
+        />
       </Flex>
     </Box>
   )

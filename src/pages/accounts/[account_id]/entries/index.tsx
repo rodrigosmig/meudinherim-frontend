@@ -15,7 +15,8 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
-  useToast, 
+  useToast,
+  useDisclosure
 } from "@chakra-ui/react";
 import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
@@ -34,6 +35,7 @@ import { queryClient } from '../../../../services/queryClient';
 import { DateFilter } from '../../../../components/DateFilter';
 import { Card } from '../../../../components/Card';
 import { Heading } from '../../../../components/Heading';
+import { ShowPaymentModal } from '../../../../components/Modals/ShowPaymentModal';
 
 interface Account {
   id: number;
@@ -61,10 +63,12 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
+  const [payableId, setPayableId] = useState(null);
+  const [parcelableId, setParcelableId ] = useState(null);
 
   const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, filterDate, page, perPage);
   const { data: dataBalance, isLoading: isLoadingBalance, refetch: refetchBalance } = useAccountBalance(account.id);
@@ -122,10 +126,24 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
     } else {
       setFilterDate(['', ''])
     }
-  } 
+  }
+
+  const handleShowPayment = (id: number, parcelable_id: null | number) => {
+    setParcelableId(parcelable_id);
+    setPayableId(id);
+    onOpen();
+  }
 
   return (
     <>
+      <ShowPaymentModal
+        accountId={payableId}
+        parcelableId={parcelableId}
+        isOpenModal={isOpen}
+        onCloseModal={onClose}
+        refetchEntries={refetch}
+        refetchBalance={refetchBalance}
+      />
       <Head>
         <title>{ account.name } | Meu Dinherim</title>
       </Head>
@@ -216,7 +234,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                               />
                             </HStack>
                             ) : (
-                              <Button bgColor="green.500">Ver Pagamento</Button>
+                              <Button colorScheme="green" onClick={() => handleShowPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Pagamento</Button>
                             )
                           }
                           </Td>

@@ -1,27 +1,19 @@
 import {
-  Button,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Stack,
   useToast
 } from "@chakra-ui/react";
 import { memo, useEffect, useState } from "react";
 import { accountService } from "../../services/ApiService/AccountService";
-import { categoryService } from "../../services/ApiService/CategoryService";
 import { payableService } from "../../services/ApiService/PayableService";
-import { toBrDate } from "../../utils/helpers";
 import { PaymentForm } from "../Foms/payable/PaymentForm";
-import { Input } from "../Inputs/Input";
-import { Select } from "../Inputs/Select";
-import { Switch } from "../Inputs/Switch";
 import { Loading } from "../Loading";
 
-interface ModalPaymentProps {
+interface PaymentModalProps {
   accountId: number;
   parcelableId?: number; 
   isOpen: boolean;
@@ -29,7 +21,7 @@ interface ModalPaymentProps {
   refetch: () => void;
 }
 
-const ModalPaymentComponent = ({ accountId, parcelableId = null, isOpen, onClose, refetch }: ModalPaymentProps) => {
+const PaymentModalComponent = ({ accountId, parcelableId = null, isOpen, onClose, refetch }: PaymentModalProps) => {
   const toast = useToast();
   const [payable, setPayable] = useState(null);
   const [categories, setCategories] = useState(null);
@@ -105,4 +97,4 @@ const ModalPaymentComponent = ({ accountId, parcelableId = null, isOpen, onClose
   )
 }
 
-export const ModalPayment = memo(ModalPaymentComponent);
+export const PaymentModal = memo(PaymentModalComponent);

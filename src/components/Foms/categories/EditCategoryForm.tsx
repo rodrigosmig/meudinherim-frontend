@@ -137,21 +137,21 @@ const EditCategoryFormComponent = ({ category }: EditCategoryFormProps) => {
         justify="flex-end"
         align="center"
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={isLoading}
-        />
-
         <Link href={"/categories"} passHref>
           <Button
+            mr={[4]}
             variant="outline"
             isDisabled={isLoading}
           >
             Cancelar
           </Button>
         </Link>
+
+        <SubmitButton
+          label="Salvar"
+          size="md"
+          isLoading={isLoading}
+        />
       </Flex>
     </Box>
   )
