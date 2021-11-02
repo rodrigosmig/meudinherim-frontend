@@ -53,7 +53,7 @@ export default function EditPayable({ payable, categories }: EditPayableProps) {
               </Heading>
             </Flex>
 
-            <EditPayableForm payable={payable} categories={[{value: "", label: "teste"}]} />
+            <EditPayableForm payable={payable} categories={categories} />
           </>
         </Card>
       </Layout>
@@ -67,7 +67,7 @@ export const getServerSideProps = withSSRAuth(async (context) => {
   const {payable_id} = context.params;  
   const payableResponse = await apiClient.get(`/payables/${payable_id}`);
   
-  const payable = payableResponse.data.data;
+  const payable = payableResponse.data;
 
   const categoriesExpenseResponse = await apiClient.get(`/categories?type=2&per_page=1000`);
 

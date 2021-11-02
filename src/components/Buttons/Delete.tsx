@@ -17,9 +17,11 @@ interface DeleteButtonProps {
   onDelete: () => void;
   resource: string;
   loading: boolean;
+  isDisabled?: boolean,
+  isParcel?: boolean
 }
 
-const DeleteButtonComponent = ({ loading, resource, onDelete }: DeleteButtonProps) => {
+const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false, isParcel = false }: DeleteButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const cancelRef = useRef();
   const onClose = () => setIsOpen(false);
@@ -40,6 +42,7 @@ const DeleteButtonComponent = ({ loading, resource, onDelete }: DeleteButtonProp
       {isWideVersion 
       ? (
         <Button
+          isDisabled={isDisabled}
           size="sm"
           fontSize="sm"
           colorScheme="purple"
@@ -52,6 +55,7 @@ const DeleteButtonComponent = ({ loading, resource, onDelete }: DeleteButtonProp
       : (
         <Tooltip label="Deletar" aria-label="A tooltip">
           <IconButton
+            isDisabled={isDisabled}
             size="xs"
             aria-label="Delete"
             colorScheme="purple" 
@@ -73,6 +77,7 @@ const DeleteButtonComponent = ({ loading, resource, onDelete }: DeleteButtonProp
 
             <AlertDialogBody bgColor="gray.800">
               Tem certeza que deseja deletar {resource.toLowerCase()}?
+              { isParcel ? " Todas as parcelas serão excluídas." : '' }
             </AlertDialogBody>
 
             <AlertDialogFooter>

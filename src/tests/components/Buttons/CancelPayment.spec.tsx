@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { DeleteButton } from '../../../components/Buttons/Delete';
+import { CancelPaymentButton } from '../../../components/Buttons/CancelPayment';
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -18,41 +18,41 @@ Object.defineProperty(window, 'matchMedia', {
 const onClick = jest.fn();
 const resource = "button test";
 
-describe('Delete button Component', () => {
+describe('Cancel Payment button Component', () => {
   it('renders correctly delete button label', () => {
     render(
-      <DeleteButton onDelete={onClick} resource={resource} loading={false} />
+      <CancelPaymentButton onCancel={onClick} label={resource} loading={false} />
     )
 
     expect(onClick).toHaveBeenCalledTimes(0)
-    expect(screen.getByRole('button', {name: "Delete"})).toBeInTheDocument()
+    expect(screen.getByRole('button', {name: "Cancel Payment"})).toBeInTheDocument()
   })
 
   it('renders alert confirmation correctly', async () => {
     render(
-      <DeleteButton onDelete={onClick} resource={resource} loading={false} />
+        <CancelPaymentButton onCancel={onClick} label={resource} loading={false} />
     )
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Delete'}));
+      fireEvent.click(screen.getByRole('button', {name: "Cancel Payment"}));
     })
 
     expect(onClick).toHaveBeenCalledTimes(0)
     expect(screen.getByRole('alertdialog')).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Cancel'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Cancel Payment'})).toBeInTheDocument();
   });
 
-  it('renders correctly delete confirmation', async () => {
+  it('renders correctly cancel payment confirmation', async () => {
     render(
-      <DeleteButton onDelete={onClick} resource={resource} loading={false} />
+        <CancelPaymentButton onCancel={onClick} label={resource} loading={false} />
     )
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Delete'}));
+        fireEvent.click(screen.getByRole('button', {name: "Cancel Payment"}));
     })
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Deletar'}));
+      fireEvent.click(screen.getByRole('button', {name: 'Confirmar'}));
     })
     
     expect(onClick).toHaveBeenCalledTimes(1)
@@ -60,11 +60,11 @@ describe('Delete button Component', () => {
 
   it('tests loading label', async () => {
     render(
-      <DeleteButton onDelete={onClick} resource={resource} loading={true} />
+        <CancelPaymentButton onCancel={onClick} label={resource} loading={true} />
     )
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Delete'}));
+        fireEvent.click(screen.getByRole('button', {name: "Cancel Payment"}));
     })
 
     expect(onClick).toHaveBeenCalledTimes(1)

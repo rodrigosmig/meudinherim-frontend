@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 import Head from "next/head";
 import {
+  Button,
   Flex, 
   HStack,
   Select,
@@ -11,7 +12,8 @@ import {
   Th, 
   Thead, 
   Tr,
-  useBreakpointValue, 
+  useBreakpointValue,
+  useDisclosure,
   useToast 
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -33,6 +35,17 @@ import { toUsDate } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
+import { PopoverTotal } from '../../components/PopoverTotal';
+import { payableService } from '../../services/ApiService/PayableService';
+import { queryClient } from '../../services/queryClient';
+import { useMutation } from 'react-query';
+import { ModalPayment } from '../../components/Modals/ModalPayment';
+import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
+
+interface CancelPayableData {
+  id: number, 
+  parcelable_id: null | number
+}
 
 export default function AccountPayables() {
   const toast = useToast();
@@ -50,8 +63,11 @@ export default function AccountPayables() {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [payableId, setPayableId] = useState(null);
+  const [parcelableId, setParcelableId ] = useState(null);
 
-  const { data, isLoading, isFetching, isError } = usePayables(filterDate, page, perPage, payableStatus);
+  const { data, isLoading, isFetching, isError, refetch } = usePayables(filterDate, page, perPage, payableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
@@ -60,12 +76,48 @@ export default function AccountPayables() {
     router.push('/payables/create');
   }
 
-  const handleDeleteAccount = (id: number) => {
-    console.log("delete")
+  const deletePayable = useMutation(async (id: number) => {
+    const response = await payableService.delete(id);
+  
+    return response.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('payables')
+    }
+  });
+
+  const handleDeletePayable = async (id: number) => {
+    try {
+      await deletePayable.mutateAsync(id);
+
+      toast({
+        title: "Sucesso",
+        description: "Conta a pagar deletada com sucesso",
+        position: "top-right",
+        status: 'success',
+        duration: 10000,
+        isClosable: true,
+      });
+
+      refetch();
+    } catch (error) {
+      const data = error.response.data
+      
+      toast({
+        title: "Erro",
+        description: data.message,
+        position: "top-right",
+        status: 'error',
+        duration: 10000,
+        isClosable: true,
+      })
+    }
   }
 
-  const handlePayment = (id: number) => {
-    console.log("payment")
+  const handlePayment = (id: number, parcelable_id: null | number) => {
+    setParcelableId(parcelable_id);
+    setPayableId(id);
+    onOpen();
   }
 
   const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -86,8 +138,58 @@ export default function AccountPayables() {
     setPayableStatus(event.target.value)
   }
 
+  const cancelPayment = useMutation(async (values: CancelPayableData) => {
+    const response = await payableService.cancelPayment(values.id, values.parcelable_id);
+  
+    return response.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('payables')
+    }
+  });
+
+  const handleCancelPayment = async (id: number, parcelable_id: null | number) => {
+    const values = {
+      id,
+      parcelable_id
+    }
+
+    try {
+      await cancelPayment.mutateAsync(values);
+
+      toast({
+        title: "Sucesso",
+        description: "Pagamento cancelado com sucesso",
+        position: "top-right",
+        status: 'success',
+        duration: 10000,
+        isClosable: true,
+      });
+
+      refetch();
+    } catch (error) {
+      const data = error.response.data
+      
+      toast({
+        title: "Erro",
+        description: data.message,
+        position: "top-right",
+        status: 'error',
+        duration: 10000,
+        isClosable: true,
+      })
+    }
+  }
+
   return (
     <>
+      <ModalPayment 
+        accountId={payableId}
+        parcelableId={parcelableId}
+        isOpen={isOpen} 
+        onClose={onClose}
+        refetch={refetch}
+      />
       <Head>
         <title>Contas a Pagar | Meu Dinherim</title>
       </Head>
@@ -160,7 +262,7 @@ export default function AccountPayables() {
 
                     <Tbody>
                       { data.payables.map(payable => (
-                        <Tr key={payable.id} px={[8]}>
+                        <Tr key={ payable.id } px={[8]}>
                           <Td fontSize={["xs", "md"]}>
                             <Text fontWeight="bold">{payable.due_date}</Text>
                           </Td>
@@ -171,7 +273,16 @@ export default function AccountPayables() {
                             { payable.category.name}
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.description}
+                            { payable.is_parcel ? (
+                              <PopoverTotal
+                                description={payable.description}
+                                amount={payable.total_purchase}
+                              />
+                              ) : (
+                                payable.description
+                              )
+                            }
+
                           </Td>
                           <Td fontSize={["xs", "md"]}>
                             { payable.value}
@@ -183,19 +294,31 @@ export default function AccountPayables() {
                             { payable.paid ? <Check /> : <Close /> }
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            <HStack spacing={[2]}>
-                              
-                              <EditButton 
-                                isDisabled={payable.is_parcel}
-                                href={`/payables/${payable.id}`}
+                            { !payable.paid ? (
+                              <HStack spacing={[2]}>
+                                <EditButton 
+                                  isDisabled={payable.is_parcel}
+                                  href={`/payables/${payable.id}`}
+                                />
+
+                                <DeleteButton
+                                  isDisabled={payable.is_parcel && payable.parcel_number !== 1}
+                                  onDelete={() => handleDeletePayable(payable.is_parcel ? payable.parcelable_id : payable.id)} 
+                                  resource="Conta a Pagar"
+                                  loading={deletePayable.isLoading}
+                                  isParcel={payable.is_parcel}
+                                />
+
+                                <PaymentButton onClick={() => handlePayment(payable.id, payable.parcelable_id)} />
+                              </HStack>
+                            ) : (
+                              <CancelPaymentButton 
+                                label="Cancelar Pagamento"
+                                loading={cancelPayment.isLoading}
+                                onCancel={() => handleCancelPayment(payable.id, payable.parcelable_id)} 
                               />
-                              <DeleteButton 
-                                onDelete={() => handleDeleteAccount(payable.id)} 
-                                resource="Conta"
-                                loading={false}
-                              />
-                              <PaymentButton onClick={() => handlePayment(payable.id)} />
-                            </HStack>
+                            )}
+                            
                           </Td>
                         </Tr>
                       )) }

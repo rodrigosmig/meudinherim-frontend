@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from 'next/router';
 import { 
   Box,
+  Button,
   Flex, 
   HStack, 
   Spinner, 
@@ -205,7 +206,8 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                           </Text>
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            <HStack spacing={[2]}>
+                          { entry.account_scheduling == null ? (
+                            <HStack spacing={[2]}>                              
                               <EditButton href={`/accounts/${account.id}/entries/${entry.id}`} />
                               <DeleteButton 
                                 onDelete={() => handleDeleteEntry(entry.id)} 
@@ -213,6 +215,10 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                                 loading={deleteEntry.isLoading}
                               />
                             </HStack>
+                            ) : (
+                              <Button bgColor="green.500">Ver Pagamento</Button>
+                            )
+                          }
                           </Td>
                         </Tr>
                       )) }

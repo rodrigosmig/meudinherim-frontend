@@ -21,6 +21,13 @@ interface AccountEntry {
   id: number;
   date: string;
   category: Category;
+  account_scheduling: {
+    is_parcel: boolean,
+    id: number,
+    parcelable_id: null | number,
+    due_date: string,
+    paid_date: string
+  },
   description: string;
   value: number;
   account: Account;

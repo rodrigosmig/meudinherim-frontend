@@ -38,7 +38,6 @@ const InstallmentBase: ForwardRefRenderFunction<HTMLSelectElement, InstallmentPr
 
   const handleChangeInstallment = (event: ChangeEvent<HTMLSelectElement>) => {
     const installmentNumber = parseInt(event.target.value);
-    console.log(installmentNumber, amount)
     setInstallmentValue(amount / installmentNumber)
   }
 

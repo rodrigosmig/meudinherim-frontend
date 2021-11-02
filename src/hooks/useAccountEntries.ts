@@ -7,10 +7,23 @@ export const getAccountEntries = async (account_id: number, filterDate: [string,
   const response = await accountEntriesService.list(account_id, filterDate, page, perPage);
 
   const entries = response.data.data.map(entry => {
+    let account_scheduling = null;
+
+    if (entry.account_scheduling != null) {
+      account_scheduling = {
+        is_parcel: entry.account_scheduling.is_parcel,
+        id: entry.account_scheduling.id,
+        parcelable_id: entry.account_scheduling.parcelable_id,
+        due_date: entry.account_scheduling.due_date,
+        paid_date: entry.account_scheduling.paid_date
+      }
+    }
+
     return {
       id: entry.id,
       date: toBrDate(entry.date),
       description: entry.description,
+      account_scheduling: account_scheduling,
       value: toCurrency(entry.value),
       category: entry.category,
       account: entry.account

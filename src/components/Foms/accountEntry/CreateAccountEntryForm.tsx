@@ -175,6 +175,7 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
           label="Salvar"
           size="md"
           isLoading={formState.isSubmitting}
+          isDisabled={formState.isSubmitted}
         />
 
         <Link href={`/dashboard`} passHref>

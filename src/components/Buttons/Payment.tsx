@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
-import { RiPencilLine } from "react-icons/ri";
 import { RiMoneyDollarBoxLine } from "react-icons/ri";
 
 interface PaymentButtonProps {

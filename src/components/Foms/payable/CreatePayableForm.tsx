@@ -65,7 +65,7 @@ export const CreatePayableForm = ({ categories }: CreatePayableFormProps) => {
   const toast = useToast();
   const router = useRouter();
 
-  const { control, register, handleSubmit, setError, reset, formState } = useForm({
+  const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
       due_date: new Date(),
       category_id: "",
@@ -103,8 +103,6 @@ export const CreatePayableForm = ({ categories }: CreatePayableFormProps) => {
         duration: 10000,
         isClosable: true,
       })
-
-      reset();
 
       router.push("/payables")
 
@@ -228,6 +226,7 @@ export const CreatePayableForm = ({ categories }: CreatePayableFormProps) => {
           label="Salvar"
           size="md"
           isLoading={formState.isSubmitting}
+          isDisabled={formState.isSubmitted}
         />
 
         <Link href={`/payables`} passHref>

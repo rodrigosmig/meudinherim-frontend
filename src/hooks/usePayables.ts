@@ -21,6 +21,8 @@ export const getPayables = async (filterDate: [string, string], page: number, pe
       monthly: payable.monthly,
       has_parcels: payable.has_parcels,
       is_parcel: payable.is_parcel,
+      total_purchase: payable.total_purchase,
+      parcel_number: payable.parcel_number,
       parcelable_id: payable.parcelable_id,
     }
   })
