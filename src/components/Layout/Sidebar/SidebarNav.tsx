@@ -30,8 +30,8 @@ export const SidebarNav = () => {
         </NavSection>
 
         <NavSection title="Agendamento">
-            <NavLink href="#" icon={GiReceiveMoney}>Contas a Receber</NavLink>
-            <NavLink href="#" icon={GiPayMoney}>Contas a Pagar</NavLink>
+            <NavLink href="/receivables" icon={GiReceiveMoney}>Contas a Receber</NavLink>
+            <NavLink href="/payables" icon={GiPayMoney}>Contas a Pagar</NavLink>
         </NavSection>
 
 

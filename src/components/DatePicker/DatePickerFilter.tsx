@@ -20,7 +20,7 @@ const DateFilterComponent = ({ startDate, endDate, onChange }: DatepickerFilterP
     <Flex w={[200, 250]}>
       <StyledaDatepicker
         w={[200, 250]}
-        h={[50]}
+        h={[10]}
         px={4}
         borderRadius="0.375rem"
         focusBorderColor="white"

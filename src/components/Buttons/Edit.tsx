@@ -4,9 +4,10 @@ import { RiPencilLine } from "react-icons/ri";
 import Link from "next/link";
 interface EditButtonProps {
   href: string
+  isDisabled?: boolean
 }
 
-const EditButtonComponent = ({ href }: EditButtonProps) => {
+const EditButtonComponent = ({ href, isDisabled = false }: EditButtonProps) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -18,6 +19,7 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
     ? (
       <Link href={href} passHref>
         <Button
+          isDisabled={isDisabled}
           size="sm"
           fontSize="sm"
           colorScheme="purple"
@@ -31,6 +33,7 @@ const EditButtonComponent = ({ href }: EditButtonProps) => {
     : (
       <Link href={href} passHref>
         <IconButton
+          isDisabled={isDisabled}
           size="xs"
           aria-label="Edit"
           colorScheme="purple" 

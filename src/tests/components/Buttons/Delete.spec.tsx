@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { AddButton } from '../../../components/Buttons/Add';
 import { DeleteButton } from '../../../components/Buttons/Delete';
 
 Object.defineProperty(window, 'matchMedia', {
@@ -21,8 +20,6 @@ const resource = "button test";
 
 describe('Delete button Component', () => {
   it('renders correctly delete button label', () => {
-    
-
     render(
       <DeleteButton onDelete={onClick} resource={resource} loading={false} />
     )

@@ -19,7 +19,7 @@ interface SelectProps extends ChakraSelectProps {
   }[]
 }
 
-export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ name, label, error=null, options, ...rest }, ref) => {
+const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ name, label, error = null, options, ...rest }, ref) => {
   return (
     <FormControl isInvalid={!!error}>
       { !!label && <FormLabel htmlFor={name}>{label}</FormLabel>}
@@ -33,7 +33,6 @@ export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps
         _hover={{
           bgColor: 'gray.900'
         }}
-        size='lg'
         ref={ref}
         {...rest}
       >

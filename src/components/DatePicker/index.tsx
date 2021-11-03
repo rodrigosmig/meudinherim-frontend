@@ -25,7 +25,7 @@ const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, DatepickerProps
       <StyledaDatepicker
         id={label}
         w={"full"}
-        h={50}
+        h={[10]}
         px={4}
         borderRadius="0.375rem"
         bgColor="gray.900"        

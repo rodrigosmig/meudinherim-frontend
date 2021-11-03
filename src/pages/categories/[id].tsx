@@ -1,6 +1,8 @@
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import Head from "next/head";
+import { Card } from "../../components/Card";
 import { EditCategoryForm } from "../../components/Foms/categories/EditCategoryForm";
+import { Heading } from "../../components/Heading";
 import { Layout } from "../../components/Layout";
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -23,23 +25,17 @@ export default function EditCategory({ category }: EditCategoryProps) {
       </Head>
 
       <Layout>
-        <Box
-          h={380}
-          flex='1' 
-          borderRadius={8} 
-          bg="gray.800" 
-          p="8"
+        <Card>
+          <>
+            <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+              <Heading>
+                  <Text>Editar Categoria</Text>
+                </Heading>
+            </Flex>
 
-        >
-          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-            <Heading fontSize={['xl', 'xl', '2xl']} fontWeight="normal">
-              Editar Categoria
-            </Heading>
-          </Flex>
-
-          <EditCategoryForm category={category} />
-          
-        </Box>
+            <EditCategoryForm category={category} />
+          </>
+        </Card>
       </Layout>
     </>
   )

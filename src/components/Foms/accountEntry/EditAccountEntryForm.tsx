@@ -4,11 +4,6 @@ import {
   Button,
   Flex,
   Stack,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   useToast
 } from "@chakra-ui/react";
 import * as yup from 'yup';
@@ -83,7 +78,6 @@ const validationSchema = yup.object().shape({
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
-  //.transform((_value, originalValue) => Number(originalValue.replace(/,/, '.')))
 })
 
 export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryFormProps) => {  
@@ -91,14 +85,14 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
   const router = useRouter();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
-  defaultValues: {
-    date: parseISO(entry.date),
-    category_id: entry.category.id,
-    description: entry.description,
-    value: entry.value
-  },
-  resolver: yupResolver(validationSchema)
-});
+    defaultValues: {
+      date: parseISO(entry.date),
+      category_id: entry.category.id,
+      description: entry.description,
+      value: entry.value
+    },
+    resolver: yupResolver(validationSchema)
+  });
 
   const { errors } = formState;
 
@@ -188,21 +182,21 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
         justify="flex-end"
         align="center"
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={formState.isSubmitting}
-        />
-
         <Link href={`/accounts/${entry.account.id}/entries`} passHref>
           <Button
+            mr={[4]}
             variant="outline"
             isDisabled={formState.isSubmitting}
           >
             Cancelar
           </Button>
         </Link>
+
+        <SubmitButton
+          label="Salvar"
+          size="md"
+          isLoading={formState.isSubmitting}
+        />
       </Flex>
     </Box>
   )

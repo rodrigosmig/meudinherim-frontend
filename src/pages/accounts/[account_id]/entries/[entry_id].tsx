@@ -1,9 +1,11 @@
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import Head from 'next/head';
 import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../../services/api';
 import { EditAccountEntryForm } from "../../../../components/Foms/accountEntry/EditAccountEntryForm";
+import { Card } from "../../../../components/Card";
+import { Heading } from "../../../../components/Heading";
 
 interface Category {
   id: number,
@@ -54,21 +56,17 @@ export default function EditAccountEntry({ entry, categories }: EditAccountEntry
       </Head>
 
       <Layout>
-        <Box
-          flex='1' 
-          borderRadius={8} 
-          bg="gray.800" 
-          p="8"
-        >
-          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-            <Heading fontSize={['xl', 'xl', '2xl']} fontWeight="normal">
-              Editar Lançamento
-            </Heading>
-          </Flex>
+        <Card>
+          <>
+            <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+              <Heading>
+                <Text>Editar Lançamento</Text>
+              </Heading>
+            </Flex>
 
-          <EditAccountEntryForm entry={entry} categories={categories} />
-          
-        </Box>
+            <EditAccountEntryForm entry={entry} categories={categories} />
+          </>
+        </Card>
       </Layout>
     </>
   )

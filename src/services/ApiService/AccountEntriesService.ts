@@ -21,6 +21,13 @@ interface AccountEntry {
   id: number;
   date: string;
   category: Category;
+  account_scheduling: {
+    is_parcel: boolean,
+    id: number,
+    parcelable_id: null | number,
+    due_date: string,
+    paid_date: string
+  },
   description: string;
   value: number;
   account: Account;
@@ -59,7 +66,7 @@ interface CreateAccountEntryFormData {
 const apiClient = setupApiClient();
 
 export const accountEntriesService = {
-  list: (account_id: number, filterDate, page: number, perPage: number): Promise<AxiosResponse<AccountEntryResponse>> => apiClient.get(`/accounts/${account_id}/entries?page=${page}&per_page=${perPage}&from=${filterDate[0]}&to=${filterDate[1]}`),
+  list: (account_id: number, filterDate: [string, string], page: number, perPage: number): Promise<AxiosResponse<AccountEntryResponse>> => apiClient.get(`/accounts/${account_id}/entries?page=${page}&per_page=${perPage}&from=${filterDate[0]}&to=${filterDate[1]}`),
   create: (data: CreateAccountEntryFormData): Promise<AxiosResponse<AccountEntry>> => apiClient.post(`/account-entries`, data),
   update: (values: EditAccountEntryFormData): Promise<AxiosResponse<AccountEntry>> => apiClient.put(`/account-entries/${values.id}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/account-entries/${id}`),

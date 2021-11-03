@@ -158,7 +158,7 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
 
         <Input
           name="value"
-          type="number"
+          type="text"
           label="Valor"
           error={errors.value}
           step="0.01"
@@ -170,21 +170,22 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
         justify="flex-end"
         align="center"
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={formState.isSubmitting}
-        />
-
         <Link href={`/dashboard`} passHref>
           <Button
+            mr={[4]}
             variant="outline"
             isDisabled={formState.isSubmitting}
           >
             Cancelar
           </Button>
         </Link>
+
+        <SubmitButton
+          label="Salvar"
+          size="md"
+          isLoading={formState.isSubmitting}
+          isDisabled={formState.isSubmitted}
+        />
       </Flex>
     </Box>
   )

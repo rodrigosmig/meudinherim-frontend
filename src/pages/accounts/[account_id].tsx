@@ -1,9 +1,11 @@
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import Head from 'next/head';
 import { EditAccountForm } from "../../components/Foms/account/EditAccountForm";
 import { Layout } from '../../components/Layout/index';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
+import { Card } from "../../components/Card";
+import { Heading } from "../../components/Heading";
 
 interface Account {
   id: number;
@@ -27,22 +29,17 @@ export default function EditAccount({ account }: EditAccountProps) {
       </Head>
 
       <Layout>
-        <Box
-          h={380}
-          flex='1' 
-          borderRadius={8} 
-          bg="gray.800" 
-          p="8"
-        >
-          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-            <Heading fontSize={['xl', 'xl', '2xl']} fontWeight="normal">
-              Editar Conta
-            </Heading>
-          </Flex>
+        <Card>
+          <>
+            <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+              <Heading>
+                <Text>Editar Conta</Text>
+              </Heading>
+            </Flex>
 
-          <EditAccountForm account={account} />
-          
-        </Box>
+            <EditAccountForm account={account} />
+          </>
+        </Card>
       </Layout>
     </>
   )

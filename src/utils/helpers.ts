@@ -8,7 +8,7 @@ export const toCurrency = (value: number) => {
 }
 
 export const toBrDate = (date: string) => {
-  return date.split('-').reverse().join('/')
+  return date?.split('-').reverse().join('/')
 }
 
 export const toUsDate = (date: Date) => {

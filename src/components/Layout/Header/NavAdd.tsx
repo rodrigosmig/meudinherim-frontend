@@ -32,15 +32,19 @@ export const NavAdd = () => {
             Lançamento na conta
           </MenuItem>
         </Link>
-        <MenuItem icon={<Icon as={RiPriceTag3Line} fontSize={20} />}>
-          Categoria
-        </MenuItem>
+        <Link href={"/categories/create"} passHref>
+          <MenuItem icon={<Icon as={RiPriceTag3Line} fontSize={20} />}>
+            Categoria
+          </MenuItem>
+        </Link>
         <MenuItem icon={<Icon as={GiReceiveMoney} fontSize={20} />}>
           Conta a receber
         </MenuItem>
-        <MenuItem icon={<Icon as={GiPayMoney} fontSize={20} />}>
-          Conta a pagar
-        </MenuItem>
+        <Link href={"/payables/create"} passHref>
+          <MenuItem icon={<Icon as={GiPayMoney} fontSize={20} />}>
+            Conta a pagar
+          </MenuItem>
+        </Link>
 
       </MenuList>
     </Menu>

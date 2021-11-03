@@ -130,21 +130,21 @@ export const EditAccountForm = ({ account }: EditAccountFormProps) => {
         justify="flex-end"
         align="center"
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={formState.isSubmitting}
-        />
-
         <Link href={"/accounts"} passHref>
           <Button
+            mr={[4]}
             variant="outline"
             isDisabled={formState.isSubmitting}
           >
             Cancelar
           </Button>
         </Link>
+
+        <SubmitButton
+          label="Salvar"
+          size="md"
+          isLoading={formState.isSubmitting}
+        />
       </Flex>
     </Box>
   )

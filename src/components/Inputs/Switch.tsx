@@ -14,13 +14,12 @@ interface SwitchProps extends ChakraSwitchProps {
 const SwitchBase: ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = ({ id, label, ...rest }, ref) => {
   return (
     <FormControl display="flex" alignItems="center">
-      <FormLabel htmlFor={id} mb="0">
+      <FormLabel w={100} htmlFor={id} mb="0">
         {label}
       </FormLabel>
 
       <ChakraSwitch
         id={id}
-        size="md" 
         colorScheme="pink"
         ref={ref}
         {...rest}

@@ -8,8 +8,9 @@ import { Layout } from '../components/Layout';
 import { AuthContext } from '../contexts/AuthContext';
 import { FileInput } from '../components/Inputs/FileInput';
 import { 
-  Box, 
-  Heading, 
+  Box,
+  Flex,
+  Heading as ChakraHeading, 
   Tab, 
   TabList, 
   TabPanel, 
@@ -20,6 +21,7 @@ import {
 import { ProfileForm } from '../components/Foms/profile/ProfileForm';
 import { Loading } from '../components/Loading/index';
 import { ChangePasswordForm } from '../components/Foms/profile/ChangePasswordForm';
+import { Heading } from '../components/Heading';
 
 interface User {
   id: number;
@@ -62,8 +64,13 @@ export default function Profile({ userUpdated }: ProfileProps) {
       </Head>
 
       <Layout>
-        <Card title="Perfil">
+        <Card>
           <>
+            <Flex justify="space-between" align="center">
+              <Heading>
+                <Text>Perfil</Text>
+              </Heading>
+            </Flex>
             <FileInput
               localImageUrl={localImageUrl}
               setLocalImageUrl={setLocalImageUrl}
@@ -75,9 +82,9 @@ export default function Profile({ userUpdated }: ProfileProps) {
             />
 
             <Box align="center">
-              <Heading mt={[6, 6, 8]} fontSize={['3xl', '4xl']}>
+              <ChakraHeading mt={[6, 6, 8]} fontSize={['3xl', '4xl']}>
                 {user.name}
-              </Heading>
+              </ChakraHeading>
 
               <Text fontSize={['sm', 'md']} mb={[6, 6, 8]}>
                 {user.email}
