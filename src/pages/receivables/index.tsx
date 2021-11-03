@@ -17,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { Layout } from "../../components/Layout";
-import { usePayables } from "../../hooks/usePayables";
 import { AddButton } from "../../components/Buttons/Add";
 import { Loading } from "../../components/Loading";
 import { EditButton } from "../../components/Buttons/Edit";
@@ -35,20 +34,31 @@ import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
 import { PopoverTotal } from '../../components/PopoverTotal';
-import { payableService } from '../../services/ApiService/PayableService';
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
 import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
 import { PaymentModal } from '../../components/Modals/PaymentModal';
+import { receivableService } from '../../services/ApiService/ReceivableService';
+import { useReceivables } from '../../hooks/useReceivable';
+import { CreateReceivableModal } from '../../components/Modals/receivables/CreateReceivableModal';
 
-interface CancelPayableData {
+interface CancelReceivableData {
   id: number, 
   parcelable_id: null | number
 }
 
-export default function AccountPayables() {
+interface AccountReceivableProps {
+  categories: {
+    value: string;
+    label: string
+  }[]
+}
+
+export default function AccountReceivable({ categories }: AccountReceivableProps) {
   const toast = useToast();
   const router = useRouter();
+
+  const { isOpen: createModalIsOpen, onOpen: createModalonOpen, onClose: createModalOnClose } = useDisclosure()
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -58,30 +68,30 @@ export default function AccountPayables() {
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [payableStatus, setPayableStatus] = useState("open");
+  const [receivableStatus, setPayableStatus] = useState("open");
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [payableId, setPayableId] = useState(null);
+  /* const { isOpen, onOpen, onClose } = useDisclosure() */
+  const [receivableId, setPayableId] = useState(null);
   const [parcelableId, setParcelableId ] = useState(null);
 
-  const { data, isLoading, isFetching, isError, refetch } = usePayables(filterDate, page, perPage, payableStatus);
+  const { data, isLoading, isFetching, isError, refetch: refetchReceivable } = useReceivables(filterDate, page, perPage, receivableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
 
   const handleAddAccount = () => {
-    router.push('/payables/create');
+    router.push('/receivables/create');
   }
 
   const deletePayable = useMutation(async (id: number) => {
-    const response = await payableService.delete(id);
+    const response = await receivableService.delete(id);
   
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('payables')
+      queryClient.invalidateQueries('receivables')
     }
   });
 
@@ -91,14 +101,14 @@ export default function AccountPayables() {
 
       toast({
         title: "Sucesso",
-        description: "Conta a pagar deletada com sucesso",
+        description: "Conta a receber deletada com sucesso",
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
       });
 
-      refetch();
+      refetchReceivable();
     } catch (error) {
       const data = error.response.data
       
@@ -113,11 +123,11 @@ export default function AccountPayables() {
     }
   }
 
-  const handlePayment = (id: number, parcelable_id: null | number) => {
+  /* const handlePayment = (id: number, parcelable_id: null | number) => {
     setParcelableId(parcelable_id);
     setPayableId(id);
     onOpen();
-  }
+  } */
 
   const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value)
@@ -137,13 +147,13 @@ export default function AccountPayables() {
     setPayableStatus(event.target.value)
   }
 
-  const cancelPayment = useMutation(async (values: CancelPayableData) => {
-    const response = await payableService.cancelPayment(values.id, values.parcelable_id);
+  const cancelPayment = useMutation(async (values: CancelReceivableData) => {
+    const response = await receivableService.cancelReceivement(values.id, values.parcelable_id);
   
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('payables')
+      queryClient.invalidateQueries('receivables')
     }
   });
 
@@ -182,15 +192,21 @@ export default function AccountPayables() {
 
   return (
     <>
-      <PaymentModal 
-        accountId={payableId}
+      {/* <PaymentModal 
+        accountId={receivableId}
         parcelableId={parcelableId}
         isOpen={isOpen} 
         onClose={onClose}
         refetch={refetch}
+      /> */}
+      <CreateReceivableModal
+        categories={categories}
+        isOpen={createModalIsOpen} 
+        onClose={createModalOnClose}
+        refetch={refetchReceivable}
       />
       <Head>
-        <title>Contas a Pagar | Meu Dinherim</title>
+        <title>Contas a Receber | Meu Dinherim</title>
       </Head>
 
       <Layout>
@@ -199,11 +215,11 @@ export default function AccountPayables() {
           <Flex mb={[6, 6, 8]} justify="space-between" align="center">
             <Heading>
               <>
-                Contas a Pagar { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+                Contas a Receber { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
               </>
             </Heading>
             <Heading>
-              <AddButton onClick={handleAddAccount} />
+              <AddButton onClick={createModalonOpen} />
             </Heading>
           </Flex>
 
@@ -253,68 +269,60 @@ export default function AccountPayables() {
                         <Th>Categoria</Th>
                         <Th>Descrição</Th>
                         <Th>Valor</Th>
-                        <Th>Mensal</Th>
-                        <Th>Pago</Th>
                         <Th w="8"></Th>
                       </Tr>
                     </Thead>
 
                     <Tbody>
-                      { data.payables.map(payable => (
-                        <Tr key={ payable.id } px={[8]}>
+                      { data.receivables.map(receivable => (
+                        <Tr key={ receivable.id } px={[8]}>
                           <Td fontSize={["xs", "md"]}>
-                            <Text fontWeight="bold">{payable.due_date}</Text>
+                            <Text fontWeight="bold">{receivable.due_date}</Text>
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.paid_date}
+                            { receivable.paid_date}
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.category.name}
+                            { receivable.category.name}
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.is_parcel ? (
+                            { receivable.is_parcel ? (
                               <PopoverTotal
-                                description={payable.description}
-                                amount={payable.total_purchase}
+                                description={receivable.description}
+                                amount={receivable.total_purchase}
                               />
                               ) : (
-                                payable.description
+                                receivable.description
                               )
                             }
 
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.value}
+                            { receivable.value}
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.monthly ? <Check /> : <Close /> }
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { payable.paid ? <Check /> : <Close /> }
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { !payable.paid ? (
+                            { !receivable.paid ? (
                               <HStack spacing={[2]}>
                                 <EditButton 
-                                  isDisabled={payable.is_parcel}
-                                  href={`/payables/${payable.id}`}
+                                  isDisabled={receivable.is_parcel}
+                                  href={`/receivables/${receivable.id}`}
                                 />
 
                                 <DeleteButton
-                                  isDisabled={payable.is_parcel && payable.parcel_number !== 1}
-                                  onDelete={() => handleDeletePayable(payable.is_parcel ? payable.parcelable_id : payable.id)} 
-                                  resource="Conta a Pagar"
+                                  isDisabled={receivable.is_parcel && receivable.parcel_number !== 1}
+                                  onDelete={() => handleDeletePayable(receivable.is_parcel ? receivable.parcelable_id : receivable.id)} 
+                                  resource="Conta a Receber"
                                   loading={deletePayable.isLoading}
-                                  isParcel={payable.is_parcel}
+                                  isParcel={receivable.is_parcel}
                                 />
 
-                                <PaymentButton onClick={() => handlePayment(payable.id, payable.parcelable_id)} />
+                                {/* <PaymentButton onClick={() => handlePayment(receivable.id, receivable.parcelable_id)} /> */}
                               </HStack>
                             ) : (
                               <CancelPaymentButton 
                                 label="Cancelar Pagamento"
                                 loading={cancelPayment.isLoading}
-                                onCancel={() => handleCancelPayment(payable.id, payable.parcelable_id)} 
+                                onCancel={() => handleCancelPayment(receivable.id, receivable.parcelable_id)} 
                               />
                             )}
                             
@@ -345,9 +353,17 @@ export default function AccountPayables() {
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
 
-  const payablesResponse = await apiClient.get('/payables');
+  const categoriesExpenseResponse = await apiClient.get(`/categories?type=1&per_page=1000`);
+    const categories = categoriesExpenseResponse.data.data.map(category => {
+      return {
+        value: category.id,
+        label: category.name
+      }
+    })
 
   return {
-    props: {}
+    props: {
+      categories
+    }
   }
 })
