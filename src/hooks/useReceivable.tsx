@@ -1,4 +1,4 @@
-import { toCurrency, toBrDate } from './../utils/helpers';
+import { toBrDate } from './../utils/helpers';
 import { useQuery } from "react-query";
 import { receivableService } from '../services/ApiService/ReceivableService';
 
@@ -11,7 +11,7 @@ export const getReceivables = async (filterDate: [string, string], page: number,
       due_date: toBrDate(receivable.due_date),
       paid_date: toBrDate(receivable.paid_date),
       description: receivable.description,
-      value: toCurrency(receivable.value),
+      value: receivable.value,
       category: {
         id: receivable.category.id,
         name: receivable.category.name,

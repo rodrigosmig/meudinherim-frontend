@@ -75,6 +75,11 @@ export default function AccountPayables() {
     router.push('/payables/create');
   }
 
+  const handlePayableForEdit = (id: number, parcelable_id: number | null) => {
+    router.push(`/payables/${id}`);
+    
+  }
+
   const deletePayable = useMutation(async (id: number) => {
     const response = await payableService.delete(id);
   
@@ -297,7 +302,7 @@ export default function AccountPayables() {
                               <HStack spacing={[2]}>
                                 <EditButton 
                                   isDisabled={payable.is_parcel}
-                                  href={`/payables/${payable.id}`}
+                                  onClick={() => handlePayableForEdit(payable.id, payable.parcelable_id)}
                                 />
 
                                 <DeleteButton

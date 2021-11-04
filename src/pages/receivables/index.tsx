@@ -21,15 +21,12 @@ import { AddButton } from "../../components/Buttons/Add";
 import { Loading } from "../../components/Loading";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
-import { Check } from "../../components/Icons/Check";
-import { Close } from "../../components/Icons/Close";
 import { Table } from "../../components/Table";
 import { Card } from "../../components/Card";
 import { Heading } from "../../components/Heading";
-import { PaymentButton } from "../../components/Buttons/Payment";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { toUsDate } from '../../utils/helpers';
+import { toCurrency, toUsDate } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
@@ -37,10 +34,10 @@ import { PopoverTotal } from '../../components/PopoverTotal';
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
 import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
-import { PaymentModal } from '../../components/Modals/PaymentModal';
 import { receivableService } from '../../services/ApiService/ReceivableService';
 import { useReceivables } from '../../hooks/useReceivable';
 import { CreateReceivableModal } from '../../components/Modals/receivables/CreateReceivableModal';
+import { EditReceivableModal } from '../../components/Modals/receivables/EditReceivableModal';
 
 interface CancelReceivableData {
   id: number, 
@@ -54,11 +51,32 @@ interface AccountReceivableProps {
   }[]
 }
 
+interface Receivable {
+  id: number;
+  due_date: string;
+  paid_date: string | null;
+  description: string;
+  value: number;
+  category: {
+    id: number;
+    name: string;
+  };
+  invoice_id: number | null;
+  paid: boolean;
+  monthly: boolean;
+  has_parcels: boolean;
+  is_parcel: boolean,
+  total_purchase: number,
+  parcel_number: number,
+  parcelable_id: number,
+}
+
 export default function AccountReceivable({ categories }: AccountReceivableProps) {
   const toast = useToast();
   const router = useRouter();
 
-  const { isOpen: createModalIsOpen, onOpen: createModalonOpen, onClose: createModalOnClose } = useDisclosure()
+  const { isOpen: createModalIsOpen, onOpen: createModalonOpen, onClose: createModalOnClose } = useDisclosure();
+  const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -75,6 +93,8 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
   /* const { isOpen, onOpen, onClose } = useDisclosure() */
   const [receivableId, setPayableId] = useState(null);
   const [parcelableId, setParcelableId ] = useState(null);
+
+  const [ selectedReceivable, setSelectedReceivable ] = useState({})
 
   const { data, isLoading, isFetching, isError, refetch: refetchReceivable } = useReceivables(filterDate, page, perPage, receivableStatus);
 
@@ -129,6 +149,21 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
     onOpen();
   } */
 
+  const handleReceivableForEdit = (id: number, parcelable_id: number | null) => {
+    const receivable = getSelectedReceivable(id, parcelable_id)
+    console.log(receivable)
+    setSelectedReceivable(receivable)
+    editModalonOpen()
+  }
+
+  const getSelectedReceivable = (id: number, parcelable_id: number | null) => {
+    const receivable = data.receivables.filter(r => {
+      return r.id === id && r.parcelable_id === parcelable_id
+    })
+    
+    return receivable[0];
+  }
+
   const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value)
     setPage(1)
@@ -175,7 +210,7 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
         isClosable: true,
       });
 
-      refetch();
+      refetchReceivable();
     } catch (error) {
       const data = error.response.data
       
@@ -203,6 +238,14 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
         categories={categories}
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
+        refetch={refetchReceivable}
+      />
+
+      <EditReceivableModal
+        receivable={selectedReceivable}
+        categories={categories}
+        isOpen={editModalIsOpen} 
+        onClose={editModalOnClose}
         refetch={refetchReceivable}
       />
       <Head>
@@ -298,14 +341,14 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
 
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { receivable.value}
+                            { toCurrency(receivable.value) }
                           </Td>
                           <Td fontSize={["xs", "md"]}>
                             { !receivable.paid ? (
                               <HStack spacing={[2]}>
                                 <EditButton 
                                   isDisabled={receivable.is_parcel}
-                                  href={`/receivables/${receivable.id}`}
+                                  onClick={() => handleReceivableForEdit(receivable.id, receivable.parcelable_id)}
                                 />
 
                                 <DeleteButton
