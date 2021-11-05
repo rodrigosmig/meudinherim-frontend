@@ -1,3 +1,4 @@
+import { memo, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -5,8 +6,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  useToast
 } from "@chakra-ui/react";
-import { EditReceivableForm } from "../../Foms/receivable/EditReceivableForm";
+import { ReceivementForm } from "../../Foms/receivable/ReceivementForm";
 
 interface Receivable {
   id: number;
@@ -28,30 +30,30 @@ interface Receivable {
   parcelable_id: number,
 }
 
-interface EditReceivableModalProps {
+interface ReceivementModalProps {
   receivable: Receivable;
-  categories: {
+  accounts: {
     value: string;
     label: string
-  }[],
+  }[];
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-export const EditReceivableModal = ({ receivable, categories, isOpen, onClose, refetch }: EditReceivableModalProps) => {
+const ReceivementModalComponent = ({ receivable, accounts, isOpen, onClose, refetch }: ReceivementModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent bgColor={"gray.800"}>
-        <ModalHeader>Editar Conta a Receber</ModalHeader>
+        <ModalHeader>Pagamento de Conta</ModalHeader>
         <ModalCloseButton onClick={onClose} />
 
-        <ModalBody>
-          <EditReceivableForm 
+        <ModalBody mb={4}>
+          <ReceivementForm
             receivable={receivable}
-            categories={categories}
-            closeModal={onClose}
+            accounts={accounts}
+            onCancel={onClose}
             refetch={refetch}
           />
         </ModalBody>
@@ -59,3 +61,5 @@ export const EditReceivableModal = ({ receivable, categories, isOpen, onClose, r
     </Modal>
   )
 }
+
+export const ReceivementModal = memo(ReceivementModalComponent);

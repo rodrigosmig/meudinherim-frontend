@@ -71,7 +71,7 @@ export const receivableService = {
   list: (filterDate: [string, string], page: number, perPage: number, status: string): Promise<AxiosResponse<ReceivableResponse>> => apiClient.get(`/receivables?page=${page}&per_page=${perPage}&from=${filterDate[0]}&to=${filterDate[1]}&status=${status}`),
   get: (id: number, receivable_id?: number): Promise<AxiosResponse<Receivable>> => {
     const receivableId = receivable_id ?? '';
-    return apiClient.get(`/receivables/${id}?receivable_id=${receivableId}`)
+    return apiClient.get(`/receivables/${id}?parcelable_id=${receivableId}`)
   },
   create: (data: CreateFormData): Promise<AxiosResponse<Receivable>> => apiClient.post(`/receivables`, data),
   update: (values: EditFormData): Promise<AxiosResponse<Receivable>> => apiClient.put(`/receivables/${values.id}`, values.data),
@@ -79,6 +79,6 @@ export const receivableService = {
   receivement: (values: ReceivementFormData): Promise<AxiosResponse> => apiClient.post(`/receivables/${values.id}/receivement`, values.data),
   cancelReceivement: (id: number, receivable_id?: number): Promise<AxiosResponse> => {
     const receivableId = receivable_id ?? '';
-    return apiClient.post(`/receivables/${id}/cancel-payment?receivable_id=${receivableId}`)
+    return apiClient.post(`/receivables/${id}/cancel-receivement?parcelable_id=${receivableId}`)
   }
 };

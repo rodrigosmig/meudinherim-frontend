@@ -106,7 +106,7 @@ export const EditPayableForm = ({payable, categories}: EditPayableFormProps) => 
 
       toast({
         title: "Sucesso",
-        description: `Conta a Pagar adicionada com sucesso`,
+        description: `Conta a Pagar alterada com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,

@@ -82,7 +82,7 @@ const validationSchema = yup.object().shape({
 
 export const EditReceivableForm = ({ receivable, categories, closeModal, refetch }: CreateReceivableFormProps) => {  
   const toast = useToast();
-console.log(receivable.value)
+
   const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
       due_date: parseISO(reverseBrDate(receivable.due_date)),

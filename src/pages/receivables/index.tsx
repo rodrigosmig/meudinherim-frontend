@@ -38,6 +38,8 @@ import { receivableService } from '../../services/ApiService/ReceivableService';
 import { useReceivables } from '../../hooks/useReceivable';
 import { CreateReceivableModal } from '../../components/Modals/receivables/CreateReceivableModal';
 import { EditReceivableModal } from '../../components/Modals/receivables/EditReceivableModal';
+import { PaymentButton } from '../../components/Buttons/Payment';
+import { ReceivementModal } from '../../components/Modals/receivables/ReceivementModal';
 
 interface CancelReceivableData {
   id: number, 
@@ -48,7 +50,11 @@ interface AccountReceivableProps {
   categories: {
     value: string;
     label: string
-  }[]
+  }[];
+  accounts: {
+    value: string;
+    label: string
+  }[];
 }
 
 interface Receivable {
@@ -71,12 +77,13 @@ interface Receivable {
   parcelable_id: number,
 }
 
-export default function AccountReceivable({ categories }: AccountReceivableProps) {
+export default function AccountReceivable({ categories, accounts }: AccountReceivableProps) {
   const toast = useToast();
   const router = useRouter();
 
-  const { isOpen: createModalIsOpen, onOpen: createModalonOpen, onClose: createModalOnClose } = useDisclosure();
+  const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
+  const { isOpen: receivementModalIsOpen, onOpen: receivementModalOnOpen, onClose: receivementModalOnClose } = useDisclosure();
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -90,20 +97,13 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
-  /* const { isOpen, onOpen, onClose } = useDisclosure() */
-  const [receivableId, setPayableId] = useState(null);
-  const [parcelableId, setParcelableId ] = useState(null);
 
-  const [ selectedReceivable, setSelectedReceivable ] = useState({})
+  const [ selectedReceivable, setSelectedReceivable ] = useState({} as Receivable)
 
   const { data, isLoading, isFetching, isError, refetch: refetchReceivable } = useReceivables(filterDate, page, perPage, receivableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
-
-  const handleAddAccount = () => {
-    router.push('/receivables/create');
-  }
 
   const deletePayable = useMutation(async (id: number) => {
     const response = await receivableService.delete(id);
@@ -143,15 +143,16 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
     }
   }
 
-  /* const handlePayment = (id: number, parcelable_id: null | number) => {
-    setParcelableId(parcelable_id);
-    setPayableId(id);
-    onOpen();
-  } */
+  const handleReceivement = (id: number, parcelable_id: null | number) => {
+    const receivable = getSelectedReceivable(id, parcelable_id)
+    
+    setSelectedReceivable(receivable)
+    receivementModalOnOpen();
+  }
 
   const handleReceivableForEdit = (id: number, parcelable_id: number | null) => {
     const receivable = getSelectedReceivable(id, parcelable_id)
-    console.log(receivable)
+
     setSelectedReceivable(receivable)
     editModalonOpen()
   }
@@ -192,7 +193,7 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
     }
   });
 
-  const handleCancelPayment = async (id: number, parcelable_id: null | number) => {
+  const handleCancelReceivement = async (id: number, parcelable_id: null | number) => {
     const values = {
       id,
       parcelable_id
@@ -227,13 +228,14 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
 
   return (
     <>
-      {/* <PaymentModal 
-        accountId={receivableId}
-        parcelableId={parcelableId}
-        isOpen={isOpen} 
-        onClose={onClose}
-        refetch={refetch}
-      /> */}
+      <ReceivementModal
+        receivable={selectedReceivable}
+        accounts={accounts}
+        isOpen={receivementModalIsOpen} 
+        onClose={receivementModalOnClose}
+        refetch={refetchReceivable}
+      />
+
       <CreateReceivableModal
         categories={categories}
         isOpen={createModalIsOpen} 
@@ -262,7 +264,7 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
               </>
             </Heading>
             <Heading>
-              <AddButton onClick={createModalonOpen} />
+              <AddButton onClick={createModalOnOpen} />
             </Heading>
           </Flex>
 
@@ -359,13 +361,16 @@ export default function AccountReceivable({ categories }: AccountReceivableProps
                                   isParcel={receivable.is_parcel}
                                 />
 
-                                {/* <PaymentButton onClick={() => handlePayment(receivable.id, receivable.parcelable_id)} /> */}
+                                <PaymentButton
+                                  label={"Receber"}
+                                  onClick={() => handleReceivement(receivable.id, receivable.parcelable_id)} 
+                                />
                               </HStack>
                             ) : (
                               <CancelPaymentButton 
                                 label="Cancelar Pagamento"
                                 loading={cancelPayment.isLoading}
-                                onCancel={() => handleCancelPayment(receivable.id, receivable.parcelable_id)} 
+                                onCancel={() => handleCancelReceivement(receivable.id, receivable.parcelable_id)} 
                               />
                             )}
                             
@@ -402,11 +407,21 @@ export const getServerSideProps = withSSRAuth(async (context) => {
         value: category.id,
         label: category.name
       }
+    });
+
+    const accountsResponse = await apiClient.get(`/accounts`);
+
+    const formAccounts = accountsResponse.data.data.map(account => {
+      return {
+        value: account.id,
+        label: account.name
+      }
     })
 
   return {
     props: {
-      categories
+      categories,
+      accounts: formAccounts
     }
   }
 })
