@@ -40,7 +40,7 @@ export const NavAdd = () => {
         <MenuItem icon={<Icon as={GiReceiveMoney} fontSize={20} />}>
           Conta a receber
         </MenuItem>
-        <Link href={"/payables/create"} passHref>
+        <Link href={"#"} passHref>
           <MenuItem icon={<Icon as={GiPayMoney} fontSize={20} />}>
             Conta a pagar
           </MenuItem>

@@ -3,10 +3,11 @@ import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import { RiMoneyDollarBoxLine } from "react-icons/ri";
 
 interface PaymentButtonProps {
+  label?: string
   onClick: () => void;
 }
 
-const PaymentButtonComponent = ({ onClick }: PaymentButtonProps) => {
+const PaymentButtonComponent = ({ onClick, label = 'Pagar' }: PaymentButtonProps) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -23,7 +24,7 @@ const PaymentButtonComponent = ({ onClick }: PaymentButtonProps) => {
         leftIcon={<Icon as={RiMoneyDollarBoxLine} fontSize="16" />}
         onClick={onClick}
       >
-        Pagar
+        { label === 'Pagar' ? 'Pagar' : 'Receber' }
       </Button>
       )
     : (

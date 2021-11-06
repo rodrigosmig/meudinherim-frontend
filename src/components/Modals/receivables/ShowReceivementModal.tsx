@@ -18,14 +18,15 @@ import {
     useToast,
   } from "@chakra-ui/react";
 import { useMutation } from "react-query";
-import { payableService } from "../../services/ApiService/PayableService";
-import { toBrDate, toCurrency } from "../../utils/helpers";
-import { Input } from "../Inputs/Input";
-import { Loading } from "../Loading";
-import { queryClient } from "../../services/queryClient";
+import { receivableService } from "../../../services/ApiService/ReceivableService";
+import { queryClient } from "../../../services/queryClient";
+import { Loading } from "../../Loading";
+import { Input } from "../../Inputs/Input";
+import { toBrDate, toCurrency } from "../../../utils/helpers";
+
   
-  interface PaymentModalProps {
-    accountId: number;
+  interface ShowReceivementModalProps {
+    receivableId: number;
     parcelableId?: number; 
     isOpenModal: boolean;
     onCloseModal: () => void;
@@ -33,21 +34,21 @@ import { queryClient } from "../../services/queryClient";
     refetchBalance: () => void;
   }
 
-  interface CancelPayableData {
+  interface CancelReceivableData {
     id: number, 
     parcelable_id: null | number
   }
   
-  const ShowPaymentModalComponent = ({ 
-    accountId, 
+  const ShowReceivementModalComponent = ({ 
+    receivableId, 
     parcelableId = null, 
     isOpenModal, 
     onCloseModal,
     refetchEntries,
     refetchBalance
-  }: PaymentModalProps) => {
+  }: ShowReceivementModalProps) => {
     const toast = useToast();
-    const [payable, setPayable] = useState(null);
+    const [receivable, setReceivable] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef();
@@ -55,9 +56,9 @@ import { queryClient } from "../../services/queryClient";
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const payableResponse = await payableService.get(accountId, parcelableId);
+          const receivableResponse = await receivableService.get(receivableId, parcelableId);
     
-          setPayable(payableResponse.data)
+          setReceivable(receivableResponse.data)
           setIsLoading(false);
         } catch (error) {
           const data = error.response.data;
@@ -78,15 +79,15 @@ import { queryClient } from "../../services/queryClient";
       if (isOpenModal) {
         fetchData();
       }
-    }, [accountId, parcelableId, isOpenModal]);
+    }, [receivableId, parcelableId, isOpenModal]);
   
     const handleOnClose = () => {
       setIsLoading(true)
       onCloseModal()
     }
 
-    const cancelPayment = useMutation(async (values: CancelPayableData) => {
-      const response = await payableService.cancelPayment(values.id, values.parcelable_id);
+    const cancelReceivement = useMutation(async (values: CancelReceivableData) => {
+      const response = await receivableService.cancelReceivement(values.id, values.parcelable_id);
     
       return response.data;
     }, {
@@ -95,14 +96,14 @@ import { queryClient } from "../../services/queryClient";
       }
     });
   
-    const handleCancelPayment = async () => {
+    const handleCancelReceivement = async () => {
       const values = {
-        id: payable.id,
-        parcelable_id: payable.parcelable_id
+        id: receivable.id,
+        parcelable_id: receivable.parcelable_id
       }
 
       try {
-        await cancelPayment.mutateAsync(values);
+        await cancelReceivement.mutateAsync(values);
   
         toast({
           title: "Sucesso",
@@ -147,7 +148,7 @@ import { queryClient } from "../../services/queryClient";
                     name="paid_date"
                     type="text"
                     label="Data do Pagamento"
-                    value={toBrDate(payable.paid_date)}
+                    value={toBrDate(receivable.paid_date)}
                     isDisabled={true}
                   />
 
@@ -155,7 +156,7 @@ import { queryClient } from "../../services/queryClient";
                     name="due_date"
                     type="text"
                     label="Vencimento"
-                    value={toBrDate(payable.due_date)}
+                    value={toBrDate(receivable.due_date)}
                     isDisabled={true}
                   />
 
@@ -163,7 +164,7 @@ import { queryClient } from "../../services/queryClient";
                     name="category"
                     type="text"
                     label="Categoria"
-                    value={payable.category.name}
+                    value={receivable.category.name}
                     isDisabled={true}
                   />
 
@@ -171,7 +172,7 @@ import { queryClient } from "../../services/queryClient";
                     name="description"
                     type="text"
                     label="Descrição"
-                    value={payable.description}
+                    value={receivable.description}
                     isDisabled={true}
                   />
 
@@ -179,7 +180,7 @@ import { queryClient } from "../../services/queryClient";
                     name="value"
                     type="text"
                     label="Valor"
-                    value={toCurrency(payable.value)}
+                    value={toCurrency(receivable.value)}
                     isDisabled={true}
                   />
 
@@ -210,8 +211,8 @@ import { queryClient } from "../../services/queryClient";
                           </Button>
                           <Button 
                             colorScheme="red"
-                            onClick={handleCancelPayment}
-                            isLoading={cancelPayment.isLoading}
+                            onClick={handleCancelReceivement}
+                            isLoading={cancelReceivement.isLoading}
                           >
                             Confirmar
                           </Button>
@@ -225,11 +226,14 @@ import { queryClient } from "../../services/queryClient";
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="outline" mr={3} onClick={handleOnClose}>
+            <Button 
+              variant="outline"
+              mr={3} 
+              onClick={handleOnClose}>
               Fechar
             </Button>
             <Button colorScheme="pink" onClick={onOpen}>
-              Cancelar Pagamento
+              Cancelar Recebimento
             </Button>
           </ModalFooter>
 
@@ -238,4 +242,4 @@ import { queryClient } from "../../services/queryClient";
     )
   }
   
-  export const ShowPaymentModal = memo(ShowPaymentModalComponent);
+  export const ShowReceivementModal = memo(ShowReceivementModalComponent);

@@ -11,6 +11,10 @@ export const toBrDate = (date: string) => {
   return date?.split('-').reverse().join('/')
 }
 
+export const reverseBrDate = (date: string) => {
+  return date?.split('/').reverse().join('-')
+}
+
 export const toUsDate = (date: Date) => {
   return format(date, 'Y-MM-dd');
 }

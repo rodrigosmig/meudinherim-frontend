@@ -1,17 +1,17 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
-import { EditPayableForm } from "../../../../components/Foms/payable/EditPayableForm";
-import { payableService } from "../../../../services/ApiService/PayableService";
+import { CreateReceivableForm } from "../../../../components/Foms/receivable/CreateReceivableForm";
+import { receivableService } from "../../../../services/ApiService/ReceivableService";
 
-const payableServiceMocked = mocked(payableService.update);
+const receivableServiceMocked = mocked(receivableService.create);
 
 jest.mock('react-query')
-jest.mock('../../../../services/ApiService/PayableService')
+jest.mock('../../../../services/ApiService/ReceivableService')
 
 const categories = [
   {
     value: "1",
-    label: "Category Expense"
+    label: "Category Income"
   },
   {
     value: "2",
@@ -19,29 +19,12 @@ const categories = [
   }
 ]
 
-const payable = {
-    id: 1,
-    due_date: "2021-10-21",
-    paid_date: null,
-    description: "Payable test",
-    value: 150.50,
-    category: {
-        id: 1,
-        name: "Category Test"
-    },
-    invoice_id: null,
-    paid: false,
-    monthly: false,
-    has_parcels: false,
-    is_parcel: false,
-    total_purchase: null,
-    parcel_number: null,
-    parcelable_id: null,
-  }
+const closeModal = jest.fn;
+const refetch = jest.fn;
 
-describe('EditPayableForm Component', () => {
+describe('CreateReceivableForm Component', () => {
   beforeEach(() => {
-    render(<EditPayableForm payable={payable} categories={categories} />)
+    render(<CreateReceivableForm categories={categories} closeModal={closeModal} refetch={refetch}  />)
   });
 
   afterEach(() => {
@@ -49,29 +32,31 @@ describe('EditPayableForm Component', () => {
   });
 
   it('renders corretly', async () => {
-    expect(payableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(receivableServiceMocked).toHaveBeenCalledTimes(0);
     expect(screen.getByText("Vencimento")).toBeInTheDocument();
     expect(screen.getByText("Categoria")).toBeInTheDocument();
     expect(screen.getByText("Descrição")).toBeInTheDocument();
     expect(screen.getByText("Valor")).toBeInTheDocument();
+    expect(screen.getByLabelText("Parcelar")).toBeInTheDocument();
+    expect(screen.getByLabelText("Parcelar")).toBeDisabled();
     expect(screen.getByLabelText("Mensal")).toBeInTheDocument();
     //Categories
-    expect(screen.getByRole("option", {name: "Category Expense"})).toBeInTheDocument();
+    expect(screen.getByRole("option", {name: "Category Income"})).toBeInTheDocument();
     expect(screen.getByRole("option", {name: "Category Test"})).toBeInTheDocument();
 
   })
 
   it('validates required fields inputs', async () => {
-    fireEvent.change(screen.getByLabelText('Categoria'), {target: { value: "" }})
+    fireEvent.input(screen.getByLabelText('Categoria'), {target: { value: "" }})
     fireEvent.input(screen.getByLabelText('Vencimento'), {target: { value: "" }})
-    fireEvent.input(screen.getByLabelText('Descrição'), {target: { value: "" }})
     fireEvent.input(screen.getByLabelText('Valor'), {target: { value: 0 }})
 
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(payableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(receivableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(screen.getByLabelText("Parcelar")).toBeDisabled();
     expect(screen.getByText("O campo vencimento é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo categoria é inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo descrição é obrigatório")).toBeInTheDocument();
@@ -88,17 +73,26 @@ describe('EditPayableForm Component', () => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(payableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(receivableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(screen.getByLabelText("Parcelar")).toBeDisabled();
     expect(screen.getByText("O campo descrição deve ter no mínimo 3 caracteres")).toBeInTheDocument();
     expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
   })
 
-  it('update payable successfully', async () => {
+  it('tests installments', async () => {
+    fireEvent.input(screen.getByLabelText('Valor'), {target: { value: 100}})
+    
+    await waitFor(() => {
+        fireEvent.click(screen.getByLabelText("Parcelar"));
+    })
+    
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(payableServiceMocked).toHaveBeenCalledTimes(1);
-    expect(screen.getByText("Conta a Pagar alterada com sucesso")).toBeInTheDocument();
+    expect(receivableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(screen.getByLabelText("Parcelar")).not.toBeDisabled();
+    expect(screen.getByText("Numero de parcelas")).toBeInTheDocument();
+    expect(screen.getByText("Valor da Parcela:")).toBeInTheDocument();    
   })
 })

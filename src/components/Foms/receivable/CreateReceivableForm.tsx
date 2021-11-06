@@ -16,9 +16,9 @@ import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
 import { format } from 'date-fns';
 import { Switch } from "../../Inputs/Switch";
-import { payableService } from '../../../services/ApiService/PayableService';
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
+import { receivableService } from "../../../services/ApiService/ReceivableService";
 
 interface FormData {
   due_date: Date;
@@ -38,7 +38,7 @@ type ResponseError = {
 
 type Key = keyof ResponseError;
 
-interface CreatePayableFormProps {
+interface CreateReceivableFormProps {
   categories: {
     value: string;
     label: string
@@ -61,11 +61,10 @@ const validationSchema = yup.object().shape({
   })
 })
 
-export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePayableFormProps) => {  
+export const CreateReceivableForm = ({ categories, closeModal, refetch }: CreateReceivableFormProps) => {  
   const toast = useToast();
-  const router = useRouter();
 
-  const { control, register, handleSubmit, setError, formState } = useForm({
+  const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
       due_date: new Date(),
       category_id: "",
@@ -80,11 +79,11 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
 
   const [ monthly, setMonthly ] = useState(false);
   const [ hasInstallment, setHasInstallment ] = useState(false);
-  const [ payableValue, setPayableValue ] = useState(0);
+  const [ receivableValue, setReceivableValue ] = useState(0);
 
   const { errors } = formState;
 
-  const handleCreatePayable: SubmitHandler<FormData> = async (values) => {
+  const handleCreateReceivable: SubmitHandler<FormData> = async (values) => {
     const data = {
       ...values,
       monthly: monthly,
@@ -93,11 +92,11 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
     }
 
     try {
-      await payableService.create(data)
+      await receivableService.create(data)
 
       toast({
         title: "Sucesso",
-        description: `Conta a Pagar adicionada com sucesso`,
+        description: `Conta a Receber adicionada com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,
@@ -131,20 +130,20 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
     setHasInstallment(!hasInstallment);
   }
 
-  const hasPayableValue = () => {
-    return payableValue > 0;
+  const hasReceivableValue = () => {
+    return receivableValue > 0;
   }
 
-  const handleChangePayableValue = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeReceivableValue = (event: ChangeEvent<HTMLInputElement>) => {
     const amount = parseFloat(event.target.value);
 
-    setPayableValue(amount);
+    setReceivableValue(amount);
   }
 
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleCreatePayable)}
+      onSubmit={handleSubmit(handleCreateReceivable)}
       >
       <Stack spacing={[4]}>
         <Controller
@@ -177,14 +176,14 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
         />
 
         <Input
-          value={payableValue}
+          value={receivableValue}
           name="value"
           type="number"
           label="Valor"
           error={errors.value}
           step="0.01"
           {...register('value')}
-          onChange={v => handleChangePayableValue(v)}
+          onChange={v => handleChangeReceivableValue(v)}
         />
 
         <Switch
@@ -198,7 +197,7 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
         />
 
         <Switch
-          isDisabled={!hasPayableValue()}
+          isDisabled={!hasReceivableValue()}
           size="lg"
           id="installment" 
           name='installment'
@@ -210,7 +209,7 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
       </Stack>
 
         <Installment
-          amount={payableValue}
+          amount={receivableValue}
           isChecked={hasInstallment}
           error={errors.installments_number}
           {...register('installments_number')}
@@ -221,20 +220,23 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
         mt={[10]}
         justify="flex-end"
         align="center"
+        mb={4}
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={formState.isSubmitting}
-        />
         <Button
+          mr={[4]}
+          colorScheme={'gray.800'}
           variant="outline"
           isDisabled={formState.isSubmitting}
           onClick={closeModal}
         >
           Cancelar
         </Button>
+
+        <SubmitButton
+          label="Salvar"
+          size="md"
+          isLoading={formState.isSubmitting}
+        />
       </Flex>
     </Box>
   )

@@ -15,8 +15,8 @@ import {
   useDisclosure,
   useToast 
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { Layout } from "../../components/Layout";
-import { usePayables } from "../../hooks/usePayables";
 import { AddButton } from "../../components/Buttons/Add";
 import { Loading } from "../../components/Loading";
 import { EditButton } from "../../components/Buttons/Edit";
@@ -24,7 +24,6 @@ import { DeleteButton } from "../../components/Buttons/Delete";
 import { Table } from "../../components/Table";
 import { Card } from "../../components/Card";
 import { Heading } from "../../components/Heading";
-import { PaymentButton } from "../../components/Buttons/Payment";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
 import { toCurrency, toUsDate } from '../../utils/helpers';
@@ -32,20 +31,22 @@ import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
 import { PopoverTotal } from '../../components/PopoverTotal';
-import { payableService } from '../../services/ApiService/PayableService';
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
 import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
-import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
-import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
-import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
+import { receivableService } from '../../services/ApiService/ReceivableService';
+import { useReceivables } from '../../hooks/useReceivable';
+import { CreateReceivableModal } from '../../components/Modals/receivables/CreateReceivableModal';
+import { EditReceivableModal } from '../../components/Modals/receivables/EditReceivableModal';
+import { PaymentButton } from '../../components/Buttons/Payment';
+import { ReceivementModal } from '../../components/Modals/receivables/ReceivementModal';
 
-interface CancelPayableData {
+interface CancelReceivableData {
   id: number, 
   parcelable_id: null | number
 }
 
-interface AccountPayableProps {
+interface AccountReceivableProps {
   categories: {
     value: string;
     label: string
@@ -56,7 +57,7 @@ interface AccountPayableProps {
   }[];
 }
 
-interface Payable {
+interface Receivable {
   id: number;
   due_date: string;
   paid_date: string | null;
@@ -65,7 +66,7 @@ interface Payable {
   category: {
     id: number;
     name: string;
-    type: 2
+    type: 1
   };
   invoice_id: number | null;
   paid: boolean;
@@ -77,12 +78,13 @@ interface Payable {
   parcelable_id: number,
 }
 
-export default function AccountPayables({ categories, accounts }: AccountPayableProps) {
+export default function AccountReceivable({ categories, accounts }: AccountReceivableProps) {
   const toast = useToast();
+  const router = useRouter();
 
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
-  const { isOpen: paymentModalIsOpen, onOpen: paymentModalOnOpen, onClose: paymentModalOnClose } = useDisclosure();
+  const { isOpen: receivementModalIsOpen, onOpen: receivementModalOnOpen, onClose: receivementModalOnClose } = useDisclosure();
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -92,28 +94,25 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [payableStatus, setPayableStatus] = useState("open");
+  const [receivableStatus, setPayableStatus] = useState("open");
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
 
-  const [payableId, setPayableId] = useState(null);
-  const [parcelableId, setParcelableId ] = useState(null);
+  const [ selectedReceivable, setSelectedReceivable ] = useState({} as Receivable)
 
-  const [ selectedPayable, setSelectedPayable ] = useState({} as Payable)
-
-  const { data, isLoading, isFetching, isError, refetch } = usePayables(filterDate, page, perPage, payableStatus);
+  const { data, isLoading, isFetching, isError, refetch } = useReceivables(filterDate, page, perPage, receivableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
 
   const deletePayable = useMutation(async (id: number) => {
-  const response = await payableService.delete(id);
+    const response = await receivableService.delete(id);
   
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('payables')
+      queryClient.invalidateQueries('receivables')
     }
   });
 
@@ -123,7 +122,7 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
 
       toast({
         title: "Sucesso",
-        description: "Conta a pagar deletada com sucesso",
+        description: "Conta a receber deletada com sucesso",
         position: "top-right",
         status: 'success',
         duration: 10000,
@@ -145,26 +144,26 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     }
   }
 
-  const handlePayment = (id: number, parcelable_id: null | number) => {
-    const payable = getSelectedPayable(id, parcelable_id)
+  const handleReceivement = (id: number, parcelable_id: null | number) => {
+    const receivable = getSelectedReceivable(id, parcelable_id)
     
-    setSelectedPayable(payable)
-    paymentModalOnOpen();
+    setSelectedReceivable(receivable)
+    receivementModalOnOpen();
   }
 
-  const handlePayableForEdit = (id: number, parcelable_id: number | null) => {
-    const payable = getSelectedPayable(id, parcelable_id)
+  const handleReceivableForEdit = (id: number, parcelable_id: number | null) => {
+    const receivable = getSelectedReceivable(id, parcelable_id)
 
-    setSelectedPayable(payable)
+    setSelectedReceivable(receivable)
     editModalonOpen()
   }
 
-  const getSelectedPayable = (id: number, parcelable_id: number | null) => {
-    const payable = data.payables.filter(r => {
+  const getSelectedReceivable = (id: number, parcelable_id: number | null) => {
+    const receivable = data.receivables.filter(r => {
       return r.id === id && r.parcelable_id === parcelable_id
     })
-    console.log(payable)
-    return payable[0];
+    
+    return receivable[0];
   }
 
   const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -185,17 +184,17 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     setPayableStatus(event.target.value)
   }
 
-  const cancelPayment = useMutation(async (values: CancelPayableData) => {
-    const response = await payableService.cancelPayment(values.id, values.parcelable_id);
+  const cancelPayment = useMutation(async (values: CancelReceivableData) => {
+    const response = await receivableService.cancelReceivement(values.id, values.parcelable_id);
   
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('payables')
+      queryClient.invalidateQueries('receivables')
     }
   });
 
-  const handleCancelPayment = async (id: number, parcelable_id: null | number) => {
+  const handleCancelReceivement = async (id: number, parcelable_id: null | number) => {
     const values = {
       id,
       parcelable_id
@@ -230,30 +229,30 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
 
   return (
     <>
-      <CreatePaymentModal
+      <CreateReceivableModal
         categories={categories}
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
         refetch={refetch}
       />
 
-      <EditPayableModal
-        payable={selectedPayable}
+      <EditReceivableModal
+        receivable={selectedReceivable}
         categories={categories}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
         refetch={refetch}
       />
 
-      <PaymentModal
-        payable={selectedPayable}
+      <ReceivementModal
+        receivable={selectedReceivable}
         accounts={accounts}
-        isOpen={paymentModalIsOpen} 
-        onClose={paymentModalOnClose}
+        isOpen={receivementModalIsOpen} 
+        onClose={receivementModalOnClose}
         refetch={refetch}
       />
       <Head>
-        <title>Contas a Pagar | Meu Dinherim</title>
+        <title>Contas a Receber | Meu Dinherim</title>
       </Head>
 
       <Layout>
@@ -262,7 +261,7 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
           <Flex mb={[6, 6, 8]} justify="space-between" align="center">
             <Heading>
               <>
-                Contas a Pagar { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+                Contas a Receber { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
               </>
             </Heading>
             <Heading>
@@ -321,55 +320,58 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
                     </Thead>
 
                     <Tbody>
-                      { data.payables.map(payable => (
-                        <Tr key={ payable.id } px={[8]}>
+                      { data.receivables.map(receivable => (
+                        <Tr key={ receivable.id } px={[8]}>
                           <Td fontSize={["xs", "md"]}>
-                            <Text fontWeight="bold">{payable.due_date}</Text>
+                            <Text fontWeight="bold">{receivable.due_date}</Text>
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.paid_date}
+                            { receivable.paid_date}
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.category.name}
+                            { receivable.category.name}
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.is_parcel ? (
+                            { receivable.is_parcel ? (
                               <PopoverTotal
-                                description={payable.description}
-                                amount={payable.total_purchase}
+                                description={receivable.description}
+                                amount={receivable.total_purchase}
                               />
                               ) : (
-                                payable.description
+                                receivable.description
                               )
                             }
 
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { toCurrency(payable.value) }
+                            { toCurrency(receivable.value) }
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { !payable.paid ? (
+                            { !receivable.paid ? (
                               <HStack spacing={[2]}>
                                 <EditButton 
-                                  isDisabled={payable.is_parcel}
-                                  onClick={() => handlePayableForEdit(payable.id, payable.parcelable_id)}
+                                  isDisabled={receivable.is_parcel}
+                                  onClick={() => handleReceivableForEdit(receivable.id, receivable.parcelable_id)}
                                 />
 
                                 <DeleteButton
-                                  isDisabled={payable.is_parcel && payable.parcel_number !== 1}
-                                  onDelete={() => handleDeletePayable(payable.is_parcel ? payable.parcelable_id : payable.id)} 
-                                  resource="Conta a Pagar"
+                                  isDisabled={receivable.is_parcel && receivable.parcel_number !== 1}
+                                  onDelete={() => handleDeletePayable(receivable.is_parcel ? receivable.parcelable_id : receivable.id)} 
+                                  resource="Conta a Receber"
                                   loading={deletePayable.isLoading}
-                                  isParcel={payable.is_parcel}
+                                  isParcel={receivable.is_parcel}
                                 />
 
-                                <PaymentButton onClick={() => handlePayment(payable.id, payable.parcelable_id)} />
+                                <PaymentButton
+                                  label={"Receber"}
+                                  onClick={() => handleReceivement(receivable.id, receivable.parcelable_id)} 
+                                />
                               </HStack>
                             ) : (
                               <CancelPaymentButton 
                                 label="Cancelar Pagamento"
                                 loading={cancelPayment.isLoading}
-                                onCancel={() => handleCancelPayment(payable.id, payable.parcelable_id)} 
+                                onCancel={() => handleCancelReceivement(receivable.id, receivable.parcelable_id)} 
                               />
                             )}
                             
@@ -400,9 +402,9 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
 
-  const categoriesExpenseResponse = await apiClient.get(`/categories?type=2&per_page=1000`);
+  const categoriesIncomeResponse = await apiClient.get(`/categories?type=1&per_page=1000`);
 
-  const categories = categoriesExpenseResponse.data.data.map(category => {
+  const categories = categoriesIncomeResponse.data.data.map(category => {
     return {
       value: category.id,
       label: category.name

@@ -1,17 +1,18 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { EditPayableForm } from "../../../../components/Foms/payable/EditPayableForm";
-import { payableService } from "../../../../services/ApiService/PayableService";
+import { EditReceivableForm } from "../../../../components/Foms/receivable/EditReceivableForm";
+import { receivableService } from "../../../../services/ApiService/ReceivableService";
 
-const payableServiceMocked = mocked(payableService.update);
+const receivableServiceMocked = mocked(receivableService.update);
 
 jest.mock('react-query')
-jest.mock('../../../../services/ApiService/PayableService')
+jest.mock('../../../../services/ApiService/ReceivableService')
 
 const categories = [
   {
     value: "1",
-    label: "Category Expense"
+    label: "Category Income"
   },
   {
     value: "2",
@@ -19,14 +20,15 @@ const categories = [
   }
 ]
 
-const payable = {
+const receivable = {
     id: 1,
     due_date: "2021-10-21",
     paid_date: null,
-    description: "Payable test",
+    description: "Receivable test",
     value: 150.50,
     category: {
         id: 1,
+        type: 1,
         name: "Category Test"
     },
     invoice_id: null,
@@ -39,9 +41,12 @@ const payable = {
     parcelable_id: null,
   }
 
+const closeModal = jest.fn;
+const refetch = jest.fn;
+
 describe('EditPayableForm Component', () => {
   beforeEach(() => {
-    render(<EditPayableForm payable={payable} categories={categories} />)
+    render(<EditReceivableForm receivable={receivable} categories={categories} closeModal={closeModal} refetch={refetch} />)
   });
 
   afterEach(() => {
@@ -49,14 +54,14 @@ describe('EditPayableForm Component', () => {
   });
 
   it('renders corretly', async () => {
-    expect(payableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(receivableServiceMocked).toHaveBeenCalledTimes(0);
     expect(screen.getByText("Vencimento")).toBeInTheDocument();
     expect(screen.getByText("Categoria")).toBeInTheDocument();
     expect(screen.getByText("Descrição")).toBeInTheDocument();
     expect(screen.getByText("Valor")).toBeInTheDocument();
     expect(screen.getByLabelText("Mensal")).toBeInTheDocument();
     //Categories
-    expect(screen.getByRole("option", {name: "Category Expense"})).toBeInTheDocument();
+    expect(screen.getByRole("option", {name: "Category Income"})).toBeInTheDocument();
     expect(screen.getByRole("option", {name: "Category Test"})).toBeInTheDocument();
 
   })
@@ -71,7 +76,7 @@ describe('EditPayableForm Component', () => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(payableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(receivableServiceMocked).toHaveBeenCalledTimes(0);
     expect(screen.getByText("O campo vencimento é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo categoria é inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo descrição é obrigatório")).toBeInTheDocument();
@@ -88,7 +93,7 @@ describe('EditPayableForm Component', () => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(payableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(receivableServiceMocked).toHaveBeenCalledTimes(0);
     expect(screen.getByText("O campo descrição deve ter no mínimo 3 caracteres")).toBeInTheDocument();
     expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
   })
@@ -98,7 +103,7 @@ describe('EditPayableForm Component', () => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(payableServiceMocked).toHaveBeenCalledTimes(1);
-    expect(screen.getByText("Conta a Pagar alterada com sucesso")).toBeInTheDocument();
+    expect(receivableServiceMocked).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Conta a Receber alterada com sucesso")).toBeInTheDocument();
   })
 })

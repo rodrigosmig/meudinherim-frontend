@@ -1,13 +1,13 @@
 import { memo } from "react";
 import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import { RiPencilLine } from "react-icons/ri";
-import Link from "next/link";
+
 interface EditButtonProps {
-  href: string
-  isDisabled?: boolean
+  isDisabled?: boolean;
+  onClick: () => void;
 }
 
-const EditButtonComponent = ({ href, isDisabled = false }: EditButtonProps) => {
+const EditButtonComponent = ({ onClick, isDisabled = false }: EditButtonProps) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -17,29 +17,26 @@ const EditButtonComponent = ({ href, isDisabled = false }: EditButtonProps) => {
   return (
     isWideVersion 
     ? (
-      <Link href={href} passHref>
-        <Button
-          isDisabled={isDisabled}
-          size="sm"
-          fontSize="sm"
-          colorScheme="purple"
-          leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-        >
-          Editar
-        </Button>
-      
-      </Link>
+      <Button
+        isDisabled={isDisabled}
+        size="sm"
+        fontSize="sm"
+        colorScheme="purple"
+        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+        onClick={onClick}
+      >
+        Editar
+      </Button>
       )
     : (
-      <Link href={href} passHref>
-        <IconButton
-          isDisabled={isDisabled}
-          size="xs"
-          aria-label="Edit"
-          colorScheme="purple" 
-          icon={<RiPencilLine />} 
-        />
-      </Link>
+      <IconButton
+        isDisabled={isDisabled}
+        size="xs"
+        aria-label="Edit"
+        colorScheme="purple" 
+        icon={<RiPencilLine />}
+        onClick={onClick}
+      />
     )
   )
 }

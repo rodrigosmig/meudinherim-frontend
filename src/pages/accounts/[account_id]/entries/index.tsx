@@ -35,7 +35,8 @@ import { queryClient } from '../../../../services/queryClient';
 import { DateFilter } from '../../../../components/DateFilter';
 import { Card } from '../../../../components/Card';
 import { Heading } from '../../../../components/Heading';
-import { ShowPaymentModal } from '../../../../components/Modals/ShowPaymentModal';
+import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
+import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
 
 interface Account {
   id: number;
@@ -61,14 +62,18 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
     lg: true 
   });
 
+  const { isOpen: showPaymentIsOpen , onOpen: showPaymentOnOpen, onClose: showPaymentOnClose } = useDisclosure();
+  const { isOpen: showReceivementIsOpen , onOpen: showReceivementOnOpen, onClose: showReceivementOnClose } = useDisclosure();
+
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
   const [payableId, setPayableId] = useState(null);
   const [parcelableId, setParcelableId ] = useState(null);
+  const [receivableId, setReceivableId] = useState(null);
 
   const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, filterDate, page, perPage);
   const { data: dataBalance, isLoading: isLoadingBalance, refetch: refetchBalance } = useAccountBalance(account.id);
@@ -131,7 +136,17 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
   const handleShowPayment = (id: number, parcelable_id: null | number) => {
     setParcelableId(parcelable_id);
     setPayableId(id);
-    onOpen();
+    showPaymentOnOpen();
+  }
+
+  const handleShowReceivement = (id: number, parcelable_id: null | number) => {
+    setParcelableId(parcelable_id);
+    setReceivableId(id);
+    showReceivementOnOpen();
+  }
+
+  const handleEditEntry = (account_id: number, entry_id: number) => {
+    router.push(`/accounts/${account_id}/entries/${entry_id}`)
   }
 
   return (
@@ -139,8 +154,17 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
       <ShowPaymentModal
         accountId={payableId}
         parcelableId={parcelableId}
-        isOpenModal={isOpen}
-        onCloseModal={onClose}
+        isOpenModal={showPaymentIsOpen}
+        onCloseModal={showPaymentOnClose}
+        refetchEntries={refetch}
+        refetchBalance={refetchBalance}
+      />
+
+      <ShowReceivementModal 
+        receivableId={receivableId}
+        parcelableId={parcelableId}
+        isOpenModal={showReceivementIsOpen}
+        onCloseModal={showReceivementOnClose}
         refetchEntries={refetch}
         refetchBalance={refetchBalance}
       />
@@ -226,7 +250,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                           <Td fontSize={["xs", "md"]}>
                           { entry.account_scheduling == null ? (
                             <HStack spacing={[2]}>                              
-                              <EditButton href={`/accounts/${account.id}/entries/${entry.id}`} />
+                              <EditButton onClick={() => handleEditEntry(account.id, entry.id)} />
                               <DeleteButton 
                                 onDelete={() => handleDeleteEntry(entry.id)} 
                                 resource="Lançamento"
@@ -234,7 +258,11 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                               />
                             </HStack>
                             ) : (
-                              <Button colorScheme="green" onClick={() => handleShowPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Pagamento</Button>
+                              entry.category.type === 1 ? (
+                                <Button colorScheme="green" onClick={() => handleShowReceivement(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Recebimento</Button>
+                              ) : (
+                                <Button colorScheme="green" onClick={() => handleShowPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Pagamento</Button>
+                              )
                             )
                           }
                           </Td>
