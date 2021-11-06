@@ -90,6 +90,10 @@ export default function Categories() {
     setPage(1)
     setPerPage(value)
   }
+
+  const handleEditAccount = (category_id: number) => {
+    router.push(`/categories/${category_id}`)
+  }
   
   const deleteCategory = useMutation(async (id: number) => {
     const response = await categoryService.delete(id);
@@ -171,7 +175,7 @@ export default function Categories() {
                           </Td>
                           <Td fontSize={["xs", "md"]}>
                             <HStack spacing={[2]}>
-                              <EditButton href={`/categories/${category.id}`} />
+                              <EditButton onClick={() => handleEditAccount(category.id)} />
                               <DeleteButton 
                                 onDelete={() => handleDeleteCategory(category.id)} 
                                 resource="Categoria"

@@ -47,6 +47,10 @@ export default function Accounts() {
     router.push('/accounts/create');
   }
 
+  const handleEditAccount = (account_id: number) => {
+    router.push(`/accounts/${account_id}`)
+  }
+
   const deleteAccount = useMutation(async (id: number) => {
     const response = await accountService.delete(id);
   
@@ -132,7 +136,7 @@ export default function Accounts() {
                           </Td>
                           <Td fontSize={["xs", "md"]}>
                             <HStack spacing={[2]}>
-                              <EditButton href={`/accounts/${account.id}`} />
+                              <EditButton onClick={() => handleEditAccount(account.id)} />
                               <DeleteButton 
                                 onDelete={() => handleDeleteAccount(account.id)} 
                                 resource="Conta"
