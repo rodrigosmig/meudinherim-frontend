@@ -66,6 +66,7 @@ interface Receivable {
   category: {
     id: number;
     name: string;
+    type: 1
   };
   invoice_id: number | null;
   paid: boolean;
@@ -100,7 +101,7 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
 
   const [ selectedReceivable, setSelectedReceivable ] = useState({} as Receivable)
 
-  const { data, isLoading, isFetching, isError, refetch: refetchReceivable } = useReceivables(filterDate, page, perPage, receivableStatus);
+  const { data, isLoading, isFetching, isError, refetch } = useReceivables(filterDate, page, perPage, receivableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
@@ -128,7 +129,7 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
         isClosable: true,
       });
 
-      refetchReceivable();
+      refetch();
     } catch (error) {
       const data = error.response.data
       
@@ -211,7 +212,7 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
         isClosable: true,
       });
 
-      refetchReceivable();
+      refetch();
     } catch (error) {
       const data = error.response.data
       
@@ -228,19 +229,11 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
 
   return (
     <>
-      <ReceivementModal
-        receivable={selectedReceivable}
-        accounts={accounts}
-        isOpen={receivementModalIsOpen} 
-        onClose={receivementModalOnClose}
-        refetch={refetchReceivable}
-      />
-
       <CreateReceivableModal
         categories={categories}
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={refetchReceivable}
+        refetch={refetch}
       />
 
       <EditReceivableModal
@@ -248,7 +241,15 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
         categories={categories}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
-        refetch={refetchReceivable}
+        refetch={refetch}
+      />
+
+      <ReceivementModal
+        receivable={selectedReceivable}
+        accounts={accounts}
+        isOpen={receivementModalIsOpen} 
+        onClose={receivementModalOnClose}
+        refetch={refetch}
       />
       <Head>
         <title>Contas a Receber | Meu Dinherim</title>
@@ -401,22 +402,23 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
 
-  const categoriesExpenseResponse = await apiClient.get(`/categories?type=1&per_page=1000`);
-    const categories = categoriesExpenseResponse.data.data.map(category => {
-      return {
-        value: category.id,
-        label: category.name
-      }
-    });
+  const categoriesIncomeResponse = await apiClient.get(`/categories?type=1&per_page=1000`);
 
-    const accountsResponse = await apiClient.get(`/accounts`);
+  const categories = categoriesIncomeResponse.data.data.map(category => {
+    return {
+      value: category.id,
+      label: category.name
+    }
+  });
 
-    const formAccounts = accountsResponse.data.data.map(account => {
-      return {
-        value: account.id,
-        label: account.name
-      }
-    })
+  const accountsResponse = await apiClient.get(`/accounts`);
+
+  const formAccounts = accountsResponse.data.data.map(account => {
+    return {
+      value: account.id,
+      label: account.name
+    }
+  })
 
   return {
     props: {

@@ -5,13 +5,8 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  useToast
 } from "@chakra-ui/react";
-import { memo, useEffect, useState } from "react";
-import { accountService } from "../../services/ApiService/AccountService";
-import { payableService } from "../../services/ApiService/PayableService";
-import { PaymentForm } from "../Foms/payable/PaymentForm";
-import { Loading } from "../Loading";
+import { EditPayableForm } from "../../Foms/payable/EditPayableForm";
 
 interface Payable {
   id: number;
@@ -32,30 +27,31 @@ interface Payable {
   parcel_number: number,
   parcelable_id: number,
 }
-interface PaymentModalProps {
+
+interface EditPayableModalProps {
   payable: Payable;
-  accounts: {
+  categories: {
     value: string;
     label: string
-  }[];
+  }[],
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-const PaymentModalComponent = ({ payable, accounts, isOpen, onClose, refetch }: PaymentModalProps) => {
+export const EditPayableModal = ({ payable, categories, isOpen, onClose, refetch }: EditPayableModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent bgColor={"gray.800"}>
-        <ModalHeader>Pagamento de Conta</ModalHeader>
+        <ModalHeader>Editar Conta a Receber</ModalHeader>
         <ModalCloseButton onClick={onClose} />
 
-        <ModalBody mb={4}>
-          <PaymentForm 
-            payable={payable} 
-            accounts={accounts}
-            onCancel={onClose} 
+        <ModalBody>
+          <EditPayableForm
+            payable={payable}
+            categories={categories}
+            closeModal={onClose}
             refetch={refetch}
           />
         </ModalBody>
@@ -63,5 +59,3 @@ const PaymentModalComponent = ({ payable, accounts, isOpen, onClose, refetch }: 
     </Modal>
   )
 }
-
-export const PaymentModal = memo(PaymentModalComponent);

@@ -15,6 +15,7 @@ export const getReceivables = async (filterDate: [string, string], page: number,
       category: {
         id: receivable.category.id,
         name: receivable.category.name,
+        type: receivable.category.type
       },
       invoice_id: receivable.invoice_id,
       paid: receivable.paid,

@@ -158,7 +158,7 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
 
         <Input
           name="value"
-          type="text"
+          type="number"
           label="Valor"
           error={errors.value}
           step="0.01"
@@ -184,7 +184,6 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
           label="Salvar"
           size="md"
           isLoading={formState.isSubmitting}
-          isDisabled={formState.isSubmitted}
         />
       </Flex>
     </Box>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { 
   Box,
   Button,
@@ -18,16 +17,7 @@ import { format, parseISO } from 'date-fns';
 import { payableService } from "../../../services/ApiService/PayableService";
 import { Select } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
-
-interface Category {
-  id: number,
-  name: string,
-}
-
-type CategoriesForForm = {
-  value: string;
-  label: string;
-}
+import { reverseBrDate } from "../../../utils/helpers";
 
 interface Payable {
   id: number;
@@ -35,7 +25,10 @@ interface Payable {
   paid_date: string | null;
   description: string;
   value: number;
-  category: Category;
+  category:{
+    id: number;
+    name: string;
+  };
   invoice_id: number | null;
   paid: boolean;
   monthly: boolean;
@@ -46,7 +39,12 @@ interface Payable {
 
 interface EditPayableFormProps {
   payable: Payable;
-  categories: CategoriesForForm[];
+  categories: {
+    value: string;
+    label: string
+  }[];
+  closeModal: () => void,
+  refetch: () => void
 }
 
 interface FormData {
@@ -72,15 +70,14 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
 })
 
-export const EditPayableForm = ({payable, categories}: EditPayableFormProps) => {
+export const EditPayableForm = ({ payable, categories, closeModal, refetch }: EditPayableFormProps) => {
   const toast = useToast();
-  const router = useRouter();
 
   const [ monthly, setMonthly ] = useState(payable.monthly);
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
-      due_date: parseISO(payable.due_date),
+      due_date: parseISO(reverseBrDate(payable.due_date)),
       category_id: payable.category.id,
       description: payable.description,
       value: payable.value,
@@ -113,7 +110,8 @@ export const EditPayableForm = ({payable, categories}: EditPayableFormProps) => 
         isClosable: true,
       })
 
-      router.push("/payables")
+      refetch();
+      closeModal();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -190,15 +188,14 @@ export const EditPayableForm = ({payable, categories}: EditPayableFormProps) => 
         justify="flex-end"
         align="center"
       >
-        <Link href={`/payables`} passHref>
-          <Button
-            mr={[4]}
-            variant="outline"
-            isDisabled={formState.isSubmitting}
-          >
-            Cancelar
-          </Button>
-        </Link>
+        <Button
+          mr={[4]}
+          variant="outline"
+          isDisabled={formState.isSubmitting}
+          onClick={closeModal}
+        >
+          Cancelar
+        </Button>
 
         <SubmitButton
           label="Salvar"

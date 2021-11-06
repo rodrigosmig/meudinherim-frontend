@@ -20,11 +20,6 @@ import { payableService } from '../../../services/ApiService/PayableService';
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 
-type CategoriesForForm = {
-  value: string;
-  label: string;
-}
-
 interface FormData {
   due_date: Date;
   category_id: number;
@@ -44,7 +39,12 @@ type ResponseError = {
 type Key = keyof ResponseError;
 
 interface CreatePayableFormProps {
-  categories: CategoriesForForm[];
+  categories: {
+    value: string;
+    label: string
+  }[];
+  closeModal: () => void,
+  refetch: () => void
 }
 
 const validationSchema = yup.object().shape({
@@ -61,7 +61,7 @@ const validationSchema = yup.object().shape({
   })
 })
 
-export const CreatePayableForm = ({ categories }: CreatePayableFormProps) => {  
+export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePayableFormProps) => {  
   const toast = useToast();
   const router = useRouter();
 
@@ -93,7 +93,7 @@ export const CreatePayableForm = ({ categories }: CreatePayableFormProps) => {
     }
 
     try {
-      const response = await payableService.create(data)
+      await payableService.create(data)
 
       toast({
         title: "Sucesso",
@@ -104,7 +104,8 @@ export const CreatePayableForm = ({ categories }: CreatePayableFormProps) => {
         isClosable: true,
       })
 
-      router.push("/payables")
+      refetch();
+      closeModal();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -226,17 +227,14 @@ export const CreatePayableForm = ({ categories }: CreatePayableFormProps) => {
           label="Salvar"
           size="md"
           isLoading={formState.isSubmitting}
-          isDisabled={formState.isSubmitted}
         />
-
-        <Link href={`/payables`} passHref>
-          <Button
-            variant="outline"
-            isDisabled={formState.isSubmitting}
-          >
-            Cancelar
-          </Button>
-        </Link>
+        <Button
+          variant="outline"
+          isDisabled={formState.isSubmitting}
+          onClick={closeModal}
+        >
+          Cancelar
+        </Button>
       </Flex>
     </Box>
   )

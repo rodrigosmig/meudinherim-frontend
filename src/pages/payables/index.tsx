@@ -15,22 +15,19 @@ import {
   useDisclosure,
   useToast 
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { Layout } from "../../components/Layout";
 import { usePayables } from "../../hooks/usePayables";
 import { AddButton } from "../../components/Buttons/Add";
 import { Loading } from "../../components/Loading";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
-import { Check } from "../../components/Icons/Check";
-import { Close } from "../../components/Icons/Close";
 import { Table } from "../../components/Table";
 import { Card } from "../../components/Card";
 import { Heading } from "../../components/Heading";
 import { PaymentButton } from "../../components/Buttons/Payment";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { toUsDate } from '../../utils/helpers';
+import { toCurrency, toUsDate } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
@@ -40,15 +37,52 @@ import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
 import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
 import { PaymentModal } from '../../components/Modals/PaymentModal';
+import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
+import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
 
 interface CancelPayableData {
   id: number, 
   parcelable_id: null | number
 }
 
-export default function AccountPayables() {
+interface AccountPayableProps {
+  categories: {
+    value: string;
+    label: string
+  }[];
+  accounts: {
+    value: string;
+    label: string
+  }[];
+}
+
+interface Payable {
+  id: number;
+  due_date: string;
+  paid_date: string | null;
+  description: string;
+  value: number;
+  category: {
+    id: number;
+    name: string;
+    type: 2
+  };
+  invoice_id: number | null;
+  paid: boolean;
+  monthly: boolean;
+  has_parcels: boolean;
+  is_parcel: boolean,
+  total_purchase: number,
+  parcel_number: number,
+  parcelable_id: number,
+}
+
+export default function AccountPayables({ categories, accounts }: AccountPayableProps) {
   const toast = useToast();
-  const router = useRouter();
+
+  const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
+  const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
+  const { isOpen: paymentModalIsOpen, onOpen: paymentModalOnOpen, onClose: paymentModalOnClose } = useDisclosure();
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -62,26 +96,19 @@ export default function AccountPayables() {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
-  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const [payableId, setPayableId] = useState(null);
   const [parcelableId, setParcelableId ] = useState(null);
+
+  const [ selectedPayable, setSelectedPayable ] = useState({} as Payable)
 
   const { data, isLoading, isFetching, isError, refetch } = usePayables(filterDate, page, perPage, payableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
 
-  const handleAddAccount = () => {
-    router.push('/payables/create');
-  }
-
-  const handlePayableForEdit = (id: number, parcelable_id: number | null) => {
-    router.push(`/payables/${id}`);
-    
-  }
-
   const deletePayable = useMutation(async (id: number) => {
-    const response = await payableService.delete(id);
+  const response = await payableService.delete(id);
   
     return response.data;
   }, {
@@ -119,9 +146,25 @@ export default function AccountPayables() {
   }
 
   const handlePayment = (id: number, parcelable_id: null | number) => {
-    setParcelableId(parcelable_id);
-    setPayableId(id);
-    onOpen();
+    const payable = getSelectedPayable(id, parcelable_id)
+    
+    setSelectedPayable(payable)
+    paymentModalOnOpen();
+  }
+
+  const handlePayableForEdit = (id: number, parcelable_id: number | null) => {
+    const payable = getSelectedPayable(id, parcelable_id)
+
+    setSelectedPayable(payable)
+    editModalonOpen()
+  }
+
+  const getSelectedPayable = (id: number, parcelable_id: number | null) => {
+    const payable = data.payables.filter(r => {
+      return r.id === id && r.parcelable_id === parcelable_id
+    })
+    console.log(payable)
+    return payable[0];
   }
 
   const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -187,11 +230,26 @@ export default function AccountPayables() {
 
   return (
     <>
-      <PaymentModal 
-        accountId={payableId}
-        parcelableId={parcelableId}
-        isOpen={isOpen} 
-        onClose={onClose}
+      <CreatePaymentModal
+        categories={categories}
+        isOpen={createModalIsOpen} 
+        onClose={createModalOnClose}
+        refetch={refetch}
+      />
+
+      <EditPayableModal
+        payable={selectedPayable}
+        categories={categories}
+        isOpen={editModalIsOpen} 
+        onClose={editModalOnClose}
+        refetch={refetch}
+      />
+
+      <PaymentModal
+        payable={selectedPayable}
+        accounts={accounts}
+        isOpen={paymentModalIsOpen} 
+        onClose={paymentModalOnClose}
         refetch={refetch}
       />
       <Head>
@@ -208,7 +266,7 @@ export default function AccountPayables() {
               </>
             </Heading>
             <Heading>
-              <AddButton onClick={handleAddAccount} />
+              <AddButton onClick={createModalOnOpen} />
             </Heading>
           </Flex>
 
@@ -258,8 +316,6 @@ export default function AccountPayables() {
                         <Th>Categoria</Th>
                         <Th>Descrição</Th>
                         <Th>Valor</Th>
-                        <Th>Mensal</Th>
-                        <Th>Pago</Th>
                         <Th w="8"></Th>
                       </Tr>
                     </Thead>
@@ -289,13 +345,7 @@ export default function AccountPayables() {
 
                           </Td>
                           <Td fontSize={["xs", "md"]}>
-                            { payable.value}
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { payable.monthly ? <Check /> : <Close /> }
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { payable.paid ? <Check /> : <Close /> }
+                            { toCurrency(payable.value) }
                           </Td>
                           <Td fontSize={["xs", "md"]}>
                             { !payable.paid ? (
@@ -350,9 +400,28 @@ export default function AccountPayables() {
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
 
-  const payablesResponse = await apiClient.get('/payables');
+  const categoriesExpenseResponse = await apiClient.get(`/categories?type=2&per_page=1000`);
+
+  const categories = categoriesExpenseResponse.data.data.map(category => {
+    return {
+      value: category.id,
+      label: category.name
+    }
+  });
+
+  const accountsResponse = await apiClient.get(`/accounts`);
+
+  const formAccounts = accountsResponse.data.data.map(account => {
+    return {
+      value: account.id,
+      label: account.name
+    }
+  })
 
   return {
-    props: {}
+    props: {
+      categories,
+      accounts: formAccounts
+    }
   }
 })

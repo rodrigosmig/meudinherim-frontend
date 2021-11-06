@@ -10,6 +10,7 @@ interface Receivable {
   category: {
     id: number;
     name: string;
+    type: 1;
   };
   invoice_id: number | null;
   paid: boolean;

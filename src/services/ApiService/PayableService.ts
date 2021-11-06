@@ -10,6 +10,7 @@ interface Payable {
   category: {
     id: number;
     name: string;
+    type: 2;
   };
   invoice_id: number | null;
   paid: boolean;

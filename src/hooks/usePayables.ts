@@ -11,10 +11,11 @@ export const getPayables = async (filterDate: [string, string], page: number, pe
       due_date: toBrDate(payable.due_date),
       paid_date: toBrDate(payable.paid_date),
       description: payable.description,
-      value: toCurrency(payable.value),
+      value: payable.value,
       category: {
         id: payable.category.id,
         name: payable.category.name,
+        type: payable.category.type
       },
       invoice_id: payable.invoice_id,
       paid: payable.paid,

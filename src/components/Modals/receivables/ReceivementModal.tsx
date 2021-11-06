@@ -6,7 +6,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  useToast
 } from "@chakra-ui/react";
 import { ReceivementForm } from "../../Foms/receivable/ReceivementForm";
 
@@ -46,7 +45,7 @@ const ReceivementModalComponent = ({ receivable, accounts, isOpen, onClose, refe
     <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent bgColor={"gray.800"}>
-        <ModalHeader>Pagamento de Conta</ModalHeader>
+        <ModalHeader>Recebimento de Conta</ModalHeader>
         <ModalCloseButton onClick={onClose} />
 
         <ModalBody mb={4}>

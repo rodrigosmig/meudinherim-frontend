@@ -139,11 +139,6 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
     }
   }
 
-  const handleIsMonthly = () => {
-    setHasInstallment(false)
-    setMonthly(!monthly)
-  }
-
   return (
     <Box
       as="form"
@@ -195,7 +190,7 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
           label="Mensal"
           {...register('monthly')}
           isChecked={monthly}
-          onChange={handleIsMonthly}
+          onChange={() => setMonthly(!monthly)}
         />
       </Stack>
 
