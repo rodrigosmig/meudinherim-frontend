@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import { RiPencilLine } from "react-icons/ri";
-import Link from "next/link";
+
 interface EditButtonProps {
   isDisabled?: boolean;
   onClick: () => void;
