@@ -7,11 +7,8 @@ import {
   ModalCloseButton,
   useToast
 } from "@chakra-ui/react";
-import { memo, useEffect, useState } from "react";
-import { accountService } from "../../services/ApiService/AccountService";
-import { payableService } from "../../services/ApiService/PayableService";
-import { PaymentForm } from "../Foms/payable/PaymentForm";
-import { Loading } from "../Loading";
+import { memo } from "react";
+import { PaymentForm } from "../../Foms/payable/PaymentForm";
 
 interface Payable {
   id: number;

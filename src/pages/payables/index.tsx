@@ -36,7 +36,7 @@ import { payableService } from '../../services/ApiService/PayableService';
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
 import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
-import { PaymentModal } from '../../components/Modals/PaymentModal';
+import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
 import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
 import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
 

@@ -35,8 +35,8 @@ import { queryClient } from '../../../../services/queryClient';
 import { DateFilter } from '../../../../components/DateFilter';
 import { Card } from '../../../../components/Card';
 import { Heading } from '../../../../components/Heading';
-import { ShowPaymentModal } from '../../../../components/Modals/ShowPaymentModal';
 import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
+import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
 
 interface Account {
   id: number;
@@ -145,6 +145,10 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
     showReceivementOnOpen();
   }
 
+  const handleEditEntry = (account_id: number, entry_id: number) => {
+    router.push(`/accounts/${account_id}/entries/${entry_id}`)
+  }
+
   return (
     <>
       <ShowPaymentModal
@@ -246,7 +250,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                           <Td fontSize={["xs", "md"]}>
                           { entry.account_scheduling == null ? (
                             <HStack spacing={[2]}>                              
-                              <EditButton href={`/accounts/${account.id}/entries/${entry.id}`} />
+                              <EditButton onClick={() => handleEditEntry(account.id, entry.id)} />
                               <DeleteButton 
                                 onDelete={() => handleDeleteEntry(entry.id)} 
                                 resource="Lançamento"
