@@ -1,16 +1,19 @@
 import { useSidebarDrawer } from "../../../contexts/SidebarDrawerContext";
 import { SidebarNav } from './SidebarNav';
 import { 
-  Box, 
+  Box,
   Drawer, 
   DrawerBody, 
   DrawerCloseButton, 
   DrawerContent, 
   DrawerHeader, 
-  DrawerOverlay, 
-  useBreakpointValue 
+  DrawerOverlay,
+  Flex,
+  useBreakpointValue,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { memo } from "react";
+import { Logo } from "../Logo";
 
 const SidebarComponent = () => {
   const { isOpen, onClose } = useSidebarDrawer();
@@ -26,7 +29,7 @@ const SidebarComponent = () => {
       <DrawerOverlay>
         <DrawerContent bg="gray.800" p="4">
           <DrawerCloseButton mt="6" />
-          <DrawerHeader>Navegação</DrawerHeader>
+          <DrawerHeader><Logo /></DrawerHeader>
           <DrawerBody>
             <SidebarNav />
           </DrawerBody>
@@ -37,7 +40,16 @@ const SidebarComponent = () => {
   }
 
   return (
-    <Box as="aside" w="64" mr="8">
+    <Box
+      pos="fixed"
+      h="full"
+      w={{ base: 'full', md: 60 }}
+      overflowY="auto"
+    >
+      <Flex h="20" alignItems="center" justifyContent="space-between">
+        <Logo />
+      </Flex>
+
       <SidebarNav />
     </Box>
   )

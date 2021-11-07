@@ -22,7 +22,6 @@ import { Loading } from "../../components/Loading";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
 import { Table } from "../../components/Table";
-import { Card } from "../../components/Card";
 import { Heading } from "../../components/Heading";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
@@ -256,144 +255,141 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
       </Head>
 
       <Layout>
-        <Card>
-          <>
-          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-            <Heading>
-              <>
-                Contas a Receber { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
-              </>
-            </Heading>
-            <Heading>
-              <AddButton onClick={createModalOnOpen} />
-            </Heading>
-          </Flex>
+        <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+          <Heading>
+            <>
+              Contas a Receber { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+            </>
+          </Heading>
+          <Heading>
+            <AddButton onClick={createModalOnOpen} />
+          </Heading>
+        </Flex>
 
-          <DateFilter
-            isWideVersion={isWideVersion}
-            startDate={startDate}
-            endDate={endDate}
-            onChange={(update: [Date | null, Date | null]) => {
-              setDateRange(update);
-            }}
-            onClick={handleClickFilter}
-          />
-          
-          <Flex 
-            justify="space-between" 
-            align="center"
-            mb={[6, 6, 8]}
-          >
-            <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />  
-
-            <Flex align="center">
-              <Select
-                size={sizeProps}
-                variant="unstyled"
-                maxW={[150]}
-                onChange={event => handleChangePayableStatus(event)}
-              >
-                <option value="all">Todas</option>
-                <option value="open" selected>Abertas</option>
-                <option value="paid">Pagas</option>
-              </Select>
-            </Flex>          
-          </Flex>
+        <DateFilter
+          isWideVersion={isWideVersion}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={(update: [Date | null, Date | null]) => {
+            setDateRange(update);
+          }}
+          onClick={handleClickFilter}
+        />
         
-          { isLoading ? (
-              <Loading />
-            ) : isError ? (
-              <Flex justify="center">Falha ao obter as contas</Flex>
-            ) : (
-              <>
-                <Table tableSize={tableSize}>
-                  <>
-                    <Thead>
-                      <Tr >
-                        <Th>Vencimento</Th>
-                        <Th>Pagamento</Th>
-                        <Th>Categoria</Th>
-                        <Th>Descrição</Th>
-                        <Th>Valor</Th>
-                        <Th w="8"></Th>
-                      </Tr>
-                    </Thead>
+        <Flex 
+          justify="space-between" 
+          align="center"
+          mb={[6, 6, 8]}
+        >
+          <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />  
 
-                    <Tbody>
-                      { data.receivables.map(receivable => (
-                        <Tr key={ receivable.id } px={[8]}>
-                          <Td fontSize={["xs", "md"]}>
-                            <Text fontWeight="bold">{receivable.due_date}</Text>
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { receivable.paid_date}
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { receivable.category.name}
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { receivable.is_parcel ? (
-                              <PopoverTotal
-                                description={receivable.description}
-                                amount={receivable.total_purchase}
-                              />
-                              ) : (
-                                receivable.description
-                              )
-                            }
+          <Flex align="center">
+            <Select
+              size={sizeProps}
+              variant="unstyled"
+              maxW={[150]}
+              onChange={event => handleChangePayableStatus(event)}
+            >
+              <option value="all">Todas</option>
+              <option value="open" selected>Abertas</option>
+              <option value="paid">Pagas</option>
+            </Select>
+          </Flex>          
+        </Flex>
+      
+        { isLoading ? (
+            <Loading />
+          ) : isError ? (
+            <Flex justify="center">Falha ao obter as contas</Flex>
+          ) : (
+            <>
+              <Table tableSize={tableSize}>
+                <>
+                  <Thead>
+                    <Tr >
+                      <Th>Vencimento</Th>
+                      <Th>Pagamento</Th>
+                      <Th>Categoria</Th>
+                      <Th>Descrição</Th>
+                      <Th>Valor</Th>
+                      <Th w="8"></Th>
+                    </Tr>
+                  </Thead>
 
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { toCurrency(receivable.value) }
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { !receivable.paid ? (
-                              <HStack spacing={[2]}>
-                                <EditButton 
-                                  isDisabled={receivable.is_parcel}
-                                  onClick={() => handleReceivableForEdit(receivable.id, receivable.parcelable_id)}
-                                />
-
-                                <DeleteButton
-                                  isDisabled={receivable.is_parcel && receivable.parcel_number !== 1}
-                                  onDelete={() => handleDeletePayable(receivable.is_parcel ? receivable.parcelable_id : receivable.id)} 
-                                  resource="Conta a Receber"
-                                  loading={deletePayable.isLoading}
-                                  isParcel={receivable.is_parcel}
-                                />
-
-                                <PaymentButton
-                                  label={"Receber"}
-                                  onClick={() => handleReceivement(receivable.id, receivable.parcelable_id)} 
-                                />
-                              </HStack>
+                  <Tbody>
+                    { data.receivables.map(receivable => (
+                      <Tr key={ receivable.id } px={[8]}>
+                        <Td fontSize={["xs", "md"]}>
+                          <Text fontWeight="bold">{receivable.due_date}</Text>
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { receivable.paid_date}
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { receivable.category.name}
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { receivable.is_parcel ? (
+                            <PopoverTotal
+                              description={receivable.description}
+                              amount={receivable.total_purchase}
+                            />
                             ) : (
-                              <CancelPaymentButton 
-                                label="Cancelar Pagamento"
-                                loading={cancelPayment.isLoading}
-                                onCancel={() => handleCancelReceivement(receivable.id, receivable.parcelable_id)} 
-                              />
-                            )}
-                            
-                          </Td>
-                        </Tr>
-                      )) }
-                    </Tbody>
-                  </>
-                </Table>
+                              receivable.description
+                            )
+                          }
 
-                <Pagination
-                  from={data.meta.from}
-                  to={data.meta.to}
-                  lastPage={data.meta.last_page}
-                  currentPage={page}
-                  totalRegisters={data.meta.total}
-                  onPageChange={setPage}
-                />
-              </>
-            )}
-          </>
-        </Card>
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { toCurrency(receivable.value) }
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { !receivable.paid ? (
+                            <HStack spacing={[2]}>
+                              <EditButton 
+                                isDisabled={receivable.is_parcel}
+                                onClick={() => handleReceivableForEdit(receivable.id, receivable.parcelable_id)}
+                              />
+
+                              <DeleteButton
+                                isDisabled={receivable.is_parcel && receivable.parcel_number !== 1}
+                                onDelete={() => handleDeletePayable(receivable.is_parcel ? receivable.parcelable_id : receivable.id)} 
+                                resource="Conta a Receber"
+                                loading={deletePayable.isLoading}
+                                isParcel={receivable.is_parcel}
+                              />
+
+                              <PaymentButton
+                                label={"Receber"}
+                                onClick={() => handleReceivement(receivable.id, receivable.parcelable_id)} 
+                              />
+                            </HStack>
+                          ) : (
+                            <CancelPaymentButton 
+                              label="Cancelar Pagamento"
+                              loading={cancelPayment.isLoading}
+                              onCancel={() => handleCancelReceivement(receivable.id, receivable.parcelable_id)} 
+                            />
+                          )}
+                          
+                        </Td>
+                      </Tr>
+                    )) }
+                  </Tbody>
+                </>
+              </Table>
+
+              <Pagination
+                from={data.meta.from}
+                to={data.meta.to}
+                lastPage={data.meta.last_page}
+                currentPage={page}
+                totalRegisters={data.meta.total}
+                onPageChange={setPage}
+              />
+            </>
+          )
+        }
       </Layout>
     </>
   )

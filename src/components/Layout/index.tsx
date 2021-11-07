@@ -1,34 +1,35 @@
 
-import { memo, ReactElement } from 'react';
-import { Flex } from '@chakra-ui/react';
+import { memo, ReactNode } from 'react';
+import { Box, Flex } from '@chakra-ui/react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 
 interface LayoutProps {
-  children: ReactElement
+  children: ReactNode
 }
 
 const LayoutComponent = ({ children }: LayoutProps) => {
   return (
-    <>
-      <Flex
-        flexDir={['column']}
-        h={["100vh"]}
-      >        
-        <Header />
-        <Flex
-          w={['full']}
-          mx={['auto']}
-          my={[6]}
-          px={[6]}
-        >
-          <Sidebar />
+    <Box minH="100vh">
+      <Sidebar />
+      <Header />
+   
+        <Box ml={{ base: 0, md: 60 }} p="4">
+          <Box 
+            w={"full"}
+            flex='1' 
+            borderRadius={8} 
+            bg="gray.800" p="8" 
+            h="max-content"
+            
+          >     
+            {children}
 
-          { children }
+          </Box>
+        </Box>
 
-        </Flex>
-      </Flex>
-    </>
+    </Box>
+
   )
 }
 

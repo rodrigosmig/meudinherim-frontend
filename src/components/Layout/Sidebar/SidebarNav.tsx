@@ -14,7 +14,7 @@ import {
 export const SidebarNav = () => {
   return (
     <>
-      <Stack spacing="8" align="flex-start">
+      <Stack spacing="8" align="flex-start" ml={[0, 4]}>
         <NavSection title="Geral" >
           <NavLink href="/dashboard" icon={RiDashboardLine}>Dashboard</NavLink>
           <NavLink href="/categories" icon={RiPriceTag3Line}>Categorias</NavLink>

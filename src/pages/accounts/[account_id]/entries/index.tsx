@@ -33,7 +33,6 @@ import { useMutation } from 'react-query';
 import { accountEntriesService } from '../../../../services/ApiService/AccountEntriesService';
 import { queryClient } from '../../../../services/queryClient';
 import { DateFilter } from '../../../../components/DateFilter';
-import { Card } from '../../../../components/Card';
 import { Heading } from '../../../../components/Heading';
 import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
 import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
@@ -173,119 +172,116 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
       </Head>
 
       <Layout>
-        <Card>
-          <>
-            <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-              <Heading>
-                <>
-                  {account.name}
-                  { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
-                </>
-              </Heading>
-              <Heading>
-                { isLoadingBalance ? (
-                  <Spinner size="sm" color="gray.500" ml="4" />
-                ) : (
-                  <Box color={dataBalance?.balances[0].positive ? 'blue.500' : 'red.500'}>{ dataBalance?.balances[0].balance }</Box>
-                )}
-              </Heading>
-            </Flex>
+        <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+          <Heading>
+            <>
+              {account.name}
+              { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+            </>
+          </Heading>
+          <Heading>
+            { isLoadingBalance ? (
+              <Spinner size="sm" color="gray.500" ml="4" />
+            ) : (
+              <Box color={dataBalance?.balances[0].positive ? 'blue.500' : 'red.500'}>{ dataBalance?.balances[0].balance }</Box>
+            )}
+          </Heading>
+        </Flex>
 
-            <DateFilter
-              isWideVersion={isWideVersion}
-              startDate={startDate}
-              endDate={endDate}
-              onChange={(update: [Date | null, Date | null]) => {
-                setDateRange(update);
-              }}
-              onClick={handleClickFilter}
-            />
-          
-            <Flex 
-              justify="space-between" 
-              align="center"
-              mb={[6, 6, 8]}
-            >
-              <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />            
-            </Flex>
+        <DateFilter
+          isWideVersion={isWideVersion}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={(update: [Date | null, Date | null]) => {
+            setDateRange(update);
+          }}
+          onClick={handleClickFilter}
+        />
+      
+        <Flex 
+          justify="space-between" 
+          align="center"
+          mb={[6, 6, 8]}
+        >
+          <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />            
+        </Flex>
 
-            { isLoading ? (
-                <Loading />
-              ) : isError ? (
-                <Flex justify="center">Falha ao obter as lançamentos</Flex>
-              ) : (
-                <>
-                <Box overflowX="auto">
-                  <Table size={sizeProps} colorScheme="whiteAlpha">
-                    <Thead>
-                      <Tr>
-                        <Th>Data</Th>
-                        <Th>Categoria</Th>
-                        <Th>Descrição</Th>
-                        <Th>Valor</Th>
-                        <Th w="8"></Th>
-                      </Tr>
-                    </Thead>
+        { isLoading ? (
+            <Loading />
+          ) : isError ? (
+            <Flex justify="center">Falha ao obter as lançamentos</Flex>
+          ) : (
+            <>
+            <Box overflowX="auto">
+              <Table size={sizeProps} colorScheme="whiteAlpha">
+                <Thead>
+                  <Tr>
+                    <Th>Data</Th>
+                    <Th>Categoria</Th>
+                    <Th>Descrição</Th>
+                    <Th>Valor</Th>
+                    <Th w="8"></Th>
+                  </Tr>
+                </Thead>
 
-                    <Tbody>
-                      { data.entries.map(entry => (
-                        <Tr key={entry.id}>
-                          <Td fontSize={["xs", "md"]}>
-                            <Text fontWeight="bold">{ entry.date }</Text>
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            <Text fontWeight="bold">{entry.category.name}</Text>
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            <Text fontWeight="bold">{entry.description}</Text>
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            <Text 
-                            fontWeight="bold" 
-                            color={entry.category.type == 1 ? "blue.500" : "red.500"}
-                          >
-                            { entry.value }
-                          </Text>
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                          { entry.account_scheduling == null ? (
-                            <HStack spacing={[2]}>                              
-                              <EditButton onClick={() => handleEditEntry(account.id, entry.id)} />
-                              <DeleteButton 
-                                onDelete={() => handleDeleteEntry(entry.id)} 
-                                resource="Lançamento"
-                                loading={deleteEntry.isLoading}
-                              />
-                            </HStack>
-                            ) : (
-                              entry.category.type === 1 ? (
-                                <Button colorScheme="green" onClick={() => handleShowReceivement(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Recebimento</Button>
-                              ) : (
-                                <Button colorScheme="green" onClick={() => handleShowPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Pagamento</Button>
-                              )
-                            )
-                          }
-                          </Td>
-                        </Tr>
-                      )) }
-                    </Tbody>
-                  </Table>
+                <Tbody>
+                  { data.entries.map(entry => (
+                    <Tr key={entry.id}>
+                      <Td fontSize={["xs", "md"]}>
+                        <Text fontWeight="bold">{ entry.date }</Text>
+                      </Td>
+                      <Td fontSize={["xs", "md"]}>
+                        <Text fontWeight="bold">{entry.category.name}</Text>
+                      </Td>
+                      <Td fontSize={["xs", "md"]}>
+                        <Text fontWeight="bold">{entry.description}</Text>
+                      </Td>
+                      <Td fontSize={["xs", "md"]}>
+                        <Text 
+                        fontWeight="bold" 
+                        color={entry.category.type == 1 ? "blue.500" : "red.500"}
+                      >
+                        { entry.value }
+                      </Text>
+                      </Td>
+                      <Td fontSize={["xs", "md"]}>
+                      { entry.account_scheduling == null ? (
+                        <HStack spacing={[2]}>                              
+                          <EditButton onClick={() => handleEditEntry(account.id, entry.id)} />
+                          <DeleteButton 
+                            onDelete={() => handleDeleteEntry(entry.id)} 
+                            resource="Lançamento"
+                            loading={deleteEntry.isLoading}
+                          />
+                        </HStack>
+                        ) : (
+                          entry.category.type === 1 ? (
+                            <Button colorScheme="green" onClick={() => handleShowReceivement(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Recebimento</Button>
+                          ) : (
+                            <Button colorScheme="green" onClick={() => handleShowPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Pagamento</Button>
+                          )
+                        )
+                      }
+                      </Td>
+                    </Tr>
+                  )) }
+                </Tbody>
+              </Table>
 
-                </Box>
+            </Box>
 
-                  <Pagination
-                    from={data.meta.from}
-                    to={data.meta.to}
-                    lastPage={data.meta.last_page}
-                    currentPage={page}
-                    totalRegisters={data.meta.total}
-                    onPageChange={setPage}
-                  />
+              <Pagination
+                from={data.meta.from}
+                to={data.meta.to}
+                lastPage={data.meta.last_page}
+                currentPage={page}
+                totalRegisters={data.meta.total}
+                onPageChange={setPage}
+              />
 
-                </>
-              )}
-          </>
-        </Card>      
+            </>
+          )
+        }
       </Layout>
     </>
   )

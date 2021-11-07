@@ -26,7 +26,6 @@ import { queryClient } from '../../services/queryClient';
 import { ExtractButton } from '../../components/Buttons/Extract';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
-import { Card } from "../../components/Card";
 import { Heading } from "../../components/Heading";
 
 export default function Accounts() {
@@ -96,63 +95,60 @@ export default function Accounts() {
       </Head>
 
       <Layout>
-        <Card>
-          <>
-            <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-              <Heading>
-                <>
-                  Contas
-                  { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
-                </>
-              </Heading>
-              <Heading>
-                <AddButton onClick={handleAddAccount} />
-              </Heading>
-            </Flex>
+        <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+          <Heading>
+            <>
+              Contas
+              { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+            </>
+          </Heading>
+          <Heading>
+            <AddButton onClick={handleAddAccount} />
+          </Heading>
+        </Flex>
 
-            { isLoading ? (
-                <Loading />
-              ) : isError ? (
-                <Flex justify="center">Falha ao obter as contas</Flex>
-              ) : (
-                <>
-                  <Table size={tableSize} colorScheme="whiteAlpha">
-                    <Thead>
-                      <Tr >
-                        <Th>Nome</Th>
-                        <Th>Tipo</Th>
-                        <Th w="8"></Th>
-                      </Tr>
-                    </Thead>
+        { isLoading ? (
+          <Loading />
+          ) : isError ? (
+            <Flex justify="center">Falha ao obter as contas</Flex>
+          ) : (
+            <>
+              <Table size={tableSize} colorScheme="whiteAlpha">
+                <Thead>
+                  <Tr >
+                    <Th>Nome</Th>
+                    <Th>Tipo</Th>
+                    <Th w="8"></Th>
+                  </Tr>
+                </Thead>
 
-                    <Tbody>
-                      { data.map(account => (
-                        <Tr key={account.id} px={[8]}>
-                          <Td fontSize={["xs", "md"]}>
-                            <Text fontWeight="bold">{account.name}</Text>
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { account.type.desc }
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            <HStack spacing={[2]}>
-                              <EditButton onClick={() => handleEditAccount(account.id)} />
-                              <DeleteButton 
-                                onDelete={() => handleDeleteAccount(account.id)} 
-                                resource="Conta"
-                                loading={deleteAccount?.isLoading}
-                              />
-                              <ExtractButton href={`/accounts/${account.id}/entries`} />
-                            </HStack>
-                          </Td>
-                        </Tr>
-                      )) }
-                    </Tbody>
-                  </Table>
-                </>
-              )}
-          </>
-        </Card>
+                <Tbody>
+                  { data.map(account => (
+                    <Tr key={account.id} px={[8]}>
+                      <Td fontSize={["xs", "md"]}>
+                        <Text fontWeight="bold">{account.name}</Text>
+                      </Td>
+                      <Td fontSize={["xs", "md"]}>
+                        { account.type.desc }
+                      </Td>
+                      <Td fontSize={["xs", "md"]}>
+                        <HStack spacing={[2]}>
+                          <EditButton onClick={() => handleEditAccount(account.id)} />
+                          <DeleteButton 
+                            onDelete={() => handleDeleteAccount(account.id)} 
+                            resource="Conta"
+                            loading={deleteAccount?.isLoading}
+                          />
+                          <ExtractButton href={`/accounts/${account.id}/entries`} />
+                        </HStack>
+                      </Td>
+                    </Tr>
+                  )) }
+                </Tbody>
+              </Table>
+            </>
+          )
+        }
       </Layout>
     </>
   )
