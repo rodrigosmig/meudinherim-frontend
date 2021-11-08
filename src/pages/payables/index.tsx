@@ -38,7 +38,6 @@ import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
 import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
 import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
 import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
-import SidebarWithHeader from '../../components/SidebarWithHeader';
 
 interface CancelPayableData {
   id: number, 
@@ -96,9 +95,6 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
-
-  const [payableId, setPayableId] = useState(null);
-  const [parcelableId, setParcelableId ] = useState(null);
 
   const [ selectedPayable, setSelectedPayable ] = useState({} as Payable)
 
@@ -163,7 +159,7 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     const payable = data.payables.filter(r => {
       return r.id === id && r.parcelable_id === parcelable_id
     })
-    console.log(payable)
+
     return payable[0];
   }
 

@@ -3,14 +3,19 @@ import { mocked } from 'ts-jest/utils';
 import { useMutation } from "react-query";
 import { act } from "react-dom/test-utils";
 import { CreateCategoryForm } from "../../../../components/Foms/categories/CreateCategoryForm";
+import { categoryService } from "../../../../services/ApiService/CategoryService";
 
-const useMutationMocked = useMutation as jest.Mock<any>;
+const categoryServiceMocked = mocked(categoryService.create);
 
-jest.mock('react-query')
+jest.mock('react-query');
+jest.mock('../../../../services/ApiService/CategoryService');
+
+const closeModal = jest.fn;
+const refetch = jest.fn;
 
 describe('CreateCategoryForm Component', () => {
   beforeEach(() => {
-    useMutationMocked.mockImplementation(() => ({ isLoading: false }));
+    render(<CreateCategoryForm closeModal={closeModal} refetch={refetch} />)
   });
 
   afterEach(() => {
@@ -18,27 +23,22 @@ describe('CreateCategoryForm Component', () => {
   });
   
   it('renders corretly', async () => {
-    render(<CreateCategoryForm />)
-
+    expect(categoryServiceMocked).toBeCalledTimes(0);
     expect(screen.getByText("Selecione um tipo")).toBeInTheDocument();
     expect(screen.getByText("Nome da Categoria")).toBeInTheDocument();
   })
 
   it('validates required fields inputs', async () => {
-    render(<CreateCategoryForm />)
-
     await act(async () => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(useMutationMocked).toBeCalledTimes(2);
+    expect(categoryServiceMocked).toBeCalledTimes(0);
     expect(screen.getByText("O campo tipo é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo nome é obrigatório")).toBeInTheDocument();
   })
 
   it('validates user inputs', async () => {
-    render(<CreateCategoryForm />)
-
     fireEvent.input(screen.getByLabelText('Nome da Categoria'), {
       target: {value: 'Te'}
     })
@@ -47,22 +47,24 @@ describe('CreateCategoryForm Component', () => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(useMutationMocked).toBeCalledTimes(2);
+    expect(categoryServiceMocked).toBeCalledTimes(0);
     expect(screen.getByText("O campo nome deve ter no mínimo 3 caracteres")).toBeInTheDocument();
   })
 
   it('create category successfuly', async () => {
-    useMutationMocked.mockImplementation(() => ({ isLoading: true }));
-
-    render(<CreateCategoryForm />)
-
     fireEvent.change(screen.getByRole('combobox'), {name: 'Tipo', target: { value: 1 } })
 
+    const category_name = 'Category Test';
+
     fireEvent.input(screen.getByLabelText('Nome da Categoria'), {
-      target: {value: 'Category Test'}
+      target: {value: category_name}
     })
 
-    expect(useMutationMocked).toBeCalledTimes(1);
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    })
+
+    expect(categoryServiceMocked).toBeCalledTimes(1);
+    expect(screen.getByText(`Categoria ${category_name} criada com sucesso`)).toBeInTheDocument();
   })
 })

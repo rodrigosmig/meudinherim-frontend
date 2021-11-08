@@ -11,7 +11,8 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
-  useToast, 
+  useToast,
+  useDisclosure
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
 import { Layout } from '../../components/Layout';
@@ -30,6 +31,14 @@ import { Pagination } from "../../components/Pagination";
 import { FilterPerPage } from '../../components/Pagination/FilterPerPage';
 import { Heading } from "../../components/Heading";
 import { Table } from "../../components/Table";
+import { EditCategoryModal } from "../../components/Modals/categories/EditCategoryModal";
+import { CreateCategoryModal } from "../../components/Modals/categories/CreateCategoryModal";
+
+interface Category {
+  id: number;
+  type: 1 | 2;
+  name: string;
+}
 
 export default function Categories() {
   const toast = useToast();
@@ -41,16 +50,17 @@ export default function Categories() {
     lg: true 
   });
 
+  const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
+  const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
+
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [categoryType, setCategoryType] = useState("");
   const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType, page, perPage);
 
-  const sizeProps = isWideVersion ? 'md' : 'sm';
+  const [ selectedCategory, setSelectedCategory ] = useState({} as Category)
 
-  const handleAddCategory = () => {
-    router.push('/categories/create');
-  }
+  const sizeProps = isWideVersion ? 'md' : 'sm';
 
   const handleChangeCategoryType = (event: ChangeEvent<HTMLSelectElement>) => {
     setCategoryType(event.target.value)
@@ -91,7 +101,17 @@ export default function Categories() {
   }
 
   const handleEditAccount = (category_id: number) => {
-    router.push(`/categories/${category_id}`)
+    const category = getSelectedCategory(category_id);
+    setSelectedCategory(category);
+    editModalonOpen();
+  }
+
+  const getSelectedCategory = (id: number) => {
+    const category = data.categories.filter(c => {
+      return c.id === id
+    })
+
+    return category[0];
   }
   
   const deleteCategory = useMutation(async (id: number) => {
@@ -106,6 +126,17 @@ export default function Categories() {
 
   return (
     <>
+      <CreateCategoryModal
+        isOpen={createModalIsOpen} 
+        onClose={createModalOnClose}
+        refetch={refetch}
+      />
+      <EditCategoryModal
+        category={selectedCategory}
+        isOpen={editModalIsOpen} 
+        onClose={editModalOnClose}
+        refetch={refetch}
+      />
       <Head>
         <title>Categorias | Meu Dinherim</title>
       </Head>
@@ -119,7 +150,7 @@ export default function Categories() {
             </>
           </Heading>
           <Heading>
-            <AddButton onClick={handleAddCategory} />
+            <AddButton onClick={createModalOnOpen} />
           </Heading>
         </Flex>
 

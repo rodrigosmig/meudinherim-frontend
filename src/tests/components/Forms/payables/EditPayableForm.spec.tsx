@@ -20,28 +20,31 @@ const categories = [
 ]
 
 const payable = {
-    id: 1,
-    due_date: "2021-10-21",
-    paid_date: null,
-    description: "Payable test",
-    value: 150.50,
-    category: {
-        id: 1,
-        name: "Category Test"
-    },
-    invoice_id: null,
-    paid: false,
-    monthly: false,
-    has_parcels: false,
-    is_parcel: false,
-    total_purchase: null,
-    parcel_number: null,
-    parcelable_id: null,
-  }
+  id: 1,
+  due_date: "2021-10-21",
+  paid_date: null,
+  description: "Payable test",
+  value: 150.50,
+  category: {
+      id: 1,
+      name: "Category Test"
+  },
+  invoice_id: null,
+  paid: false,
+  monthly: false,
+  has_parcels: false,
+  is_parcel: false,
+  total_purchase: null,
+  parcel_number: null,
+  parcelable_id: null,
+}
+
+const closeModal = jest.fn;
+const refetch = jest.fn;
 
 describe('EditPayableForm Component', () => {
   beforeEach(() => {
-    render(<EditPayableForm payable={payable} categories={categories} />)
+    render(<EditPayableForm payable={payable} categories={categories} closeModal={closeModal} refetch={refetch} />)
   });
 
   afterEach(() => {

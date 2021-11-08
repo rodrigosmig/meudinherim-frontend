@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
-import { EditPayableForm } from "../../../../components/Foms/payable/EditPayableForm";
 import { EditReceivableForm } from "../../../../components/Foms/receivable/EditReceivableForm";
 import { receivableService } from "../../../../services/ApiService/ReceivableService";
 
