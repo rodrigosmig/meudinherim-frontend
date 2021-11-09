@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import Head from "next/head";
 import { withSSRAuth } from '../utils/withSSRAuth';
 import { setupApiClient } from '../services/api';
-import { Card } from '../components/Card';
 import { Layout } from '../components/Layout';
 import { AuthContext } from '../contexts/AuthContext';
 import { FileInput } from '../components/Inputs/FileInput';
@@ -64,53 +63,49 @@ export default function Profile({ userUpdated }: ProfileProps) {
       </Head>
 
       <Layout>
-        <Card>
-          <>
-            <Flex justify="space-between" align="center">
-              <Heading>
-                <Text>Perfil</Text>
-              </Heading>
-            </Flex>
-            <FileInput
-              localImageUrl={localImageUrl}
-              setLocalImageUrl={setLocalImageUrl}
-              updateUser={handleUpdateUser}
-              setError={setError}
-              trigger={trigger}
-              error={errors.image}
-              {...register('image')}
-            />
+        <Flex justify="space-between" align="center">
+          <Heading>
+            <Text>Perfil</Text>
+          </Heading>
+        </Flex>
+        <FileInput
+          localImageUrl={localImageUrl}
+          setLocalImageUrl={setLocalImageUrl}
+          updateUser={handleUpdateUser}
+          setError={setError}
+          trigger={trigger}
+          error={errors.image}
+          {...register('image')}
+        />
 
-            <Box align="center">
-              <ChakraHeading mt={[6, 6, 8]} fontSize={['3xl', '4xl']}>
-                {user.name}
-              </ChakraHeading>
+        <Box align="center">
+          <ChakraHeading mt={[6, 6, 8]} fontSize={['3xl', '4xl']}>
+            {user.name}
+          </ChakraHeading>
 
-              <Text fontSize={['sm', 'md']} mb={[6, 6, 8]}>
-                {user.email}
-              </Text>
+          <Text fontSize={['sm', 'md']} mb={[6, 6, 8]}>
+            {user.email}
+          </Text>
 
-              <Box >
-                <Tabs colorScheme="pink">
-                  <TabList>
-                    <Tab>Perfil</Tab>
-                    <Tab>Senha</Tab>
-                  </TabList>
+          <Box >
+            <Tabs colorScheme="pink">
+              <TabList>
+                <Tab>Perfil</Tab>
+                <Tab>Senha</Tab>
+              </TabList>
 
-                  <TabPanels>
-                    <TabPanel>
-                      <ProfileForm updateUser={handleUpdateUser}/>
-                    </TabPanel>
+              <TabPanels>
+                <TabPanel>
+                  <ProfileForm updateUser={handleUpdateUser}/>
+                </TabPanel>
 
-                    <TabPanel>
-                      <ChangePasswordForm />
-                    </TabPanel>
-                  </TabPanels>
-                </Tabs>
-              </Box>
-            </Box>
-          </>
-        </Card>
+                <TabPanel>
+                  <ChangePasswordForm />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </Box>
+        </Box>
       </Layout>
     </>
   )

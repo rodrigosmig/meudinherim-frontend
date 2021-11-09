@@ -26,7 +26,6 @@ import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
 import { useMutation } from "react-query";
 import { queryClient } from "../../services/queryClient";
-import { useRouter } from "next/router";
 import { Pagination } from "../../components/Pagination";
 import { FilterPerPage } from '../../components/Pagination/FilterPerPage';
 import { Heading } from "../../components/Heading";
@@ -42,7 +41,6 @@ interface Category {
 
 export default function Categories() {
   const toast = useToast();
-  const router = useRouter();
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -100,7 +98,7 @@ export default function Categories() {
     setPerPage(value)
   }
 
-  const handleEditAccount = (category_id: number) => {
+  const handleEditCategory = (category_id: number) => {
     const category = getSelectedCategory(category_id);
     setSelectedCategory(category);
     editModalonOpen();
@@ -203,7 +201,7 @@ export default function Categories() {
                         </Td>
                         <Td fontSize={["xs", "md"]}>
                           <HStack spacing={[2]}>
-                            <EditButton onClick={() => handleEditAccount(category.id)} />
+                            <EditButton onClick={() => handleEditCategory(category.id)} />
                             <DeleteButton 
                               onDelete={() => handleDeleteCategory(category.id)} 
                               resource="Categoria"

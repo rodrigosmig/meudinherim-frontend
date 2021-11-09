@@ -6,22 +6,26 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { EditCategoryForm } from "../../Foms/categories/EditCategoryForm";
+import { EditAccountForm } from "../../Foms/account/EditAccountForm";
 
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
+interface Account {
+  id: number;
+  type: {
+    id: 'money' | 'savings' | 'checking_account' | 'investment';
+    desc: string;
+  }
+  name: string;
+  balance: number;
 }
 
 interface EditPayableModalProps {
-  category: Category;
+  account: Account;
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-export const EditCategoryModal = ({ category, isOpen, onClose, refetch }: EditPayableModalProps) => {
+export const EditAccountModal = ({ account, isOpen, onClose, refetch }: EditPayableModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
       <ModalOverlay />
@@ -30,8 +34,8 @@ export const EditCategoryModal = ({ category, isOpen, onClose, refetch }: EditPa
         <ModalCloseButton onClick={onClose} />
 
         <ModalBody>
-          <EditCategoryForm
-            category={category}
+          <EditAccountForm
+            account={account}
             closeModal={onClose}
             refetch={refetch}
           />

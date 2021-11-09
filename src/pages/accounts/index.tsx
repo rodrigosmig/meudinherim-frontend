@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Head from "next/head";
 import {
   Flex, 
@@ -11,12 +12,12 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
+  useDisclosure,
   useToast
 } from "@chakra-ui/react";
 import { Layout } from '../../components/Layout/index';
 import { AddButton } from '../../components/Buttons/Add';
 import { useAccounts } from "../../hooks/useAccounts";
-import { useRouter } from 'next/router';
 import { EditButton } from '../../components/Buttons/Edit';
 import { DeleteButton } from '../../components/Buttons/Delete';
 import { Loading } from '../../components/Loading/index';
@@ -27,10 +28,21 @@ import { ExtractButton } from '../../components/Buttons/Extract';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
 import { Heading } from "../../components/Heading";
+import { EditAccountModal } from "../../components/Modals/accounts/EditAccountModal";
+import { CreateAccountModal } from "../../components/Modals/accounts/CreateAccountModal";
+
+interface Account {
+  id: number;
+  type: {
+    id: 'money' | 'savings' | 'checking_account' | 'investment';
+    desc: string;
+  }
+  name: string;
+  balance: number;
+}
 
 export default function Accounts() {
   const toast = useToast();
-  const router = useRouter();
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -38,16 +50,27 @@ export default function Accounts() {
     lg: true 
   });
 
+  const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
+  const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
+
   const { data, isLoading, isFetching, isError, refetch } = useAccounts();
 
   const tableSize = isWideVersion ? 'md' : 'sm';
 
-  const handleAddAccount = () => {
-    router.push('/accounts/create');
-  }
+  const [ selectedAccount, setSelectedAccount ] = useState({} as Account)
 
   const handleEditAccount = (account_id: number) => {
-    router.push(`/accounts/${account_id}`)
+    const account = getSelectedAccount(account_id);
+    setSelectedAccount(account);
+    editModalonOpen();
+  }
+
+  const getSelectedAccount = (id: number) => {
+    const account = data.filter(a => {
+      return a.id === id
+    })
+
+    return account[0];
   }
 
   const deleteAccount = useMutation(async (id: number) => {
@@ -90,6 +113,19 @@ export default function Accounts() {
 
   return (
     <>
+      <CreateAccountModal
+        isOpen={createModalIsOpen} 
+        onClose={createModalOnClose}
+        refetch={refetch}
+      />
+      
+      <EditAccountModal
+        account={selectedAccount}
+        isOpen={editModalIsOpen} 
+        onClose={editModalOnClose}
+        refetch={refetch}
+      />
+
       <Head>
         <title>Contas | Meu Dinherim</title>
       </Head>
@@ -103,7 +139,7 @@ export default function Accounts() {
             </>
           </Heading>
           <Heading>
-            <AddButton onClick={handleAddAccount} />
+            <AddButton onClick={createModalOnOpen} />
           </Heading>
         </Flex>
 

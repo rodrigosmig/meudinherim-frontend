@@ -1,5 +1,3 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { 
   Box,
   Button,
@@ -32,6 +30,8 @@ interface Account {
 
 interface EditAccountFormProps {
   account: Account;
+  closeModal: () => void,
+  refetch: () => void
 }
 
 interface FormData {
@@ -46,9 +46,8 @@ type ResponseError = {
 
 type Key = keyof ResponseError
 
-export const EditAccountForm = ({ account }: EditAccountFormProps) => {
+export const EditAccountForm = ({ account, closeModal, refetch }: EditAccountFormProps) => {
   const toast = useToast();
-  const router = useRouter();
 
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
@@ -81,7 +80,9 @@ export const EditAccountForm = ({ account }: EditAccountFormProps) => {
         isClosable: true,
       })
 
-      router.push("/accounts");
+      refetch();
+      closeModal();
+
     } catch (error) {
       if (error.response?.status === 422) {
         const data: ResponseError = error.response.data;
@@ -130,15 +131,14 @@ export const EditAccountForm = ({ account }: EditAccountFormProps) => {
         justify="flex-end"
         align="center"
       >
-        <Link href={"/accounts"} passHref>
-          <Button
-            mr={[4]}
-            variant="outline"
-            isDisabled={formState.isSubmitting}
-          >
-            Cancelar
-          </Button>
-        </Link>
+        <Button
+          mr={[4]}
+          variant="outline"
+          isDisabled={formState.isSubmitting}
+          onClick={closeModal}
+        >
+          Cancelar
+        </Button>
 
         <SubmitButton
           label="Salvar"

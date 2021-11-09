@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { 
   Box,
   Button,
@@ -13,11 +12,15 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { accountService } from '../../../services/ApiService/AccountService';
 import { Select } from "../../Inputs/Select";
-import { useRouter } from 'next/router';
 
 interface FormData {
   type: string;
   name: string;
+}
+
+interface CreateAccountFormProps {
+  closeModal: () => void,
+  refetch: () => void
 }
 
 const validationSchema = yup.object().shape({
@@ -25,9 +28,8 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const CreateAccountForm = () => {
+export const CreateAccountForm = ({ closeModal, refetch }: CreateAccountFormProps) => {
   const toast = useToast();
-  const router = useRouter();
 
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
@@ -48,7 +50,9 @@ export const CreateAccountForm = () => {
         isClosable: true,
       });
 
-      router.push("/accounts");
+      refetch();
+      closeModal();
+
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;
@@ -95,15 +99,13 @@ export const CreateAccountForm = () => {
         justify="flex-end"
         align="center"
       >
-        <Link href={"/accounts"} passHref>
-          <Button
-            mr={[4]}
-            variant="outline"
-            isDisabled={formState.isSubmitting}
-          >
-            Cancelar
-          </Button>
-        </Link>
+        <Button
+          mr={[4]}
+          variant="outline"
+          isDisabled={formState.isSubmitting}
+        >
+          Cancelar
+        </Button>
 
         <SubmitButton
           label="Salvar"

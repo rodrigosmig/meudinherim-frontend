@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { useRouter } from "next/router";
 import { 
   Box,
   Button,
@@ -12,11 +11,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { useMutation } from "react-query";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
-import Link from "next/link";
-import { queryClient } from "../../../services/queryClient";
 
 interface EditCategoryFormProps {
   category: Category;
