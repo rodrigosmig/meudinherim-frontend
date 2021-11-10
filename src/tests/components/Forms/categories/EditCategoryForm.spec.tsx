@@ -1,11 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { useMutation } from "react-query";
 import { EditCategoryForm } from "../../../../components/Foms/categories/EditCategoryForm";
 import { act } from "react-dom/test-utils";
+import { mocked } from "ts-jest/utils";
+import { categoryService } from "../../../../services/ApiService/CategoryService";
 
-const useMutationMocked = useMutation as jest.Mock<any>;
+const categoryServiceMocked = mocked(categoryService.update);
 
-jest.mock('react-query')
+jest.mock('react-query');
+jest.mock('../../../../services/ApiService/CategoryService');
 
 interface Category {
   id: number;
@@ -19,9 +21,12 @@ const category: Category = {
   name: "Category Test"
 }
 
+const closeModal = jest.fn;
+const refetch = jest.fn;
+
 describe('EditCategoryForm Component', () => {
   beforeEach(() => {
-    useMutationMocked.mockImplementation(() => ({ isLoading: false }));
+    render(<EditCategoryForm category={category} closeModal={closeModal} refetch={refetch} />)
   });
 
   afterEach(() => {
@@ -29,8 +34,6 @@ describe('EditCategoryForm Component', () => {
   });
 
   it('validates required fields inputs', async () => {
-    render(<EditCategoryForm category={category} />)
-
     fireEvent.change(screen.getByRole('combobox'), {name: 'Tipo', target: { value: "" } })
 
     fireEvent.input(screen.getByLabelText('Nome da Categoria'), {
@@ -41,14 +44,12 @@ describe('EditCategoryForm Component', () => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(useMutationMocked).toBeCalledTimes(2);
+    expect(categoryServiceMocked).toBeCalledTimes(0);
     expect(screen.getByText("O campo tipo é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo nome é obrigatório")).toBeInTheDocument();
   })
 
   it('validates user inputs', async () => {
-    render(<EditCategoryForm category={category} />)
-
     fireEvent.input(screen.getByLabelText('Nome da Categoria'), {
       target: {value: 'Te'}
     })
@@ -57,22 +58,22 @@ describe('EditCategoryForm Component', () => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
 
-    expect(useMutationMocked).toBeCalledTimes(2);
+    expect(categoryServiceMocked).toBeCalledTimes(0);
     expect(screen.getByText("O campo nome deve ter no mínimo 3 caracteres")).toBeInTheDocument();
   })
 
   it('edit category successfuly', async () => {
-    useMutationMocked.mockImplementation(() => ({ isLoading: true }));
-
-    render(<EditCategoryForm category={category} />)
-
     fireEvent.change(screen.getByRole('combobox'), {name: 'Tipo', target: { value: 1 } })
 
     fireEvent.input(screen.getByLabelText('Nome da Categoria'), {
       target: {value: 'Category Test'}
     })
 
-    expect(useMutationMocked).toBeCalledTimes(1);
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    })
+
+    expect(categoryServiceMocked).toBeCalledTimes(1);
+    expect(screen.getByText("Categoria alterada com sucesso")).toBeInTheDocument();
   })
 })

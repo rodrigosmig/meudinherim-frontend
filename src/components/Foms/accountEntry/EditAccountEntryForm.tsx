@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { 
   Box,
   Button,
@@ -11,27 +10,18 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import Link from "next/link";
 import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
 import { format, parseISO } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
+import { useCategoriesForm } from "../../../hooks/useCategories";
+import { reverseBrDate } from "../../../utils/helpers";
+import { Loading } from "../../Loading";
 
 interface Category {
   id: number,
-  type: number | 1 | 2,
+  type: 1 | 2,
   name: string,
-}
-
-type CategoriesForForm = {
-  income: {
-    id: number;
-    label: string
-  }[]
-  expense: {
-    id: number;
-    label: string
-  }[]
 }
 
 interface Account {
@@ -55,7 +45,8 @@ interface AccountEntry {
 
 interface EditAccountEntryFormProps {
   entry: AccountEntry;
-  categories: CategoriesForForm;
+  closeModal: () => void,
+  refetch: () => void
 }
 
 interface FormData {
@@ -80,13 +71,14 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
 })
 
-export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryFormProps) => {  
+export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccountEntryFormProps) => {  
   const toast = useToast();
-  const router = useRouter();
+
+  const { data: categories, isLoading } = useCategoriesForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
-      date: parseISO(entry.date),
+      date: parseISO(reverseBrDate(entry.date)),
       category_id: entry.category.id,
       description: entry.description,
       value: entry.value
@@ -107,7 +99,7 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
     }
     
     try {
-      const response = await accountEntriesService.update(data)
+      await accountEntriesService.update(data)
       
       toast({
         title: "Sucesso",
@@ -118,7 +110,8 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
         isClosable: true,
       })
 
-      router.push(`/accounts/${entry.account.id}/entries`)
+      refetch();
+      closeModal();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -132,6 +125,12 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
         }
       }
     }
+  }
+
+  if (isLoading) {
+    return (
+      <Loading />
+    )
   }
 
   return (
@@ -182,15 +181,14 @@ export const EditAccountEntryForm = ({ entry, categories }: EditAccountEntryForm
         justify="flex-end"
         align="center"
       >
-        <Link href={`/accounts/${entry.account.id}/entries`} passHref>
-          <Button
-            mr={[4]}
-            variant="outline"
-            isDisabled={formState.isSubmitting}
-          >
-            Cancelar
-          </Button>
-        </Link>
+        <Button
+          mr={[4]}
+          variant="outline"
+          isDisabled={formState.isSubmitting}
+          onClick={closeModal}
+        >
+          Cancelar
+        </Button>
 
         <SubmitButton
           label="Salvar"

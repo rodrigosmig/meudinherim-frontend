@@ -4,7 +4,6 @@ import { Layout } from '../../../components/Layout/index';
 import { withSSRAuth } from '../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../services/api';
 import { CreateAccountEntryForm } from "../../../components/Foms/accountEntry/CreateAccountEntryForm";
-import { Card } from "../../../components/Card";
 import { Heading } from "../../../components/Heading";
 
 type CategoriesForForm = {
@@ -36,20 +35,16 @@ export default function CreateAccountEntry({ categories, formAccounts }: CreateA
       </Head>
 
       <Layout>
-        <Card>
-          <>
-            <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-              <Heading>
-                <Text>Novo Lançamento</Text>
-              </Heading>
-            </Flex>
+          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+            <Heading>
+              <Text>Novo Lançamento</Text>
+            </Heading>
+          </Flex>
 
-            <CreateAccountEntryForm 
-              categories={categories} 
-              formAccounts={formAccounts} 
-            />
-          </>
-        </Card>
+          <CreateAccountEntryForm 
+            categories={categories} 
+            formAccounts={formAccounts} 
+          />
       </Layout>
     </>
   )

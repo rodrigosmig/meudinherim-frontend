@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { useRouter } from "next/router";
 import { 
   Box,
   Button,
@@ -12,14 +11,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { useMutation } from "react-query";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
-import Link from "next/link";
-import { queryClient } from "../../../services/queryClient";
 
 interface EditCategoryFormProps {
   category: Category;
+  closeModal: () => void,
+  refetch: () => void
 }
 
 interface Category {
@@ -45,9 +43,8 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-const EditCategoryFormComponent = ({ category }: EditCategoryFormProps) => {
+const EditCategoryFormComponent = ({ category, closeModal, refetch }: EditCategoryFormProps) => {
   const toast = useToast();
-  const router = useRouter();
 
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
@@ -59,7 +56,7 @@ const EditCategoryFormComponent = ({ category }: EditCategoryFormProps) => {
 
   const { errors } = formState;
 
-  const { isLoading, mutateAsync } = useMutation(async (values: FormData) => {
+  const handleEditCategory: SubmitHandler<FormData> = async (values) => {
     const data = {
       categoryId: category.id,
       data: {
@@ -67,29 +64,21 @@ const EditCategoryFormComponent = ({ category }: EditCategoryFormProps) => {
         name: values.name,
       }
     }
-    const response = await categoryService.update(data)
-  
-    return response.data;
-  },  {
-    onSuccess: () => {
-      queryClient.invalidateQueries('categories')
-    }
-  });
 
-  const handleEditCategory: SubmitHandler<FormData> = async (values) => {
     try {
-      await mutateAsync(values);
+      await categoryService.update(data)
       
       toast({
         title: "Sucesso",
-        description: "Alteração realizada com sucesso",
+        description: "Categoria alterada com sucesso",
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
       })
 
-      router.push('/categories')
+      refetch();
+      closeModal();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -137,20 +126,19 @@ const EditCategoryFormComponent = ({ category }: EditCategoryFormProps) => {
         justify="flex-end"
         align="center"
       >
-        <Link href={"/categories"} passHref>
-          <Button
-            mr={[4]}
-            variant="outline"
-            isDisabled={isLoading}
-          >
-            Cancelar
-          </Button>
-        </Link>
+        <Button
+          mr={[4]}
+          variant="outline"
+          isDisabled={formState.isSubmitting}
+          onClick={closeModal}
+        >
+          Cancelar
+        </Button>
 
         <SubmitButton
           label="Salvar"
           size="md"
-          isLoading={isLoading}
+          isLoading={formState.isSubmitting}
         />
       </Flex>
     </Box>

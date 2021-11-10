@@ -9,10 +9,19 @@ const accountServiceMocked = mocked(accountService.create);
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/AccountService')
 
-describe('CreateAccountForm Component', () => {
-  it('renders corretly', async () => {
-    render(<CreateAccountForm />)
+const closeModal = jest.fn;
+const refetch = jest.fn;
 
+describe('CreateAccountForm Component', () => {
+  beforeEach(() => {
+    render(<CreateAccountForm closeModal={closeModal} refetch={refetch} />)
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders corretly', async () => {
     expect(screen.getByText("Dinheiro")).toBeInTheDocument();
     expect(screen.getByText("Poupança")).toBeInTheDocument();
     expect(screen.getByText("Conta Corrente")).toBeInTheDocument();
@@ -21,8 +30,6 @@ describe('CreateAccountForm Component', () => {
   })
 
   it('validates required fields inputs', async () => {
-    render(<CreateAccountForm />)
-
     fireEvent.change(screen.getByRole('combobox'), {name: 'Tipo', target: { value: "" } })
 
     await act(async () => {
@@ -35,8 +42,6 @@ describe('CreateAccountForm Component', () => {
   })
 
   it('validates user inputs', async () => {
-    render(<CreateAccountForm />)
-
     fireEvent.change(screen.getByRole('combobox'), {name: 'Tipo', target: { value: "savings" } })
 
     fireEvent.input(screen.getByLabelText('Nome da Conta'), {
@@ -52,8 +57,6 @@ describe('CreateAccountForm Component', () => {
   })
 
   it('create account successfuly', async () => {
-    render(<CreateAccountForm />)
-
     fireEvent.change(screen.getByRole('combobox'), {name: 'Tipo', target: { value: 'savings' } })
 
     fireEvent.input(screen.getByLabelText('Nome da Conta'), {

@@ -63,7 +63,6 @@ const validationSchema = yup.object().shape({
 
 export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePayableFormProps) => {  
   const toast = useToast();
-  const router = useRouter();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
@@ -222,12 +221,7 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
         justify="flex-end"
         align="center"
       >
-        <SubmitButton
-          mr={[4]}
-          label="Salvar"
-          size="md"
-          isLoading={formState.isSubmitting}
-        />
+
         <Button
           variant="outline"
           isDisabled={formState.isSubmitting}
@@ -235,6 +229,13 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
         >
           Cancelar
         </Button>
+
+        <SubmitButton
+          mr={[4]}
+          label="Salvar"
+          size="md"
+          isLoading={formState.isSubmitting}
+        />
       </Flex>
     </Box>
   )

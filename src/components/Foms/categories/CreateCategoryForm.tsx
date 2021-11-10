@@ -10,16 +10,18 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { queryClient } from "../../../services/queryClient";
-import { useMutation } from "react-query";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 interface FormData {
   type: number;
   name: string;
+}
+
+interface CreateCategoryFormProps {
+  closeModal: () => void,
+  refetch: () => void
 }
 
 const validationSchema = yup.object().shape({
@@ -27,9 +29,8 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const CreateCategoryForm = () => {
+export const CreateCategoryForm = ({ closeModal, refetch }: CreateCategoryFormProps) => {
   const toast = useToast();
-  const router = useRouter();
 
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
@@ -37,20 +38,9 @@ export const CreateCategoryForm = () => {
 
   const { errors } = formState;
 
-  const createCategory = useMutation(async (values: FormData) => {
-    const response = await categoryService.create(values)
-  
-    return response.data;
-  }, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('categories')
-      router.push('/categories')
-    }
-  });
-
   const handleCreateCategory: SubmitHandler<FormData> = async (values) => {
     try {
-      await createCategory.mutateAsync(values);
+      await categoryService.create(values)
       
       toast({
         title: "Sucesso",
@@ -60,6 +50,10 @@ export const CreateCategoryForm = () => {
         duration: 10000,
         isClosable: true,
       })
+
+      refetch();
+      closeModal();
+
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;
@@ -109,7 +103,8 @@ export const CreateCategoryForm = () => {
           <Button
             mr={[4]}
             variant="outline"
-            isDisabled={createCategory.isLoading}
+            isDisabled={formState.isSubmitting}
+            onClick={closeModal}
           >
             Cancelar
           </Button>
@@ -118,7 +113,7 @@ export const CreateCategoryForm = () => {
         <SubmitButton
           label="Salvar"
           size="md"
-          isLoading={createCategory.isLoading}
+          isLoading={formState.isSubmitting}
         />
       </Flex>
     </Box>

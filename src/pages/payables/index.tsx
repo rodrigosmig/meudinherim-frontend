@@ -22,7 +22,6 @@ import { Loading } from "../../components/Loading";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
 import { Table } from "../../components/Table";
-import { Card } from "../../components/Card";
 import { Heading } from "../../components/Heading";
 import { PaymentButton } from "../../components/Buttons/Payment";
 import { DateFilter } from "../../components/DateFilter";
@@ -97,9 +96,6 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
 
-  const [payableId, setPayableId] = useState(null);
-  const [parcelableId, setParcelableId ] = useState(null);
-
   const [ selectedPayable, setSelectedPayable ] = useState({} as Payable)
 
   const { data, isLoading, isFetching, isError, refetch } = usePayables(filterDate, page, perPage, payableStatus);
@@ -163,7 +159,7 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     const payable = data.payables.filter(r => {
       return r.id === id && r.parcelable_id === parcelable_id
     })
-    console.log(payable)
+
     return payable[0];
   }
 
@@ -257,141 +253,138 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
       </Head>
 
       <Layout>
-        <Card>
-          <>
-          <Flex mb={[6, 6, 8]} justify="space-between" align="center">
-            <Heading>
-              <>
-                Contas a Pagar { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
-              </>
-            </Heading>
-            <Heading>
-              <AddButton onClick={createModalOnOpen} />
-            </Heading>
-          </Flex>
+        <Flex mb={[6, 6, 8]} justify="space-between" align="center">
+          <Heading>
+            <>
+              Contas a Pagar { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+            </>
+          </Heading>
+          <Heading>
+            <AddButton onClick={createModalOnOpen} />
+          </Heading>
+        </Flex>
 
-          <DateFilter
-            isWideVersion={isWideVersion}
-            startDate={startDate}
-            endDate={endDate}
-            onChange={(update: [Date | null, Date | null]) => {
-              setDateRange(update);
-            }}
-            onClick={handleClickFilter}
-          />
-          
-          <Flex 
-            justify="space-between" 
-            align="center"
-            mb={[6, 6, 8]}
-          >
-            <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />  
-
-            <Flex align="center">
-              <Select
-                size={sizeProps}
-                variant="unstyled"
-                maxW={[150]}
-                onChange={event => handleChangePayableStatus(event)}
-              >
-                <option value="all">Todas</option>
-                <option value="open" selected>Abertas</option>
-                <option value="paid">Pagas</option>
-              </Select>
-            </Flex>          
-          </Flex>
+        <DateFilter
+          isWideVersion={isWideVersion}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={(update: [Date | null, Date | null]) => {
+            setDateRange(update);
+          }}
+          onClick={handleClickFilter}
+        />
         
-          { isLoading ? (
-              <Loading />
-            ) : isError ? (
-              <Flex justify="center">Falha ao obter as contas</Flex>
-            ) : (
-              <>
-                <Table tableSize={tableSize}>
-                  <>
-                    <Thead>
-                      <Tr >
-                        <Th>Vencimento</Th>
-                        <Th>Pagamento</Th>
-                        <Th>Categoria</Th>
-                        <Th>Descrição</Th>
-                        <Th>Valor</Th>
-                        <Th w="8"></Th>
-                      </Tr>
-                    </Thead>
+        <Flex 
+          justify="space-between" 
+          align="center"
+          mb={[6, 6, 8]}
+        >
+          <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />  
 
-                    <Tbody>
-                      { data.payables.map(payable => (
-                        <Tr key={ payable.id } px={[8]}>
-                          <Td fontSize={["xs", "md"]}>
-                            <Text fontWeight="bold">{payable.due_date}</Text>
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { payable.paid_date}
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { payable.category.name}
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { payable.is_parcel ? (
-                              <PopoverTotal
-                                description={payable.description}
-                                amount={payable.total_purchase}
-                              />
-                              ) : (
-                                payable.description
-                              )
-                            }
+          <Flex align="center">
+            <Select
+              size={sizeProps}
+              variant="unstyled"
+              maxW={[150]}
+              onChange={event => handleChangePayableStatus(event)}
+            >
+              <option value="all">Todas</option>
+              <option value="open" selected>Abertas</option>
+              <option value="paid">Pagas</option>
+            </Select>
+          </Flex>          
+        </Flex>
+      
+        { isLoading ? (
+            <Loading />
+          ) : isError ? (
+            <Flex justify="center">Falha ao obter as contas</Flex>
+          ) : (
+            <>
+              <Table tableSize={tableSize}>
+                <>
+                  <Thead>
+                    <Tr >
+                      <Th>Vencimento</Th>
+                      <Th>Pagamento</Th>
+                      <Th>Categoria</Th>
+                      <Th>Descrição</Th>
+                      <Th>Valor</Th>
+                      <Th w="8"></Th>
+                    </Tr>
+                  </Thead>
 
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { toCurrency(payable.value) }
-                          </Td>
-                          <Td fontSize={["xs", "md"]}>
-                            { !payable.paid ? (
-                              <HStack spacing={[2]}>
-                                <EditButton 
-                                  isDisabled={payable.is_parcel}
-                                  onClick={() => handlePayableForEdit(payable.id, payable.parcelable_id)}
-                                />
-
-                                <DeleteButton
-                                  isDisabled={payable.is_parcel && payable.parcel_number !== 1}
-                                  onDelete={() => handleDeletePayable(payable.is_parcel ? payable.parcelable_id : payable.id)} 
-                                  resource="Conta a Pagar"
-                                  loading={deletePayable.isLoading}
-                                  isParcel={payable.is_parcel}
-                                />
-
-                                <PaymentButton onClick={() => handlePayment(payable.id, payable.parcelable_id)} />
-                              </HStack>
+                  <Tbody>
+                    { data.payables.map(payable => (
+                      <Tr key={ payable.id } px={[8]}>
+                        <Td fontSize={["xs", "md"]}>
+                          <Text fontWeight="bold">{payable.due_date}</Text>
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { payable.paid_date}
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { payable.category.name}
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { payable.is_parcel ? (
+                            <PopoverTotal
+                              description={payable.description}
+                              amount={payable.total_purchase}
+                            />
                             ) : (
-                              <CancelPaymentButton 
-                                label="Cancelar Pagamento"
-                                loading={cancelPayment.isLoading}
-                                onCancel={() => handleCancelPayment(payable.id, payable.parcelable_id)} 
-                              />
-                            )}
-                            
-                          </Td>
-                        </Tr>
-                      )) }
-                    </Tbody>
-                  </>
-                </Table>
+                              payable.description
+                            )
+                          }
 
-                <Pagination
-                  from={data.meta.from}
-                  to={data.meta.to}
-                  lastPage={data.meta.last_page}
-                  currentPage={page}
-                  totalRegisters={data.meta.total}
-                  onPageChange={setPage}
-                />
-              </>
-            )}
-          </>
-        </Card>
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { toCurrency(payable.value) }
+                        </Td>
+                        <Td fontSize={["xs", "md"]}>
+                          { !payable.paid ? (
+                            <HStack spacing={[2]}>
+                              <EditButton 
+                                isDisabled={payable.is_parcel}
+                                onClick={() => handlePayableForEdit(payable.id, payable.parcelable_id)}
+                              />
+
+                              <DeleteButton
+                                isDisabled={payable.is_parcel && payable.parcel_number !== 1}
+                                onDelete={() => handleDeletePayable(payable.is_parcel ? payable.parcelable_id : payable.id)} 
+                                resource="Conta a Pagar"
+                                loading={deletePayable.isLoading}
+                                isParcel={payable.is_parcel}
+                              />
+
+                              <PaymentButton onClick={() => handlePayment(payable.id, payable.parcelable_id)} />
+                            </HStack>
+                          ) : (
+                            <CancelPaymentButton 
+                              label="Cancelar Pagamento"
+                              loading={cancelPayment.isLoading}
+                              onCancel={() => handleCancelPayment(payable.id, payable.parcelable_id)} 
+                            />
+                          )}
+                          
+                        </Td>
+                      </Tr>
+                    )) }
+                  </Tbody>
+                </>
+              </Table>
+
+              <Pagination
+                from={data.meta.from}
+                to={data.meta.to}
+                lastPage={data.meta.last_page}
+                currentPage={page}
+                totalRegisters={data.meta.total}
+                onPageChange={setPage}
+              />
+            </>
+          )
+        }
       </Layout>
     </>
   )

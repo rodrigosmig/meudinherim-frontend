@@ -1,5 +1,11 @@
-import { Flex, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
-import { Logo } from "./Logo";
+import { 
+  Box, 
+  Flex, 
+  Icon, 
+  IconButton, 
+  useBreakpointValue, 
+  useColorModeValue 
+} from "@chakra-ui/react";
 import { MenuNav } from "./MenuNav";
 import { Avatar } from './Avatar';
 import { useSidebarDrawer } from "../../../contexts/SidebarDrawerContext";
@@ -11,18 +17,15 @@ const HeaderComponent = () => {
 
   const isWideVersion = useBreakpointValue({
     base: false,
-    md: false,
     lg: true 
   })
 
   return (
     <Flex
-      as="header"
-      w="full"
-      mx="auto"
-      mt="4"
-      px="6"
-      align="center"
+      ml={{ base: 0, md: 0 }}
+      px={{ base: 4, md: 4 }}
+      h={[20]}
+      alignItems="center"
     >
       { !isWideVersion && (
         <IconButton
@@ -33,10 +36,6 @@ const HeaderComponent = () => {
           onClick={onOpen}
           mr="2"
         />
-      )}
-
-      { isWideVersion && (
-        <Logo />
       )}
 
       <Flex
