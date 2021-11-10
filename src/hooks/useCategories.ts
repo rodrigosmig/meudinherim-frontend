@@ -31,3 +31,9 @@ export const useCategories = (type: string, page: number, perPage: number) => {
     staleTime: 1000 * 5
   })
 }
+
+export const useCategoriesForm = () => {
+  return useQuery(['categories-form'], () => getCategoriesForForm(), {
+    staleTime: 1000 * 5
+  })
+}

@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { accountEntriesService } from "../services/ApiService/AccountEntriesService";
-import { toBrDate, toCurrency } from '../utils/helpers';
+import { toBrDate } from '../utils/helpers';
 
 
 export const getAccountEntries = async (account_id: number, filterDate: [string, string], page: number, perPage: number) => {
@@ -24,7 +24,7 @@ export const getAccountEntries = async (account_id: number, filterDate: [string,
       date: toBrDate(entry.date),
       description: entry.description,
       account_scheduling: account_scheduling,
-      value: toCurrency(entry.value),
+      value: entry.value,
       category: entry.category,
       account: entry.account
     }

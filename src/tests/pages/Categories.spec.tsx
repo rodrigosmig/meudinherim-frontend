@@ -52,11 +52,6 @@ const data = {
   }
 }
 
-const data2 = [
-  {id: 1, type: {id: "money", desc: "Money"}, name: "Account Test", balance: 50},
-  {id: 2, type: {id: "savings", desc: "Savings"}, name: "Account Savings", balance: 150}
-]
-
 describe('Categories Component', () => {
     beforeEach(() => {
       useCategoriesMocked.mockImplementation(() => ({ isLoading: true }));

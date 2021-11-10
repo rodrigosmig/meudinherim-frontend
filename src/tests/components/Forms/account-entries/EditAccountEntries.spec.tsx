@@ -2,13 +2,54 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from "ts-jest/utils";
 import { accountEntriesService } from "../../../../services/ApiService/AccountEntriesService";
 import { EditAccountEntryForm } from "../../../../components/Foms/accountEntry/EditAccountEntryForm";
+import { useCategoriesForm } from "../../../../hooks/useCategories";
 
+interface Category {
+  id: number,
+  type: 1 | 2,
+  name: string,
+}
+
+interface AccountEntry {
+  id: number;
+  date: string;
+  category: Category;
+  description: string;
+  value: number;
+  account: Account;
+}
+
+interface Account {
+  id: number;
+  name: string;
+  type: {
+    id: string | 'money' | 'savings' | 'checking_account' | 'investment';
+    desc: string;
+  }
+  balance: number;
+}
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
 const accountEntriesServiceMocked = mocked(accountEntriesService.update);
 
 jest.mock('react-query')
-jest.mock('../../../../services/ApiService/AccountEntriesService')
+jest.mock('../../../../services/ApiService/AccountEntriesService');
+jest.mock('../../../../hooks/useCategories');
 
-const account = {
+const account: Account = {
   id: 1,
   type: {
     id: 'checking_account',
@@ -18,12 +59,12 @@ const account = {
   name: "Account Test"
 }
 
-const entry = {
+const entry: AccountEntry = {
   id: 1,
   date: '2021-09-01',
   category: {
     id: 1,
-    type: 1,
+    type: 2,
     name: 'Category test'
   },
   description: 'Account entry test',
@@ -46,23 +87,56 @@ const categoriesForm = {
   ]
 }
 
-describe('EditAccountForm Component', () => {
-  it('renders corretly', async () => {
-    render(<EditAccountEntryForm entry={entry} categories={categoriesForm} />)
+type CategoriesForForm = {
+  income: {
+    id: number;
+    label: string
+  }[]
+  expense: {
+    id: number;
+    label: string
+  }[]
+}
 
+const data = {
+  income: [
+    {
+      id: 1, label: "Income Category Test"
+    },
+  ],
+  expense: [
+    {
+      id: 2, label: "Expense Category Test"
+    },
+  ],
+}
+
+const closeModal = jest.fn;
+const refetch = jest.fn;
+
+describe('EditAccountEntryForm Component', () => {
+  beforeEach(() => {
+    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data }));
+
+    render(<EditAccountEntryForm entry={entry} closeModal={closeModal} refetch={refetch} />)
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders corretly', async () => {
     expect(screen.getByText("Data")).toBeInTheDocument();
     expect(screen.getByText("Categoria")).toBeInTheDocument();
     expect(screen.getByText("Descrição")).toBeInTheDocument();
     expect(screen.getByText("Valor")).toBeInTheDocument();
 
-    expect(screen.getByText("Income Category")).toBeInTheDocument();
-    expect(screen.getByText("Expense Category")).toBeInTheDocument();
+    expect(screen.getByText("Income Category Test")).toBeInTheDocument();
+    expect(screen.getByText("Expense Category Test")).toBeInTheDocument();
   })
 
 
   it('validates required fields inputs', async () => {
-    render(<EditAccountEntryForm entry={entry} categories={categoriesForm} />)
-
     fireEvent.change(screen.getByLabelText('Categoria'), {target: { value: "" }})
     fireEvent.change(screen.getByLabelText('Data'), {target: { value: "" }})
     fireEvent.change(screen.getByLabelText('Descrição'), {target: { value: "" }})
@@ -81,8 +155,6 @@ describe('EditAccountForm Component', () => {
   })
 
   it('validates user inputs', async () => {
-    render(<EditAccountEntryForm entry={entry} categories={categoriesForm} />)
-
     fireEvent.change(screen.getByLabelText('Descrição'), {target: { value: "Te" }})
     fireEvent.change(screen.getByLabelText('Valor'), {target: { value: -100 }})
 
@@ -96,8 +168,6 @@ describe('EditAccountForm Component', () => {
   })
 
   it('edit account successfuly', async () => {
-    render(<EditAccountEntryForm entry={entry} categories={categoriesForm} />)
-
     fireEvent.change(screen.getByLabelText('Descrição'), {target: { value: "Account entry updated" }})
 
     await waitFor(() => {

@@ -21,7 +21,7 @@ import {
 import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../../services/api';
-import { toUsDate } from '../../../../utils/helpers';
+import { toCurrency, toUsDate } from '../../../../utils/helpers';
 import { useAccountEntries } from '../../../../hooks/useAccountEntries';
 import { useAccountBalance } from '../../../../hooks/useAccountBalance';
 import { FilterPerPage } from '../../../../components/Pagination/FilterPerPage';
@@ -36,7 +36,13 @@ import { DateFilter } from '../../../../components/DateFilter';
 import { Heading } from '../../../../components/Heading';
 import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
 import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
+import { EditAccountEntryModal } from '../../../../components/Modals/account_entries/EditAccountEntryModal';
 
+interface Category {
+  id: number,
+  type: 1 | 2,
+  name: string,
+}
 interface Account {
   id: number;
   type: {
@@ -51,6 +57,15 @@ interface AccountEntriesProps {
   account: Account
 }
 
+interface AccountEntry {
+  id: number;
+  date: string;
+  category: Category;
+  description: string;
+  value: number;
+  account: Account;
+}
+
 export default function AccountEntries({ account }: AccountEntriesProps) {
   const toast = useToast();
   const router = useRouter();
@@ -63,6 +78,8 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
 
   const { isOpen: showPaymentIsOpen , onOpen: showPaymentOnOpen, onClose: showPaymentOnClose } = useDisclosure();
   const { isOpen: showReceivementIsOpen , onOpen: showReceivementOnOpen, onClose: showReceivementOnClose } = useDisclosure();
+  const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
+  const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -73,6 +90,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
   const [payableId, setPayableId] = useState(null);
   const [parcelableId, setParcelableId ] = useState(null);
   const [receivableId, setReceivableId] = useState(null);
+  const [ selectedEntry, setSelectedEntry ] = useState({} as AccountEntry)
 
   const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, filterDate, page, perPage);
   const { data: dataBalance, isLoading: isLoadingBalance, refetch: refetchBalance } = useAccountBalance(account.id);
@@ -88,6 +106,11 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
       queryClient.invalidateQueries('accountEntries')
     }
   });
+
+  const handleRefetchData = () => {
+    refetch();
+    refetchBalance();
+  }
 
   const handleDeleteEntry = async (id: number) => {
     try {
@@ -144,12 +167,36 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
     showReceivementOnOpen();
   }
 
-  const handleEditEntry = (account_id: number, entry_id: number) => {
-    router.push(`/accounts/${account_id}/entries/${entry_id}`)
+  const handleEditEntry = (entry_id: number) => {
+    const entry = getSelectedAccount(entry_id);
+
+    setSelectedEntry(entry);
+    editModalonOpen();
+  }
+
+  const getSelectedAccount = (id: number) => {
+    const account = data.entries.filter(e => {
+      return e.id === id
+    })
+
+    return account[0];
   }
 
   return (
     <>
+      {/* <CreateAccountModal
+        isOpen={createModalIsOpen} 
+        onClose={createModalOnClose}
+        refetch={refetch}
+      /> */}
+      
+      <EditAccountEntryModal
+        entry={selectedEntry}
+        isOpen={editModalIsOpen} 
+        onClose={editModalOnClose}
+        refetch={handleRefetchData}
+      />
+
       <ShowPaymentModal
         accountId={payableId}
         parcelableId={parcelableId}
@@ -241,13 +288,13 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                         fontWeight="bold" 
                         color={entry.category.type == 1 ? "blue.500" : "red.500"}
                       >
-                        { entry.value }
+                        { toCurrency(entry.value) }
                       </Text>
                       </Td>
                       <Td fontSize={["xs", "md"]}>
                       { entry.account_scheduling == null ? (
                         <HStack spacing={[2]}>                              
-                          <EditButton onClick={() => handleEditEntry(account.id, entry.id)} />
+                          <EditButton onClick={() => handleEditEntry(entry.id)} />
                           <DeleteButton 
                             onDelete={() => handleDeleteEntry(entry.id)} 
                             resource="Lançamento"
