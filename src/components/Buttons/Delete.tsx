@@ -45,7 +45,12 @@ const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false
           isDisabled={isDisabled}
           size="sm"
           fontSize="sm"
-          colorScheme="purple"
+          bg="purple.500"
+          _hover={{ bg: "purple.300" }}
+          _active={{
+            bg: "purple.400",
+            transform: "scale(0.98)",
+          }}
           leftIcon={<Icon as={RiDeleteBin2Line} fontSize="16" />}
           onClick={() => setIsOpen(true)}
         >
@@ -58,7 +63,12 @@ const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false
             isDisabled={isDisabled}
             size="xs"
             aria-label="Delete"
-            colorScheme="purple" 
+            bg="purple.500"
+            _hover={{ bg: "purple.300" }}
+            _active={{
+              bg: "purple.400",
+              transform: "scale(0.98)",
+            }}
             icon={<RiDeleteBin2Line />} 
             onClick={() => setIsOpen(true)}
           />
@@ -70,12 +80,12 @@ const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false
         onClose={onClose}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent bgColor="gray.800">
+          <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Deletar { resource }
             </AlertDialogHeader>
 
-            <AlertDialogBody bgColor="gray.800">
+            <AlertDialogBody>
               Tem certeza que deseja deletar {resource.toLowerCase()}?
               { isParcel ? " Todas as parcelas serão excluídas." : '' }
             </AlertDialogBody>
@@ -91,7 +101,12 @@ const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false
                 Cancelar
               </Button>
               <Button 
-                colorScheme="red" 
+                bg="red.500"
+                _hover={{ bg: "red.400" }}
+                _active={{
+                  bg: "red.300",
+                  transform: "scale(0.98)",
+                }}
                 onClick={handleOnDelete} 
                 ml={3}
                 isLoading={loading}

@@ -1,4 +1,11 @@
-import { Button, Icon, IconButton, Tooltip, useBreakpointValue } from "@chakra-ui/react"
+import { 
+  Button, 
+  Icon, 
+  IconButton, 
+  Tooltip, 
+  useBreakpointValue, 
+  useColorModeValue 
+} from "@chakra-ui/react"
 import { memo } from "react"
 import { RiAddLine } from "react-icons/ri"
 
@@ -19,7 +26,13 @@ const AddButtonComponent = ({ onClick }: AddButtonProps) => {
       <Button
         size="sm"
         fontSize="sm"
-        colorScheme="pink"
+        variant="outline"
+        bg="pink.500"
+        _hover={{ bg: "pink.300" }}
+        _active={{
+          bg: "pink.400",
+          transform: "scale(0.98)",
+        }}
         leftIcon={<Icon as={RiAddLine} fontSize="20" />}
         onClick={onClick}
       >

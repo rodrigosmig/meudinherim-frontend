@@ -27,7 +27,7 @@ const SidebarComponent = () => {
     return (
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
       <DrawerOverlay>
-        <DrawerContent bg="gray.800" p="4">
+        <DrawerContent p="4">
           <DrawerCloseButton mt="6" />
           <DrawerHeader><Logo /></DrawerHeader>
           <DrawerBody>
@@ -45,6 +45,7 @@ const SidebarComponent = () => {
       h="full"
       w={{ base: 'full', md: 60 }}
       overflowY="auto"
+      overflowX="hidden"
     >
       <Flex h="20" alignItems="center" justifyContent="space-between">
         <Logo />

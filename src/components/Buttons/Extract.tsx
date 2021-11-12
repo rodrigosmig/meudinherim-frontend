@@ -21,7 +21,12 @@ const ExtractButtonComponent = ({ href }: ExtractButtonProps) => {
         <Button
           size="sm"
           fontSize="sm"
-          colorScheme="purple"
+          bg="purple.500"
+          _hover={{ bg: "purple.300" }}
+          _active={{
+            bg: "purple.400",
+            transform: "scale(0.98)",
+          }}
           leftIcon={<Icon as={FaMoneyBillAlt} fontSize="16" />}
         >
           Extrato
@@ -34,7 +39,12 @@ const ExtractButtonComponent = ({ href }: ExtractButtonProps) => {
         <IconButton
           size="xs"
           aria-label="Extract"
-          colorScheme="purple" 
+          bg="purple.500"
+          _hover={{ bg: "purple.300" }}
+          _active={{
+            bg: "purple.400",
+            transform: "scale(0.98)",
+          }}
           icon={<FaMoneyBillAlt />} 
         />
       </Link>

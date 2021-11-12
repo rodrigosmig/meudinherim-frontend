@@ -1,4 +1,7 @@
-import { Button } from "@chakra-ui/react";
+import { 
+  Button,
+  useColorModeValue
+} from "@chakra-ui/react";
 import React from "react";
 
 interface PaginationItemProps {
@@ -8,6 +11,9 @@ interface PaginationItemProps {
 }
 
 export function PaginationItem({ number, isCurrent = false, onPageChange }: PaginationItemProps) {
+  const bgColor = useColorModeValue('gray.300', 'gray.700')
+  const bgHover = useColorModeValue('gray.200', 'gray.500')
+
   if (isCurrent) {
     return (
       <Button
@@ -32,9 +38,9 @@ export function PaginationItem({ number, isCurrent = false, onPageChange }: Pagi
       size="sm"
       fontSize="xs"
       w="4"
-      bg="gray.700"
+      bg={bgColor}
       _hover={{
-        bg: "gray.500"
+        bg: bgHover
       }}
       onClick={() => onPageChange(number)}
 

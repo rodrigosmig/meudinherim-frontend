@@ -10,7 +10,8 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-  Text
+  Text,
+  useColorModeValue
 } from "@chakra-ui/react";
 
 interface AvatarProps {
@@ -19,6 +20,8 @@ interface AvatarProps {
 
 const AvatarComponent = ({ showProfileData }: AvatarProps) => {
   const { user, signOut } = useContext(AuthContext)
+
+  const color = useColorModeValue('gray.600', 'gray.300')
 
   const handleSignOut = () => {
     try {
@@ -33,7 +36,7 @@ const AvatarComponent = ({ showProfileData }: AvatarProps) => {
       { showProfileData && (
         <Box mr="4" textAlign="right">
           <Text>{user?.name}</Text>  
-          <Text color="gray.300" fontSize="small">
+          <Text color={color} fontSize="small">
             {user?.email}
           </Text>
         </Box>
@@ -44,7 +47,7 @@ const AvatarComponent = ({ showProfileData }: AvatarProps) => {
           <ChakraAvatar size="md" name={user?.name} src={user?.avatar} mr={["auto"]} />
         </MenuButton>
         
-        <MenuList color='gray.900'>
+        <MenuList>
           <Link href="/profile" passHref>
             <MenuItem>
               Perfil

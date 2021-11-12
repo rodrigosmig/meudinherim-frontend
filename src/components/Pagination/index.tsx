@@ -1,4 +1,11 @@
-import { Box, Button, Stack, Text, Tooltip } from "@chakra-ui/react";
+import { 
+  Box, 
+  Button, 
+  Stack, 
+  Text, 
+  Tooltip, 
+  useColorModeValue 
+} from "@chakra-ui/react";
 import { PaginationItem } from "./PaginationItem";
 
 interface PaginationProps {
@@ -33,6 +40,10 @@ export const Pagination = ({
   const nextPages = currentPage < lastPage
     ? generatePagesArray(currentPage, Math.min(currentPage + siblingsCount, lastPage))
     : [];
+
+  const bgColor = useColorModeValue('gray.300', 'gray.700')
+  const bgHover = useColorModeValue('gray.200', 'gray.500')
+  const textColor = useColorModeValue('gray.700', 'gray.300')
     
   return (
     <Stack 
@@ -52,9 +63,9 @@ export const Pagination = ({
             size="sm"
             fontSize="xs"
             w="4"
-            bg="gray.700"
+            bg={bgColor}
             _hover={{
-              bg: "gray.500"
+              bg: bgHover
             }}
             onClick={() => onPageChange(currentPage - 1)}
             isDisabled={currentPage === 1}
@@ -85,7 +96,7 @@ export const Pagination = ({
         {currentPage + siblingsCount < lastPage && (
           <>
             { (currentPage + 1 + siblingsCount)  < lastPage && (
-              <Text color='gray.300' width="8" textAlign='center'>...</Text>
+              <Text color={textColor} width="8" textAlign='center'>...</Text>
             ) }
             <PaginationItem onPageChange={onPageChange} number={lastPage} />
           </>  
@@ -96,9 +107,9 @@ export const Pagination = ({
             size="sm"
             fontSize="xs"
             w="4"
-            bg="gray.700"
+            bg={bgColor}
             _hover={{
-              bg: "gray.500"
+              bg: bgHover
             }}
             onClick={() => onPageChange(currentPage + 1)}
             isDisabled={currentPage === lastPage}

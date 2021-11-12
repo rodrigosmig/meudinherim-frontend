@@ -183,13 +183,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
   }
 
   return (
-    <>
-      {/* <CreateAccountModal
-        isOpen={createModalIsOpen} 
-        onClose={createModalOnClose}
-        refetch={refetch}
-      /> */}
-      
+    <>     
       <EditAccountEntryModal
         entry={selectedEntry}
         isOpen={editModalIsOpen} 
@@ -260,7 +254,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
           ) : (
             <>
             <Box overflowX="auto">
-              <Table size={sizeProps} colorScheme="whiteAlpha">
+              <Table size={sizeProps}>
                 <Thead>
                   <Tr>
                     <Th>Data</Th>

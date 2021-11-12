@@ -1,5 +1,5 @@
 
-import { Stack } from '@chakra-ui/react';
+import { Stack, useColorModeValue } from '@chakra-ui/react';
 import { NavLink } from './NavLink';
 import { NavSection } from './NavSection';
 import { HiDocumentReport } from "react-icons/hi";
@@ -14,7 +14,12 @@ import {
 export const SidebarNav = () => {
   return (
     <>
-      <Stack spacing="8" align="flex-start" ml={[0, 4]}>
+      <Stack 
+        spacing="8" 
+        align="flex-start" 
+        ml={[0, 4]}
+        mb={4}
+      >
         <NavSection title="Geral" >
           <NavLink href="/dashboard" icon={RiDashboardLine}>Dashboard</NavLink>
           <NavLink href="/categories" icon={RiPriceTag3Line}>Categorias</NavLink>

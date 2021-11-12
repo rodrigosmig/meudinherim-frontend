@@ -20,7 +20,12 @@ const PaymentButtonComponent = ({ onClick, label = 'Pagar' }: PaymentButtonProps
       <Button
         size="sm"
         fontSize="sm"
-        colorScheme="purple"
+        bg="purple.500"
+        _hover={{ bg: "purple.300" }}
+        _active={{
+          bg: "purple.400",
+          transform: "scale(0.98)",
+        }}
         leftIcon={<Icon as={RiMoneyDollarBoxLine} fontSize="16" />}
         onClick={onClick}
       >
@@ -31,7 +36,12 @@ const PaymentButtonComponent = ({ onClick, label = 'Pagar' }: PaymentButtonProps
       <IconButton
         size="xs"
         aria-label="Pay"
-        colorScheme="purple" 
+        bg="purple.500"
+        _hover={{ bg: "purple.300" }}
+        _active={{
+          bg: "purple.400",
+          transform: "scale(0.98)",
+        }}
         icon={<RiMoneyDollarBoxLine />} 
         onClick={onClick}
       />
