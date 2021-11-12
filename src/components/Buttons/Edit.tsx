@@ -21,7 +21,12 @@ const EditButtonComponent = ({ onClick, isDisabled = false }: EditButtonProps) =
         isDisabled={isDisabled}
         size="sm"
         fontSize="sm"
-        colorScheme="purple"
+        bg="purple.500"
+        _hover={{ bg: "purple.300" }}
+        _active={{
+          bg: "purple.400",
+          transform: "scale(0.98)",
+        }}
         leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
         onClick={onClick}
       >
@@ -33,7 +38,12 @@ const EditButtonComponent = ({ onClick, isDisabled = false }: EditButtonProps) =
         isDisabled={isDisabled}
         size="xs"
         aria-label="Edit"
-        colorScheme="purple" 
+        bg="purple.500"
+        _hover={{ bg: "purple.300" }}
+        _active={{
+          bg: "purple.400",
+          transform: "scale(0.98)",
+        }}
         icon={<RiPencilLine />}
         onClick={onClick}
       />

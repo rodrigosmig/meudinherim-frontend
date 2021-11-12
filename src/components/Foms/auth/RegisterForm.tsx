@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from 'next/router';
-import { Box, Flex, Stack, useToast } from "@chakra-ui/react";
+import { Box, Flex, Stack, useToast, useColorModeValue } from "@chakra-ui/react";
 import { Input } from '../../Inputs/Input';
 import { authService } from '../../../services/ApiService/AuthService';
 import { SubmitButton } from '../../Buttons/Submit';
@@ -70,7 +69,7 @@ export function RegisterForm() {
       w={['100%']}
       maxW={[360]}
       flexDir={["column"]}
-      bg="gray.800"
+      bg={useColorModeValue('white', 'gray.800')}
       p={8}
       borderRadius={[8]}
       onSubmit={handleSubmit(handleRegister)}

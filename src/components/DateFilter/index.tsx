@@ -1,5 +1,13 @@
 import { memo } from 'react';
-import { Button, chakra, Flex, Icon, IconButton, HStack } from '@chakra-ui/react';
+import { 
+  Button, 
+  chakra, 
+  Flex, 
+  Icon, 
+  IconButton, 
+  HStack, 
+  useColorModeValue 
+} from '@chakra-ui/react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import ptBR from "date-fns/locale/pt-BR";
 import { RiFilter2Line } from "react-icons/ri"
@@ -19,6 +27,8 @@ interface DatepickerFilterProps {
 }
 
 const DateFilterComponent = ({ startDate, endDate, isWideVersion, onChange, onClick }: DatepickerFilterProps) => {
+  const bgColor = useColorModeValue('white', 'gray.900')
+
   return (
     <HStack spacing={3} mb={[6, 8]}>
       <Flex w={[200, 250]}>
@@ -28,7 +38,7 @@ const DateFilterComponent = ({ startDate, endDate, isWideVersion, onChange, onCl
             fontSize={["sm", "md"]}
             px={[2, 4]}
             borderRadius="0.375rem"
-            bgColor="gray.900"            
+            bgColor={bgColor}
             _focus={{
               outline: '2px solid #D53F8C',
             }}
@@ -46,7 +56,12 @@ const DateFilterComponent = ({ startDate, endDate, isWideVersion, onChange, onCl
       { isWideVersion ? (
         <Button
           aria-label="Filter"
-          colorScheme="purple"
+          bg="purple.500"
+          _hover={{ bg: "purple.300" }}
+          _active={{
+            bg: "purple.400",
+            transform: "scale(0.98)",
+          }}
           leftIcon={<Icon as={RiFilter2Line} fontSize="16" />}
           onClick={onClick}
           
@@ -57,7 +72,12 @@ const DateFilterComponent = ({ startDate, endDate, isWideVersion, onChange, onCl
         <IconButton
           size="sm"
           aria-label="Filter"
-          colorScheme="purple" 
+          bg="purple.500"
+          _hover={{ bg: "purple.300" }}
+          _active={{
+            bg: "purple.400",
+            transform: "scale(0.98)",
+          }}
           icon={<RiFilter2Line />} 
           onClick={onClick}
         />

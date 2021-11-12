@@ -18,12 +18,12 @@ import Link from 'next/link'
 export const NavAdd = () => {
   return (
     <Menu isLazy>
-      <Tooltip label="Adicionar" bg="pink.600">
+      <Tooltip label="Adicionar">
         <MenuButton>
           <Icon as={RiAddCircleLine} fontSize="20" />
         </MenuButton>
       </Tooltip>
-      <MenuList color='gray.900'>
+      <MenuList>
         <MenuItem icon={<Icon as={RiBankCard2Line} fontSize={20} />}>
           Lançamento no cartão
         </MenuItem>

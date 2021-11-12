@@ -21,12 +21,12 @@ export const NavBalance = () => {
 
   return (
     <Menu isLazy onOpen={() => refetch()}>
-      <Tooltip label="Saldo" bg="pink.600">
+      <Tooltip label="Saldo">
         <MenuButton>
             <Icon as={HiOutlineCurrencyDollar} fontSize="20" />
         </MenuButton>
       </Tooltip>
-      <MenuList color='gray.900'>
+      <MenuList>
       <Box fontSize={["xl"]} align="center">Contas
       { isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
       </Box>

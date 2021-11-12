@@ -1,4 +1,10 @@
-import { Flex, Image, Text, useBreakpointValue } from "@chakra-ui/react";
+import { 
+  Flex, 
+  Image, 
+  Text, 
+  useBreakpointValue, 
+  useColorMode 
+} from "@chakra-ui/react";
 
 export const Logo = () => {
   const isWideVersion = useBreakpointValue({
@@ -6,15 +12,20 @@ export const Logo = () => {
     lg: true 
   })
 
+  const { colorMode } = useColorMode()
+
+  const url_logo = colorMode === "dark" ? '/icons/logo_white.png' : '/icons/logo_black.png'
+
   return (
     <>
     <Flex ml={[0, 4]}>
       {isWideVersion && (
+        
         <Image
           alt="Meu Dinherim"
           w={[6]}
           h={[6]}
-          src="/icons/logo.png"
+          src={url_logo}
           objectFit="cover"
           mr={[3]}
         />

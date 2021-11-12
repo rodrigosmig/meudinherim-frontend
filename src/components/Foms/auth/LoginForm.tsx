@@ -1,6 +1,12 @@
-import { useState, useContext } from "react";
 import Link from "next/link";
-import { Box, Flex, Stack, useToast } from "@chakra-ui/react";
+import { useState, useContext } from "react";
+import { 
+  Box, 
+  Flex, 
+  Stack, 
+  useToast, 
+  useColorModeValue 
+} from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../../Inputs/Input';
 import { AuthContext } from '../../../contexts/AuthContext';
@@ -78,7 +84,7 @@ export function LoginForm() {
       w={['100%']}
       maxW={[340, 340, 360]}
       flexDir={["column"]}
-      bg="gray.800"
+      bg={useColorModeValue('white', 'gray.800')}
       p={[8]}
       borderRadius={[8]}
       onSubmit={handleSubmit(handleLogin)}

@@ -181,38 +181,36 @@ export default function Categories() {
           ) : (
             <>
               <Table tableSize={sizeProps}>
-                <>
-                  <Thead>
-                    <Tr>
-                      <Th>Nome da Categoria</Th>
-                      <Th>Tipo</Th>
-                      <Th w="8"></Th>
-                    </Tr>
-                  </Thead>
+                <Thead>
+                  <Tr>
+                    <Th>Nome da Categoria</Th>
+                    <Th>Tipo</Th>
+                    <Th w="8"></Th>
+                  </Tr>
+                </Thead>
 
-                  <Tbody>
-                    { data.categories.map(category => (
-                      <Tr key={category.id}>
-                        <Td fontSize={["xs", "md"]}>
-                          <Text fontWeight="bold">{category.name}</Text>
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { category.type === 1 ? 'Entrada' : 'Saída' }
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          <HStack spacing={[2]}>
-                            <EditButton onClick={() => handleEditCategory(category.id)} />
-                            <DeleteButton 
-                              onDelete={() => handleDeleteCategory(category.id)} 
-                              resource="Categoria"
-                              loading={deleteCategory?.isLoading}
-                            />
-                          </HStack>
-                        </Td>
-                      </Tr>
-                    )) }
-                  </Tbody>
-                </>
+                <Tbody>
+                  { data.categories.map(category => (
+                    <Tr key={category.id}>
+                      <Td fontSize={["xs", "md"]}>
+                        <Text fontWeight="bold">{category.name}</Text>
+                      </Td>
+                      <Td fontSize={["xs", "md"]}>
+                        { category.type === 1 ? 'Entrada' : 'Saída' }
+                      </Td>
+                      <Td fontSize={["xs", "md"]}>
+                        <HStack spacing={[2]}>
+                          <EditButton onClick={() => handleEditCategory(category.id)} />
+                          <DeleteButton 
+                            onDelete={() => handleDeleteCategory(category.id)} 
+                            resource="Categoria"
+                            loading={deleteCategory?.isLoading}
+                          />
+                        </HStack>
+                      </Td>
+                    </Tr>
+                  )) }
+                </Tbody>
               </Table>
 
               <Pagination
