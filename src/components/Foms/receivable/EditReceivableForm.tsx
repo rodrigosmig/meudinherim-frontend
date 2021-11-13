@@ -17,6 +17,7 @@ import { Switch } from "../../Inputs/Switch";
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { reverseBrDate } from '../../../utils/helpers';
+import { CancelButton } from '../../Buttons/Cancel';
 
 interface Receivable {
   id: number;
@@ -200,15 +201,11 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
         align="center"
         mb={4}
       >
-        <Button
-          mr={[4]}
-          colorScheme={'gray.800'}
-          variant="outline"
+        <CancelButton
+          mr={4}
           isDisabled={formState.isSubmitting}
           onClick={closeModal}
-        >
-          Cancelar
-        </Button>
+        />
 
         <SubmitButton
           label="Salvar"

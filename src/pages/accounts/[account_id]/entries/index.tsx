@@ -37,6 +37,7 @@ import { Heading } from '../../../../components/Heading';
 import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
 import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
 import { EditAccountEntryModal } from '../../../../components/Modals/account_entries/EditAccountEntryModal';
+import { ShowPaymentButton } from '../../../../components/Buttons/ShowPayment';
 
 interface Category {
   id: number,
@@ -297,9 +298,16 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
                         </HStack>
                         ) : (
                           entry.category.type === 1 ? (
-                            <Button colorScheme="green" onClick={() => handleShowReceivement(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Recebimento</Button>
+                            <ShowPaymentButton
+                              label="Ver Recebimento"
+                              onClick={() => handleShowReceivement(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}
+                            />
+                            
                           ) : (
-                            <Button colorScheme="green" onClick={() => handleShowPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}>Ver Pagamento</Button>
+                            <ShowPaymentButton
+                              label="Ver Pagamento"
+                              onClick={() => handleShowPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}
+                            />
                           )
                         )
                       }

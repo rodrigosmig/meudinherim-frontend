@@ -96,7 +96,6 @@ export function ProfileForm({ updateUser }: ProfileFormProps) {
       as="form"
       w={['100%']}
       flexDir={["column"]}
-      bg="gray.800"
       onSubmit={handleSubmit(handleUpdateProfile)}
     >
       <Stack spacing={[4]}>

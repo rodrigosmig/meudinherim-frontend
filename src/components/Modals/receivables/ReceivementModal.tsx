@@ -1,13 +1,7 @@
-import { memo, useState } from "react";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
+import { memo } from "react";
+
 import { ReceivementForm } from "../../Foms/receivable/ReceivementForm";
+import { Modal } from "../Modal";
 
 interface Receivable {
   id: number;
@@ -42,21 +36,17 @@ interface ReceivementModalProps {
 
 const ReceivementModalComponent = ({ receivable, accounts, isOpen, onClose, refetch }: ReceivementModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
-      <ModalOverlay />
-      <ModalContent bgColor={"gray.800"}>
-        <ModalHeader>Recebimento de Conta</ModalHeader>
-        <ModalCloseButton onClick={onClose} />
-
-        <ModalBody mb={4}>
-          <ReceivementForm
-            receivable={receivable}
-            accounts={accounts}
-            onCancel={onClose}
-            refetch={refetch}
-          />
-        </ModalBody>
-      </ModalContent>
+    <Modal
+      header="Recebimento de Conta"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <ReceivementForm
+        receivable={receivable}
+        accounts={accounts}
+        onCancel={onClose}
+        refetch={refetch}
+      />
     </Modal>
   )
 }

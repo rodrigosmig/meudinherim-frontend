@@ -13,6 +13,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
+import { CancelButton } from "../../Buttons/Cancel";
 
 interface EditCategoryFormProps {
   category: Category;
@@ -126,14 +127,11 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: EditCatego
         justify="flex-end"
         align="center"
       >
-        <Button
-          mr={[4]}
-          variant="outline"
+        <CancelButton
+          mr={4}
           isDisabled={formState.isSubmitting}
           onClick={closeModal}
-        >
-          Cancelar
-        </Button>
+        />
 
         <SubmitButton
           label="Salvar"

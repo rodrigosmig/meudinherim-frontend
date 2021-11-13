@@ -1,14 +1,6 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  useToast
-} from "@chakra-ui/react";
 import { memo } from "react";
 import { PaymentForm } from "../../Foms/payable/PaymentForm";
+import { Modal } from "../Modal";
 
 interface Payable {
   id: number;
@@ -42,21 +34,17 @@ interface PaymentModalProps {
 
 const PaymentModalComponent = ({ payable, accounts, isOpen, onClose, refetch }: PaymentModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
-      <ModalOverlay />
-      <ModalContent bgColor={"gray.800"}>
-        <ModalHeader>Pagamento de Conta</ModalHeader>
-        <ModalCloseButton onClick={onClose} />
-
-        <ModalBody mb={4}>
-          <PaymentForm 
-            payable={payable} 
-            accounts={accounts}
-            onCancel={onClose} 
-            refetch={refetch}
-          />
-        </ModalBody>
-      </ModalContent>
+    <Modal
+      header="Pagamento de Conta"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <PaymentForm 
+        payable={payable} 
+        accounts={accounts}
+        onCancel={onClose} 
+        refetch={refetch}
+      />
     </Modal>
   )
 }

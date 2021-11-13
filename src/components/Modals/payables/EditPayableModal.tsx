@@ -1,12 +1,5 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
 import { EditPayableForm } from "../../Foms/payable/EditPayableForm";
+import { Modal } from "../Modal";
 
 interface Payable {
   id: number;
@@ -41,21 +34,18 @@ interface EditPayableModalProps {
 
 export const EditPayableModal = ({ payable, categories, isOpen, onClose, refetch }: EditPayableModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
-      <ModalOverlay />
-      <ModalContent bgColor={"gray.800"}>
-        <ModalHeader>Editar Conta a Receber</ModalHeader>
-        <ModalCloseButton onClick={onClose} />
-
-        <ModalBody>
-          <EditPayableForm
-            payable={payable}
-            categories={categories}
-            closeModal={onClose}
-            refetch={refetch}
-          />
-        </ModalBody>
-      </ModalContent>
+    <Modal
+      header="Editar Conta a Pagar"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <EditPayableForm
+        payable={payable}
+        categories={categories}
+        closeModal={onClose}
+        refetch={refetch}
+      />
     </Modal>
+
   )
 }

@@ -4,7 +4,6 @@ import {
   Flex, 
   HStack, 
   Spinner, 
-  Table, 
   Tbody, 
   Td,
   Text,
@@ -30,6 +29,7 @@ import { setupApiClient } from '../../services/api';
 import { Heading } from "../../components/Heading";
 import { EditAccountModal } from "../../components/Modals/accounts/EditAccountModal";
 import { CreateAccountModal } from "../../components/Modals/accounts/CreateAccountModal";
+import { Table } from "../../components/Table";
 
 interface Account {
   id: number;
@@ -149,7 +149,7 @@ export default function Accounts() {
             <Flex justify="center">Falha ao obter as contas</Flex>
           ) : (
             <>
-              <Table size={tableSize} colorScheme="whiteAlpha">
+              <Table tableSize={tableSize}>
                 <Thead>
                   <Tr >
                     <Th>Nome</Th>

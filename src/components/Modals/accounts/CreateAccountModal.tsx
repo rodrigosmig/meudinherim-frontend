@@ -1,12 +1,5 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
 import { CreateAccountForm } from "../../Foms/account/CreateAccountForm";
+import { Modal } from "../Modal";
 
 interface CreateCategoryModalProps {
   isOpen: boolean;
@@ -16,18 +9,15 @@ interface CreateCategoryModalProps {
 
 export const CreateAccountModal = ({ isOpen, onClose, refetch }: CreateCategoryModalProps) => {
 return (
-  <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
-    <ModalOverlay />
-    <ModalContent bgColor={"gray.800"}>
-      <ModalHeader>Nova Conta a Pagar</ModalHeader>
-      <ModalCloseButton onClick={onClose} />
-      <ModalBody>
-        <CreateAccountForm
-          closeModal={onClose}
-          refetch={refetch}
-        />
-      </ModalBody>
-    </ModalContent>
+  <Modal
+    header="Nova Conta"
+    isOpen={isOpen}
+    onClose={onClose}
+  >
+    <CreateAccountForm
+      closeModal={onClose}
+      refetch={refetch}
+    />
   </Modal>
 )
 }

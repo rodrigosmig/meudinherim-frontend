@@ -87,7 +87,7 @@ export default function Profile({ userUpdated }: ProfileProps) {
             {user.email}
           </Text>
 
-          <Box >
+          <Box>
             <Tabs colorScheme="pink">
               <TabList>
                 <Tab>Perfil</Tab>

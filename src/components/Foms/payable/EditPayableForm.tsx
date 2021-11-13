@@ -17,6 +17,7 @@ import { payableService } from "../../../services/ApiService/PayableService";
 import { Select } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
 import { reverseBrDate } from "../../../utils/helpers";
+import { CancelButton } from "../../Buttons/Cancel";
 
 interface Payable {
   id: number;
@@ -187,14 +188,11 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Ed
         justify="flex-end"
         align="center"
       >
-        <Button
-          mr={[4]}
-          variant="outline"
+        <CancelButton
+          mr={4}
           isDisabled={formState.isSubmitting}
           onClick={closeModal}
-        >
-          Cancelar
-        </Button>
+        />
 
         <SubmitButton
           label="Salvar"

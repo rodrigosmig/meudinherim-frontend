@@ -27,7 +27,7 @@ interface DatepickerFilterProps {
 }
 
 const DateFilterComponent = ({ startDate, endDate, isWideVersion, onChange, onClick }: DatepickerFilterProps) => {
-  const bgColor = useColorModeValue('white', 'gray.900')
+  const bgColor = useColorModeValue('gray.50', 'gray.900')
 
   return (
     <HStack spacing={3} mb={[6, 8]}>

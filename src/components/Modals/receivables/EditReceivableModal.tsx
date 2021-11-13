@@ -1,12 +1,5 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
 import { EditReceivableForm } from "../../Foms/receivable/EditReceivableForm";
+import { Modal } from "../Modal";
 
 interface Receivable {
   id: number;
@@ -41,21 +34,17 @@ interface EditReceivableModalProps {
 
 export const EditReceivableModal = ({ receivable, categories, isOpen, onClose, refetch }: EditReceivableModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
-      <ModalOverlay />
-      <ModalContent bgColor={"gray.800"}>
-        <ModalHeader>Editar Conta a Receber</ModalHeader>
-        <ModalCloseButton onClick={onClose} />
-
-        <ModalBody>
-          <EditReceivableForm 
-            receivable={receivable}
-            categories={categories}
-            closeModal={onClose}
-            refetch={refetch}
-          />
-        </ModalBody>
-      </ModalContent>
+    <Modal
+      header="Editar Conta a Receber"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <EditReceivableForm 
+        receivable={receivable}
+        categories={categories}
+        closeModal={onClose}
+        refetch={refetch}
+      />
     </Modal>
   )
 }

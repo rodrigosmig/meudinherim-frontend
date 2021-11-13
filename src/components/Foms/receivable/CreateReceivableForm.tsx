@@ -19,6 +19,7 @@ import { Switch } from "../../Inputs/Switch";
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
+import { CancelButton } from "../../Buttons/Cancel";
 
 interface FormData {
   due_date: Date;
@@ -222,15 +223,11 @@ export const CreateReceivableForm = ({ categories, closeModal, refetch }: Create
         align="center"
         mb={4}
       >
-        <Button
-          mr={[4]}
-          colorScheme={'gray.800'}
-          variant="outline"
+        <CancelButton
+          mr={4}
           isDisabled={formState.isSubmitting}
           onClick={closeModal}
-        >
-          Cancelar
-        </Button>
+        />
 
         <SubmitButton
           label="Salvar"

@@ -51,12 +51,12 @@ export function ChangePasswordForm() {
             if (error.response.status === 422) {
                 const data = error.response.data.errors;
 
-                for (const key in data) {          
-                  data[key].map(error => {
-                    setError(key, {message: error})
-                  })
+                for (const key in data) {
+                    data[key].map(error => {
+                        setError(key, { message: error })
+                    })
                 }
-              }
+            }
         }
     }
 
@@ -66,7 +66,6 @@ export function ChangePasswordForm() {
                 as="form"
                 w={['100%']}
                 flexDir={["column"]}
-                bg="gray.800"
                 onSubmit={handleSubmit(handleUpdatePassword)}
             >
                 <Stack spacing={[4]}>
@@ -78,7 +77,7 @@ export function ChangePasswordForm() {
                         {...register('current_password')}
                     />
 
-                    <Input 
+                    <Input
                         name="password"
                         type="password"
                         label="Nova Senha"
@@ -86,13 +85,13 @@ export function ChangePasswordForm() {
                         {...register('password')}
                     />
 
-                    <Input 
+                    <Input
                         name="password_confirmation"
                         type="password"
                         label="Confirmação"
                         error={errors.password_confirmation}
                         {...register('password_confirmation')}
-                    />                
+                    />
                 </Stack>
 
                 <SubmitButton
