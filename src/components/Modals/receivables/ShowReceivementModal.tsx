@@ -58,25 +58,13 @@ import { SubmitButton } from "../../Buttons/Submit";
           setReceivable(receivableResponse.data)
           setIsLoading(false);
         } catch (error) {
-          const data = error.response.data;
-          const message = data.message ?? "Requisição inválida";
-  
-          toast({
-            title: "Erro",
-            description: message,
-            position: "top-right",
-            status: 'error',
-            duration: 10000,
-            isClosable: true,
-          });
-  
           onCloseModal()
         }
       }
       if (isOpenModal) {
         fetchData();
       }
-    }, [receivableId, parcelableId, isOpenModal]);
+    }, [receivableId, parcelableId, isOpenModal, onCloseModal]);
   
     const handleOnClose = () => {
       setIsLoading(true)
