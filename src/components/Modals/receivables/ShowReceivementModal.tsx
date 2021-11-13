@@ -130,63 +130,61 @@ import { SubmitButton } from "../../Buttons/Submit";
     }
   
     return (
-      <>
-        <Modal
-          header="Recebimento de Conta"
-          isOpen={isOpenModal}
-          onClose={onCloseModal}
-        >
-          { isLoading ? (
-            <Loading />
-            ) : (
-              <>
-                <Input
-                  name="paid_date"
-                  type="text"
-                  label="Data do Pagamento"
-                  value={toBrDate(receivable.paid_date)}
-                  isDisabled={true}
-                />
+      <Modal
+        header="Recebimento"
+        isOpen={isOpenModal}
+        onClose={onCloseModal}
+      >
+        { isLoading ? (
+          <Loading />
+          ) : (
+            <>
+              <Input
+                name="paid_date"
+                type="text"
+                label="Data do Pagamento"
+                value={toBrDate(receivable.paid_date)}
+                isDisabled={true}
+              />
 
-                <Input
-                  name="due_date"
-                  type="text"
-                  label="Vencimento"
-                  value={toBrDate(receivable.due_date)}
-                  isDisabled={true}
-                />
+              <Input
+                name="due_date"
+                type="text"
+                label="Vencimento"
+                value={toBrDate(receivable.due_date)}
+                isDisabled={true}
+              />
 
-                <Input
-                  name="category"
-                  type="text"
-                  label="Categoria"
-                  value={receivable.category.name}
-                  isDisabled={true}
-                />
+              <Input
+                name="category"
+                type="text"
+                label="Categoria"
+                value={receivable.category.name}
+                isDisabled={true}
+              />
 
-                <Input
-                  name="description"
-                  type="text"
-                  label="Descrição"
-                  value={receivable.description}
-                  isDisabled={true}
-                />
+              <Input
+                name="description"
+                type="text"
+                label="Descrição"
+                value={receivable.description}
+                isDisabled={true}
+              />
 
-                <Input
-                  name="value"
-                  type="text"
-                  label="Valor"
-                  value={toCurrency(receivable.value)}
-                  isDisabled={true}
-                />
+              <Input
+                name="value"
+                type="text"
+                label="Valor"
+                value={toCurrency(receivable.value)}
+                isDisabled={true}
+              />
 
-              <Flex
-                mt={[10]}
-                justify="flex-end"
-                align="center"
-                mb={4}
-              >
-
+            <Flex
+              mt={[10]}
+              justify="flex-end"
+              align="center"
+              mb={4}
+            >
               <CancelButton
                 label="Fechar"
                 mr={4}
@@ -198,58 +196,53 @@ import { SubmitButton } from "../../Buttons/Submit";
                 size="md"
                 onClick={onOpen}
               />
-              </Flex>
+            </Flex>
 
-                <AlertDialog
-                  isOpen={isOpen}
-                  leastDestructiveRef={cancelRef}
-                  onClose={onClose}
-                >
-                  <AlertDialogOverlay>
-                    <AlertDialogContent>
-                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                        Cancelar o Pagamento
-                      </AlertDialogHeader>
+              <AlertDialog
+                isOpen={isOpen}
+                leastDestructiveRef={cancelRef}
+                onClose={onClose}
+              >
+                <AlertDialogOverlay>
+                  <AlertDialogContent>
+                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                      Cancelar o Pagamento
+                    </AlertDialogHeader>
 
-                      <AlertDialogBody>
-                        Tem certeza que deseja cancelar o pagamento?
-                      </AlertDialogBody>
+                    <AlertDialogBody>
+                      Tem certeza que deseja cancelar o pagamento?
+                    </AlertDialogBody>
 
-                      <AlertDialogFooter>
-                        <Button
-                          aria-label="Cancel"
-                          ref={cancelRef} 
-                          onClick={onClose} 
-                          variant="outline"
-                          mr={4}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button 
-                          bg="red.500"
-                          _hover={{ bg: "red.400" }}
-                          _active={{
-                            bg: "red.300",
-                            transform: "scale(0.98)",
-                          }}
-                          onClick={handleCancelReceivement}
-                          isLoading={cancelReceivement.isLoading}
-                        >
-                          Confirmar
-                        </Button>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialogOverlay>
-                </AlertDialog>
-              </>
-            )
-          }
-        </Modal>
-        
-      </>
-
-      
-      
+                    <AlertDialogFooter>
+                      <Button
+                        aria-label="Cancel"
+                        ref={cancelRef} 
+                        onClick={onClose} 
+                        variant="outline"
+                        mr={4}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button 
+                        bg="red.500"
+                        _hover={{ bg: "red.400" }}
+                        _active={{
+                          bg: "red.300",
+                          transform: "scale(0.98)",
+                        }}
+                        onClick={handleCancelReceivement}
+                        isLoading={cancelReceivement.isLoading}
+                      >
+                        Confirmar
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialogOverlay>
+              </AlertDialog>
+            </>
+          )
+        }
+      </Modal>
     )
   }
   

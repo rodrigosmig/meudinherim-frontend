@@ -19,6 +19,7 @@ import { Switch } from "../../Inputs/Switch";
 import { payableService } from '../../../services/ApiService/PayableService';
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
+import { CancelButton } from "../../Buttons/Cancel";
 
 interface FormData {
   due_date: Date;
@@ -222,13 +223,11 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
         align="center"
       >
 
-        <Button
-          variant="outline"
+        <CancelButton
+          mr={4}
           isDisabled={formState.isSubmitting}
           onClick={closeModal}
-        >
-          Cancelar
-        </Button>
+        />
 
         <SubmitButton
           mr={[4]}
