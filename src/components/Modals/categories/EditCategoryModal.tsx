@@ -1,12 +1,5 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
 import { EditCategoryForm } from "../../Foms/categories/EditCategoryForm";
+import { Modal } from "../Modal";
 
 interface Category {
   id: number,
@@ -23,20 +16,16 @@ interface EditPayableModalProps {
 
 export const EditCategoryModal = ({ category, isOpen, onClose, refetch }: EditPayableModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
-      <ModalOverlay />
-      <ModalContent bgColor={"gray.800"}>
-        <ModalHeader>Editar Categoria</ModalHeader>
-        <ModalCloseButton onClick={onClose} />
-
-        <ModalBody>
-          <EditCategoryForm
-            category={category}
-            closeModal={onClose}
-            refetch={refetch}
-          />
-        </ModalBody>
-      </ModalContent>
+    <Modal
+      header="Editar Categoria"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <EditCategoryForm
+        category={category}
+        closeModal={onClose}
+        refetch={refetch}
+      />
     </Modal>
   )
 }

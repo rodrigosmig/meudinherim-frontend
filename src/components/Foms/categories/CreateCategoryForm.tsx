@@ -13,6 +13,7 @@ import { Input } from "../../Inputs/Input";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import Link from "next/link";
+import { CancelButton } from "../../Buttons/Cancel";
 
 interface FormData {
   type: number;
@@ -99,16 +100,11 @@ export const CreateCategoryForm = ({ closeModal, refetch }: CreateCategoryFormPr
         justify="flex-end"
         align="center"
       >
-        <Link href="/categories" passHref>
-          <Button
-            mr={[4]}
-            variant="outline"
-            isDisabled={formState.isSubmitting}
-            onClick={closeModal}
-          >
-            Cancelar
-          </Button>
-        </Link>
+        <CancelButton
+          mr={4}
+          isDisabled={formState.isSubmitting}
+          onClick={closeModal}
+        />
 
         <SubmitButton
           label="Salvar"
