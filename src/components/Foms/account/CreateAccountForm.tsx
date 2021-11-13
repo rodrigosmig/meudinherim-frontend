@@ -12,6 +12,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { accountService } from '../../../services/ApiService/AccountService';
 import { Select } from "../../Inputs/Select";
+import { CancelButton } from "../../Buttons/Cancel";
 
 interface FormData {
   type: string;
@@ -99,13 +100,11 @@ export const CreateAccountForm = ({ closeModal, refetch }: CreateAccountFormProp
         justify="flex-end"
         align="center"
       >
-        <Button
-          mr={[4]}
-          variant="outline"
+        <CancelButton
+          mr={4}
           isDisabled={formState.isSubmitting}
-        >
-          Cancelar
-        </Button>
+          onClick={closeModal}
+        />
 
         <SubmitButton
           label="Salvar"
