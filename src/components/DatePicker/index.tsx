@@ -1,5 +1,11 @@
 import { forwardRef, ForwardRefRenderFunction } from 'react';
-import { FormControl, FormLabel, FormErrorMessage, chakra } from '@chakra-ui/react';
+import { 
+  chakra,
+  FormControl, 
+  FormLabel, 
+  FormErrorMessage, 
+  useColorModeValue
+} from '@chakra-ui/react';
 import { FieldError } from 'react-hook-form'
 import DatePicker, { registerLocale } from 'react-datepicker';
 import ptBR from "date-fns/locale/pt-BR";
@@ -18,6 +24,10 @@ interface DatepickerProps {
 }
 
 const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, DatepickerProps> = ({ label, selected, error=null, onChange, ...rest }, ref) => {
+  const bgColor = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("#B3B5C6", "#353646");
+  const hoverColor = useColorModeValue('gray.50', 'gray.900');
+
   return (
     <FormControl isInvalid={!!error}>
       { !!label && <FormLabel htmlFor={label}>{label}</FormLabel>}
@@ -28,9 +38,13 @@ const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, DatepickerProps
         h={[10]}
         px={4}
         borderRadius="0.375rem"
-        bgColor="gray.900"        
+        outline={`1px solid ${borderColor}`}
+        bgColor={bgColor}
         _focus={{
           outline: '2px solid #D53F8C',
+        }}
+        _hover={{
+          bgColor: hoverColor
         }}
         dateFormat="dd/MM/yyyy"
         locale={ptBR}

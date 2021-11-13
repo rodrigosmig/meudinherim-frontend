@@ -4,7 +4,8 @@ import {
   FormLabel, 
   Select as ChakraSelect, 
   SelectProps as ChakraSelectProps, 
-  Text  
+  Text,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { forwardRef, ForwardRefRenderFunction } from "react";
 import { FieldError } from "react-hook-form";
@@ -20,6 +21,8 @@ interface SelectProps extends ChakraSelectProps {
 }
 
 const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ name, label, error = null, options, ...rest }, ref) => {
+  const hoverColor = useColorModeValue('gray.50', 'gray.900');
+
   return (
     <FormControl isInvalid={!!error}>
       { !!label && <FormLabel htmlFor={name}>{label}</FormLabel>}
@@ -28,16 +31,14 @@ const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ 
         id={name}
         name={name}
         focusBorderColor="pink.500"
-        bgColor="gray.900"
-        variant="filled"
         _hover={{
-          bgColor: 'gray.900'
+          bgColor: hoverColor
         }}
         ref={ref}
         {...rest}
       >
         {options.map(option => (
-          <Text as="option" key={option.value} value={option.value} color="gray.900">{option.label}</Text>
+          <Text as="option" key={option.value} value={option.value}>{option.label}</Text>
         ))}
       </ChakraSelect>
 

@@ -17,6 +17,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
+import { CancelButton } from "../../Buttons/Cancel";
 
 interface Receivable {
   id: number;
@@ -207,14 +208,11 @@ export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Rec
             justify="flex-end"
             align="center"
           >
-            <Button
-              variant="outline"
+            <CancelButton
+              mr={4}
               isDisabled={formState.isSubmitting}
               onClick={onCancel}
-              mr={[4]}
-            >
-              Cancelar
-            </Button>
+            />
 
             <SubmitButton
               label="Receber"

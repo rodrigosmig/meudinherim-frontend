@@ -7,13 +7,7 @@ import {
     AlertDialogHeader, 
     AlertDialogOverlay, 
     Button,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalCloseButton,
-    ModalFooter,
+    Flex,
     useDisclosure,
     useToast,
   } from "@chakra-ui/react";
@@ -23,6 +17,9 @@ import { queryClient } from "../../../services/queryClient";
 import { Loading } from "../../Loading";
 import { Input } from "../../Inputs/Input";
 import { toBrDate, toCurrency } from "../../../utils/helpers";
+import { Modal } from "../Modal";
+import { CancelButton } from "../../Buttons/Cancel";
+import { SubmitButton } from "../../Buttons/Submit";
 
   
   interface ShowReceivementModalProps {
@@ -133,112 +130,126 @@ import { toBrDate, toCurrency } from "../../../utils/helpers";
     }
   
     return (
-      <Modal isOpen={isOpenModal} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
-      <ModalOverlay />
-        <ModalContent bgColor={"gray.800"}>
-          <ModalHeader>Pagamento de Conta</ModalHeader>
-          <ModalCloseButton onClick={handleOnClose} />
-  
-          <ModalBody mb={4}>
-            { isLoading ? (
-              <Loading />
-              ) : (
-                <>
-                  <Input
-                    name="paid_date"
-                    type="text"
-                    label="Data do Pagamento"
-                    value={toBrDate(receivable.paid_date)}
-                    isDisabled={true}
-                  />
+      <>
+        <Modal
+          header="Recebimento de Conta"
+          isOpen={isOpenModal}
+          onClose={onCloseModal}
+        >
+          { isLoading ? (
+            <Loading />
+            ) : (
+              <>
+                <Input
+                  name="paid_date"
+                  type="text"
+                  label="Data do Pagamento"
+                  value={toBrDate(receivable.paid_date)}
+                  isDisabled={true}
+                />
 
-                  <Input
-                    name="due_date"
-                    type="text"
-                    label="Vencimento"
-                    value={toBrDate(receivable.due_date)}
-                    isDisabled={true}
-                  />
+                <Input
+                  name="due_date"
+                  type="text"
+                  label="Vencimento"
+                  value={toBrDate(receivable.due_date)}
+                  isDisabled={true}
+                />
 
-                  <Input
-                    name="category"
-                    type="text"
-                    label="Categoria"
-                    value={receivable.category.name}
-                    isDisabled={true}
-                  />
+                <Input
+                  name="category"
+                  type="text"
+                  label="Categoria"
+                  value={receivable.category.name}
+                  isDisabled={true}
+                />
 
-                  <Input
-                    name="description"
-                    type="text"
-                    label="Descrição"
-                    value={receivable.description}
-                    isDisabled={true}
-                  />
+                <Input
+                  name="description"
+                  type="text"
+                  label="Descrição"
+                  value={receivable.description}
+                  isDisabled={true}
+                />
 
-                  <Input
-                    name="value"
-                    type="text"
-                    label="Valor"
-                    value={toCurrency(receivable.value)}
-                    isDisabled={true}
-                  />
+                <Input
+                  name="value"
+                  type="text"
+                  label="Valor"
+                  value={toCurrency(receivable.value)}
+                  isDisabled={true}
+                />
 
-                  <AlertDialog
-                    isOpen={isOpen}
-                    leastDestructiveRef={cancelRef}
-                    onClose={onClose}
-                  >
-                    <AlertDialogOverlay>
-                      <AlertDialogContent bgColor="gray.800">
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                          Cancelar o Pagamento
-                        </AlertDialogHeader>
+              <Flex
+                mt={[10]}
+                justify="flex-end"
+                align="center"
+                mb={4}
+              >
 
-                        <AlertDialogBody bgColor="gray.800">
-                          Tem certeza que deseja cancelar o pagamento?
-                        </AlertDialogBody>
+              <CancelButton
+                label="Fechar"
+                mr={4}
+                onClick={handleOnClose}
+              />
 
-                        <AlertDialogFooter>
-                          <Button
-                            aria-label="Cancel"
-                            ref={cancelRef} 
-                            onClick={onClose} 
-                            variant="outline"
-                            mr={4}
-                          >
-                            Cancelar
-                          </Button>
-                          <Button 
-                            colorScheme="red"
-                            onClick={handleCancelReceivement}
-                            isLoading={cancelReceivement.isLoading}
-                          >
-                            Confirmar
-                          </Button>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialogOverlay>
-                  </AlertDialog>
-                </>
-              )
-            }
-          </ModalBody>
+              <SubmitButton
+                label="Cancelar Recebimento"
+                size="md"
+                onClick={onOpen}
+              />
+              </Flex>
 
-          <ModalFooter>
-            <Button 
-              variant="outline"
-              mr={3} 
-              onClick={handleOnClose}>
-              Fechar
-            </Button>
-            <Button colorScheme="pink" onClick={onOpen}>
-              Cancelar Recebimento
-            </Button>
-          </ModalFooter>
+                <AlertDialog
+                  isOpen={isOpen}
+                  leastDestructiveRef={cancelRef}
+                  onClose={onClose}
+                >
+                  <AlertDialogOverlay>
+                    <AlertDialogContent>
+                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        Cancelar o Pagamento
+                      </AlertDialogHeader>
 
-        </ModalContent>
-      </Modal>
+                      <AlertDialogBody>
+                        Tem certeza que deseja cancelar o pagamento?
+                      </AlertDialogBody>
+
+                      <AlertDialogFooter>
+                        <Button
+                          aria-label="Cancel"
+                          ref={cancelRef} 
+                          onClick={onClose} 
+                          variant="outline"
+                          mr={4}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button 
+                          bg="red.500"
+                          _hover={{ bg: "red.400" }}
+                          _active={{
+                            bg: "red.300",
+                            transform: "scale(0.98)",
+                          }}
+                          onClick={handleCancelReceivement}
+                          isLoading={cancelReceivement.isLoading}
+                        >
+                          Confirmar
+                        </Button>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialogOverlay>
+                </AlertDialog>
+              </>
+            )
+          }
+        </Modal>
+        
+      </>
+
+      
+      
     )
   }
   
