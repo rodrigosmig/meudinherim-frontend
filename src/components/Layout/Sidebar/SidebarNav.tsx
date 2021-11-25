@@ -1,5 +1,5 @@
 
-import { Stack, useColorModeValue } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 import { NavLink } from './NavLink';
 import { NavSection } from './NavSection';
 import { HiDocumentReport } from "react-icons/hi";
@@ -30,7 +30,7 @@ export const SidebarNav = () => {
         </NavSection>
       
         <NavSection title="Cartão de Crédito">
-            <NavLink href="#" icon={RiBankCard2Line}>Cartão de Crédito</NavLink>
+            <NavLink href="/cards" icon={RiBankCard2Line}>Cartão de Crédito</NavLink>
             <NavLink href="#" icon={RiBankCard2Line}>Faturas</NavLink>
         </NavSection>
 
