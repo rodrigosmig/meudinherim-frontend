@@ -1,8 +1,9 @@
+import { useRouter } from "next/router";
 import { 
   Box,
   Button,
   Flex,
-  Stack,
+  Stack, 
   useToast
 } from "@chakra-ui/react";
 import * as yup from 'yup';
@@ -12,44 +13,15 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
-import { format, parseISO } from 'date-fns';
-import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
+import { format } from 'date-fns';
+import { Select } from "../../Inputs/Select";
+import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
 import { useCategoriesForm } from "../../../hooks/useCategories";
-import { reverseBrDate } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
-
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-
-interface Account {
-  id: number;
-  name: string;
-  type: {
-    id: string | 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  balance: number;
-}
-
-interface AccountEntry {
-  id: number;
-  date: string;
-  category: Category;
-  description: string;
-  value: number;
-  account: Account;
-}
-
-interface EditAccountEntryFormProps {
-  entry: AccountEntry;
-  closeModal: () => void,
-  refetch: () => void
-}
+import { useCardsForm } from "../../../hooks/useCards";
 
 interface FormData {
+  card_id: number;
   date: Date;
   category_id: number;
   description: string;
@@ -60,58 +32,69 @@ type ResponseError = {
   category_id: string[];
   description: string[];
   value: string[];
+  date: string[];
 }
 
 type Key = keyof ResponseError;
 
+interface CreateInvoiceEntryFormProps {
+  card_id?: number;
+  onCancel: () => void;
+  refetch?: () => void;
+}
+
 const validationSchema = yup.object().shape({
+  card_id: yup.number().integer("Cartão de Crédito inválido").typeError("O campo cartão de crédito é inválido"),
   date: yup.date().typeError("O campo data é obrigatório"),
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
 })
 
-export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccountEntryFormProps) => {  
+export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: CreateInvoiceEntryFormProps) => {  
   const toast = useToast();
+  const router = useRouter();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { data: formCards, isLoading: isLoadingCardsForm } = useCardsForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
-    defaultValues: {
-      date: parseISO(reverseBrDate(entry.date)),
-      category_id: entry.category.id,
-      description: entry.description,
-      value: entry.value
+    defaultValues:{
+      date: new Date(),
+      card_id: card_id,
+      category_id: "",
+      description: "",
+      value: 0,
     },
     resolver: yupResolver(validationSchema)
   });
 
   const { errors } = formState;
 
-  const handleEditAccountEntry: SubmitHandler<FormData> = async (values) => {
+  const handleCreateInvoiceEntry: SubmitHandler<FormData> = async (values) => {
     const data = {
-      id: entry.id,
-      data: {
-        ...values,
-        account_id: entry.account.id,
+      ...values,
         date: values?.date ? format(values.date, 'Y-MM-dd') : ''
-      }
     }
-    
+
     try {
-      await accountEntriesService.update(data)
-      
+      const response = await invoiceEntriesService.create(data)
+
       toast({
         title: "Sucesso",
-        description: "Alteração realizada com sucesso",
+        description: `Lançamento ${values.description} criado com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
       })
 
-      refetch();
-      closeModal();
+      if (typeof refetch !== 'undefined') {
+        refetch();
+        onCancel();
+      } else {
+        router.push(`/cards/${response.data.card_id}/invoices/${response.data.invoice_id}/entries`)
+      }
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -123,11 +106,20 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
             setError(key, {message: error})
           })
         }
+      } else if (error.response?.status === 400) {
+        toast({
+          title: "Erro",
+          description: error.response.data.message,
+          position: "top-right",
+          status: 'error',
+          duration: 10000,
+          isClosable: true,
+        })
       }
     }
   }
 
-  if (isLoadingCategories) {
+  if (isLoadingCategories || isLoadingCardsForm) {
     return (
       <Loading />
     )
@@ -136,9 +128,17 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleEditAccountEntry)}
+      onSubmit={handleSubmit(handleCreateInvoiceEntry)}
       >
       <Stack spacing={[4]}>
+        <Select
+          name="type"
+          label="Cartão de Crédito"
+          options={formCards}
+          error={errors.card_id}
+          {...register('card_id')}
+        />
+
         <Controller
           control={control}
             name="date"
@@ -185,7 +185,7 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
           mr={[4]}
           variant="outline"
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onCancel}
         >
           Cancelar
         </Button>

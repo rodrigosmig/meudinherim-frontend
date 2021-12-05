@@ -1,4 +1,3 @@
-import { CreateAccountForm } from "../../Foms/account/CreateAccountForm";
 import { CreateCardForm } from "../../Foms/card/CreateCardForm";
 import { Modal } from "../Modal";
 

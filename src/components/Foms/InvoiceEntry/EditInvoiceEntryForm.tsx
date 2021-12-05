@@ -1,22 +1,26 @@
+import { useRouter } from "next/router";
 import { 
   Box,
   Button,
   Flex,
-  Stack,
+  Stack, 
   useToast
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
-import { format, parseISO } from 'date-fns';
-import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
+import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
 import { useCategoriesForm } from "../../../hooks/useCategories";
-import { reverseBrDate } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
+
+interface FormData {
+  category_id: number;
+  description: string;
+  value: number;
+}
 
 interface Category {
   id: number,
@@ -24,36 +28,20 @@ interface Category {
   name: string,
 }
 
-interface Account {
-  id: number;
-  name: string;
-  type: {
-    id: string | 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  balance: number;
-}
-
-interface AccountEntry {
+interface InvoiceEntry {
   id: number;
   date: string;
+  description: string;
+  value: number;
   category: Category;
-  description: string;
-  value: number;
-  account: Account;
+  card_id: number;
+  invoice_id: number;
 }
 
-interface EditAccountEntryFormProps {
-  entry: AccountEntry;
-  closeModal: () => void,
+interface EditInvoiceEntryFormProps {
+  entry: InvoiceEntry;
+  onClose: () => void,
   refetch: () => void
-}
-
-interface FormData {
-  date: Date;
-  category_id: number;
-  description: string;
-  value: number;
 }
 
 type ResponseError = {
@@ -65,45 +53,48 @@ type ResponseError = {
 type Key = keyof ResponseError;
 
 const validationSchema = yup.object().shape({
+  card_id: yup.number().integer("Cartão de Crédito inválido").typeError("O campo cartão de crédito é inválido"),
   date: yup.date().typeError("O campo data é obrigatório"),
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
 })
 
-export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccountEntryFormProps) => {  
+export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: EditInvoiceEntryFormProps) => {  
   const toast = useToast();
+  const router = useRouter();
 
-  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { data: categories, isLoading } = useCategoriesForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
-    defaultValues: {
-      date: parseISO(reverseBrDate(entry.date)),
+    defaultValues:{
       category_id: entry.category.id,
       description: entry.description,
-      value: entry.value
+      value: entry.value,
     },
     resolver: yupResolver(validationSchema)
   });
 
   const { errors } = formState;
 
-  const handleEditAccountEntry: SubmitHandler<FormData> = async (values) => {
+  const handleCreateInvoiceEntry: SubmitHandler<FormData> = async (values) => {
     const data = {
       id: entry.id,
       data: {
-        ...values,
-        account_id: entry.account.id,
-        date: values?.date ? format(values.date, 'Y-MM-dd') : ''
+        category_id: values.category_id,
+        description: values.description,
+        value: values.value
       }
     }
-    
+
     try {
-      await accountEntriesService.update(data)
-      
+      const response = await invoiceEntriesService.update(data)
+
+      const newEntry = response.data
+
       toast({
         title: "Sucesso",
-        description: "Alteração realizada com sucesso",
+        description: `Lançamento ${values.description} alterado com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,
@@ -111,7 +102,7 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
       })
 
       refetch();
-      closeModal();
+      onClose();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -123,11 +114,20 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
             setError(key, {message: error})
           })
         }
+      } else if (error.response?.status === 400) {
+        toast({
+          title: "Erro",
+          description: error.response.data.message,
+          position: "top-right",
+          status: 'error',
+          duration: 10000,
+          isClosable: true,
+        })
       }
     }
   }
 
-  if (isLoadingCategories) {
+  if (isLoading) {
     return (
       <Loading />
     )
@@ -136,22 +136,9 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleEditAccountEntry)}
+      onSubmit={handleSubmit(handleCreateInvoiceEntry)}
       >
       <Stack spacing={[4]}>
-        <Controller
-          control={control}
-            name="date"
-            render={({ field }) => (
-              <Datepicker
-                label="Data"
-                error={errors.date}
-                selected={field.value}
-                onChange={(date) => field.onChange(date)}
-              />
-           )}
-        />
-
         <SelectCategories
           name="type"
           label="Categoria"
@@ -185,7 +172,7 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
           mr={[4]}
           variant="outline"
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onClose}
         >
           Cancelar
         </Button>

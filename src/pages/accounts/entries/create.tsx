@@ -37,7 +37,7 @@ export default function CreateAccountEntry({ categories, formAccounts }: CreateA
       <Layout>
           <Flex mb={[6, 6, 8]} justify="space-between" align="center">
             <Heading>
-              <Text>Novo Lançamento</Text>
+              <Text>Novo Lançamento | Conta</Text>
             </Heading>
           </Flex>
 

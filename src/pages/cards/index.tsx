@@ -3,7 +3,6 @@ import Head from "next/head";
 import { 
   Flex, 
   HStack, 
-  Select, 
   Spinner, 
   Tbody, 
   Td, 
@@ -126,6 +125,10 @@ export default function Cards() {
         onClose={editModalOnClose}
         refetch={refetch}
       />
+
+      <Head>
+        <title>Cartão de Crédito | Meu Dinherim</title>
+      </Head>
 
       <Layout>
         <Flex mb={[6, 6, 8]} justify="space-between" align="center">

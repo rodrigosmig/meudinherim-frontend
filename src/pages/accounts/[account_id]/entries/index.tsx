@@ -1,6 +1,5 @@
 import { ChangeEvent, useState } from 'react';
 import Head from "next/head";
-import { useRouter } from 'next/router';
 import { 
   Box,
   Flex, 
@@ -68,8 +67,7 @@ interface AccountEntry {
 
 export default function AccountEntries({ account }: AccountEntriesProps) {
   const toast = useToast();
-  const router = useRouter();
-
+  
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

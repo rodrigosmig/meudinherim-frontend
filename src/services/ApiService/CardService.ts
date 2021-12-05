@@ -10,6 +10,31 @@ interface Card {
   balance: number;
 }
 
+interface Invoice {
+  id: number;
+  due_date: string;
+  closing_date: string;
+  amount: number;
+  paid: boolean;
+  isClosed: boolean;
+  card: {
+    id: number;
+    name: string;
+  }
+}
+
+interface InvoiceResponse {
+  data: Invoice[];
+  meta: {
+    from: number;
+    to: number;
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  }
+}
+
 interface CardResponse {
   data: Card[]
 }
@@ -33,4 +58,11 @@ export const cardService = {
   create: (values: FormData): Promise<AxiosResponse<Card>> => apiClient.post(`/cards`, values),
   update: (values: EditCardFormData): Promise<AxiosResponse<Card>> => apiClient.put(`/cards/${values.cardId}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/cards/${id}`),
+  getInvoices: (
+    cardId: number, 
+    status: 'open' | 'paid',
+    page: number, 
+    perPage: number
+  ): Promise<AxiosResponse<InvoiceResponse>> => apiClient.get(`/cards/${cardId}/invoices?status=${status}&page=${page}&per_page=${perPage}`),
+  getInvoice: (cardId: number, invoiceId: number): Promise<AxiosResponse<Invoice>> => apiClient.get(`/cards/${cardId}/invoices/${invoiceId}`),
 };
