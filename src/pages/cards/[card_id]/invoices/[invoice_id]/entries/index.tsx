@@ -1,7 +1,9 @@
 import { ChangeEvent, useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from 'next/router';
 import {
+  Button,
   Box,
   Flex,
   Icon,
@@ -36,19 +38,10 @@ import { invoiceEntriesService } from "../../../../../../services/ApiService/Inv
 import { DeleteButton } from "../../../../../../components/Buttons/Delete";
 import { useInvoice } from "../../../../../../hooks/useInvoices";
 import { CreateInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/CreateInvoiceEntryModal";
-
-interface Invoice {
-  id: number;
-  due_date: string;
-  closing_date: string;
-  amount: number;
-  paid: boolean;
-  isClosed: boolean;
-  card: {
-    id: number;
-    name: string;
-  }
-}
+import { BsClock } from "react-icons/bs"
+import { PopoverTotal } from "../../../../../../components/PopoverTotal";
+import { CancelButton } from "../../../../../../components/Buttons/Cancel";
+import { AnticipateInstallmentsModal } from "../../../../../../components/Modals/invoice_entries/AnticipateInstallmentsModal";
 
 interface Category {
   id: number,
@@ -64,6 +57,12 @@ interface InvoiceEntry {
   category: Category;
   card_id: number;
   invoice_id: number;
+  is_parcel: boolean;
+  parcel_number: number;
+  parcel_total: number;
+  total_purchase: number;
+  parcelable_id: number;
+  anticipated: boolean;
 }
 
 interface InvoiceEntriesProps {
@@ -85,12 +84,12 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
 
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
+  const { isOpen: anticipateModalIsOpen, onOpen: anticipateModalonOpen, onClose: anticipateModalOnClose } = useDisclosure();
 
   const [ page, setPage ] = useState(1);
   const [ perPage, setPerPage ] = useState(10);
 
   const [ dateRange, setDateRange ] = useState([null, null]);
-  const [ startDate, endDate ] = dateRange;
   const [ selectedEntry, setSelectedEntry ] = useState({} as InvoiceEntry)
 
   const { data, isLoading, isFetching, isError, refetch } = useInvoiceEntries(cardId, invoiceId, page, perPage);
@@ -103,16 +102,23 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
     setPerPage(value)
   }
 
-  const handleEditEntry = (entry_id: number) => {
-    const entry = getSelectedEntry(entry_id);
+  const handleEditEntry = (id: number, parcelable_id: number | null) => {
+    const entry = getSelectedEntry(id, parcelable_id);
 
     setSelectedEntry(entry);
     editModalonOpen();
   }
 
-  const getSelectedEntry = (id: number) => {
+  const handleAnticipateInstallments = (id: number, parcelable_id: number | null) => {
+    const entry = getSelectedEntry(id, parcelable_id);
+
+    setSelectedEntry(entry);
+    anticipateModalonOpen();
+  }
+
+  const getSelectedEntry = (id: number, parcelable_id: number | null) => {
     const entry = data.entries.filter(e => {
-      return e.id === id
+      return e.id === id && e.parcelable_id === parcelable_id
     })
 
     return entry[0];
@@ -157,11 +163,6 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
     }
   }
 
-  const handleCancelForm = () => {
-    refetch();
-    refetchInvoice();
-  }
-
   return (
     <>
       <CreateInvoiceEntryModal
@@ -175,6 +176,13 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
         entry={selectedEntry}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
+        refetch={handleRefetchData}
+      />
+
+      <AnticipateInstallmentsModal
+        entry={selectedEntry}
+        isOpen={anticipateModalIsOpen} 
+        onClose={anticipateModalOnClose}
         refetch={handleRefetchData}
       />
 
@@ -245,7 +253,15 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
                         <Text fontWeight="bold">{entry.category.name}</Text>
                       </Td>
                       <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{entry.description}</Text>
+                        { entry.is_parcel ? (
+                          <PopoverTotal
+                            description={entry.description}
+                            amount={entry.total_purchase}
+                          />
+                          ) : (
+                            entry.description
+                          )
+                        }
                       </Td>
                       <Td fontSize={["xs", "md"]}>
                         <Text 
@@ -256,13 +272,47 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
                       </Text>
                       </Td>
                       <Td fontSize={["xs", "md"]}>
-                        <HStack spacing={[2]}>                              
-                          <EditButton onClick={() => handleEditEntry(entry.id)} />
-                          <DeleteButton
-                            onDelete={() => handleDeleteEntry(entry.id)} 
-                            resource="Lançamento"
-                            loading={deleteEntry.isLoading}
-                          />
+                        <HStack spacing={[2]}>
+                          { (!entry.is_parcel && !entry.anticipated) && (
+                            <>
+                              <EditButton onClick={() => handleEditEntry(entry.id, entry.parcelable_id)} />
+                              <DeleteButton
+                                onDelete={() => handleDeleteEntry(entry.id)} 
+                                resource="Lançamento"
+                                loading={deleteEntry.isLoading}
+                              />
+                            </>
+                          )}
+
+                          {((entry.is_parcel || !entry.anticipated) && entry.parcel_number === 1) && (
+                            <>
+                              <DeleteButton
+                                onDelete={() => handleDeleteEntry(entry.is_parcel ? entry.parcelable_id : entry.id)} 
+                                resource="todas as parcelas"
+                                loading={deleteEntry.isLoading}
+                              />
+                            </>
+                          )}
+
+                          {((entry.is_parcel || entry.anticipated) && entry.parcel_number < entry.parcel_total) && (
+                            <>
+                              <Button
+                                size="sm"
+                                fontSize="sm"
+                                bg="green.500"
+                                _hover={{ bg: "green.300" }}
+                                _active={{
+                                  bg: "green.400",
+                                  transform: "scale(0.98)",
+                                }}
+                                leftIcon={<Icon as={BsClock} fontSize="16" />}
+                                onClick={() => handleAnticipateInstallments(entry.id, entry.parcelable_id)} 
+                              >
+                                Antecipar
+                              </Button>
+                            </>
+                          )}
+                          
                         </HStack>
                       </Td>
                     </Tr>
@@ -284,6 +334,13 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
             </>
           )
         }
+        
+        <Link href={`/cards/${cardId}/invoices`}>
+          <CancelButton 
+            label={"Voltar"} 
+            mt={8}
+          />        
+        </Link>
       </Layout>
     </>
   )

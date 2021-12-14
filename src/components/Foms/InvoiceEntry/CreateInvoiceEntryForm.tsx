@@ -1,3 +1,4 @@
+import { useState, ChangeEvent } from "react";
 import { useRouter } from "next/router";
 import { 
   Box,
@@ -19,6 +20,8 @@ import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntri
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useCardsForm } from "../../../hooks/useCards";
+import { Installment } from "../../Inputs/Installment";
+import { Switch } from "../../Inputs/Switch";
 
 interface FormData {
   card_id: number;
@@ -26,6 +29,8 @@ interface FormData {
   category_id: number;
   description: string;
   value: number;
+  installment: boolean;
+  installments_number: number
 }
 
 type ResponseError = {
@@ -48,7 +53,14 @@ const validationSchema = yup.object().shape({
   date: yup.date().typeError("O campo data é obrigatório"),
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
+  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório"),
+  installment: yup.boolean(),
+  installments_number: yup.number().when('installment', {
+    is: true,
+    then: yup.number().typeError("O número de parcelas é inválido")
+      .min(2, 'O valor mínimo é 2.')
+      .max(12, 'O valor máximo é 12.'),
+  })
 })
 
 export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: CreateInvoiceEntryFormProps) => {  
@@ -58,6 +70,9 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
   const { data: formCards, isLoading: isLoadingCardsForm } = useCardsForm();
 
+  const [ hasInstallment, setHasInstallment ] = useState(false);
+  const [ entryValue, setEntryValue ] = useState(0);
+
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
       date: new Date(),
@@ -65,6 +80,8 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
       category_id: "",
       description: "",
       value: 0,
+      installment: false,
+      installments_number: 2
     },
     resolver: yupResolver(validationSchema)
   });
@@ -74,7 +91,8 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
   const handleCreateInvoiceEntry: SubmitHandler<FormData> = async (values) => {
     const data = {
       ...values,
-        date: values?.date ? format(values.date, 'Y-MM-dd') : ''
+      installment: hasInstallment,
+      date: values?.date ? format(values.date, 'Y-MM-dd') : ''
     }
 
     try {
@@ -117,6 +135,16 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
         })
       }
     }
+  }
+
+  const hasEntryValue = () => {
+    return entryValue > 0;
+  }
+
+  const handleChangeEntryValue = (event: ChangeEvent<HTMLInputElement>) => {
+    const amount = parseFloat(event.target.value);
+
+    setEntryValue(amount);
   }
 
   if (isLoadingCategories || isLoadingCardsForm) {
@@ -168,14 +196,36 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
         />
 
         <Input
+          value={entryValue}
           name="value"
           type="number"
           label="Valor"
           error={errors.value}
           step="0.01"
           {...register('value')}
+          onChange={v => handleChangeEntryValue(v)}
+        />
+
+        <Switch
+          isDisabled={!hasEntryValue()}
+          size="lg"
+          id="installment" 
+          name='installment'
+          label="Parcelar"
+          isChecked={hasInstallment}
+          {...register('installment')}
+          onChange={() => setHasInstallment(!hasInstallment)}
         />
       </Stack>
+
+      <Installment
+        amount={entryValue}
+        isChecked={hasInstallment}
+        error={errors.installments_number}
+        {...register('installments_number')}
+        onChange={() => setHasInstallment(!hasInstallment)}
+      />
+
       <Flex
         mt={[10]}
         justify="flex-end"

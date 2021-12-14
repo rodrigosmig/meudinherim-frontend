@@ -4,7 +4,6 @@ import {
   PopoverContent,
   PopoverBody,
   PopoverArrow,
-  PopoverCloseButton,
   Text
 } from "@chakra-ui/react";
 import { toCurrency } from "../../utils/helpers";
@@ -18,9 +17,9 @@ export const PopoverTotal = ({ description, amount }:PopoverTotalProps) => {
   return (
     <Popover trigger={"hover"}>
       <PopoverTrigger>
-      <Text>{description}</Text>
+      <Text fontWeight="bold">{description}</Text>
       </PopoverTrigger>
-      <PopoverContent color='gray.900'>
+      <PopoverContent>
         <PopoverArrow />
         <PopoverBody>Total da compra: {toCurrency(amount)}</PopoverBody>
       </PopoverContent>

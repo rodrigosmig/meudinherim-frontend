@@ -15,6 +15,12 @@ interface InvoiceEntry {
   category: Category;
   card_id: number;
   invoice_id: number;
+  is_parcel: boolean;
+  parcel_number: number;
+  parcel_total: number;
+  total_purchase: number;
+  parcelable_id: number;
+  anticipated: boolean;
 }
 
 interface InvoiceEntryResponse {
@@ -33,6 +39,13 @@ interface EditInvoiceEntryFormData {
     category_id: number;
     description: string;
     value: number;
+  }
+}
+
+interface AnticipateInstallmentsFormData {
+  id: number;
+  data: {
+    parcels: number[];
   }
 }
 
@@ -56,4 +69,6 @@ export const invoiceEntriesService = {
   create: (data: CreateInvoiceEntryFormData): Promise<AxiosResponse<InvoiceEntry>> => apiClient.post(`/cards/${data.card_id}/entries`, data),
   update: (values: EditInvoiceEntryFormData): Promise<AxiosResponse<InvoiceEntry>> => apiClient.put(`/invoice-entries/${values.id}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/invoice-entries/${id}`),
+  getNextInstallments: (id: number, installment_number: number): Promise<AxiosResponse> => apiClient.get(`/invoice_entries/${id}/next-parcels?parcel_number=${installment_number}`),
+  anticipateInstallments: (values: AnticipateInstallmentsFormData,): Promise<AxiosResponse> => apiClient.post(`/invoice_entries/${values.id}/anticipate-parcels`, values.data),
 };

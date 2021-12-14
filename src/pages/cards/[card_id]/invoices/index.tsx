@@ -5,9 +5,7 @@ import { setupApiClient } from "../../../../services/api";
 import { withSSRAuth } from "../../../../utils/withSSRAuth";
 import {
   Box,
-  Button,
   Flex,
-  Icon,
   HStack,
   Select,
   Spinner,
@@ -88,7 +86,7 @@ export default function Invoices({ card }: InvoicesProps) {
             </>
           </Heading>
           <Heading>
-            <Box color='blue.500'>{ toCurrency(card.balance) }</Box>
+            <Box color='blue.500'>Limite: { toCurrency(card.balance) }</Box>
           </Heading>
         </Flex>
 
@@ -123,7 +121,7 @@ export default function Invoices({ card }: InvoicesProps) {
                   <Tr>
                     <Th>Vencimento</Th>
                     <Th>Data do Fechamento</Th>
-                    <Th>Valor Total</Th>
+                    <Th>Valor da Fatura</Th>
                     <Th w="8"></Th>
                   </Tr>
                 </Thead>

@@ -3,6 +3,20 @@ import { mocked } from 'ts-jest/utils';
 import { CreatePayableForm } from "../../../../components/Foms/payable/CreatePayableForm";
 import { payableService } from "../../../../services/ApiService/PayableService";
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 const payableServiceMocked = mocked(payableService.create);
 
 jest.mock('react-query')
@@ -19,9 +33,15 @@ const categories = [
   }
 ]
 
+const closeModal = jest.fn();
+const refetch = jest.fn();
+
 describe('CreatePayableForm Component', () => {
   beforeEach(() => {
-    render(<CreatePayableForm categories={categories} />)
+    render(<CreatePayableForm 
+      closeModal={closeModal}
+      refetch={refetch}
+      categories={categories} />)
   });
 
   afterEach(() => {

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { AddButton } from '../../../components/Buttons/Add';
+import { AnticipateButton } from '../../../components/Buttons/Anticipate';
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -18,25 +19,27 @@ Object.defineProperty(window, 'matchMedia', {
 const onClick = jest.fn();
 
 describe('Add button Component', () => {
-  it('renders correctly add button label', () => {
+  beforeEach(() => {
     render(
-      <AddButton onClick={onClick} />
+      <AnticipateButton onClick={onClick} />
     )
+  });
 
-    expect(screen.getByRole('button', {name: "Add"})).toBeInTheDocument()
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders correctly add button label', () => {
+    expect(screen.getByRole('button', {name: "Antecipar"})).toBeInTheDocument()
     expect(onClick).toHaveBeenCalledTimes(0)
   })
 
   it('tests onClick function', async () => {
-    render(
-      <AddButton onClick={onClick} />
-    )
-
     await waitFor(() => {
-      fireEvent.click(screen.getByRole('button', {name: 'Add'}));
+      fireEvent.click(screen.getByRole('button', {name: 'Antecipar'}));
     })
 
-    expect(screen.getByRole('button', {name: "Add"})).toBeInTheDocument()
+    expect(screen.getByRole('button', {name: "Antecipar"})).toBeInTheDocument()
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 })

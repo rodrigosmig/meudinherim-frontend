@@ -4,6 +4,20 @@ import { EditAccountForm } from "../../../../components/Foms/account/EditAccount
 import { accountService } from "../../../../services/ApiService/AccountService";
 import { mocked } from "ts-jest/utils";
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 const accountServiceMocked = mocked(accountService.update);
 
 jest.mock('react-query')

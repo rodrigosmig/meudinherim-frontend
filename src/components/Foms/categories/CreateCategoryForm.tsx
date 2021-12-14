@@ -12,7 +12,6 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
-import Link from "next/link";
 import { CancelButton } from "../../Buttons/Cancel";
 
 interface FormData {

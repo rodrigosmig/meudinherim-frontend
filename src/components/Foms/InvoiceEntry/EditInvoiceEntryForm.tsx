@@ -36,6 +36,12 @@ interface InvoiceEntry {
   category: Category;
   card_id: number;
   invoice_id: number;
+  is_parcel: boolean;
+  parcel_number: number;
+  parcel_total: number;
+  total_purchase: number;
+  parcelable_id: number;
+  anticipated: boolean;
 }
 
 interface EditInvoiceEntryFormProps {
@@ -54,7 +60,6 @@ type Key = keyof ResponseError;
 
 const validationSchema = yup.object().shape({
   card_id: yup.number().integer("Cartão de Crédito inválido").typeError("O campo cartão de crédito é inválido"),
-  date: yup.date().typeError("O campo data é obrigatório"),
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")

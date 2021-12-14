@@ -1,4 +1,3 @@
-import { EditCategoryForm } from "../../Foms/categories/EditCategoryForm";
 import { EditInvoiceEntryForm } from "../../Foms/InvoiceEntry/EditInvoiceEntryForm";
 import { Modal } from "../Modal";
 

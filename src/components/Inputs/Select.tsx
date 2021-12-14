@@ -15,7 +15,7 @@ interface SelectProps extends ChakraSelectProps {
   label?: string;
   error?: FieldError;
   options: {
-    value: string;
+    value: string | number;
     label: string;
   }[]
 }
