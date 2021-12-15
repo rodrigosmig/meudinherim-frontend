@@ -24,9 +24,11 @@ export const NavAdd = () => {
         </MenuButton>
       </Tooltip>
       <MenuList>
-        <MenuItem icon={<Icon as={RiBankCard2Line} fontSize={20} />}>
-          Lançamento no cartão
-        </MenuItem>
+        <Link href={"/cards/invoices/entries/create"} passHref>
+          <MenuItem icon={<Icon as={RiBankCard2Line} fontSize={20} />}>
+            Lançamento no cartão
+          </MenuItem>
+        </Link>
         <Link href={"/accounts/entries/create"} passHref>
           <MenuItem icon={<Icon as={RiBankLine} fontSize={20} />}>
             Lançamento na conta

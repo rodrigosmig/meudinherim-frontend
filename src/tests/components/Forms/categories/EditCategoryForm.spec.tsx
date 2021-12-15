@@ -4,6 +4,20 @@ import { act } from "react-dom/test-utils";
 import { mocked } from "ts-jest/utils";
 import { categoryService } from "../../../../services/ApiService/CategoryService";
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 const categoryServiceMocked = mocked(categoryService.update);
 
 jest.mock('react-query');

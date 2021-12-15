@@ -27,7 +27,7 @@ describe('Add button Component', () => {
     expect(onClick).toHaveBeenCalledTimes(0)
   })
 
-  it('renders correctly add button label', async () => {
+  it('tests onClick function', async () => {
     render(
       <AddButton onClick={onClick} />
     )

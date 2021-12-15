@@ -1,58 +1,103 @@
 import {
   Box,
-  HStack,
+  Center,
+  Flex,
   Icon,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuGroup,
-  MenuItem,
-  MenuDivider,
-  Spinner,
+  Link as ChakraLink,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  IconButton,
+  Stack,
   Text,
-  Tooltip
+  useColorModeValue,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { useAccountBalance } from "../../../hooks/useAccountBalance";
+import { Loading } from "../../Loading";
 
 export const NavBalance = () => {
-  const { data, isFetching, refetch } = useAccountBalance(null);
+  const bg = useColorModeValue('gray.50', 'gray.800');
+  const { data, isLoading, isFetching, refetch } = useAccountBalance(null);
 
   return (
-    <Menu isLazy onOpen={() => refetch()}>
-      <Tooltip label="Saldo">
-        <MenuButton>
-            <Icon as={HiOutlineCurrencyDollar} fontSize="20" />
-        </MenuButton>
-      </Tooltip>
-      <MenuList>
-      <Box fontSize={["xl"]} align="center">Contas
-      { isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
-      </Box>
-        <MenuDivider />
-        { data?.balances.map(account => (
-            <MenuGroup key={account.account_id} title={account.account_name}>
-              <Link href={`/accounts/${account.account_id}/entries`} passHref>
-                <MenuItem>
-                  <HStack spacing={2}>
-                    <>
-                      <Text>Saldo:</Text> 
-                      <Box color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
-                    </>
-                  </HStack>
-                </MenuItem>              
-              </Link>
-              <MenuDivider />
-            </MenuGroup>
-        ))}        
-        <MenuItem justify="center" align="center">
-          <HStack spacing={2}>
-            <Text>Total:</Text> 
-            <Box color={data?.total.positive ? 'blue.500' : 'red.500'}>{ data?.total.value } </Box>
-            </HStack>
-        </MenuItem>
-      </MenuList>
-    </Menu>
+    <Popover isLazy trigger={'hover'}>
+      <PopoverTrigger>
+        <IconButton
+          variant="ghost"
+          aria-label="Open Invoices"
+          icon={<Icon as={HiOutlineCurrencyDollar} fontSize={[18, 20, 20]} />}
+        />
+      </PopoverTrigger>
+      <PopoverContent
+        border={0}
+        boxShadow={'xl'}
+        rounded={'xl'}
+      >
+        <PopoverArrow />
+        <PopoverHeader 
+          fontWeight="bold" 
+          fontSize={['sm', "lg", "lg"]}
+        >
+          <Center>Contas</Center>
+        </PopoverHeader>
+          { isLoading ? (
+            <Loading />
+          ) : (
+            <>
+              <PopoverBody>
+                { data.balances.map(account => (
+                  <Link href={`/accounts/${account.account_id}/entries`} passHref  key={account.account_id}>
+                    <ChakraLink 
+                      role={'group'}
+                      display={'block'}
+                      p={3}
+                      rounded={'md'}
+                      _hover={{ bg: bg }}>
+                      <Stack direction={'row'} align={'center'}>
+                        <Box>
+                          <Text
+                            transition={'all .3s ease'}
+                            _groupHover={{ color: 'pink.400' }}
+                            fontWeight={500}
+                            fontSize={['sm', "lg", "lg"]}
+                          >
+                            { account.account_name }
+                          </Text>
+
+                          <Text as="span" fontSize={['xs', "md", "md"]} mr={1}>Saldo:</Text>
+                          <Box as="span" color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
+                        </Box>
+                      </Stack>
+                    </ChakraLink>
+                  </Link>
+                ))}
+              </PopoverBody>
+
+              <PopoverFooter
+                border='0'
+                d='flex'
+                alignItems='center'
+                justifyContent='center'
+                pb={4}
+              >
+                <Box fontSize={['sm', "lg", "lg"]}>
+                  <Text as="span" fontWeight="bold" mr="1">
+                    Total:
+                  </Text>
+                  <Text as="span" color={data.total.positive ? 'blue.500' : 'red.500'}>
+                    { data.total.value }
+                  </Text>
+                </Box>
+              </PopoverFooter>
+            </>
+          )}
+      </PopoverContent>
+    </Popover>
   )
 }

@@ -1,5 +1,5 @@
 import { setupApiClient } from "../api";
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 interface Payable {
   id: number;

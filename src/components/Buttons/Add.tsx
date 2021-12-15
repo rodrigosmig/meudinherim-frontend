@@ -4,7 +4,6 @@ import {
   IconButton, 
   Tooltip, 
   useBreakpointValue, 
-  useColorModeValue 
 } from "@chakra-ui/react"
 import { memo } from "react"
 import { RiAddLine } from "react-icons/ri"

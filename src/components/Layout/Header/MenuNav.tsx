@@ -6,20 +6,20 @@ import { RiNotificationLine } from "react-icons/ri";
 import { NavAdd } from "./NavAdd";
 import { NavBalance } from "./NavBalance";
 import { ChangeTheme } from "./ChangeTheme";
+import { NavInvoices } from "./NavInvoices";
 
 export const MenuNav = ()  => {
   return (
     <HStack 
-      spacing={["4", "4", "6"]}
-      mx={["6", "6", "8"]}
-      pr={["6", "6", "8"]}
-      py="1"      
+      mx={["4", "4", "6"]}
+      pr={["4", "4", "6"]}
       borderRightWidth={1}
     >
       <ChangeTheme />
       <Icon as={RiNotificationLine} fontSize="20" />
       <NavAdd />
       <NavBalance />
+      <NavInvoices />
       
     </HStack>
   )

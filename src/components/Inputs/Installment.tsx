@@ -19,15 +19,15 @@ interface InstallmentProps extends SelectProps {
   amount: number;
   isChecked: boolean;
   error?: FieldError;
-  onChange: () => void
 }
 
-const InstallmentBase: ForwardRefRenderFunction<HTMLSelectElement, InstallmentProps> = ({ amount, isChecked, error = null, onChange, ...rest }, ref) => {
+const InstallmentBase: ForwardRefRenderFunction<HTMLSelectElement, InstallmentProps> = ({ amount, isChecked, error = null, ...rest }, ref) => {
   const [ installmentValue, setInstallmentValue ] = useState(0)
+  const [ installmentNumber, setInstallmentNumber ] = useState(2)
 
   useEffect(() => {
-    setInstallmentValue(amount / 2);
-  }, [amount])
+    setInstallmentValue(amount / installmentNumber);
+  }, [amount, installmentNumber])
 
   const options = [2,3,4,5,6,7,8,9,10,11,12].map((value) => {
     return {
@@ -37,8 +37,8 @@ const InstallmentBase: ForwardRefRenderFunction<HTMLSelectElement, InstallmentPr
   })
 
   const handleChangeInstallment = (event: ChangeEvent<HTMLSelectElement>) => {
-    const installmentNumber = parseInt(event.target.value);
-    setInstallmentValue(amount / installmentNumber)
+    setInstallmentNumber(parseInt(event.target.value));
+    setInstallmentValue(amount / installmentNumber);
   }
 
   return (

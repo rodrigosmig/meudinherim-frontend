@@ -3,6 +3,20 @@ import { mocked } from 'ts-jest/utils';
 import { CreateReceivableForm } from "../../../../components/Foms/receivable/CreateReceivableForm";
 import { receivableService } from "../../../../services/ApiService/ReceivableService";
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 const receivableServiceMocked = mocked(receivableService.create);
 
 jest.mock('react-query')

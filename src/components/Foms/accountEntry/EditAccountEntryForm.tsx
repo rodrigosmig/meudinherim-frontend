@@ -74,7 +74,7 @@ const validationSchema = yup.object().shape({
 export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccountEntryFormProps) => {  
   const toast = useToast();
 
-  const { data: categories, isLoading } = useCategoriesForm();
+  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
@@ -127,7 +127,7 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
     }
   }
 
-  if (isLoading) {
+  if (isLoadingCategories) {
     return (
       <Loading />
     )

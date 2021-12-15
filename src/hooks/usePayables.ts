@@ -1,4 +1,4 @@
-import { toCurrency, toBrDate } from './../utils/helpers';
+import { toBrDate } from './../utils/helpers';
 import { useQuery } from "react-query";
 import { payableService } from "../services/ApiService/PayableService";
 
