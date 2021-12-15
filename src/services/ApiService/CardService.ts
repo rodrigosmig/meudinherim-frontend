@@ -35,6 +35,11 @@ interface InvoiceResponse {
   }
 }
 
+interface OpenInvoicesResponse {
+  invoices: Invoice[];
+  total: number;
+}
+
 interface CardResponse {
   data: Card[]
 }
@@ -65,4 +70,5 @@ export const cardService = {
     perPage: number
   ): Promise<AxiosResponse<InvoiceResponse>> => apiClient.get(`/cards/${cardId}/invoices?status=${status}&page=${page}&per_page=${perPage}`),
   getInvoice: (cardId: number, invoiceId: number): Promise<AxiosResponse<Invoice>> => apiClient.get(`/cards/${cardId}/invoices/${invoiceId}`),
+  getOpenInvoices: (): Promise<AxiosResponse<OpenInvoicesResponse>> => apiClient.get(`/cards/invoices/open`)
 };

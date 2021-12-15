@@ -8,7 +8,7 @@ interface InvoicesButtonProps {
   href: string
 }
 
-const invoicesButtonComponent = ({ href }: InvoicesButtonProps) => {
+const InvoicesButtonComponent = ({ href }: InvoicesButtonProps) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -53,4 +53,4 @@ const invoicesButtonComponent = ({ href }: InvoicesButtonProps) => {
   )
 }
 
-export const InvoicesButton = memo(invoicesButtonComponent)
+export const InvoicesButton = memo(InvoicesButtonComponent)

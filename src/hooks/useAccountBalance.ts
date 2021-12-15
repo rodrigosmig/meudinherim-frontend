@@ -9,7 +9,7 @@ export const getAccountBalance = async (id: number | null) => {
     return {
       ...account,
       balance: toCurrency(account.balance),
-      positive: account.balance > 0
+      positive: account.balance >= 0
     }
 
   })
@@ -18,7 +18,7 @@ export const getAccountBalance = async (id: number | null) => {
     balances: balances,
     total: {
       value: toCurrency(response.data.total),
-      positive: response.data.total > 0
+      positive: response.data.total >= 0
     }
   }
 

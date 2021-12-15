@@ -1,4 +1,4 @@
-import {
+import {  
   Box,
   Center,
   Flex,
@@ -16,14 +16,14 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import Link from "next/link";
-import { HiOutlineCurrencyDollar } from "react-icons/hi";
-import { useAccountBalance } from "../../../hooks/useAccountBalance";
+import { RiBankCard2Line } from "react-icons/ri";
+import { useOpenInvoices } from "../../../hooks/useOpenInvoices";
 import { Loading } from "../../Loading";
+import Link from 'next/link'
 
-export const NavBalance = () => {
+export const NavInvoices = () => {
   const bg = useColorModeValue('gray.50', 'gray.800');
-  const { data, isLoading, isFetching, refetch } = useAccountBalance(null);
+  const { data, isLoading, isFetching, refetch } = useOpenInvoices();
 
   return (
     <Popover isLazy trigger={'hover'}>
@@ -31,32 +31,33 @@ export const NavBalance = () => {
         <IconButton
           variant="ghost"
           aria-label="Open Invoices"
-          icon={<Icon as={HiOutlineCurrencyDollar} fontSize={[18, 20, 20]} />}
+          icon={<Icon as={RiBankCard2Line} fontSize={[18, 20, 20]} />}
         />
       </PopoverTrigger>
       <PopoverContent
         border={0}
         boxShadow={'xl'}
         rounded={'xl'}
+        minW={['xs', 'sm']}
       >
         <PopoverArrow />
         <PopoverHeader 
           fontWeight="bold" 
           fontSize={['sm', "lg", "lg"]}
         >
-          <Center>Contas</Center>
+          <Center>Faturas</Center>
         </PopoverHeader>
           { isLoading ? (
             <Loading />
           ) : (
             <>
               <PopoverBody>
-                { data.balances.map(account => (
-                  <Link href={`/accounts/${account.account_id}/entries`} passHref  key={account.account_id}>
+                { data.invoices.map(invoice => (
+                  <Link href={`/cards/${invoice.card.id}/invoices/${invoice.id}/entries`} passHref  key={invoice.id}>
                     <ChakraLink 
                       role={'group'}
                       display={'block'}
-                      p={3}
+                      p={2}
                       rounded={'md'}
                       _hover={{ bg: bg }}>
                       <Stack direction={'row'} align={'center'}>
@@ -67,12 +68,19 @@ export const NavBalance = () => {
                             fontWeight={500}
                             fontSize={['sm', "lg", "lg"]}
                           >
-                            { account.account_name }
+                            { invoice.card.name }
                           </Text>
-
-                          <Text as="span" fontSize={['xs', "md", "md"]} mr={1}>Saldo:</Text>
-                          <Box as="span" color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
+                          <Text fontSize={['xs', "md", "md"]}>Vencimento: { invoice.due_date }</Text>
                         </Box>
+                        <Flex
+                          _groupHover={{ color: 'pink.400' }}
+                          justify={'flex-end'}
+                          align={'center'}
+                          flex={1}
+                          fontSize={['sm', "lg", "lg"]}
+                        >
+                          { invoice.amount }
+                        </Flex>
                       </Stack>
                     </ChakraLink>
                   </Link>
@@ -86,12 +94,12 @@ export const NavBalance = () => {
                 justifyContent='center'
                 pb={4}
               >
-                <Box fontSize={['sm', "lg", "lg"]}>
+                <Box fontSize={['sm', "md", "md"]}>
                   <Text as="span" fontWeight="bold" mr="1">
                     Total:
                   </Text>
-                  <Text as="span" color={data.total.positive ? 'blue.500' : 'red.500'}>
-                    { data.total.value }
+                  <Text as="span" color="red.500">
+                    {data.total }
                   </Text>
                 </Box>
               </PopoverFooter>

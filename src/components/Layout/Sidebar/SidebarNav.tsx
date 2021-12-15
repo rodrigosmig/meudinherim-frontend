@@ -25,13 +25,12 @@ export const SidebarNav = () => {
           <NavLink href="/categories" icon={RiPriceTag3Line}>Categorias</NavLink>
         </NavSection>
 
-        <NavSection title="Banco">
+        <NavSection title="Contas">
             <NavLink href="/accounts" icon={RiBankLine}>Contas</NavLink>
         </NavSection>
       
         <NavSection title="Cartão de Crédito">
             <NavLink href="/cards" icon={RiBankCard2Line}>Cartão de Crédito</NavLink>
-            <NavLink href="#" icon={RiBankCard2Line}>Faturas</NavLink>
         </NavSection>
 
         <NavSection title="Agendamento">

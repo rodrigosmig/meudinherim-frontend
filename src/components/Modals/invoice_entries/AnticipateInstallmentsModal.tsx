@@ -18,7 +18,7 @@ import { Modal } from "../Modal";
 import { Loading } from "../../Loading";
 import { toBrDate, toCurrency } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
-import { AnticipateButtonButton } from "../../Buttons/Anticipate";
+import { AnticipateButton } from "../../Buttons/Anticipate";
 
 interface Category {
   id: number,
@@ -88,7 +88,7 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
     if (isOpen) {
       fetchData();
     }
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, entry.parcelable_id, entry.parcel_number]);
 
   const handleCheckAnticipate = (instalmment_id: number) => {
     installments.map(installment  => {
@@ -233,7 +233,7 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
             onClick={onClose}
           />
 
-          <AnticipateButtonButton
+          <AnticipateButton
             isLoading={isSubmitting}
             onClick={handleAnticipateInstallments}
           />

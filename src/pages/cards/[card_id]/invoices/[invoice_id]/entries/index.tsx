@@ -334,13 +334,19 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
             </>
           )
         }
+
+        <Flex justify={["center", "left"]}>
+          <Link href={`/cards/${cardId}/invoices`} passHref>
+            <Button
+              mt={8}
+              size={sizeProps}
+              variant="outline"
+            >
+              Voltar
+            </Button>
+          </Link>          
+        </Flex>
         
-        <Link href={`/cards/${cardId}/invoices`}>
-          <CancelButton 
-            label={"Voltar"} 
-            mt={8}
-          />        
-        </Link>
       </Layout>
     </>
   )
