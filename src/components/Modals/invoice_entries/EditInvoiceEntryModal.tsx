@@ -15,6 +15,12 @@ interface InvoiceEntry {
   category: Category;
   card_id: number;
   invoice_id: number;
+  is_parcel: boolean;
+  parcel_number: number;
+  parcel_total: number;
+  total_purchase: number;
+  parcelable_id: number;
+  anticipated: boolean;
 }
 
 interface EditInvoiceEntryModalProps {
