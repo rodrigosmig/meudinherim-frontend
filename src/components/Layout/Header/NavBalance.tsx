@@ -15,8 +15,11 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  Spinner,
+  Divider,
 } from "@chakra-ui/react";
 import Link from "next/link";
+import { Fragment } from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { useAccountBalance } from "../../../hooks/useAccountBalance";
 import { Loading } from "../../Loading";
@@ -26,11 +29,16 @@ export const NavBalance = () => {
   const { data, isLoading, isFetching, refetch } = useAccountBalance(null);
 
   return (
-    <Popover isLazy trigger={'hover'}>
+    <Popover 
+      isLazy 
+      trigger={'hover'}
+      onOpen={refetch}
+    >
       <PopoverTrigger>
         <IconButton
+          aria-label="add menu"
+          size="sm"
           variant="ghost"
-          aria-label="Open Invoices"
           icon={<Icon as={HiOutlineCurrencyDollar} fontSize={[18, 20, 20]} />}
         />
       </PopoverTrigger>
@@ -44,7 +52,9 @@ export const NavBalance = () => {
           fontWeight="bold" 
           fontSize={['sm', "lg", "lg"]}
         >
-          <Center>Contas</Center>
+          <Center>
+            Contas { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+          </Center>
         </PopoverHeader>
           { isLoading ? (
             <Loading />
@@ -52,30 +62,34 @@ export const NavBalance = () => {
             <>
               <PopoverBody>
                 { data.balances.map(account => (
-                  <Link href={`/accounts/${account.account_id}/entries`} passHref  key={account.account_id}>
-                    <ChakraLink 
-                      role={'group'}
-                      display={'block'}
-                      p={3}
-                      rounded={'md'}
-                      _hover={{ bg: bg }}>
-                      <Stack direction={'row'} align={'center'}>
-                        <Box>
-                          <Text
-                            transition={'all .3s ease'}
-                            _groupHover={{ color: 'pink.400' }}
-                            fontWeight={500}
-                            fontSize={['sm', "lg", "lg"]}
-                          >
-                            { account.account_name }
-                          </Text>
+                  <Fragment key={account.account_id}>
+                    <Link href={`/accounts/${account.account_id}/entries`} passHref>
+                      <ChakraLink 
+                        role={'group'}
+                        display={'block'}
+                        p={3}
+                        rounded={'md'}
+                        _hover={{ bg: bg }}>
+                        <Stack direction={'row'} align={'center'}>
+                          <Box>
+                            <Text
+                              transition={'all .3s ease'}
+                              _groupHover={{ color: 'pink.400' }}
+                              fontWeight={500}
+                              fontSize={['sm', "lg", "lg"]}
+                            >
+                              { account.account_name }
+                            </Text>
 
-                          <Text as="span" fontSize={['xs', "md", "md"]} mr={1}>Saldo:</Text>
-                          <Box as="span" color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
-                        </Box>
-                      </Stack>
-                    </ChakraLink>
-                  </Link>
+                            <Text as="span" fontSize={['xs', "md", "md"]} mr={1}>Saldo:</Text>
+                            <Box as="span" color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
+                          </Box>
+                        </Stack>
+                      </ChakraLink>
+                    </Link>
+
+                    <Divider mt={2} mb={2} />
+                  </Fragment>
                 ))}
               </PopoverBody>
 

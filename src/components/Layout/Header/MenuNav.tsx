@@ -1,4 +1,5 @@
 import { 
+  Box,
   HStack, 
   Icon,
 } from "@chakra-ui/react";
@@ -10,13 +11,19 @@ import { NavInvoices } from "./NavInvoices";
 
 export const MenuNav = ()  => {
   return (
-    <HStack 
+    <HStack spacing={2}
       mx={["4", "4", "6"]}
       pr={["4", "4", "6"]}
       borderRightWidth={1}
     >
       <ChangeTheme />
+      
+      <Box as="a">
       <Icon as={RiNotificationLine} fontSize="20" />
+
+      </Box>
+      
+      
       <NavAdd />
       <NavBalance />
       <NavInvoices />
