@@ -1,58 +1,93 @@
 import {  
+  Box,
+  Center,
   Icon,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Tooltip
+  IconButton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  Divider
 } from "@chakra-ui/react";
 import {
+  RiBankLine,
+  RiAddCircleLine,
   RiPriceTag3Line, 
-  RiBankCard2Line, 
-  RiBankLine 
 } from "react-icons/ri";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
-import { RiAddCircleLine } from "react-icons/ri";
-import Link from 'next/link'
+import { BiTransfer } from "react-icons/bi";
+import { NavAddItem } from "./NavAddItem";
 
 export const NavAdd = () => {
   return (
-    <Menu isLazy>
-      <Tooltip label="Adicionar">
-        <MenuButton>
-          <Icon as={RiAddCircleLine} fontSize="20" />
-        </MenuButton>
-      </Tooltip>
-      <MenuList>
-        <Link href={"/cards/invoices/entries/create"} passHref>
-          <MenuItem icon={<Icon as={RiBankCard2Line} fontSize={20} />}>
-            Lançamento no cartão
-          </MenuItem>
-        </Link>
-        <Link href={"/accounts/entries/create"} passHref>
-          <MenuItem icon={<Icon as={RiBankLine} fontSize={20} />}>
-            Lançamento na conta
-          </MenuItem>
-        </Link>
-        <Link href={"/categories/create"} passHref>
-          <MenuItem icon={<Icon as={RiPriceTag3Line} fontSize={20} />}>
-            Categoria
-          </MenuItem>
-        </Link>
-        <MenuItem icon={<Icon as={GiReceiveMoney} fontSize={20} />}>
-          Conta a receber
-        </MenuItem>
-        <Link href={"#"} passHref>
-          <MenuItem icon={<Icon as={GiPayMoney} fontSize={20} />}>
-            Conta a pagar
-          </MenuItem>
-        </Link>
+    <Popover
+      isLazy 
+      trigger={'hover'}
+    >
+      <PopoverTrigger>
+      <IconButton
+        aria-label="add menu"
+        size="sm"
+        variant="ghost"
+        icon={<Icon as={RiAddCircleLine} fontSize={[18, 20, 20]} />} 
+      />
 
-      </MenuList>
-    </Menu>
-    
-    
+      </PopoverTrigger>
+      <PopoverContent
+        border={0}
+        boxShadow={'xl'}
+        rounded={'xl'}
+        minW={['xs']}
+      >
+        <PopoverArrow />
+        <PopoverHeader>
+          <Center>
+            Adicionar
+          </Center>
+        </PopoverHeader>
+        <PopoverBody>
+          <NavAddItem
+            url="/cards/invoices/entries/create"
+            label="Lançamento no cartão"
+            icon={<Icon as={RiAddCircleLine} fontSize={[18, 20, 20]} />}
+          />
 
+          <NavAddItem
+            url="/accounts/entries/create"
+            label="Lançamento na conta"
+            icon={<Icon as={RiBankLine} fontSize={20} />}
+          />
 
+          <NavAddItem
+            url="/categories/create"
+            label="Categoria"
+            icon={<Icon as={RiPriceTag3Line} fontSize={20} />}
+          />
+          
+          <NavAddItem
+            url="#"
+            label="Contas a receber"
+            icon={<Icon as={GiReceiveMoney} fontSize={20} />}
+          />
+
+          <NavAddItem
+            url="#"
+            label="Contas a pagar"
+            icon={<Icon as={GiPayMoney} fontSize={20} />}
+          />
+
+          <NavAddItem
+            url="#"
+            label="Transferência entre contras"
+            icon={<Icon as={BiTransfer} fontSize={20} />}
+          />
+
+          <Divider mt={2} mb={2} />
+
+          </PopoverBody>
+      </PopoverContent>
+    </Popover>
   )
 }
