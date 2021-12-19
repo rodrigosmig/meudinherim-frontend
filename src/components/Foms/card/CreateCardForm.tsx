@@ -83,7 +83,7 @@ export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => 
         <Input
           name="name"
           type="text"
-          label="Nome da Conta"
+          label="Nome do Cartão"
           error={errors.name}
           {...register('name')}
         />

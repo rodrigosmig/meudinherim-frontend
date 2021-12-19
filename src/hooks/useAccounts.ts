@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { useQuery } from "react-query";
+import { AuthContext } from "../contexts/AuthContext";
 import { accountService } from "../services/ApiService/AccountService";
 
 export const getAccounts = async () => {
@@ -10,7 +12,9 @@ export const getAccounts = async () => {
 }
 
 export const useAccounts = () => {
-  return useQuery(['accounts'], () => getAccounts(), {
+  const { user } = useContext(AuthContext);
+
+  return useQuery(['accounts', user?.id], () => getAccounts(), {
     staleTime: 1000 * 5
   })
 }

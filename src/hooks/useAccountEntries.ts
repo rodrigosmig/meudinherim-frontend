@@ -1,7 +1,8 @@
+import { useContext } from "react";
 import { useQuery } from "react-query";
+import { AuthContext } from "../contexts/AuthContext";
 import { accountEntriesService } from "../services/ApiService/AccountEntriesService";
 import { toBrDate } from '../utils/helpers';
-
 
 export const getAccountEntries = async (account_id: number, filterDate: [string, string], page: number, perPage: number) => {
   const response = await accountEntriesService.list(account_id, filterDate, page, perPage);
@@ -46,7 +47,9 @@ export const getAccountEntries = async (account_id: number, filterDate: [string,
 }
 
 export const useAccountEntries = (account_id: number, filterDate: [string, string], page: number, perPage: number) => {
-  return useQuery(['accountEntries', account_id, filterDate, page, perPage], () => getAccountEntries(account_id, filterDate, page, perPage), {
+  const { user } = useContext(AuthContext);
+
+  return useQuery(['accountEntries', account_id, filterDate, page, perPage, user?.id], () => getAccountEntries(account_id, filterDate, page, perPage), {
     staleTime: 1000 * 5
   })
 }

@@ -38,15 +38,6 @@ export function LoginForm() {
     try {
       await signIn(values);
       setIsSubimited(true);
-
-      toast({
-        title: "Sucesso",
-        description: "Login realizado com sucesso.",
-        position: "top-right",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      })
     } catch (error) {
       const data = error.response.data
 

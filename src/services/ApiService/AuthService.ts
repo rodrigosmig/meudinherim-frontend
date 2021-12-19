@@ -1,5 +1,7 @@
-import { AxiosResponse } from "axios";
 import { setupApiClient } from "../api";
+import { AxiosResponse } from "axios";
+
+import { parseCookies } from 'nookies';
 
 type SignInCredentials = {
   email: string;

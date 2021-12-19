@@ -147,6 +147,8 @@ export default function Cards() {
           <Loading />
           ) : isError ? (
             <Flex justify="center">Falha ao obter as cartões de crédito</Flex>
+          ) : data.length === 0 ? (
+            <Text>Nenhum cartão cadastrado</Text>
           ) : (
             <>
               <Table tableSize={tableSize}>

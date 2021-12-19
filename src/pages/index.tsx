@@ -6,10 +6,10 @@ import {
   useColorMode,
   useColorModeValue
 } from "@chakra-ui/react";
-import { withSsrGuest } from '../utils/withSSRGuest';
 import { LoginForm } from "../components/Foms/auth/LoginForm";
 import Head from "next/head";
 import { ChangeTheme } from "../components/Layout/Header/ChangeTheme";
+import { withSsrGuest } from '../utils/withSSRGuest';
 
 export default function SignIn() {
   const { colorMode } = useColorMode()
