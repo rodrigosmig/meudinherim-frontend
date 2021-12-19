@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { useQuery } from "react-query";
+import { AuthContext } from "../contexts/AuthContext";
 import { accountService } from "../services/ApiService/AccountService";
 import { toCurrency } from "../utils/helpers";
 
@@ -26,7 +28,9 @@ export const getAccountBalance = async (id: number | null) => {
 }
 
 export const useAccountBalance = (id: number | null) => {
-  return useQuery(['account_balance', id], () => getAccountBalance(id), {
+  const { user } = useContext(AuthContext);
+
+  return useQuery(['account_balance', id, user?.id], () => getAccountBalance(id), {
     staleTime: 1000 * 5
   })
 }

@@ -32,21 +32,4 @@ describe('LoginForm Component', () => {
     expect(screen.getByText("E-mail inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo senha deve ter no mínimo 8 caracteres")).toBeInTheDocument();
   });
-
-  it('allows the user to login successfuly', async () => {
-    fireEvent.change(screen.getByLabelText('E-mail'), {
-      target: {value: 'test@test.com'}
-    })
-
-    fireEvent.change(screen.getByLabelText('Senha'), {
-      target: {value: '12345678'}
-    })
-
-    await act(async () => {
-      fireEvent.submit(screen.getByText('Entrar'))
-    })
-
-    expect(screen.getByText("Sucesso")).toBeInTheDocument();
-    expect(screen.getByText("Login realizado com sucesso.")).toBeInTheDocument();
-  });
 })

@@ -44,8 +44,12 @@ const logout = async () => {
     console.log(error.response.data)
   }
 
-  destroyCookie(undefined, 'meudinherim.token');
+  destroyCookie(null, 'meudinherim.token', {
+    maxAge: 60 * 60 * 2, // 2 hours
+    path: '/'
+  });
   Router.push('/');
+  Router.reload()
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -91,13 +95,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const { token, user } = response.data;
 
-    setCookie(undefined, 'meudinherim.token', token, {
+    setCookie(null, 'meudinherim.token', token, {
       maxAge: 60 * 60 * 2, // 2 hours
       path: '/'
     });
 
     setUser(user)
-
     router.push('/dashboard');
   }
 

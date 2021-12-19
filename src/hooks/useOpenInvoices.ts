@@ -1,6 +1,8 @@
 import { toBrDate, toCurrency } from './../utils/helpers';
 import { useQuery } from "react-query";
 import { cardService } from "../services/ApiService/CardService";
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 export const getOpenInvoices = async () => {
   const response = await cardService.getOpenInvoices();
@@ -12,7 +14,6 @@ export const getOpenInvoices = async () => {
       amount: toCurrency(invoice.amount)
     }
   })
-    
 
   return {
     invoices,
@@ -21,7 +22,9 @@ export const getOpenInvoices = async () => {
 }
 
 export const useOpenInvoices = () => {
-  return useQuery(['open_invoices'], () => getOpenInvoices(), {
+  const { user, isAuthenticated } = useContext(AuthContext);
+
+  return useQuery(['open_invoices', user?.id], () => getOpenInvoices(), {
     staleTime: 1000 * 5
   })
 }

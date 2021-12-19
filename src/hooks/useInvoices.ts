@@ -1,6 +1,8 @@
 import { toBrDate, toCurrency } from './../utils/helpers';
 import { useQuery } from "react-query";
 import { cardService } from "../services/ApiService/CardService";
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 export const getInvoices = async (cardId: number, status: 'open' | 'paid', page: number, perPage: number) => {
   const response = await cardService.getInvoices(cardId, status, page, perPage);
@@ -41,13 +43,17 @@ export const getInvoice = async (cardId: number, invoiceId: number) => {
 }
 
 export const useInvoices = (cardId: number, status: 'open' | 'paid', page: number, perPage: number) => {
-  return useQuery(['invoices', cardId, status, page, perPage], () => getInvoices(cardId, status, page, perPage), {
+  const { user } = useContext(AuthContext);
+
+  return useQuery(['invoices', cardId, status, page, perPage, user?.id], () => getInvoices(cardId, status, page, perPage), {
     staleTime: 1000 * 5
   })
 }
 
 export const useInvoice = (cardId: number, invoiceId: number) => {
-  return useQuery(['invoice', cardId, invoiceId], () => getInvoice(cardId, invoiceId), {
+  const { user } = useContext(AuthContext);
+
+  return useQuery(['invoice', cardId, invoiceId, user?.id], () => getInvoice(cardId, invoiceId), {
     staleTime: 1000 * 5
   })
 }
