@@ -18,7 +18,7 @@ import {
   Divider,
   Spinner,
 } from "@chakra-ui/react";
-import { RiBankCard2Line } from "react-icons/ri";
+import { FaCreditCard } from 'react-icons/fa'
 import { useOpenInvoices } from "../../../hooks/useOpenInvoices";
 import { Loading } from "../../Loading";
 import Link from 'next/link'
@@ -39,7 +39,7 @@ export const NavInvoices = () => {
           aria-label="add menu"
           size="sm"
           variant="ghost"
-          icon={<Icon as={RiBankCard2Line} fontSize={[18, 20, 20]} />}
+          icon={<Icon as={FaCreditCard} fontSize={[18, 20, 20]} />}
         />
       </PopoverTrigger>
       <PopoverContent

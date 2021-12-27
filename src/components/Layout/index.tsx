@@ -1,36 +1,35 @@
 
 import { memo, ReactNode } from 'react';
-import { Box, useColorModeValue } from '@chakra-ui/react';
+import { Box, BoxProps, Text, useColorModeValue } from '@chakra-ui/react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { Card } from '../Card';
 
-interface LayoutProps {
+interface LayoutProps extends BoxProps {
+  isDashboard?: boolean
   children: ReactNode
 }
 
-const LayoutComponent = ({ children }: LayoutProps) => {
+const LayoutComponent = ({ children, isDashboard = false, }: LayoutProps) => {
+  const bgColor = useColorModeValue('gray.50', 'gray.900');
+
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
+    <Box minH="100vh" bg={bgColor}>
       <Sidebar />
-      <Header />
-   
+      <Header />   
         <Box 
           ml={{ base: 0, md: 60 }} 
           p="4" 
-          bg={useColorModeValue('gray.50', 'gray.900')}
+          bg={bgColor}
         >
-          <Box
-            bg={useColorModeValue('white', 'gray.800')}
-            w={"full"}
-            flex='1' 
-            borderRadius={8} 
-            p="8" 
-            h="max-content"
-            
-          >     
-            {children}
+          { isDashboard ? (
+            children
+          ) : (
+            <Card>
+              {children}
+            </Card>
+          ) }       
 
-          </Box>
         </Box>
 
     </Box>

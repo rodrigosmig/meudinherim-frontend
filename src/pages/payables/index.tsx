@@ -177,10 +177,6 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     }
   }
 
-  const handleChangePayableStatus = (event: ChangeEvent<HTMLSelectElement>) => {
-    setPayableStatus(event.target.value)
-  }
-
   const cancelPayment = useMutation(async (values: CancelPayableData) => {
     const response = await payableService.cancelPayment(values.id, values.parcelable_id);
   
@@ -283,13 +279,14 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
 
           <Flex align="center">
             <Select
+              value={payableStatus}
               size={sizeProps}
               variant="unstyled"
               maxW={[150]}
-              onChange={event => handleChangePayableStatus(event)}
+              onChange={event => setPayableStatus(event.target.value)}
             >
               <option value="all">Todas</option>
-              <option value="open" selected>Abertas</option>
+              <option value="open">Abertas</option>
               <option value="paid">Pagas</option>
             </Select>
           </Flex>          

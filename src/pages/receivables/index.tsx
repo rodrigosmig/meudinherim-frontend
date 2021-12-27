@@ -93,7 +93,7 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [receivableStatus, setPayableStatus] = useState("open");
+  const [receivableStatus, setReceivableStatus] = useState("open");
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
@@ -105,7 +105,7 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
 
-  const deletePayable = useMutation(async (id: number) => {
+  const deleteReceivable = useMutation(async (id: number) => {
     const response = await receivableService.delete(id);
   
     return response.data;
@@ -115,9 +115,9 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
     }
   });
 
-  const handleDeletePayable = async (id: number) => {
+  const handleDeleteReceivable = async (id: number) => {
     try {
-      await deletePayable.mutateAsync(id);
+      await deleteReceivable.mutateAsync(id);
 
       toast({
         title: "Sucesso",
@@ -177,10 +177,6 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
     } else {
       setFilterDate(['', ''])
     }
-  }
-
-  const handleChangePayableStatus = (event: ChangeEvent<HTMLSelectElement>) => {
-    setPayableStatus(event.target.value)
   }
 
   const cancelPayment = useMutation(async (values: CancelReceivableData) => {
@@ -257,9 +253,7 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
       <Layout>
         <Flex mb={[6, 6, 8]} justify="space-between" align="center">
           <Heading>
-            <>
               Contas a Receber { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
-            </>
           </Heading>
           <Heading>
             <AddButton onClick={createModalOnOpen} />
@@ -285,13 +279,14 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
 
           <Flex align="center">
             <Select
+              value={receivableStatus}
               size={sizeProps}
               variant="unstyled"
               maxW={[150]}
-              onChange={event => handleChangePayableStatus(event)}
+              onChange={event => setReceivableStatus(event.target.value)}
             >
               <option value="all">Todas</option>
-              <option value="open" selected>Abertas</option>
+              <option value="open">Abertas</option>
               <option value="paid">Pagas</option>
             </Select>
           </Flex>          
@@ -353,9 +348,9 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
 
                               <DeleteButton
                                 isDisabled={receivable.is_parcel && receivable.parcel_number !== 1}
-                                onDelete={() => handleDeletePayable(receivable.is_parcel ? receivable.parcelable_id : receivable.id)} 
+                                onDelete={() => handleDeleteReceivable(receivable.is_parcel ? receivable.parcelable_id : receivable.id)} 
                                 resource="Conta a Receber"
-                                loading={deletePayable.isLoading}
+                                loading={deleteReceivable.isLoading}
                                 isParcel={receivable.is_parcel}
                               />
 
