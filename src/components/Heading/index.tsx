@@ -1,16 +1,20 @@
-import { ReactElement } from "react"
+import { ReactNode } from "react"
 import { 
 	Heading as ChakraHeading,
   HeadingProps as ChakraHeadingProps
 } from "@chakra-ui/react";
 
-interface CardProps extends ChakraHeadingProps {
-  children: ReactElement;
+interface HeadingProps extends ChakraHeadingProps {
+  children: ReactNode;
 }
 
-export const Heading = ({ children }: CardProps) => {
+export const Heading = ({ children, ...rest }: HeadingProps) => {
 	return (
-		<ChakraHeading fontSize={['md', '2xl']} fontWeight="normal">
+		<ChakraHeading 
+      fontSize={['md', '2xl']} 
+      fontWeight="normal"
+      {...rest}
+    >
       { children }
     </ChakraHeading>
 	)

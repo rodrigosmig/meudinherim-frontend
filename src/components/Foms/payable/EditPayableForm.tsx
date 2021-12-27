@@ -94,7 +94,7 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Ed
       data: {
         ...values,
         monthly: monthly,
-        due_date: values?.due_date ? format(values.due_date, 'Y-MM-dd') : ''
+        due_date: values?.due_date ? format(values.due_date, 'yyyy-MM-dd') : ''
       }
     }
 

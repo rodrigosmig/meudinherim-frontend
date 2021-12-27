@@ -11,6 +11,8 @@ import {
   RiBankLine 
 } from "react-icons/ri";
 
+import { FaMoneyBillAlt, FaCreditCard } from 'react-icons/fa'
+
 export const SidebarNav = () => {
   return (
     <>
@@ -30,7 +32,7 @@ export const SidebarNav = () => {
         </NavSection>
       
         <NavSection title="Cartão de Crédito">
-            <NavLink href="/cards" icon={RiBankCard2Line}>Cartão de Crédito</NavLink>
+            <NavLink href="/cards" icon={FaCreditCard}>Cartão de Crédito</NavLink>
         </NavSection>
 
         <NavSection title="Agendamento">
