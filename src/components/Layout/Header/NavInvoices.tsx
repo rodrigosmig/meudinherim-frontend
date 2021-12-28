@@ -77,7 +77,7 @@ export const NavInvoices = () => {
                               transition={'all .3s ease'}
                               _groupHover={{ color: 'pink.400' }}
                               fontWeight={500}
-                              fontSize={['sm', "lg", "lg"]}
+                              fontSize={['sm', "md", "md"]}
                             >
                               { invoice.card.name }
                             </Text>
@@ -88,7 +88,7 @@ export const NavInvoices = () => {
                             justify={'flex-end'}
                             align={'center'}
                             flex={1}
-                            fontSize={['sm', "lg", "lg"]}
+                            fontSize={['sm', "md", "md"]}
                           >
                             { invoice.amount }
                           </Flex>

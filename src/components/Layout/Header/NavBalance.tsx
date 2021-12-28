@@ -49,7 +49,7 @@ export const NavBalance = () => {
         <PopoverArrow />
         <PopoverHeader 
           fontWeight="bold" 
-          fontSize={['sm', "lg", "lg"]}
+          fontSize={['sm', "md", "md"]}
         >
           <Center>
             Contas { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
@@ -66,7 +66,7 @@ export const NavBalance = () => {
                       <Link
                         role={'group'}
                         display={'block'}
-                        p={3}
+                        p={2}
                         rounded={'md'}
                         _hover={{ bg: bg }}>
                         <Stack direction={'row'} align={'center'}>
@@ -75,7 +75,7 @@ export const NavBalance = () => {
                               transition={'all .3s ease'}
                               _groupHover={{ color: 'pink.400' }}
                               fontWeight={500}
-                              fontSize={['sm', "lg", "lg"]}
+                              fontSize={['sm', "md", "md"]}
                             >
                               { account.account_name }
                             </Text>
@@ -87,7 +87,7 @@ export const NavBalance = () => {
                       </Link>
                     </NextLink>
 
-                    <Divider mt={2} mb={2} />
+                    <Divider mt={1} mb={1} />
                   </Fragment>
                 ))}
               </PopoverBody>
@@ -99,7 +99,7 @@ export const NavBalance = () => {
                 justifyContent='center'
                 pb={4}
               >
-                <Box fontSize={['sm', "lg", "lg"]}>
+                <Box fontSize={['sm', "md", "md"]}>
                   <Text as="span" fontWeight="bold" mr="1">
                     Total:
                   </Text>
