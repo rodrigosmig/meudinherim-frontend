@@ -18,6 +18,7 @@ import { payableService } from '../../../services/ApiService/PayableService';
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
+import { toUsDate } from '../../../utils/helpers';
 
 interface FormData {
   due_date: Date;
@@ -87,7 +88,7 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
       ...values,
       monthly: monthly,
       installment: hasInstallment,
-      due_date: values?.due_date ? format(values.due_date, 'Y-MM-dd') : ''
+      due_date: values?.due_date ? toUsDate(values.due_date) : ''
     }
 
     try {

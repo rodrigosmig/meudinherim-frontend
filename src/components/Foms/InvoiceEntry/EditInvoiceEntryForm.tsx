@@ -71,7 +71,7 @@ export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: EditInvoiceEnt
 
   const { data: categories, isLoading } = useCategoriesForm();
 
-  const { control, register, handleSubmit, setError, formState } = useForm({
+  const { register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
       category_id: entry.category.id,
       description: entry.description,

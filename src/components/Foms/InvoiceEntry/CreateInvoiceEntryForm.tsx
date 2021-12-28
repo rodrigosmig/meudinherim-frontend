@@ -22,6 +22,7 @@ import { Loading } from "../../Loading";
 import { useCardsForm } from "../../../hooks/useCards";
 import { Installment } from "../../Inputs/Installment";
 import { Switch } from "../../Inputs/Switch";
+import { toUsDate } from "../../../utils/helpers";
 
 interface FormData {
   card_id: number;
@@ -92,7 +93,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
     const data = {
       ...values,
       installment: hasInstallment,
-      date: values?.date ? format(values.date, 'Y-MM-dd') : ''
+      date: values?.date ? toUsDate(values.date) : ''
     }
 
     try {

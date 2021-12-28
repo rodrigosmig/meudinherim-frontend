@@ -20,6 +20,7 @@ import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { CancelButton } from "../../Buttons/Cancel";
+import { toUsDate } from "../../../utils/helpers";
 
 interface FormData {
   due_date: Date;
@@ -89,7 +90,7 @@ export const CreateReceivableForm = ({ categories, closeModal, refetch }: Create
       ...values,
       monthly: monthly,
       installment: hasInstallment,
-      due_date: values?.due_date ? format(values.due_date, 'Y-MM-dd') : ''
+      due_date: values?.due_date ? toUsDate(values.due_date) : ''
     }
 
     try {

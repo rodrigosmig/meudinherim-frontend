@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 
 import { Input } from "../../Inputs/Input"
 import { Switch } from "../../Inputs/Switch"
-import { toBrDate } from "../../../utils/helpers"
+import { toBrDate, toUsDate } from "../../../utils/helpers"
 import { payableService } from "../../../services/ApiService/PayableService";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
@@ -90,7 +90,7 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: PaymentFor
       data: {
         ...values,
         parcelable_id: payable.parcelable_id,
-        paid_date: values?.paid_date ? format(values.paid_date, 'Y-MM-dd') : ''
+        paid_date: values?.paid_date ? toUsDate(values.paid_date) : ''
       }
     }
 

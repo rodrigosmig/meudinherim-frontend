@@ -16,7 +16,7 @@ import { format, parseISO } from 'date-fns';
 import { payableService } from "../../../services/ApiService/PayableService";
 import { Select } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
-import { reverseBrDate } from "../../../utils/helpers";
+import { reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
 
 interface Payable {
@@ -94,7 +94,7 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Ed
       data: {
         ...values,
         monthly: monthly,
-        due_date: values?.due_date ? format(values.due_date, 'yyyy-MM-dd') : ''
+        due_date: values?.due_date ? toUsDate(values.due_date) : ''
       }
     }
 

@@ -17,6 +17,7 @@ import { SelectCategories } from "../../Inputs/SelectCategories";
 import { format } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { Select } from "../../Inputs/Select";
+import { toUsDate } from "../../../utils/helpers";
 
 type CategoriesForForm = {
   income: {
@@ -83,7 +84,7 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
   const handleCreateAccountEntry: SubmitHandler<FormData> = async (values) => {
     const data = {
       ...values,
-        date: values?.date ? format(values.date, 'Y-MM-dd') : ''
+        date: values?.date ? toUsDate(values.date) : ''
     }
 
     try {
