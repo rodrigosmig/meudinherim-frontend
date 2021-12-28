@@ -1,9 +1,7 @@
 import {
   Box,
   Center,
-  Flex,
   Icon,
-  Link as ChakraLink,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -18,10 +16,11 @@ import {
   Spinner,
   Divider,
 } from "@chakra-ui/react";
-import Link from "next/link";
+import NextLink from "next/link";
 import { Fragment } from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { useAccountBalance } from "../../../hooks/useAccountBalance";
+import { Link } from "../../Link";
 import { Loading } from "../../Loading";
 
 export const NavBalance = () => {
@@ -63,8 +62,8 @@ export const NavBalance = () => {
               <PopoverBody>
                 { data.balances.map(account => (
                   <Fragment key={account.account_id}>
-                    <Link href={`/accounts/${account.account_id}/entries`} passHref>
-                      <ChakraLink 
+                    <NextLink href={`/accounts/${account.account_id}/entries`} passHref>
+                      <Link
                         role={'group'}
                         display={'block'}
                         p={3}
@@ -85,8 +84,8 @@ export const NavBalance = () => {
                             <Box as="span" color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
                           </Box>
                         </Stack>
-                      </ChakraLink>
-                    </Link>
+                      </Link>
+                    </NextLink>
 
                     <Divider mt={2} mb={2} />
                   </Fragment>
