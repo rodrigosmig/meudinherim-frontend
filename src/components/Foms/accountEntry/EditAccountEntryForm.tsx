@@ -15,7 +15,7 @@ import { SelectCategories } from "../../Inputs/SelectCategories";
 import { format, parseISO } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { useCategoriesForm } from "../../../hooks/useCategories";
-import { reverseBrDate } from "../../../utils/helpers";
+import { reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
 
 interface Category {
@@ -94,7 +94,7 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
       data: {
         ...values,
         account_id: entry.account.id,
-        date: values?.date ? format(values.date, 'Y-MM-dd') : ''
+        date: values?.date ? toUsDate(values.date) : ''
       }
     }
     

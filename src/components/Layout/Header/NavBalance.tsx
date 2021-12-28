@@ -1,9 +1,7 @@
 import {
   Box,
   Center,
-  Flex,
   Icon,
-  Link as ChakraLink,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -18,10 +16,11 @@ import {
   Spinner,
   Divider,
 } from "@chakra-ui/react";
-import Link from "next/link";
+import NextLink from "next/link";
 import { Fragment } from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { useAccountBalance } from "../../../hooks/useAccountBalance";
+import { Link } from "../../Link";
 import { Loading } from "../../Loading";
 
 export const NavBalance = () => {
@@ -50,7 +49,7 @@ export const NavBalance = () => {
         <PopoverArrow />
         <PopoverHeader 
           fontWeight="bold" 
-          fontSize={['sm', "lg", "lg"]}
+          fontSize={['sm', "md", "md"]}
         >
           <Center>
             Contas { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
@@ -63,11 +62,11 @@ export const NavBalance = () => {
               <PopoverBody>
                 { data.balances.map(account => (
                   <Fragment key={account.account_id}>
-                    <Link href={`/accounts/${account.account_id}/entries`} passHref>
-                      <ChakraLink 
+                    <NextLink href={`/accounts/${account.account_id}/entries`} passHref>
+                      <Link
                         role={'group'}
                         display={'block'}
-                        p={3}
+                        p={2}
                         rounded={'md'}
                         _hover={{ bg: bg }}>
                         <Stack direction={'row'} align={'center'}>
@@ -76,7 +75,7 @@ export const NavBalance = () => {
                               transition={'all .3s ease'}
                               _groupHover={{ color: 'pink.400' }}
                               fontWeight={500}
-                              fontSize={['sm', "lg", "lg"]}
+                              fontSize={['sm', "md", "md"]}
                             >
                               { account.account_name }
                             </Text>
@@ -85,10 +84,10 @@ export const NavBalance = () => {
                             <Box as="span" color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
                           </Box>
                         </Stack>
-                      </ChakraLink>
-                    </Link>
+                      </Link>
+                    </NextLink>
 
-                    <Divider mt={2} mb={2} />
+                    <Divider mt={1} mb={1} />
                   </Fragment>
                 ))}
               </PopoverBody>
@@ -100,7 +99,7 @@ export const NavBalance = () => {
                 justifyContent='center'
                 pb={4}
               >
-                <Box fontSize={['sm', "lg", "lg"]}>
+                <Box fontSize={['sm', "md", "md"]}>
                   <Text as="span" fontWeight="bold" mr="1">
                     Total:
                   </Text>

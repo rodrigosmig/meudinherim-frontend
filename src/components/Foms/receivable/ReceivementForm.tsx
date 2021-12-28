@@ -18,6 +18,7 @@ import { Datepicker } from "../../DatePicker";
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { CancelButton } from "../../Buttons/Cancel";
+import { toUsDate } from "../../../utils/helpers";
 
 interface Receivable {
   id: number;
@@ -91,7 +92,7 @@ export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Rec
         ...values,
         value: receivable.is_parcel ? receivable.value : values.value,
         parcelable_id: receivable.parcelable_id,
-        paid_date: values?.paid_date ? format(values.paid_date, 'Y-MM-dd') : ''
+        paid_date: values?.paid_date ? toUsDate(values.paid_date) : ''
       }
     }
 

@@ -16,7 +16,7 @@ import { format, parseISO } from 'date-fns';
 import { Switch } from "../../Inputs/Switch";
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
-import { reverseBrDate } from '../../../utils/helpers';
+import { reverseBrDate, toUsDate } from '../../../utils/helpers';
 import { CancelButton } from '../../Buttons/Cancel';
 
 interface Receivable {
@@ -107,7 +107,7 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
         ...values,
         monthly: monthly,
         installment: hasInstallment,
-        due_date: values?.due_date ? format(values.due_date, 'Y-MM-dd') : ''
+        due_date: values?.due_date ? toUsDate(values.due_date) : ''
       }
     }
 

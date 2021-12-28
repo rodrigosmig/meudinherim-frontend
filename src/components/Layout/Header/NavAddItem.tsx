@@ -1,13 +1,13 @@
 import {  
   Box,
-  Link as ChakraLink,
   Stack,
   Text,
   Flex,
   useColorModeValue
 } from "@chakra-ui/react";
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { ReactElement } from "react";
+import { Link } from "../../Link";
 
 interface NavAddItemProps {
   url: string;
@@ -19,8 +19,9 @@ export const NavAddItem = ({ icon, label, url }: NavAddItemProps) => {
   const bg = useColorModeValue('gray.50', 'gray.800');
 
   return (
-    <Link href={url} passHref >
-      <ChakraLink 
+    <NextLink href={url} passHref >
+      <Link
+        href=""
         role={'group'}
         display={'block'}
         p={2}
@@ -47,7 +48,7 @@ export const NavAddItem = ({ icon, label, url }: NavAddItemProps) => {
             { label }
           </Flex>
         </Stack>
-      </ChakraLink>
-    </Link>
+      </Link>
+    </NextLink>
   )
 }

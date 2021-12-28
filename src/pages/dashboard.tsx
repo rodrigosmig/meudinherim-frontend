@@ -38,7 +38,7 @@ export default function Dashboard() {
 
   const { data, isLoading, isFetching, isError, refetch } = useDashboard(toUsDate(date));
 
-  const month = format(new Date(), 'LLLL', { locale: ptBR });
+  const month = format(date, 'LLLL', { locale: ptBR });
   const year = getYear(date);
 
   const handlePreviousMonth = () => {
