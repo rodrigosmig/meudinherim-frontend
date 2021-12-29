@@ -27,22 +27,21 @@ export const NavAddItem = ({ icon, label, url }: NavAddItemProps) => {
         p={2}
         rounded={'md'}
         _hover={{ bg: bg }}>
-        <Stack direction={'row'} align={'center'}>
-          <Box>
-            <Text
-              transition={'all .3s ease'}
-              _groupHover={{ color: 'pink.400' }}
-              fontWeight={500}
-              fontSize={['sm', "md", "md"]}
-            >
-              { icon }
-            </Text>
-          </Box>
+        <Stack direction={'row'}>
           <Flex
+            transition={'all .3s ease'}
             _groupHover={{ color: 'pink.400' }}
-            
             align={'center'}
-            flex={1}
+            fontSize={['sm', "md", "md"]}
+          >
+            { icon }
+          </Flex>
+
+          <Flex
+            transition={'all .3s ease'}
+            _groupHover={{ color: 'pink.400' }}
+            align={'center'}
+            
             fontSize={['sm', "md", "md"]}
           >
             { label }
