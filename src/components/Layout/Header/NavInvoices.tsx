@@ -3,7 +3,8 @@ import {
   Center,
   Flex,
   Icon,
-  Link as ChakraLink,
+  LinkBox,
+  LinkOverlay,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -18,10 +19,10 @@ import {
   Divider,
   Spinner,
 } from "@chakra-ui/react";
-import { FaCreditCard } from 'react-icons/fa'
+import { FaCreditCard } from 'react-icons/fa';
 import { useOpenInvoices } from "../../../hooks/useOpenInvoices";
 import { Loading } from "../../Loading";
-import Link from 'next/link'
+import NextLink from 'next/link'
 import { Fragment } from "react";
 
 export const NavInvoices = () => {
@@ -64,37 +65,40 @@ export const NavInvoices = () => {
               <PopoverBody>
                 { data.invoices.map(invoice => (
                   <Fragment key={invoice.id}>
-                    <Link href={`/cards/${invoice.card.id}/invoices/${invoice.id}/entries`} passHref  key={invoice.id}>
-                      <ChakraLink 
-                        role={'group'}
-                        display={'block'}
-                        p={2}
-                        rounded={'md'}
-                        _hover={{ bg: bg }}>
-                        <Stack direction={'row'} align={'center'}>
-                          <Box>
-                            <Text
-                              transition={'all .3s ease'}
+                    <LinkBox>
+                      <NextLink href={`/cards/${invoice.card.id}/invoices/${invoice.id}/entries`} passHref  key={invoice.id}>
+                        <LinkOverlay 
+                          role={'group'}
+                          display={'block'}
+                          p={2}
+                          rounded={'md'}
+                          _hover={{ bg: bg }}>
+                          <Stack direction={'row'} align={'center'}>
+                            <Box>
+                              <Text
+                                transition={'all .3s ease'}
+                                _groupHover={{ color: 'pink.400' }}
+                                fontWeight={500}
+                                fontSize={['sm', "md", "md"]}
+                              >
+                                { invoice.card.name }
+                              </Text>
+                              <Text fontSize={['xs', "md", "md"]}>Vencimento: { invoice.due_date }</Text>
+                            </Box>
+                            <Flex
                               _groupHover={{ color: 'pink.400' }}
-                              fontWeight={500}
+                              justify={'flex-end'}
+                              align={'center'}
+                              flex={1}
                               fontSize={['sm', "md", "md"]}
                             >
-                              { invoice.card.name }
-                            </Text>
-                            <Text fontSize={['xs', "md", "md"]}>Vencimento: { invoice.due_date }</Text>
-                          </Box>
-                          <Flex
-                            _groupHover={{ color: 'pink.400' }}
-                            justify={'flex-end'}
-                            align={'center'}
-                            flex={1}
-                            fontSize={['sm', "md", "md"]}
-                          >
-                            { invoice.amount }
-                          </Flex>
-                        </Stack>
-                      </ChakraLink>
-                    </Link>
+                              { invoice.amount }
+                            </Flex>
+                          </Stack>
+                        </LinkOverlay>
+                      </NextLink>
+                    
+                    </LinkBox>
 
                     <Divider mt={2} mb={2} />
                   </Fragment>
