@@ -1,7 +1,10 @@
 import {
   Box,
   Center,
+  Divider,
   Icon,
+  LinkBox,
+  LinkOverlay,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -11,16 +14,14 @@ import {
   PopoverArrow,
   IconButton,
   Stack,
+  Spinner,
   Text,
   useColorModeValue,
-  Spinner,
-  Divider,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Fragment } from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { useAccountBalance } from "../../../hooks/useAccountBalance";
-import { Link } from "../../Link";
 import { Loading } from "../../Loading";
 
 export const NavBalance = () => {
@@ -62,31 +63,32 @@ export const NavBalance = () => {
               <PopoverBody>
                 { data.balances.map(account => (
                   <Fragment key={account.account_id}>
-                    <NextLink href={`/accounts/${account.account_id}/entries`} passHref>
-                      <Link
-                        role={'group'}
-                        display={'block'}
-                        p={2}
-                        rounded={'md'}
-                        _hover={{ bg: bg }}>
-                        <Stack direction={'row'} align={'center'}>
-                          <Box>
-                            <Text
-                              transition={'all .3s ease'}
-                              _groupHover={{ color: 'pink.400' }}
-                              fontWeight={500}
-                              fontSize={['sm', "md", "md"]}
-                            >
-                              { account.account_name }
-                            </Text>
+                    <LinkBox>
+                      <NextLink href={`/accounts/${account.account_id}/entries`} passHref>
+                        <LinkOverlay
+                          role={'group'}
+                          display={'block'}
+                          p={2}
+                          rounded={'md'}
+                          _hover={{ bg: bg }}>
+                          <Stack direction={'row'} align={'center'}>
+                            <Box>
+                              <Text
+                                transition={'all .3s ease'}
+                                _groupHover={{ color: 'pink.400' }}
+                                fontWeight={500}
+                                fontSize={['sm', "md", "md"]}
+                              >
+                                { account.account_name }
+                              </Text>
 
-                            <Text as="span" fontSize={['xs', "md", "md"]} mr={1}>Saldo:</Text>
-                            <Box as="span" color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
-                          </Box>
-                        </Stack>
-                      </Link>
-                    </NextLink>
-
+                              <Text as="span" fontSize={['xs', "md", "md"]} mr={1}>Saldo:</Text>
+                              <Box as="span" color={account.positive ? 'blue.500' : 'red.500'}>{ account.balance } </Box>
+                            </Box>
+                          </Stack>
+                        </LinkOverlay>
+                      </NextLink>
+                    </LinkBox>
                     <Divider mt={1} mb={1} />
                   </Fragment>
                 ))}

@@ -17,6 +17,7 @@ import {
   RiPriceTag3Line, 
 } from "react-icons/ri";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
+import { FaCreditCard } from 'react-icons/fa'
 import { BiTransfer } from "react-icons/bi";
 import { NavAddItem } from "./NavAddItem";
 
@@ -51,7 +52,7 @@ export const NavAdd = () => {
           <NavAddItem
             url="/cards/invoices/entries/create"
             label="Lançamento no cartão"
-            icon={<Icon as={RiAddCircleLine} fontSize={[18, 20, 20]} />}
+            icon={<Icon as={FaCreditCard} fontSize={[18, 20, 20]} />}
           />
 
           <NavAddItem

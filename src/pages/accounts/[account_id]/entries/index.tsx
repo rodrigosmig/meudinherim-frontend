@@ -36,6 +36,8 @@ import { ShowReceivementModal } from '../../../../components/Modals/receivables/
 import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
 import { EditAccountEntryModal } from '../../../../components/Modals/account_entries/EditAccountEntryModal';
 import { ShowPaymentButton } from '../../../../components/Buttons/ShowPayment';
+import { AddButton } from '../../../../components/Buttons/Add';
+import { CreateAccountEntryModal } from '../../../../components/Modals/account_entries/CreateAccountEntryModal';
 
 interface Category {
   id: number,
@@ -181,7 +183,14 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
   }
 
   return (
-    <>     
+    <>
+      <CreateAccountEntryModal
+        accountId={account.id}
+        isOpen={createModalIsOpen} 
+        onClose={createModalOnClose}
+        refetch={handleRefetchData}
+      />
+
       <EditAccountEntryModal
         entry={selectedEntry}
         isOpen={editModalIsOpen} 
@@ -242,7 +251,9 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
           align="center"
           mb={[6, 6, 8]}
         >
-          <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />            
+          <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />
+
+          <AddButton onClick={createModalOnOpen} />
         </Flex>
 
         { isLoading ? (

@@ -2,13 +2,36 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { accountEntriesService } from "../../../../services/ApiService/AccountEntriesService";
 import { CreateAccountEntryForm } from "../../../../components/Foms/accountEntry/CreateAccountEntryForm";
+import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useAccountsForm } from "../../../../hooks/useAccounts";
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
 
 const accountEntriesServiceMocked = mocked(accountEntriesService.create);
+const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
+const useAccountsFormMocked = useAccountsForm as jest.Mock<any>;
 
-jest.mock('react-query')
-jest.mock('../../../../services/ApiService/AccountEntriesService')
+jest.mock('react-query');
+jest.mock('../../../../services/ApiService/AccountEntriesService');
+jest.mock('../../../../hooks/useCategories');
+jest.mock('../../../../hooks/useAccounts');
 
-const categoriesForm = {
+const onCancel = jest.fn();
+const refetch = jest.fn();
+
+const categories = {
   income: [
     {
       id: 1,
@@ -23,7 +46,7 @@ const categoriesForm = {
   ]
 }
 
-const accountsForm = [
+const accounts = [
   {
     value: "1",
     label: "Account Test"
@@ -32,7 +55,10 @@ const accountsForm = [
 
 describe('CreateAccountEntryForm Component', () => {
   beforeEach(() => {
-    render(<CreateAccountEntryForm categories={categoriesForm} formAccounts={accountsForm} />)
+    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useAccountsFormMocked.mockImplementation(() => ({ isLoading: false, data: accounts }));
+
+    render(<CreateAccountEntryForm  onCancel={onCancel} refetch={refetch} />)
   });
 
   afterEach(() => {

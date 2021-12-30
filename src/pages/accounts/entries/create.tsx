@@ -5,6 +5,7 @@ import { withSSRAuth } from '../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../services/api';
 import { CreateAccountEntryForm } from "../../../components/Foms/accountEntry/CreateAccountEntryForm";
 import { Heading } from "../../../components/Heading";
+import { useRouter } from "next/router";
 
 type CategoriesForForm = {
   income: {
@@ -22,12 +23,14 @@ interface AccountForm {
   label: string;
 }
 
-interface CreateAccountEntryProps {
-  categories: CategoriesForForm;
-  formAccounts: AccountForm[]
-}
 
-export default function CreateAccountEntry({ categories, formAccounts }: CreateAccountEntryProps) {
+export default function CreateAccountEntry() {
+  const router = useRouter();
+
+  const handleOnCancel = () => {
+    router.push('/accounts');
+  }
+
   return (
     <>
       <Head>
@@ -42,8 +45,7 @@ export default function CreateAccountEntry({ categories, formAccounts }: CreateA
           </Flex>
 
           <CreateAccountEntryForm 
-            categories={categories} 
-            formAccounts={formAccounts} 
+            onCancel={handleOnCancel}
           />
       </Layout>
     </>
@@ -53,21 +55,9 @@ export default function CreateAccountEntry({ categories, formAccounts }: CreateA
 export const getServerSideProps = withSSRAuth(async (context) => {
     const apiClient = setupApiClient(context);
 
-    const categoriesResponse = await apiClient.get(`/categories?type=all`);
-    const categories = categoriesResponse.data
-
-    const accountsResponse = await apiClient.get(`/accounts`);
-    const formAccounts = accountsResponse.data.data.map(account => {
-      return {
-        value: account.id,
-        label: account.name
-      }
-    })
+    await apiClient.get(`/accounts`);
 
     return {
-      props: {
-        categories,
-        formAccounts
-      }
+      props: {}
     }
 })

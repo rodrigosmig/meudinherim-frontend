@@ -11,24 +11,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import Link from "next/link";
 import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
-import { format } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { Select } from "../../Inputs/Select";
 import { toUsDate } from "../../../utils/helpers";
-
-type CategoriesForForm = {
-  income: {
-    id: number;
-    label: string
-  }[]
-  expense: {
-    id: number;
-    label: string
-  }[]
-}
+import { useCategoriesForm } from "../../../hooks/useCategories";
+import { Loading } from "../../Loading";
+import { useAccounts, useAccountsForm } from "../../../hooks/useAccounts";
 
 interface AccountForm {
   value: string;
@@ -52,8 +42,9 @@ type ResponseError = {
 type Key = keyof ResponseError;
 
 interface CreateAccountEntryFormProps {
-  categories: CategoriesForForm;
-  formAccounts: AccountForm[]
+  accountId?: number;
+  onCancel: () => void;
+  refetch?: () => void;
 }
 
 const validationSchema = yup.object().shape({
@@ -64,17 +55,20 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
 })
 
-export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccountEntryFormProps) => {  
+export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: CreateAccountEntryFormProps) => {  
   const toast = useToast();
   const router = useRouter();
+
+  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { data: formAccounts, isLoading: isLoadingAccounts } = useAccountsForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
       date: new Date(),
-      account_id: "",
+      account_id: accountId,
       category_id: "",
       description: "",
-      value: 0
+      value: ""
     },
     resolver: yupResolver(validationSchema)
   });
@@ -99,8 +93,12 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
         isClosable: true,
       })
 
-      router.push(`/accounts/${response.data.account.id}/entries`)
-
+      if (typeof refetch !== 'undefined') {
+        refetch();
+        onCancel();
+      } else {
+        router.push(`/accounts/${response.data.account.id}/entries`)
+      }
     } catch (error) {
       if (error.response?.status === 422) {
         const data: ResponseError = error.response.data;
@@ -113,6 +111,12 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
         }
       }
     }
+  }
+
+  if (isLoadingCategories || isLoadingAccounts) {
+    return (
+      <Loading />
+    )
   }
 
   return (
@@ -171,15 +175,14 @@ export const CreateAccountEntryForm = ({ categories, formAccounts }: CreateAccou
         justify="flex-end"
         align="center"
       >
-        <Link href={`/dashboard`} passHref>
-          <Button
-            mr={[4]}
-            variant="outline"
-            isDisabled={formState.isSubmitting}
-          >
-            Cancelar
-          </Button>
-        </Link>
+        <Button
+          mr={[4]}
+          variant="outline"
+          isDisabled={formState.isSubmitting}
+          onClick={onCancel}
+        >
+          Cancelar
+        </Button>
 
         <SubmitButton
           label="Salvar"
