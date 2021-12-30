@@ -4,7 +4,7 @@ import { Modal } from "../Modal";
 interface CreateCategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
+  refetch?: () => void;
 }
 
 export const CreateCategoryModal = ({ isOpen, onClose, refetch }: CreateCategoryModalProps) => {
@@ -15,7 +15,7 @@ return (
       onClose={onClose}
     >
       <CreateCategoryForm
-        closeModal={onClose}
+        onCancel={onClose}
         refetch={refetch}
       />
   </Modal>

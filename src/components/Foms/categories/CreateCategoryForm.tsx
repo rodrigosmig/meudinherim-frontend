@@ -1,6 +1,5 @@
 import { 
   Box,
-  Button,
   Flex,
   Stack, 
   useToast
@@ -13,6 +12,7 @@ import { Input } from "../../Inputs/Input";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
+import { useRouter } from "next/router";
 
 interface FormData {
   type: number;
@@ -20,8 +20,8 @@ interface FormData {
 }
 
 interface CreateCategoryFormProps {
-  closeModal: () => void,
-  refetch: () => void
+  onCancel: () => void,
+  refetch?: () => void
 }
 
 const validationSchema = yup.object().shape({
@@ -29,8 +29,9 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const CreateCategoryForm = ({ closeModal, refetch }: CreateCategoryFormProps) => {
+export const CreateCategoryForm = ({ onCancel, refetch }: CreateCategoryFormProps) => {
   const toast = useToast();
+  const router = useRouter();
 
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
@@ -49,11 +50,14 @@ export const CreateCategoryForm = ({ closeModal, refetch }: CreateCategoryFormPr
         status: 'success',
         duration: 10000,
         isClosable: true,
-      })
+      });
 
-      refetch();
-      closeModal();
-
+      if (typeof refetch !== 'undefined') {
+        refetch();
+        onCancel();
+      } else {
+        router.push(`/categories`)
+      }
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;
@@ -102,7 +106,7 @@ export const CreateCategoryForm = ({ closeModal, refetch }: CreateCategoryFormPr
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onCancel}
         />
 
         <SubmitButton
