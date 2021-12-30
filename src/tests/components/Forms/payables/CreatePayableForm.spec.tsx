@@ -39,7 +39,7 @@ const refetch = jest.fn();
 describe('CreatePayableForm Component', () => {
   beforeEach(() => {
     render(<CreatePayableForm 
-      closeModal={closeModal}
+      onCancel={closeModal}
       refetch={refetch}
       categories={categories} />)
   });
@@ -66,7 +66,7 @@ describe('CreatePayableForm Component', () => {
   it('validates required fields inputs', async () => {
     fireEvent.input(screen.getByLabelText('Categoria'), {target: { value: "" }})
     fireEvent.input(screen.getByLabelText('Vencimento'), {target: { value: "" }})
-    fireEvent.input(screen.getByLabelText('Valor'), {target: { value: 0 }})
+    fireEvent.input(screen.getByLabelText('Valor'), {target: { value: -1 }})
 
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
@@ -77,13 +77,13 @@ describe('CreatePayableForm Component', () => {
     expect(screen.getByText("O campo vencimento é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo categoria é inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo descrição é obrigatório")).toBeInTheDocument();
-    expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
+    expect(screen.getByText("O campo valor é inválido")).toBeInTheDocument();
   })
 
   it('validates user inputs', async () => {
     fireEvent.input(screen.getByLabelText('Categoria'), {target: { value: "2" }})
     fireEvent.input(screen.getByLabelText('Vencimento'), {target: { value: '01/09/2021'}})
-    fireEvent.input(screen.getByLabelText('Valor'), {target: { value: 0}})
+    fireEvent.input(screen.getByLabelText('Valor'), {target: { value: -1}})
     fireEvent.input(screen.getByLabelText('Descrição'), {target: {value: 'Te'}})
 
     await waitFor(() => {
@@ -93,7 +93,7 @@ describe('CreatePayableForm Component', () => {
     expect(payableServiceMocked).toHaveBeenCalledTimes(0);
     expect(screen.getByLabelText("Parcelar")).toBeDisabled();
     expect(screen.getByText("O campo descrição deve ter no mínimo 3 caracteres")).toBeInTheDocument();
-    expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
+    expect(screen.getByText("O campo valor é inválido")).toBeInTheDocument();
   })
 
   it('tests installments', async () => {

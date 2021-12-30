@@ -20,10 +20,6 @@ import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccounts, useAccountsForm } from "../../../hooks/useAccounts";
 
-interface AccountForm {
-  value: string;
-  label: string;
-}
 
 interface FormData {
   account_id: number;

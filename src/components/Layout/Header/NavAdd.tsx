@@ -1,5 +1,4 @@
 import {  
-  Box,
   Center,
   Icon,
   IconButton,
@@ -68,13 +67,13 @@ export const NavAdd = () => {
           />
           
           <NavAddItem
-            url="#"
+            url="/receivables/create"
             label="Contas a receber"
             icon={<Icon as={GiReceiveMoney} fontSize={20} />}
           />
 
           <NavAddItem
-            url="#"
+            url="/payables/create"
             label="Contas a pagar"
             icon={<Icon as={GiPayMoney} fontSize={20} />}
           />
