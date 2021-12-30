@@ -45,8 +45,8 @@ interface CreateReceivableFormProps {
     value: string;
     label: string
   }[];
-  closeModal: () => void,
-  refetch: () => void
+  onCancel: () => void,
+  refetch?: () => void
 }
 
 const validationSchema = yup.object().shape({
@@ -63,8 +63,9 @@ const validationSchema = yup.object().shape({
   })
 })
 
-export const CreateReceivableForm = ({ categories, closeModal, refetch }: CreateReceivableFormProps) => {  
+export const CreateReceivableForm = ({ categories, onCancel, refetch }: CreateReceivableFormProps) => {  
   const toast = useToast();
+  const router = useRouter();
 
   const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
@@ -105,8 +106,12 @@ export const CreateReceivableForm = ({ categories, closeModal, refetch }: Create
         isClosable: true,
       })
 
-      refetch();
-      closeModal();
+      if (typeof refetch !== 'undefined') {
+        refetch();
+        onCancel();
+      } else {
+        router.push(`/receivables`)
+      }
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -227,7 +232,7 @@ export const CreateReceivableForm = ({ categories, closeModal, refetch }: Create
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onCancel}
         />
 
         <SubmitButton
