@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { 
   Box,
   Button,
+  Divider,
   Flex,
   Stack, 
   useToast
@@ -12,48 +13,55 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
-import { SelectCategories } from "../../Inputs/SelectCategories";
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { Select } from "../../Inputs/Select";
 import { toUsDate } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
+import { Heading } from "../../Heading";
+import { useQueryClient } from "react-query";
 
 
 interface FormData {
-  account_id: number;
   date: Date;
-  category_id: number;
   description: string;
   value: number;
+  source_category_id: number;
+  destination_category_id: number;
+  source_account_id: number;
+  destination_account_id: number;
 }
 
 type ResponseError = {
-  category_id: string[];
+  date: string[];
   description: string[];
   value: string[];
+  source_category_id: string[];
+  destination_category_id: string[];
+  source_account_id: string[];
+  destination_account_id: string[];
 }
 
 type Key = keyof ResponseError;
 
 interface CreateAccountEntryFormProps {
-  accountId?: number;
   onCancel: () => void;
-  refetch?: () => void;
 }
 
 const validationSchema = yup.object().shape({
-  account_id: yup.number().integer("Conta inválida").typeError("O campo conta é inválido"),
-  date: yup.date().typeError("O campo data é obrigatório"),
-  category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
+  date: yup.date().typeError("O campo vencimento é obrigatório"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
+  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
+  source_category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria de origem é inválido"),
+  destination_category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria de destino é inválido"),
+  source_account_id: yup.number().integer("Categoria inválida").typeError("O campo conta de origem é inválido"),
+  destination_account_id: yup.number().integer("Categoria inválida").typeError("O campo conta de destino é inválido"),
 })
 
-export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: CreateAccountEntryFormProps) => {  
+export const TransferBetweenAccountsForm = ({ onCancel}: CreateAccountEntryFormProps) => {  
   const toast = useToast();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
   const { data: formAccounts, isLoading: isLoadingAccounts } = useAccountsForm();
@@ -61,40 +69,40 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
       date: new Date(),
-      account_id: accountId,
-      category_id: "",
       description: "",
-      value: ""
+      value: "",
+      source_account_id: "",
+      destination_account_id: "",
+      source_category_id: "",
+      destination_category_id: ""
     },
     resolver: yupResolver(validationSchema)
   });
 
   const { errors } = formState;
 
-  const handleCreateAccountEntry: SubmitHandler<FormData> = async (values) => {
+  const handleTransfer: SubmitHandler<FormData> = async (values) => {
     const data = {
       ...values,
         date: values?.date ? toUsDate(values.date) : ''
     }
 
     try {
-      const response = await accountEntriesService.create(data)
+      const response = await accountEntriesService.accountTransfer(data)
 
       toast({
         title: "Sucesso",
-        description: `Lançamento ${values.description} criado com sucesso`,
+        description: `Transferência realizada com sucesso`,
         position: "top-right",
         status: 'success',
         duration: 10000,
         isClosable: true,
       })
 
-      if (typeof refetch !== 'undefined') {
-        refetch();
-        onCancel();
-      } else {
-        router.push(`/accounts/${response.data.account.id}/entries`)
-      }
+      onCancel();
+      queryClient.invalidateQueries('accountEntries');
+      queryClient.invalidateQueries('account_balance');
+
     } catch (error) {
       if (error.response?.status === 422) {
         const data: ResponseError = error.response.data;
@@ -106,7 +114,38 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
           })
         }
       }
+
+      if (error.response?.status === 400) {
+        const message = error.response.data.message 
+
+        toast({
+          title: "Erro",
+          description: message,
+          position: "top-right",
+          status: 'error',
+          duration: 10000,
+          isClosable: true,
+        });
+      }
     }
+  }
+
+  const getExpenseCategories = () => {
+    return categories?.expense.map(category => {
+      return {
+        value: category.id,
+        label: category.label
+      }
+    })
+  }
+
+  const getIncomeCategories = () => {
+    return categories?.income.map(category => {
+      return {
+        value: category.id,
+        label: category.label
+      }
+    })
   }
 
   if (isLoadingCategories || isLoadingAccounts) {
@@ -117,18 +156,66 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
 
   return (
     <Box
-      as="form"
-      onSubmit={handleSubmit(handleCreateAccountEntry)}
+    as="form"
+    onSubmit={handleSubmit(handleTransfer)}
+    >
+      <Heading
+        mb={2}
+        fontSize={['md', 'xl']}
+        color={"blue.500"}
       >
+        Origem
+      </Heading>
+      
+      <Divider mt={2} mb={2}/>
+
       <Stack spacing={[4]}>
         <Select
           name="type"
-          label="Conta"
+          label="Conta de origem"
           options={formAccounts}
-          error={errors.account_id}
-          {...register('account_id')}
+          error={errors.source_account_id}
+          {...register('source_account_id')}
         />
 
+        <Select
+          name="type"
+          label="Categoria de origem"
+          options={getExpenseCategories()}
+          error={errors.source_category_id}
+          {...register('source_category_id')}
+        />
+      </Stack>
+
+      <Heading
+        mt={4}
+        fontSize={['md', 'xl']}
+        color={"red.500"}
+      >
+        Destino
+      </Heading>
+
+      <Divider mt={2} mb={2}/>
+      
+      <Stack spacing={[4]}>
+        <Select
+          name="type"
+          label="Conta de destino"
+          options={formAccounts}
+          error={errors.destination_account_id}
+          {...register('destination_account_id')}
+        />
+
+        <Select
+          name="type"
+          label="Categoria de destino"
+          options={getIncomeCategories()}
+          error={errors.destination_category_id}
+          {...register('destination_category_id')}
+        />
+      </Stack>
+
+      <Stack spacing={[4]} mt={4}>
         <Controller
           control={control}
             name="date"
@@ -140,14 +227,6 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
                 onChange={(date) => field.onChange(date)}
               />
            )}
-        />
-
-        <SelectCategories
-          name="type"
-          label="Categoria"
-          options={categories}
-          error={errors.category_id}
-          {...register('category_id')}
         />
         <Input
           name="description"

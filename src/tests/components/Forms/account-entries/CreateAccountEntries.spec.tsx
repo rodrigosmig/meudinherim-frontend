@@ -51,7 +51,7 @@ const accounts = [
     value: "1",
     label: "Account Test"
   }
-]
+];
 
 describe('CreateAccountEntryForm Component', () => {
   beforeEach(() => {

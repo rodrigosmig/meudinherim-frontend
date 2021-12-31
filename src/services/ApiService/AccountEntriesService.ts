@@ -63,6 +63,16 @@ interface CreateAccountEntryFormData {
     value: number;
 }
 
+interface AccountTransferFormData {
+  source_account_id: number;
+  destination_account_id: number;
+  source_category_id: number;
+  destination_category_id: number;
+  date: string;
+  description: string;
+  value: number;
+}
+
 const apiClient = setupApiClient();
 
 export const accountEntriesService = {
@@ -70,4 +80,6 @@ export const accountEntriesService = {
   create: (data: CreateAccountEntryFormData): Promise<AxiosResponse<AccountEntry>> => apiClient.post(`/account-entries`, data),
   update: (values: EditAccountEntryFormData): Promise<AxiosResponse<AccountEntry>> => apiClient.put(`/account-entries/${values.id}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/account-entries/${id}`),
+  accountTransfer: (data: AccountTransferFormData): Promise<AxiosResponse> => apiClient.post(`account-entries/account-transfer`, data),
+  
 };
