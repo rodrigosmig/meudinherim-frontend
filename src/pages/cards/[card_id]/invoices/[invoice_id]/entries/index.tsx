@@ -40,7 +40,6 @@ import { useInvoice } from "../../../../../../hooks/useInvoices";
 import { CreateInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/CreateInvoiceEntryModal";
 import { BsClock } from "react-icons/bs"
 import { PopoverTotal } from "../../../../../../components/PopoverTotal";
-import { CancelButton } from "../../../../../../components/Buttons/Cancel";
 import { AnticipateInstallmentsModal } from "../../../../../../components/Modals/invoice_entries/AnticipateInstallmentsModal";
 
 interface Category {
@@ -74,7 +73,6 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
   const { data: invoice, isLoading: isLoadingInvoice, refetch: refetchInvoice } = useInvoice(cardId, invoiceId);
   
   const toast = useToast();
-  const router = useRouter()
 
   const isWideVersion = useBreakpointValue({
     base: false,

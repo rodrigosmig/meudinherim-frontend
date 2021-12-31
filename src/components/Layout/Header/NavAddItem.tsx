@@ -12,9 +12,10 @@ interface NavAddItemProps {
   url: string;
   label: string;
   icon: ReactElement
+  onClick?: () => void;
 }
 
-export const NavAddItem = ({ icon, label, url }: NavAddItemProps) => {
+export const NavAddItem = ({ icon, label, url, onClick }: NavAddItemProps) => {
   const bg = useColorModeValue('gray.50', 'gray.800');
 
   return (
@@ -25,7 +26,9 @@ export const NavAddItem = ({ icon, label, url }: NavAddItemProps) => {
           display={'block'}
           p={2}
           rounded={'md'}
-          _hover={{ bg: bg }}>
+          _hover={{ bg: bg }}
+          onClick={onClick}
+        >
           <Stack direction={'row'}>
             <Flex
               transition={'all .3s ease'}

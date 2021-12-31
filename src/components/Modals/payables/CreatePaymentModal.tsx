@@ -21,7 +21,7 @@ export const CreatePaymentModal = ({ categories, isOpen, onClose, refetch }: Cre
     >
       <CreatePayableForm
         categories={categories} 
-        closeModal={onClose}
+        onCancel={onClose}
         refetch={refetch}
       />
     </Modal>

@@ -28,7 +28,7 @@ const refetch = jest.fn;
 
 describe('CreateCategoryForm Component', () => {
   beforeEach(() => {
-    render(<CreateCategoryForm closeModal={closeModal} refetch={refetch} />)
+    render(<CreateCategoryForm onCancel={closeModal} refetch={refetch} />)
   });
 
   afterEach(() => {

@@ -14,7 +14,6 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
-import { format } from 'date-fns';
 import { Select } from "../../Inputs/Select";
 import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
 import { useCategoriesForm } from "../../../hooks/useCategories";
@@ -114,7 +113,6 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
       } else {
         router.push(`/cards/${response.data.card_id}/invoices/${response.data.invoice_id}/entries`)
       }
-
     } catch (error) {
       if (error.response?.status === 422) {
         const data: ResponseError = error.response.data;

@@ -1,7 +1,6 @@
 import { useState, ChangeEvent } from 'react';
 import { 
   Box,
-  Button,
   Flex,
   Stack, 
   useToast,
@@ -12,13 +11,13 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
-import { format } from 'date-fns';
 import { Switch } from "../../Inputs/Switch";
 import { payableService } from '../../../services/ApiService/PayableService';
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
 import { toUsDate } from '../../../utils/helpers';
+import { useRouter } from 'next/router';
 
 interface FormData {
   due_date: Date;
@@ -43,8 +42,8 @@ interface CreatePayableFormProps {
     value: string;
     label: string
   }[];
-  closeModal: () => void,
-  refetch: () => void
+  onCancel: () => void,
+  refetch?: () => void
 }
 
 const validationSchema = yup.object().shape({
@@ -61,15 +60,16 @@ const validationSchema = yup.object().shape({
   })
 })
 
-export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePayableFormProps) => {  
+export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayableFormProps) => {  
   const toast = useToast();
+  const router = useRouter();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
       due_date: new Date(),
       category_id: "",
       description: "",
-      value: 0,
+      value: "",
       monthly: false,
       installment: false,
       installments_number: 2
@@ -103,9 +103,12 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
         isClosable: true,
       })
 
-      refetch();
-      closeModal();
-
+      if (typeof refetch !== 'undefined') {
+        refetch();
+        onCancel();
+      } else {
+        router.push(`/payables`)
+      }
     } catch (error) {
       if (error.response?.status === 422) {
         const data: ResponseError = error.response.data;
@@ -225,7 +228,7 @@ export const CreatePayableForm = ({ categories, closeModal, refetch }: CreatePay
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onCancel}
         />
 
         <SubmitButton

@@ -20,7 +20,7 @@ export const CreateReceivableModal = ({ categories, isOpen, onClose, refetch }: 
     >
       <CreateReceivableForm 
         categories={categories} 
-        closeModal={onClose}
+        onCancel={onClose}
         refetch={refetch}
       />
     </Modal>

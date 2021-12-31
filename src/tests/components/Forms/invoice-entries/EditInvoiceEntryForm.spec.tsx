@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
-import { CreateInvoiceEntryForm } from "../../../../components/Foms/InvoiceEntry/CreateInvoiceEntryForm";
 import { EditInvoiceEntryForm } from "../../../../components/Foms/InvoiceEntry/EditInvoiceEntryForm";
 import { useCardsForm } from "../../../../hooks/useCards";
 import { useCategoriesForm } from "../../../../hooks/useCategories";
