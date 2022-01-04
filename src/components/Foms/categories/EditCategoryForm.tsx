@@ -2,8 +2,7 @@ import { memo } from "react";
 import { 
   Box,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,6 +12,7 @@ import { Input } from "../../Inputs/Input";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
+import { getMessage } from "../../../utils/helpers";
 
 interface EditCategoryFormProps {
   category: Category;
@@ -44,8 +44,6 @@ const validationSchema = yup.object().shape({
 })
 
 const EditCategoryFormComponent = ({ category, closeModal, refetch }: EditCategoryFormProps) => {
-  const toast = useToast();
-
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       type: category.type,
@@ -66,16 +64,9 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: EditCatego
     }
 
     try {
-      await categoryService.update(data)
-      
-      toast({
-        title: "Sucesso",
-        description: "Categoria alterada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      await categoryService.update(data);
+
+      getMessage("Sucesso", "Categoria alterada com sucesso");
 
       refetch();
       closeModal();

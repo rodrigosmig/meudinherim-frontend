@@ -8,15 +8,14 @@ import {
     AlertDialogOverlay, 
     Button,
     Flex,
-    useDisclosure,
-    useToast,
+    useDisclosure
   } from "@chakra-ui/react";
 import { useMutation } from "react-query";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { queryClient } from "../../../services/queryClient";
 import { Loading } from "../../Loading";
 import { Input } from "../../Inputs/Input";
-import { toBrDate, toCurrency } from "../../../utils/helpers";
+import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
 import { Modal } from "../Modal";
 import { CancelButton } from "../../Buttons/Cancel";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -44,7 +43,6 @@ import { SubmitButton } from "../../Buttons/Submit";
     refetchEntries,
     refetchBalance
   }: ShowReceivementModalProps) => {
-    const toast = useToast();
     const [receivable, setReceivable] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -89,31 +87,16 @@ import { SubmitButton } from "../../Buttons/Submit";
 
       try {
         await cancelReceivement.mutateAsync(values);
-  
-        toast({
-          title: "Sucesso",
-          description: "Pagamento cancelado com sucesso",
-          position: "top-right",
-          status: 'success',
-          duration: 10000,
-          isClosable: true,
-        });
+        getMessage("Sucesso", "Pagamento cancelado com sucesso");
 
         refetchEntries();
         refetchBalance();
         handleOnClose();
   
       } catch (error) {
-        const data = error.response.data
-        
-        toast({
-          title: "Erro",
-          description: data.message,
-          position: "top-right",
-          status: 'error',
-          duration: 10000,
-          isClosable: true,
-        })
+        const data = error.response.data;
+
+        getMessage("Erro", data.message, 'error');
       }
     }
   

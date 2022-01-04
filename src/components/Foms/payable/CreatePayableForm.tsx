@@ -3,7 +3,6 @@ import {
   Box,
   Flex,
   Stack, 
-  useToast,
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,7 +15,7 @@ import { payableService } from '../../../services/ApiService/PayableService';
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
-import { toUsDate } from '../../../utils/helpers';
+import { getMessage, toUsDate } from '../../../utils/helpers';
 import { useRouter } from 'next/router';
 
 interface FormData {
@@ -61,7 +60,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayableFormProps) => {  
-  const toast = useToast();
   const router = useRouter();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
@@ -92,16 +90,9 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
     }
 
     try {
-      await payableService.create(data)
+      await payableService.create(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Conta a Pagar adicionada com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Conta a Pagar adicionada com sucesso");
 
       if (typeof refetch !== 'undefined') {
         refetch();

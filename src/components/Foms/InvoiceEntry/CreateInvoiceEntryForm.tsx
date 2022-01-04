@@ -4,8 +4,7 @@ import {
   Box,
   Button,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,7 +20,7 @@ import { Loading } from "../../Loading";
 import { useCardsForm } from "../../../hooks/useCards";
 import { Installment } from "../../Inputs/Installment";
 import { Switch } from "../../Inputs/Switch";
-import { toUsDate } from "../../../utils/helpers";
+import { getMessage, toUsDate } from "../../../utils/helpers";
 
 interface FormData {
   card_id: number;
@@ -64,7 +63,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: CreateInvoiceEntryFormProps) => {  
-  const toast = useToast();
   const router = useRouter();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
@@ -96,16 +94,9 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
     }
 
     try {
-      const response = await invoiceEntriesService.create(data)
+      const response = await invoiceEntriesService.create(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Lançamento ${values.description} criado com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", `Lançamento ${values.description} criado com sucesso`);
 
       if (typeof refetch !== 'undefined') {
         refetch();
@@ -124,14 +115,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
           })
         }
       } else if (error.response?.status === 400) {
-        toast({
-          title: "Erro",
-          description: error.response.data.message,
-          position: "top-right",
-          status: 'error',
-          duration: 10000,
-          isClosable: true,
-        })
+        getMessage("Erro", error.response.data.message, 'error');
       }
     }
   }

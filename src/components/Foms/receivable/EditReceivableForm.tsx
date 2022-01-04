@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { 
   Box,
-  Button,
   Flex,
-  Stack, 
-  useToast,
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,7 +14,7 @@ import { format, parseISO } from 'date-fns';
 import { Switch } from "../../Inputs/Switch";
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
-import { reverseBrDate, toUsDate } from '../../../utils/helpers';
+import { getMessage, reverseBrDate, toUsDate } from '../../../utils/helpers';
 import { CancelButton } from '../../Buttons/Cancel';
 
 interface Receivable {
@@ -82,8 +80,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const EditReceivableForm = ({ receivable, categories, closeModal, refetch }: CreateReceivableFormProps) => {  
-  const toast = useToast();
-
   const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
       due_date: parseISO(reverseBrDate(receivable.due_date)),
@@ -112,16 +108,9 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
     }
 
     try {
-      await receivableService.update(data)
+      await receivableService.update(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Conta a Receber alterada com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Conta a Receber alterada com sucesso");
 
       refetch();
       closeModal();

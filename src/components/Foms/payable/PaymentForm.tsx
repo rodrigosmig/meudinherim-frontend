@@ -3,8 +3,7 @@ import {
     Box,
     Button,
     Flex,
-    Stack,
-    useToast
+    Stack
 } from "@chakra-ui/react"
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,7 +12,7 @@ import { format } from 'date-fns';
 
 import { Input } from "../../Inputs/Input"
 import { Switch } from "../../Inputs/Switch"
-import { toBrDate, toUsDate } from "../../../utils/helpers"
+import { getMessage, toBrDate, toUsDate } from "../../../utils/helpers"
 import { payableService } from "../../../services/ApiService/PayableService";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
@@ -71,8 +70,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const PaymentForm = ({ payable, accounts, onCancel, refetch }: PaymentFormProps) => {
-  const toast = useToast();
-
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       account_id: "",
@@ -95,16 +92,9 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: PaymentFor
     }
 
     try {
-      await payableService.payment(data)
+      await payableService.payment(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Conta paga com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+      getMessage("Sucesso", "Conta paga com sucesso");
 
       refetch();
       onCancel();  
@@ -119,14 +109,7 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: PaymentFor
           })
         }
       } else if (error.response.data.message) {
-        toast({
-          title: "Erro",
-          description: error.response.data.message,
-          position: "top-right",
-          status: 'error',
-          duration: 10000,
-          isClosable: true,
-        });
+        getMessage('Erro', error.response.data.message, 'error')
 
         onCancel(); 
       }

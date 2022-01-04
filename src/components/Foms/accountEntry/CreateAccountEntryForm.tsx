@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   Stack, 
-  useToast
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +14,7 @@ import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { Select } from "../../Inputs/Select";
-import { toUsDate } from "../../../utils/helpers";
+import { getMessage, toUsDate } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
@@ -52,7 +51,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: CreateAccountEntryFormProps) => {  
-  const toast = useToast();
   const router = useRouter();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
@@ -78,16 +76,9 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
     }
 
     try {
-      const response = await accountEntriesService.create(data)
+      const response = await accountEntriesService.create(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Lançamento ${values.description} criado com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", `Lançamento ${values.description} criado com sucesso`);
 
       if (typeof refetch !== 'undefined') {
         refetch();

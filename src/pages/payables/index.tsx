@@ -17,8 +17,7 @@ import {
   Tooltip, 
   Tr,
   useBreakpointValue,
-  useDisclosure,
-  useToast 
+  useDisclosure
 } from "@chakra-ui/react";
 import { Layout } from "../../components/Layout";
 import { usePayables } from "../../hooks/usePayables";
@@ -31,7 +30,7 @@ import { Heading } from "../../components/Heading";
 import { PaymentButton } from "../../components/Buttons/Payment";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { toCurrency, toUsDate } from '../../utils/helpers';
+import { getMessage, toCurrency, toUsDate } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
@@ -82,8 +81,6 @@ interface Payable {
 }
 
 export default function AccountPayables({ categories, accounts }: AccountPayableProps) {
-  const toast = useToast();
-
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
   const { isOpen: paymentModalIsOpen, onOpen: paymentModalOnOpen, onClose: paymentModalOnClose } = useDisclosure();
@@ -122,27 +119,13 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     try {
       await deletePayable.mutateAsync(id);
 
-      toast({
-        title: "Sucesso",
-        description: "Conta a pagar deletada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+      getMessage("Sucesso", "Conta a pagar deletada com sucesso");
 
       refetch();
     } catch (error) {
-      const data = error.response.data
-      
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      const data = error.response.data;
+
+      getMessage("Erro", data.message, 'error');
     }
   }
 
@@ -201,27 +184,13 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     try {
       await cancelPayment.mutateAsync(values);
 
-      toast({
-        title: "Sucesso",
-        description: "Pagamento cancelado com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+      getMessage("Sucesso", "Pagamento cancelado com sucesso");
 
       refetch();
     } catch (error) {
-      const data = error.response.data
-      
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      const data = error.response.data;
+
+      getMessage("Erro", data.message, 'error');
     }
   }
 

@@ -20,7 +20,6 @@ import {
   FormControl,
   FormErrorMessage,
   Flex,
-  useToast,
   Tooltip,
 } from '@chakra-ui/react';
 
@@ -36,6 +35,7 @@ import {
 import { FiAlertCircle, FiPlus } from 'react-icons/fi';
 import { profileService } from '../../services/ApiService/ProfileService';
 import { AuthContext } from '../../contexts/AuthContext';
+import { getMessage } from '../../utils/helpers';
 
 interface User {
   id: number;
@@ -76,7 +76,6 @@ const FileInputBase: ForwardRefRenderFunction<
   ref
 ) => {
   const { user } = useContext(AuthContext);
-  const toast = useToast();
   const [progress, setProgress] = useState(0);
   const [isSending, setIsSending] = useState(false);
   const [cancelToken, setCancelToken] = useState<CancelTokenSource>(
@@ -118,33 +117,19 @@ const FileInputBase: ForwardRefRenderFunction<
 
         const userUpdated = {...user, avatar: response.data.avatar}
 
-        updateUser(userUpdated)
+        updateUser(userUpdated);
 
-        toast({
-          title: 'Sucesso',
-          description: 'Imagem alterada com sucesso.',
-          position: "top-right",
-          status: 'success',
-          duration: 10000,
-          isClosable: true,
-        });
+        getMessage("Sucesso", 'Imagem alterada com sucesso');
       } catch (err) {
         if (err?.message === 'Cancelled image upload.') return;
 
-        toast({
-          title: 'Falha no envio',
-          description: 'Ocorreu um erro ao realizar o upload da sua imagem.',
-          position: "top-right",
-          status: 'error',
-          duration: 10000,
-          isClosable: true,
-        });
+        getMessage("Falha no envio", "Ocorreu um erro ao realizar o upload da sua imagem", 'error');
       } finally {
         setIsSending(false);
         setProgress(0);
       }
     },
-    [onChange, setError, setLocalImageUrl, updateUser, trigger, user, toast]
+    [onChange, setError, setLocalImageUrl, updateUser, trigger, user]
   );
 
   useEffect(() => {

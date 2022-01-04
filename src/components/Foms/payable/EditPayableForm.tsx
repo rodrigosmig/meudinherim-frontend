@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { 
   Box,
-  Button,
   Flex,
-  Stack,
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,7 +14,7 @@ import { format, parseISO } from 'date-fns';
 import { payableService } from "../../../services/ApiService/PayableService";
 import { Select } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
-import { reverseBrDate, toUsDate } from "../../../utils/helpers";
+import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
 
 interface Payable {
@@ -71,8 +69,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const EditPayableForm = ({ payable, categories, closeModal, refetch }: EditPayableFormProps) => {
-  const toast = useToast();
-
   const [ monthly, setMonthly ] = useState(payable.monthly);
 
   const { control, register, handleSubmit, setError, formState } = useForm({
@@ -99,16 +95,9 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Ed
     }
 
     try {
-      await payableService.update(data)
+      await payableService.update(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Conta a Pagar alterada com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Conta a Pagar alterada com sucesso");
 
       refetch();
       closeModal();

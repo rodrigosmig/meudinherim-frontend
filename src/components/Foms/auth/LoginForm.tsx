@@ -4,7 +4,6 @@ import {
   Box, 
   Flex, 
   Stack, 
-  useToast, 
   useColorModeValue 
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -13,6 +12,7 @@ import { AuthContext } from '../../../contexts/AuthContext';
 import { SubmitButton } from '../../Buttons/Submit';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { getMessage } from "../../../utils/helpers";
 
 type LoginFormData = {
   email: string;
@@ -25,7 +25,6 @@ const validationSchema = yup.object().shape({
 })
 
 export function LoginForm() {
-  const toast = useToast();
   const [isSubimited, setIsSubimited] = useState(false);
 
   const { signIn } = useContext(AuthContext);  
@@ -42,27 +41,14 @@ export function LoginForm() {
       const data = error.response.data
 
       if (data.error) {
-        toast({
-          title: "Falha ao entrar",
-          description: "As credenciais informadas são inválidas.",
-          position: "top-right",
-          status: "error",
-          duration: 10000,
-          isClosable: true,
-        })
+        getMessage("Falha ao Entrar", "As credenciais informadas são inválidas", 'error');
+
       } else if (error?.response.status === 422) {
         const data = error.response.data;
 
         for (const key in data) {
           data[key].map(error => {
-            toast({
-              title: "Erro",
-              description: error,
-              position: "top-right",
-              status: "error",
-              duration: 10000,
-              isClosable: true,
-            })
+            getMessage("Erro", error, 'error');
           })
         }
       }

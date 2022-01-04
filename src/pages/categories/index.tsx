@@ -11,7 +11,6 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
-  useToast,
   useDisclosure
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
@@ -32,6 +31,7 @@ import { Heading } from "../../components/Heading";
 import { Table } from "../../components/Table";
 import { EditCategoryModal } from "../../components/Modals/categories/EditCategoryModal";
 import { CreateCategoryModal } from "../../components/Modals/categories/CreateCategoryModal";
+import { getMessage } from "../../utils/helpers";
 
 interface Category {
   id: number;
@@ -40,8 +40,6 @@ interface Category {
 }
 
 export default function Categories() {
-  const toast = useToast();
-
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -68,27 +66,13 @@ export default function Categories() {
     try {
       await deleteCategory.mutateAsync(id);
 
-      toast({
-        title: "Sucesso",
-        description: "Categoria deletada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Categoria deletada com sucesso");
 
       refetch();
     } catch (error) {
-      const data = error.response.data
+      const data = error.response.data;
 
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Erro", data.message, 'error');
     }
   }
 

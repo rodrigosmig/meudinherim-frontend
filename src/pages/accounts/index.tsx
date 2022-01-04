@@ -11,8 +11,7 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
-  useDisclosure,
-  useToast
+  useDisclosure
 } from "@chakra-ui/react";
 import { Layout } from '../../components/Layout/index';
 import { AddButton } from '../../components/Buttons/Add';
@@ -30,6 +29,7 @@ import { Heading } from "../../components/Heading";
 import { EditAccountModal } from "../../components/Modals/accounts/EditAccountModal";
 import { CreateAccountModal } from "../../components/Modals/accounts/CreateAccountModal";
 import { Table } from "../../components/Table";
+import { getMessage } from "../../utils/helpers";
 
 interface Account {
   id: number;
@@ -42,8 +42,6 @@ interface Account {
 }
 
 export default function Accounts() {
-  const toast = useToast();
-
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -87,27 +85,13 @@ export default function Accounts() {
     try {
       await deleteAccount.mutateAsync(id);
 
-      toast({
-        title: "Sucesso",
-        description: "Conta deletada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Conta deletada com sucesso");
 
       refetch();
     } catch (error) {
-      const data = error.response.data
+      const data = error.response.data;
 
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Erro", data.message, 'error');
     }
   }
 

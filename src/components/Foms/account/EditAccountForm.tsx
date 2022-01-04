@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   Stack, 
-  useToast
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,6 +11,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Select } from "../../Inputs/Select";
 import { accountService } from '../../../services/ApiService/AccountService';
+import { getMessage } from "../../../utils/helpers";
 
 const validationSchema = yup.object().shape({
   type: yup.string().required("O campo tipo é obrigatório"),
@@ -47,8 +47,6 @@ type ResponseError = {
 type Key = keyof ResponseError
 
 export const EditAccountForm = ({ account, closeModal, refetch }: EditAccountFormProps) => {
-  const toast = useToast();
-
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       type: account.type.id,
@@ -69,16 +67,9 @@ export const EditAccountForm = ({ account, closeModal, refetch }: EditAccountFor
     }
 
     try {
-      await accountService.update(data)
-      
-      toast({
-        title: "Sucesso",
-        description: "Alteração realizada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      await accountService.update(data);
+
+      getMessage("Sucesso", "Alteração realizada com sucesso");
 
       refetch();
       closeModal();
