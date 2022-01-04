@@ -28,7 +28,8 @@ interface SelectCategoriesProps extends ChakraSelectProps {
 }
 
 export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectCategoriesProps> = ({ name, label, error=null, options, ...rest }, ref) => {
-  const hoverColor = useColorModeValue('gray.50', 'gray.900');
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const hoverColor = useColorModeValue('white', 'gray.900');
 
   return (
     <FormControl isInvalid={!!error}>
@@ -40,20 +41,17 @@ export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectCateg
         id={name}
         name={name}
         focusBorderColor="pink.500"
-        _hover={{
-          bgColor: hoverColor
-        }}
+        bgColor={bgColor}
         ref={ref}
         {...rest}
       >
         <optgroup label="Entrada">
           {options.income.map(category => (
-            <Text as="option" key={category.id} value={category.id}>{category.label}</Text>
-          ))}
+            <option key={category.id} value={category.id}>{category.label}</option>))}
         </optgroup>
         <optgroup label="Saída">
           {options.expense.map(category => (
-            <Text as="option" key={category.id} value={category.id}>{category.label}</Text>
+            <option  key={category.id} value={category.id}>{category.label}</option>
           ))}
         </optgroup>
       </ChakraSelect>
