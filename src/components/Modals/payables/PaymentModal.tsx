@@ -12,7 +12,7 @@ interface Payable {
     id: number;
     name: string;
   };
-  invoice_id: number | null;
+  invoice: null | {invoice_id:number, card_id: number};
   paid: boolean;
   monthly: boolean;
   has_parcels: boolean;

@@ -17,6 +17,7 @@ interface Invoice {
   amount: number;
   paid: boolean;
   isClosed: boolean;
+  hasPayable: boolean;
   card: {
     id: number;
     name: string;

@@ -10,9 +10,7 @@ export const getInvoices = async (cardId: number, status: 'open' | 'paid', page:
   const invoices = response.data.data.map(invoice => {
     return {
       ...invoice,
-      due_date: toBrDate(invoice.due_date),
       closing_date: toBrDate(invoice.closing_date),
-      amount: toCurrency(invoice.amount)
     }
   })
 
@@ -36,7 +34,7 @@ export const getInvoice = async (cardId: number, invoiceId: number) => {
 
   const invoice = {
     ...response.data,
-      due_date: toBrDate(response.data.due_date),
+      due_date: response.data.due_date,
   }
 
   return invoice

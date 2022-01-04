@@ -43,7 +43,7 @@ const payable = {
       id: 1,
       name: "Category Test"
   },
-  invoice_id: null,
+  invoice: null,
   paid: false,
   monthly: false,
   has_parcels: false,
