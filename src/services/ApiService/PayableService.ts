@@ -12,7 +12,7 @@ interface Payable {
     name: string;
     type: 2;
   };
-  invoice_id: number | null;
+  invoice: null | {invoice_id:number, card_id: number};
   paid: boolean;
   monthly: boolean;
   has_parcels: boolean;
@@ -30,9 +30,10 @@ interface CreateFormData {
   category_id: number;
   description: string;
   value: number;
-  monthly: boolean;
-  installment: boolean;
-  installments_number: number
+  monthly?: boolean;
+  installment?: boolean;
+  installments_number?: number;
+  invoice_id?: number
 }
 
 interface EditFormData {

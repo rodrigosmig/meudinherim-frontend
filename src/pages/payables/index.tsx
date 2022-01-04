@@ -1,8 +1,12 @@
 import { ChangeEvent, useState } from 'react';
 import Head from "next/head";
+import NextLink from "next/link";
 import {
   Flex, 
   HStack,
+  Link,
+  LinkBox,
+  LinkOverlay,
   Select,
   Spinner,
   Tbody, 
@@ -10,6 +14,7 @@ import {
   Text,
   Th, 
   Thead, 
+  Tooltip, 
   Tr,
   useBreakpointValue,
   useDisclosure,
@@ -66,7 +71,7 @@ interface Payable {
     name: string;
     type: 2
   };
-  invoice_id: number | null;
+  invoice: null | {invoice_id:number, card_id: number};
   paid: boolean;
   monthly: boolean;
   has_parcels: boolean;
@@ -330,7 +335,23 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
                               amount={payable.total_purchase}
                             />
                             ) : (
-                              payable.description
+                              payable.invoice ? (
+                                <LinkBox>
+                                  <NextLink href={`/cards/${payable.invoice.card_id}/invoices/${payable.invoice.invoice_id}/entries`} passHref>
+                                    <LinkOverlay
+                                      title='Ver Fatura'
+                                      fontWeight={"bold"}
+                                      _hover={{ color: "pink.500" }}
+                                    >
+                                      { payable.description }                                   
+                                    </LinkOverlay>
+                                  </NextLink>
+                                
+                                </LinkBox>
+                              ) : (
+                                payable.description
+
+                              )
                             )
                           }
 

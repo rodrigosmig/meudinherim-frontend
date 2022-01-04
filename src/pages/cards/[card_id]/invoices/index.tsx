@@ -5,8 +5,10 @@ import { setupApiClient } from "../../../../services/api";
 import { withSSRAuth } from "../../../../utils/withSSRAuth";
 import {
   Box,
+  Button,
   Flex,
   HStack,
+  Icon,
   Select,
   Spinner,
   Tbody, 
@@ -15,10 +17,11 @@ import {
   Th, 
   Thead, 
   Tr,
-  useBreakpointValue
+  useBreakpointValue,
+  useDisclosure
 } from "@chakra-ui/react";
 import { Heading } from "../../../../components/Heading";
-import { toCurrency } from "../../../../utils/helpers";
+import { toBrDate, toCurrency } from "../../../../utils/helpers";
 import { FilterPerPage } from "../../../../components/Pagination/FilterPerPage";
 import { useInvoices } from "../../../../hooks/useInvoices";
 import { Loading } from "../../../../components/Loading";
@@ -26,6 +29,21 @@ import { Table } from "../../../../components/Table";
 import { Pagination } from "../../../../components/Pagination";
 import { ShowEntriesButton } from "../../../../components/Buttons/ShowEntries";
 import { useRouter } from "next/router";
+import { GeneratePayment } from "../../../../components/Buttons/GeneratePayment";
+import { GeneratePaymentModal } from "../../../../components/Modals/invoices/GeneratePaymentModal";
+
+interface Invoice {
+  id: number;
+  due_date: string;
+  closing_date: string;
+  amount: number;
+  paid: boolean;
+  isClosed: boolean;
+  card: {
+    id: number;
+    name: string;
+  }
+}
 
 interface Card {
   id: number;
@@ -48,7 +66,11 @@ export default function Invoices({ card }: InvoicesProps) {
   const [perPage, setPerPage] = useState(10);
   const [invoiceStatus, setInvoiceStatus] = useState<StatusType>("open");
 
-  const { data, isLoading, isFetching, isError, refetch } = useInvoices(card.id, invoiceStatus, page, perPage);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice>()
+
+  const { data, isLoading, isFetching, isError } = useInvoices(card.id, invoiceStatus, page, perPage);
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -72,8 +94,19 @@ export default function Invoices({ card }: InvoicesProps) {
     router.push(`/cards/${cardId}/invoices/${invoiceId}/entries`)
   }
 
+  const handleGeneratePayment = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    onOpen();
+  }
+
   return (
     <>
+      <GeneratePaymentModal
+        invoice={selectedInvoice}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
+
       <Head>
         <title>Faturas | { card.name }</title>
       </Head>
@@ -130,17 +163,22 @@ export default function Invoices({ card }: InvoicesProps) {
                   { data.invoices.map(invoice => (
                     <Tr key={invoice.id}>
                       <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{ invoice.due_date }</Text>
+                        <Text fontWeight="bold">{ toBrDate(invoice.due_date) }</Text>
                       </Td>
                       <Td fontSize={["xs", "md"]}>
                         <Text fontWeight="bold">{ invoice.closing_date }</Text>
                       </Td>
                       <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold" color={"red.600"}>{ invoice.amount }</Text>
+                        <Text fontWeight="bold" color={"red.600"}>{ toCurrency(invoice.amount) }</Text>
                       </Td>
                       <Td>
                         <HStack spacing={[2]}>                              
-                          <ShowEntriesButton onClick={() => handleShowEntries(card.id, invoice.id)} />
+                          <ShowEntriesButton onClick={() => handleShowEntries(card.id, invoice.id)} />7
+                          
+                          { (invoice.isClosed && !invoice.hasPayable) && (
+                            <GeneratePayment onClick={() => handleGeneratePayment(invoice)} />
+                          )}
+
                         </HStack>
                       </Td>
                     </Tr>

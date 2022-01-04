@@ -17,7 +17,13 @@ export const PopoverTotal = ({ description, amount }:PopoverTotalProps) => {
   return (
     <Popover trigger={"hover"}>
       <PopoverTrigger>
-      <Text fontWeight="bold">{description}</Text>
+        <Text 
+          cursor={"pointer"} 
+          fontWeight="bold"
+          _hover={{ color: "pink.500" }}
+        >
+          {description}
+        </Text>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverArrow />

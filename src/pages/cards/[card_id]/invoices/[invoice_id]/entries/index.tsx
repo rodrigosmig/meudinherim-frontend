@@ -1,7 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from 'next/router';
+import NextLink from "next/link";
 import {
   Button,
   Box,
@@ -21,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { Heading } from "../../../../../../components/Heading";
 import { FilterPerPage } from "../../../../../../components/Pagination/FilterPerPage";
-import { toCurrency } from "../../../../../../utils/helpers";
+import { toBrDate, toCurrency } from "../../../../../../utils/helpers";
 import { Layout } from "../../../../../../components/Layout";
 import { withSSRAuth } from "../../../../../../utils/withSSRAuth";
 import { setupApiClient } from "../../../../../../services/api";
@@ -41,6 +40,8 @@ import { CreateInvoiceEntryModal } from "../../../../../../components/Modals/inv
 import { BsClock } from "react-icons/bs"
 import { PopoverTotal } from "../../../../../../components/PopoverTotal";
 import { AnticipateInstallmentsModal } from "../../../../../../components/Modals/invoice_entries/AnticipateInstallmentsModal";
+import { GeneratePayment } from "../../../../../../components/Buttons/GeneratePayment";
+import { GeneratePaymentModal } from "../../../../../../components/Modals/invoices/GeneratePaymentModal";
 
 interface Category {
   id: number,
@@ -83,6 +84,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
   const { isOpen: anticipateModalIsOpen, onOpen: anticipateModalonOpen, onClose: anticipateModalOnClose } = useDisclosure();
+  const { isOpen: generatePaymentIsOpen, onOpen: generatePaymentonOpen, onClose: generatePaymentOnClose } = useDisclosure();
 
   const [ page, setPage ] = useState(1);
   const [ perPage, setPerPage ] = useState(10);
@@ -133,6 +135,11 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
     refetchInvoice();
   }
 
+  const handleCloseGeneratePayment = () => {
+    refetchInvoice();
+    generatePaymentOnClose();
+  }
+
   const handleDeleteEntry = async (id: number) => {
     try {
       await deleteEntry.mutateAsync(id);
@@ -163,6 +170,12 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
 
   return (
     <>
+      <GeneratePaymentModal
+        invoice={invoice}
+        isOpen={generatePaymentIsOpen}
+        onClose={handleCloseGeneratePayment}
+      />
+
       <CreateInvoiceEntryModal
         card_id={cardId}
         isOpen={createModalIsOpen} 
@@ -192,11 +205,11 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
         <Flex mb={[6, 6, 8]} justify="space-between" align="center">
           <Heading>
             <>
-            <Icon as={BiCalendar} mb="5px" mr="4px" />
+            <Icon as={BiCalendar} mr="4px" />
               { isLoadingInvoice ? (
                   <Spinner size="sm" color="gray.500" ml="4" />
                 ) : (
-                  invoice.due_date
+                  toBrDate(invoice.due_date)
                 )
               }
               { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
@@ -333,16 +346,25 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
           )
         }
 
-        <Flex justify={["center", "left"]}>
-          <Link href={`/cards/${cardId}/invoices`} passHref>
+        <Flex 
+          justify={["center", "left"]}
+          mt={8}
+          
+        >
+          <NextLink href={`/cards/${cardId}/invoices`} passHref>
             <Button
-              mt={8}
               size={sizeProps}
               variant="outline"
             >
               Voltar
             </Button>
-          </Link>          
+          </NextLink>
+
+          { (!isLoadingInvoice && invoice.isClosed && !invoice.hasPayable) && (
+            <Box mt={[1, 0]} ml={2}>
+              <GeneratePayment onClick={generatePaymentonOpen} />
+            </Box>
+          )}          
         </Flex>
         
       </Layout>
