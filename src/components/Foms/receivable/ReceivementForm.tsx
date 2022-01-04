@@ -1,15 +1,12 @@
 import React from "react"
 import { 
     Box,
-    Button,
     Flex,
     Stack,
-    useToast
 } from "@chakra-ui/react"
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { format } from 'date-fns';
 
 import { Input } from "../../Inputs/Input"
 import { Switch } from "../../Inputs/Switch"
@@ -18,7 +15,7 @@ import { Datepicker } from "../../DatePicker";
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { CancelButton } from "../../Buttons/Cancel";
-import { toUsDate } from "../../../utils/helpers";
+import { getMessage, toUsDate } from "../../../utils/helpers";
 
 interface Receivable {
   id: number;
@@ -72,8 +69,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: ReceivementFormProps) => {
-  const toast = useToast();
-
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       account_id: "",
@@ -97,16 +92,9 @@ export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Rec
     }
 
     try {
-      await receivableService.receivement(data)
+      await receivableService.receivement(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Conta recebida com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+      getMessage("Sucesso", "Conta recebida com sucesso");
 
       refetch();
       onCancel();  
@@ -121,14 +109,7 @@ export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Rec
           })
         }
       } else if (error.response.data.message) {
-        toast({
-          title: "Erro",
-          description: error.response.data.message,
-          position: "top-right",
-          status: 'error',
-          duration: 10000,
-          isClosable: true,
-        });
+        getMessage("Sucesso", error.response.data.message, 'error');
 
         onCancel(); 
       }

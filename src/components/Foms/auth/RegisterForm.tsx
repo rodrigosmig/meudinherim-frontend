@@ -1,13 +1,14 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from 'next/router';
-import { Box, Flex, Stack, useToast, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Stack, useColorModeValue } from "@chakra-ui/react";
 import { Input } from '../../Inputs/Input';
 import { authService } from '../../../services/ApiService/AuthService';
 import { SubmitButton } from '../../Buttons/Submit';
 import { Switch } from "../../Inputs/Switch";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { getMessage } from "../../../utils/helpers";
 
 type RegisterFormData = {
   name: string
@@ -26,7 +27,6 @@ const validationSchema = yup.object().shape({
 
 export function RegisterForm() {
   const router = useRouter()
-  const toast = useToast();
 
   const { register, reset, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
@@ -38,14 +38,7 @@ export function RegisterForm() {
       const response = await authService.register(values);
       const name = response.data.name;
 
-      toast({
-        title: "Sucesso",
-        description: `Usuário ${name} cadastrado com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", `Usuário ${name} cadastrado com sucesso`);
 
       reset();
       

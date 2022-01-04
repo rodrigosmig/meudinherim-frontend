@@ -1,10 +1,8 @@
-import { useRouter } from "next/router";
 import { 
   Box,
   Button,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,6 +13,7 @@ import { SelectCategories } from "../../Inputs/SelectCategories";
 import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
+import { getMessage } from "../../../utils/helpers";
 
 interface FormData {
   category_id: number;
@@ -66,9 +65,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: EditInvoiceEntryFormProps) => {  
-  const toast = useToast();
-  const router = useRouter();
-
   const { data: categories, isLoading } = useCategoriesForm();
 
   const { register, handleSubmit, setError, formState } = useForm({
@@ -95,16 +91,7 @@ export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: EditInvoiceEnt
     try {
       const response = await invoiceEntriesService.update(data)
 
-      const newEntry = response.data
-
-      toast({
-        title: "Sucesso",
-        description: `Lançamento ${values.description} alterado com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", `Lançamento ${values.description} alterado com sucesso`);
 
       refetch();
       onClose();
@@ -120,14 +107,7 @@ export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: EditInvoiceEnt
           })
         }
       } else if (error.response?.status === 400) {
-        toast({
-          title: "Erro",
-          description: error.response.data.message,
-          position: "top-right",
-          status: 'error',
-          duration: 10000,
-          isClosable: true,
-        })
+        getMessage("Erro", error.response.data.message, 'error');
       }
     }
   }

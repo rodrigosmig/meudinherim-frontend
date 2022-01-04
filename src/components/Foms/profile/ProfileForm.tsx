@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useState } from 'react';
-import { Flex, Stack, useToast } from "@chakra-ui/react";
+import { Flex, Stack } from "@chakra-ui/react";
 import { profileService } from '../../../services/ApiService/ProfileService';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../../Inputs/Input';
@@ -8,6 +8,7 @@ import { Switch } from "../../Inputs/Switch";
 import { AuthContext } from '../../../contexts/AuthContext';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { getMessage } from '../../../utils/helpers';
 
 type ProfileFormData = {
   name: string
@@ -38,7 +39,6 @@ export function ProfileForm({ updateUser }: ProfileFormProps) {
   const [ email, setEmail ] = useState(user.email);
   const [ enableNotification, setEnableNotification ] = useState(user.enable_notification);
   
-  const toast = useToast();
   const { register, handleSubmit, setError, setValue, getValues, formState } = useForm({
     resolver: yupResolver(validationSchema)
   });
@@ -53,16 +53,9 @@ export function ProfileForm({ updateUser }: ProfileFormProps) {
       const response = await profileService.updateProfile(values)
       const userUpdated = response.data
 
-      updateUser(userUpdated)
+      updateUser(userUpdated);
 
-      toast({
-        title: "Sucesso",
-        description: "Alteração realizada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Alteração realizada com sucesso");
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;

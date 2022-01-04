@@ -21,7 +21,7 @@ interface SelectProps extends ChakraSelectProps {
 }
 
 const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ name, label, error = null, options, ...rest }, ref) => {
-  const hoverColor = useColorModeValue('gray.50', 'gray.900');
+  
 
   return (
     <FormControl isInvalid={!!error}>
@@ -31,9 +31,6 @@ const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ 
         id={name}
         name={name}
         focusBorderColor="pink.500"
-        _hover={{
-          bgColor: hoverColor
-        }}
         ref={ref}
         {...rest}
       >

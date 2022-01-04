@@ -2,8 +2,7 @@ import {
   Box,
   Button,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,7 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Select } from "../../Inputs/Select";
-import { toBrDate, toCurrency } from "../../../utils/helpers";
+import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useQueryClient } from "react-query";
@@ -50,7 +49,6 @@ interface GeneratePaymentFormProps {
 }
 
 export const GeneratePaymentForm = ({ invoice, onCancel }: GeneratePaymentFormProps) => {
-  const toast = useToast();
   const queryClient = useQueryClient();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
@@ -76,16 +74,9 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: GeneratePaymentFormPr
     }
 
     try {
-      await payableService.create(data)
+      await payableService.create(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Conta a pagar gerado com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Conta a pagar gerado com sucesso");
 
       queryClient.invalidateQueries('open_invoices');
       queryClient.invalidateQueries('invoice');
@@ -104,16 +95,9 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: GeneratePaymentFormPr
       }
 
       if (error.response?.status === 400) {
-        const message = error.response.data.message 
+        const message = error.response.data.message;
 
-        toast({
-          title: "Erro",
-          description: message,
-          position: "top-right",
-          status: 'error',
-          duration: 10000,
-          isClosable: true,
-        });
+        getMessage('Erro', message, 'error');
       }
     }
   }

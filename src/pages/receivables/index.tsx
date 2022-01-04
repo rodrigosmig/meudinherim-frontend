@@ -12,8 +12,7 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
-  useDisclosure,
-  useToast 
+  useDisclosure
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { Layout } from "../../components/Layout";
@@ -25,7 +24,7 @@ import { Table } from "../../components/Table";
 import { Heading } from "../../components/Heading";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { toCurrency, toUsDate } from '../../utils/helpers';
+import { getMessage, toCurrency, toUsDate } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
@@ -78,7 +77,6 @@ interface Receivable {
 }
 
 export default function AccountReceivable({ categories, accounts }: AccountReceivableProps) {
-  const toast = useToast();
   const router = useRouter();
 
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
@@ -119,27 +117,13 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
     try {
       await deleteReceivable.mutateAsync(id);
 
-      toast({
-        title: "Sucesso",
-        description: "Conta a receber deletada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+      getMessage("Sucesso", "Conta a receber deletada com sucesso");
 
       refetch();
     } catch (error) {
-      const data = error.response.data
-      
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      const data = error.response.data;
+
+      getMessage("Erro", data.message, 'error');
     }
   }
 
@@ -198,27 +182,13 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
     try {
       await cancelPayment.mutateAsync(values);
 
-      toast({
-        title: "Sucesso",
-        description: "Pagamento cancelado com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+      getMessage("Sucesso", "Pagamento cancelado com sucesso");
 
       refetch();
     } catch (error) {
-      const data = error.response.data
-      
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      const data = error.response.data;
+
+      getMessage("Erro", data.message, 'error');
     }
   }
 

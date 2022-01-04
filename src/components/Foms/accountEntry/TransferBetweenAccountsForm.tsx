@@ -4,8 +4,7 @@ import {
   Button,
   Divider,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +14,7 @@ import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { Select } from "../../Inputs/Select";
-import { toUsDate } from "../../../utils/helpers";
+import { getMessage, toUsDate } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
@@ -60,7 +59,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const TransferBetweenAccountsForm = ({ onCancel}: CreateAccountEntryFormProps) => {  
-  const toast = useToast();
   const queryClient = useQueryClient();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
@@ -88,16 +86,9 @@ export const TransferBetweenAccountsForm = ({ onCancel}: CreateAccountEntryFormP
     }
 
     try {
-      const response = await accountEntriesService.accountTransfer(data)
+      await accountEntriesService.accountTransfer(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Transferência realizada com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Transferência realizada com sucesso");
 
       onCancel();
       queryClient.invalidateQueries('accountEntries');
@@ -118,14 +109,7 @@ export const TransferBetweenAccountsForm = ({ onCancel}: CreateAccountEntryFormP
       if (error.response?.status === 400) {
         const message = error.response.data.message 
 
-        toast({
-          title: "Erro",
-          description: message,
-          position: "top-right",
-          status: 'error',
-          duration: 10000,
-          isClosable: true,
-        });
+        getMessage("Erro", message, 'error');
       }
     }
   }

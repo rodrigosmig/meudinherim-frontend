@@ -3,10 +3,8 @@ import { useState, ChangeEvent } from 'react';
 import { useRouter } from "next/router";
 import { 
   Box,
-  Button,
   Flex,
   Stack, 
-  useToast,
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,13 +12,12 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
-import { format } from 'date-fns';
 import { Switch } from "../../Inputs/Switch";
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { CancelButton } from "../../Buttons/Cancel";
-import { toUsDate } from "../../../utils/helpers";
+import { getMessage, toUsDate } from "../../../utils/helpers";
 
 interface FormData {
   due_date: Date;
@@ -64,7 +61,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const CreateReceivableForm = ({ categories, onCancel, refetch }: CreateReceivableFormProps) => {  
-  const toast = useToast();
   const router = useRouter();
 
   const { control, formState, register, handleSubmit, setError  } = useForm({
@@ -95,16 +91,9 @@ export const CreateReceivableForm = ({ categories, onCancel, refetch }: CreateRe
     }
 
     try {
-      await receivableService.create(data)
+      await receivableService.create(data);
 
-      toast({
-        title: "Sucesso",
-        description: `Conta a Receber adicionada com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Conta a Receber adicionada com sucesso");
 
       if (typeof refetch !== 'undefined') {
         refetch();

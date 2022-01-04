@@ -1,5 +1,4 @@
 import {
-  Button,
   Checkbox,
   Flex,
   Tbody, 
@@ -8,15 +7,14 @@ import {
   Th, 
   Thead, 
   Tr,
-  useBreakpointValue,
-  useToast
+  useBreakpointValue
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
 import { Table } from "../../Table";
 import { Modal } from "../Modal";
 import { Loading } from "../../Loading";
-import { toBrDate, toCurrency } from "../../../utils/helpers";
+import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
 import { AnticipateButton } from "../../Buttons/Anticipate";
 
@@ -50,8 +48,6 @@ interface EditInvoiceEntryModalProps {
 }
 
 export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }: EditInvoiceEntryModalProps) => {
-  const toast = useToast();
-
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -118,11 +114,9 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
 
   const handleAnticipateInstallments = async () => {
     if (selected_installments.length === 0) {
-      return setMessage(
-        "Error",
-        "Selecione pelo menos uma parcela",
-        "error"
-      )
+      getMessage("Error", "Selecione pelo menos uma parcela", 'error');
+      
+      return;
     }
 
     setIsSubmitting(true);
@@ -137,41 +131,18 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
     try {
       await invoiceEntriesService.anticipateInstallments(data);
 
-      setMessage(
-        "Sucesso",
-        "Parcelas antecipadas com sucesso",
-        "success"
-      )
+      getMessage("Sucesso", "Parcelas antecipadas com sucesso");
       
       setIsSubmitting(false);
       refetch();
       onClose();
 
     } catch (error) {
-      const data = error.response.data
-      
-      setMessage(
-        "Error",
-        data.message,
-        "error"
-      )
+      const data = error.response.data;
+
+      getMessage("Error", data.message, 'error');
     }
 
-  }
-
-  const setMessage = (
-    title: string,
-    description: string,
-    status: "success" | "error" | "warning"
-  ) => {
-    toast({
-      title: title,
-      description: description,
-      position: "top-right",
-      status: status,
-      duration: 5000,
-      isClosable: true,
-    });
   }
 
   return (

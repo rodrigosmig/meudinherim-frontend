@@ -13,13 +13,12 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
-  useToast,
   useDisclosure
 } from "@chakra-ui/react";
 import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../../services/api';
-import { toCurrency, toUsDate } from '../../../../utils/helpers';
+import { getMessage, toCurrency, toUsDate } from '../../../../utils/helpers';
 import { useAccountEntries } from '../../../../hooks/useAccountEntries';
 import { useAccountBalance } from '../../../../hooks/useAccountBalance';
 import { FilterPerPage } from '../../../../components/Pagination/FilterPerPage';
@@ -67,9 +66,7 @@ interface AccountEntry {
   account: Account;
 }
 
-export default function AccountEntries({ account }: AccountEntriesProps) {
-  const toast = useToast();
-  
+export default function AccountEntries({ account }: AccountEntriesProps) {  
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -116,28 +113,14 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
     try {
       await deleteEntry.mutateAsync(id);
 
-      toast({
-        title: "Sucesso",
-        description: "Lançamento deletado com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Lançamento deletado com sucesso");
 
       refetch();
       refetchBalance();
     } catch (error) {
-      const data = error.response.data
+      const data = error.response.data;
 
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Erro", data.message, 'error');
     }
   }
 

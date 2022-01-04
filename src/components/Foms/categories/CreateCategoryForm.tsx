@@ -1,8 +1,7 @@
 import { 
   Box,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,6 +12,7 @@ import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
 import { useRouter } from "next/router";
+import { getMessage } from "../../../utils/helpers";
 
 interface FormData {
   type: number;
@@ -30,7 +30,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const CreateCategoryForm = ({ onCancel, refetch }: CreateCategoryFormProps) => {
-  const toast = useToast();
   const router = useRouter();
 
   const { register, handleSubmit, setError, formState } = useForm({
@@ -41,16 +40,9 @@ export const CreateCategoryForm = ({ onCancel, refetch }: CreateCategoryFormProp
 
   const handleCreateCategory: SubmitHandler<FormData> = async (values) => {
     try {
-      await categoryService.create(values)
-      
-      toast({
-        title: "Sucesso",
-        description: `Categoria ${values.name} criada com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+      await categoryService.create(values);
+
+      getMessage("Sucesso", `Categoria ${values.name} criada com sucesso`);
 
       if (typeof refetch !== 'undefined') {
         refetch();

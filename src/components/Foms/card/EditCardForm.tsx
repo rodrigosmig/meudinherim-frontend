@@ -2,17 +2,15 @@ import {
   Box,
   Button,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { Select } from "../../Inputs/Select";
-import { accountService } from '../../../services/ApiService/AccountService';
 import { cardService } from "../../../services/ApiService/CardService";
+import { getMessage } from "../../../utils/helpers";
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
@@ -58,8 +56,6 @@ type ResponseError = {
 type Key = keyof ResponseError
 
 export const EditCardForm = ({ card, closeModal, refetch }: EditCardFormProps) => {
-  const toast = useToast();
-
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       name: card.name,
@@ -85,16 +81,9 @@ export const EditCardForm = ({ card, closeModal, refetch }: EditCardFormProps) =
     }
 
     try {
-      await cardService.update(data)
-      
-      toast({
-        title: "Sucesso",
-        description: "Alteração realizada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      await cardService.update(data);
+
+      getMessage("Sucesso", "Alteração realizada com sucesso");
 
       refetch();
       closeModal();

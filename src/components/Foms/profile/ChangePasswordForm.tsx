@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { Flex, Stack, useToast } from "@chakra-ui/react";
+import { useContext } from "react";
+import { Flex, Stack } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../../Inputs/Input";
 import { AuthContext } from "../../../contexts/AuthContext";
@@ -7,6 +7,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitButton } from "../../Buttons/Submit";
 import { profileService } from "../../../services/ApiService/ProfileService";
+import { getMessage } from "../../../utils/helpers";
 
 type PasswordFormData = {
     current_password: string
@@ -23,7 +24,6 @@ const validationSchema = yup.object().shape({
 export function ChangePasswordForm() {
     const { signOut } = useContext(AuthContext);
 
-    const toast = useToast();
     const { register, handleSubmit, reset, setError, formState } = useForm({
         resolver: yupResolver(validationSchema)
     });
@@ -31,16 +31,9 @@ export function ChangePasswordForm() {
 
     const handleUpdatePassword: SubmitHandler<PasswordFormData> = async (values) => {
         try {
-            const response = await profileService.updatePassword(values)
+            await profileService.updatePassword(values);
 
-            toast({
-                title: "Sucesso",
-                description: "Senha alterada com sucesso",
-                position: "top-right",
-                status: 'success',
-                duration: 10000,
-                isClosable: true,
-            })
+            getMessage("Sucesso", "Senha alterada com sucesso");
 
             reset();
 

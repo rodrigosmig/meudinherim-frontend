@@ -8,7 +8,7 @@ import {
   ModalProps as ChakraModalProps,
   useColorModeValue
 } from "@chakra-ui/react";
-import { ReactNode } from "toasted-notes/node_modules/@types/react";
+import { ReactNode } from "react"
 
 interface ModalProps extends ChakraModalProps {
   header: string;

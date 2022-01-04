@@ -1,9 +1,7 @@
 import { 
   Box,
-  Button,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,6 +11,7 @@ import { Input } from "../../Inputs/Input";
 import { accountService } from '../../../services/ApiService/AccountService';
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
+import { getMessage } from "../../../utils/helpers";
 
 interface FormData {
   type: string;
@@ -30,8 +29,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const CreateAccountForm = ({ closeModal, refetch }: CreateAccountFormProps) => {
-  const toast = useToast();
-
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
   });
@@ -40,16 +37,9 @@ export const CreateAccountForm = ({ closeModal, refetch }: CreateAccountFormProp
 
   const handleCreateAccount: SubmitHandler<FormData> = async (values) => {
     try {
-      await accountService.create(values)
-      
-      toast({
-        title: "Sucesso",
-        description: `Conta ${values.name} criada com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+      await accountService.create(values);
+
+      getMessage("Sucesso", `Conta ${values.name} criada com sucesso`);
 
       refetch();
       closeModal();

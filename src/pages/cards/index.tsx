@@ -11,7 +11,6 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
-  useToast,
   useDisclosure
 } from "@chakra-ui/react";
 import { Layout } from "../../components/Layout";
@@ -25,7 +24,7 @@ import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
 import { useMutation } from "react-query";
 import { queryClient } from "../../services/queryClient";
-import { toCurrency } from "../../utils/helpers";
+import { getMessage, toCurrency } from "../../utils/helpers";
 import { CreateCardModal } from "../../components/Modals/cards/CreateCardModal";
 import { EditCardModal } from "../../components/Modals/cards/EditCardModal";
 import { InvoicesButton } from "../../components/Buttons/Invoices";
@@ -42,8 +41,6 @@ interface Card {
 }
 
 export default function Cards() {
-  const toast = useToast();
-
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -87,27 +84,13 @@ export default function Cards() {
     try {
       await deleteCard.mutateAsync(id);
 
-      toast({
-        title: "Sucesso",
-        description: "Cartão deletado com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Cartão deletado com sucesso");
 
       refetch();
     } catch (error) {
-      const data = error.response.data
+      const data = error.response.data;
 
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Erro", data.message, 'error');
     }
   }
 

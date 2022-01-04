@@ -15,12 +15,11 @@ import {
   Thead, 
   Tr,
   useBreakpointValue,
-  useDisclosure,
-  useToast
+  useDisclosure
 } from "@chakra-ui/react";
 import { Heading } from "../../../../../../components/Heading";
 import { FilterPerPage } from "../../../../../../components/Pagination/FilterPerPage";
-import { toBrDate, toCurrency } from "../../../../../../utils/helpers";
+import { getMessage, toBrDate, toCurrency } from "../../../../../../utils/helpers";
 import { Layout } from "../../../../../../components/Layout";
 import { withSSRAuth } from "../../../../../../utils/withSSRAuth";
 import { setupApiClient } from "../../../../../../services/api";
@@ -72,8 +71,6 @@ interface InvoiceEntriesProps {
 
 export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProps) {
   const { data: invoice, isLoading: isLoadingInvoice, refetch: refetchInvoice } = useInvoice(cardId, invoiceId);
-  
-  const toast = useToast();
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -144,27 +141,13 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
     try {
       await deleteEntry.mutateAsync(id);
 
-      toast({
-        title: "Sucesso",
-        description: "Lançamento deletado com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Sucesso", "Lançamento deletado com sucesso");
 
       handleRefetchData();
     } catch (error) {
-      const data = error.response.data
+      const data = error.response.data;
 
-      toast({
-        title: "Erro",
-        description: data.message,
-        position: "top-right",
-        status: 'error',
-        duration: 10000,
-        isClosable: true,
-      })
+      getMessage("Erro", data.message, 'error');
     }
   }
 

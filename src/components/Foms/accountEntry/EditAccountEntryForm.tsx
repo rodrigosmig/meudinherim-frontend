@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   Stack,
-  useToast
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +14,7 @@ import { SelectCategories } from "../../Inputs/SelectCategories";
 import { format, parseISO } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { useCategoriesForm } from "../../../hooks/useCategories";
-import { reverseBrDate, toUsDate } from "../../../utils/helpers";
+import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
 
 interface Category {
@@ -72,8 +71,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccountEntryFormProps) => {  
-  const toast = useToast();
-
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
@@ -99,16 +96,9 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
     }
     
     try {
-      await accountEntriesService.update(data)
-      
-      toast({
-        title: "Sucesso",
-        description: "Alteração realizada com sucesso",
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
+      await accountEntriesService.update(data);
+
+      getMessage("Sucesso", "Alteração realizada com sucesso");
 
       refetch();
       closeModal();

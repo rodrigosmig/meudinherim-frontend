@@ -1,9 +1,7 @@
 import { 
   Box,
-  Button,
   Flex,
-  Stack, 
-  useToast
+  Stack
 } from "@chakra-ui/react";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,6 +10,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { CancelButton } from "../../Buttons/Cancel";
 import { cardService } from "../../../services/ApiService/CardService";
+import { getMessage } from "../../../utils/helpers";
 
 interface FormData {
   name: string;
@@ -38,8 +37,6 @@ const validationSchema = yup.object().shape({
 })
 
 export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => {
-  const toast = useToast();
-
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
   });
@@ -49,15 +46,8 @@ export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => 
   const handleCreateCard: SubmitHandler<FormData> = async (values) => {
     try {
       await cardService.create(values)
-      
-      toast({
-        title: "Sucesso",
-        description: `Cartão de Crédito ${values.name} criado com sucesso`,
-        position: "top-right",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      });
+
+      getMessage("Sucesso", `Cartão de Crédito ${values.name} criado com sucesso`);
 
       refetch();
       closeModal();
