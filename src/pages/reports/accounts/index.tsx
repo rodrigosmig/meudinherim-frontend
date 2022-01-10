@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Head from "next/head";
 import { 
   Flex,
@@ -28,12 +28,19 @@ export default function AccountsReport() {
     lg: true 
   });
 
+  const sizeProps = isWideVersion ? 'md' : 'sm';
+
   const handleClickFilter = () => {    
     if (dateRange[0] && dateRange[1]) {
       setFilterDate([toUsDate(dateRange[0]), toUsDate(dateRange[1])])
     } else {
       setFilterDate(['', ''])
     }
+  }
+
+  const handleChangeStatus = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value as AccountStatus
+    setAccountStatus(value)
   }
 
   return (
@@ -64,10 +71,10 @@ export default function AccountsReport() {
 
           <Select
             value={AccountStatus}
-            //size={sizeProps}
+            size={sizeProps}
             variant="unstyled"
             maxW={[150]}
-            onChange={event => setAccountStatus(event.target.value)}
+            onChange={handleChangeStatus}
           >
             <option value="all">Todas</option>
             <option value="open">Abertas</option>
