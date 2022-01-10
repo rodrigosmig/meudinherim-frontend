@@ -19,6 +19,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 const StyledaDatepicker = chakra(DatePicker);
 
 interface DatepickerFilterProps {
+  label?: string;
   startDate: Date;
   endDate: Date;
   isWideVersion: boolean;
@@ -26,7 +27,7 @@ interface DatepickerFilterProps {
   onClick: () => void;
 }
 
-const DateFilterComponent = ({ startDate, endDate, isWideVersion, onChange, onClick }: DatepickerFilterProps) => {
+const DateFilterComponent = ({ startDate, endDate, isWideVersion, label = 'Filtrar por período', onChange, onClick }: DatepickerFilterProps) => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
 
   return (
@@ -49,7 +50,7 @@ const DateFilterComponent = ({ startDate, endDate, isWideVersion, onChange, onCl
             endDate={endDate}
             onChange={onChange}
             isClearable={true}
-            placeholderText={"Filtrar por período"}
+            placeholderText={label}
         />
       </Flex>
 

@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { AuthContext } from "../contexts/AuthContext";
 import { dashboardService } from "../services/ApiService/DashboardService";
 
-export const getvalues = async (date: string) => {
+export const getValues = async (date: string) => {
   const response = await dashboardService.getValues(date);
   const data = response.data;
 
@@ -13,7 +13,7 @@ export const getvalues = async (date: string) => {
 export const useDashboard = (date: string) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['dashboard', date, user?.id], () => getvalues(date), {
+  return useQuery(['dashboard', date, user?.id], () => getValues(date), {
     staleTime: 1000 * 5
   })
 }

@@ -4,7 +4,6 @@ import NextLink from "next/link";
 import {
   Flex, 
   HStack,
-  Link,
   LinkBox,
   LinkOverlay,
   Select,
@@ -14,7 +13,6 @@ import {
   Text,
   Th, 
   Thead, 
-  Tooltip, 
   Tr,
   useBreakpointValue,
   useDisclosure

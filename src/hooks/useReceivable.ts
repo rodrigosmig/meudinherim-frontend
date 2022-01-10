@@ -1,4 +1,4 @@
-import { toBrDate } from './../utils/helpers';
+import { toBrDate } from '../utils/helpers';
 import { useQuery } from "react-query";
 import { receivableService } from '../services/ApiService/ReceivableService';
 import { useContext } from 'react';
