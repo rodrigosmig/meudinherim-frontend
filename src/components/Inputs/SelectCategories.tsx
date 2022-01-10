@@ -29,7 +29,6 @@ interface SelectCategoriesProps extends ChakraSelectProps {
 
 export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectCategoriesProps> = ({ name, label, error=null, options, ...rest }, ref) => {
   const bgColor = useColorModeValue('white', 'gray.800');
-  const hoverColor = useColorModeValue('white', 'gray.900');
 
   return (
     <FormControl isInvalid={!!error}>

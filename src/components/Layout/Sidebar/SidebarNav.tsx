@@ -42,7 +42,7 @@ export const SidebarNav = () => {
 
 
         <NavSection title="Relatórios">
-            <NavLink href="#" icon={HiDocumentReport}>Relatórios</NavLink>
+            <NavLink href="/reports/accounts" icon={HiDocumentReport}>Contas a Pagar/Receber</NavLink>
         </NavSection>
         
       </Stack>
