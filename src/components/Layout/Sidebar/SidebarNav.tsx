@@ -6,7 +6,6 @@ import { HiDocumentReport } from "react-icons/hi";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import {
   RiPriceTag3Line, 
-  RiBankCard2Line, 
   RiDashboardLine, 
   RiBankLine 
 } from "react-icons/ri";
@@ -42,7 +41,8 @@ export const SidebarNav = () => {
 
 
         <NavSection title="Relatórios">
-            <NavLink href="/reports/accounts" icon={HiDocumentReport}>Contas a Pagar/Receber</NavLink>
+            <NavLink href="/reports/accounts" icon={FaMoneyBillAlt}>Contas a Pagar/Receber</NavLink>
+            <NavLink href="/reports/total-by-category" icon={RiPriceTag3Line}>Total por Categoria</NavLink>
         </NavSection>
         
       </Stack>

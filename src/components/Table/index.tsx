@@ -11,14 +11,18 @@ interface TableProps extends ChakraTableProps {
   children: ReactNode;
 }
 
-export const Table = ({ tableSize, children }: TableProps) => {
+export const Table = ({ tableSize, children, ...rest }: TableProps) => {
   const { colorMode } = useColorMode();
 
   const colorScheme = colorMode === 'light' ? 'blackAlpha' : 'whiteAlpha'
 
   return (
     <Box overflowX="auto">
-      <ChakraTable size={tableSize} colorScheme={colorScheme}>
+      <ChakraTable 
+        size={tableSize} 
+        colorScheme={colorScheme}
+        {...rest}
+      >
         { children }
       </ChakraTable>
     </Box>

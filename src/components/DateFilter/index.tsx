@@ -6,7 +6,8 @@ import {
   Icon, 
   IconButton, 
   HStack, 
-  useColorModeValue 
+  useColorModeValue, 
+  useBreakpointValue
 } from '@chakra-ui/react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import ptBR from "date-fns/locale/pt-BR";
@@ -22,13 +23,18 @@ interface DatepickerFilterProps {
   label?: string;
   startDate: Date;
   endDate: Date;
-  isWideVersion: boolean;
   onChange: (date: [Date | null, Date | null]) => void;
   onClick: () => void;
 }
 
-const DateFilterComponent = ({ startDate, endDate, isWideVersion, label = 'Filtrar por período', onChange, onClick }: DatepickerFilterProps) => {
-  const bgColor = useColorModeValue('gray.50', 'gray.900')
+const DateFilterComponent = ({ startDate, endDate, label = 'Filtrar por período', onChange, onClick }: DatepickerFilterProps) => {
+  const bgColor = useColorModeValue('gray.50', 'gray.900');
+
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    md: false,
+    lg: true 
+  });
 
   return (
     <HStack spacing={3} mb={[6, 8]}>
