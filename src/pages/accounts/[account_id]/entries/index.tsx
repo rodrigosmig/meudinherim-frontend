@@ -37,6 +37,7 @@ import { EditAccountEntryModal } from '../../../../components/Modals/account_ent
 import { ShowPaymentButton } from '../../../../components/Buttons/ShowPayment';
 import { AddButton } from '../../../../components/Buttons/Add';
 import { CreateAccountEntryModal } from '../../../../components/Modals/account_entries/CreateAccountEntryModal';
+import { useDateFilter } from '../../../../contexts/DateFilterContext';
 
 interface Category {
   id: number,
@@ -80,16 +81,15 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
-  const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
+
+  const { stringDateRange, startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
+
   const [payableId, setPayableId] = useState(null);
   const [parcelableId, setParcelableId ] = useState(null);
   const [receivableId, setReceivableId] = useState(null);
   const [ selectedEntry, setSelectedEntry ] = useState({} as AccountEntry)
 
-  const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, filterDate, page, perPage);
+  const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, stringDateRange, page, perPage);
   const { data: dataBalance, isLoading: isLoadingBalance, refetch: refetchBalance } = useAccountBalance(account.id);
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
@@ -129,15 +129,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
     setPage(1)
     setPerPage(value)
   }
-
-  const handleClickFilter = () => {    
-    if (dateRange[0] && dateRange[1]) {
-      setFilterDate([toUsDate(dateRange[0]), toUsDate(dateRange[1])])
-    } else {
-      setFilterDate(['', ''])
-    }
-  }
-
+  
   const handleShowPayment = (id: number, parcelable_id: null | number) => {
     setParcelableId(parcelable_id);
     setPayableId(id);
@@ -220,13 +212,12 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
         </Flex>
 
         <DateFilter
-          isWideVersion={isWideVersion}
           startDate={startDate}
           endDate={endDate}
           onChange={(update: [Date | null, Date | null]) => {
             setDateRange(update);
           }}
-          onClick={handleClickFilter}
+          onClick={handleDateFilter}
         />
       
         <Flex 

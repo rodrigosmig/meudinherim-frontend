@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 import 'nprogress/nprogress.css';
+import { DateFilterProvider } from '../contexts/DateFilterContext';
 
 Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
@@ -23,7 +24,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ChakraProvider theme={theme}>
         <SidebarDrawerProvider>
           <QueryClientProvider client={queryClient}>
-            <Component {...pageProps} />
+            <DateFilterProvider>
+              <Component {...pageProps} />
+            </DateFilterProvider>
             <ReactQueryDevtools/>
           </QueryClientProvider>
         </SidebarDrawerProvider>

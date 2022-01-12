@@ -9,17 +9,15 @@ import {
 import { Heading } from "../../../components/Heading"
 import { Layout } from "../../../components/Layout"
 import { DateFilter } from "../../../components/DateFilter";
-import { toUsDate } from "../../../utils/helpers";
 import { withSSRAuth } from "../../../utils/withSSRAuth";
 import { setupApiClient } from "../../../services/api";
 import { AccountReport } from "../../../components/AccountReport";
+import { useDateFilter } from "../../../contexts/DateFilterContext";
 
 type AccountStatus = 'all' | 'open' | 'paid';
 
 export default function AccountsReport() {
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
-  const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
+  const { stringDateRange, startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
   const [AccountStatus, setAccountStatus] = useState<AccountStatus>('open');
 
   const isWideVersion = useBreakpointValue({
@@ -29,14 +27,6 @@ export default function AccountsReport() {
   });
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
-
-  const handleClickFilter = () => {    
-    if (dateRange[0] && dateRange[1]) {
-      setFilterDate([toUsDate(dateRange[0]), toUsDate(dateRange[1])])
-    } else {
-      setFilterDate(['', ''])
-    }
-  }
 
   const handleChangeStatus = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value as AccountStatus
@@ -60,13 +50,12 @@ export default function AccountsReport() {
         <Flex align="center" justifyContent={"space-between"}>
           <DateFilter
             label="Selecione um período"
-            isWideVersion={isWideVersion}
             startDate={startDate}
             endDate={endDate}
             onChange={(update: [Date | null, Date | null]) => {
               setDateRange(update);
             }}
-            onClick={handleClickFilter}
+            onClick={handleDateFilter}
           />
 
           <Select
@@ -83,7 +72,7 @@ export default function AccountsReport() {
         </Flex>
           
         <Box>
-          <AccountReport rangeDate={filterDate} status={AccountStatus} />
+          <AccountReport status={AccountStatus} />
         </Box>
         
       </Layout>

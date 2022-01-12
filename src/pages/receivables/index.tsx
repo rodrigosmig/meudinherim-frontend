@@ -38,6 +38,7 @@ import { CreateReceivableModal } from '../../components/Modals/receivables/Creat
 import { EditReceivableModal } from '../../components/Modals/receivables/EditReceivableModal';
 import { PaymentButton } from '../../components/Buttons/Payment';
 import { ReceivementModal } from '../../components/Modals/receivables/ReceivementModal';
+import { useDateFilter } from '../../contexts/DateFilterContext';
 
 interface CancelReceivableData {
   id: number, 
@@ -92,13 +93,14 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [receivableStatus, setReceivableStatus] = useState("open");
-  const [dateRange, setDateRange] = useState([null, null]);
+  const { stringDateRange, startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
+/*   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
-  const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
+  const [filterDate, setFilterDate] = useState<[string, string]>(['', '']); */
 
   const [ selectedReceivable, setSelectedReceivable ] = useState({} as Receivable)
 
-  const { data, isLoading, isFetching, isError, refetch } = useReceivables(filterDate, page, perPage, receivableStatus);
+  const { data, isLoading, isFetching, isError, refetch } = useReceivables(stringDateRange, page, perPage, receivableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
@@ -153,14 +155,6 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
     const value = parseInt(event.target.value)
     setPage(1)
     setPerPage(value)
-  }
-
-  const handleClickFilter = () => {    
-    if (dateRange[0] && dateRange[1]) {
-      setFilterDate([toUsDate(dateRange[0]), toUsDate(dateRange[1])])
-    } else {
-      setFilterDate(['', ''])
-    }
   }
 
   const cancelPayment = useMutation(async (values: CancelReceivableData) => {
@@ -231,13 +225,12 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
         </Flex>
 
         <DateFilter
-          isWideVersion={isWideVersion}
           startDate={startDate}
           endDate={endDate}
           onChange={(update: [Date | null, Date | null]) => {
             setDateRange(update);
           }}
-          onClick={handleClickFilter}
+          onClick={handleDateFilter}
         />
         
         <Flex 

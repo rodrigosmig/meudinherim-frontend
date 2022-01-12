@@ -56,8 +56,48 @@ interface AccountReportResponse {
   }
 }
 
+interface TotalByCategoryResponse {
+  incomes: {
+    category: string;
+    id: number;
+    total: number;
+    quantity: number
+  }[],
+  expenses: {
+    category: string;
+    id: number;
+    total: number;
+    quantity: number
+  }[],
+  creditCard: {
+    category: string;
+    id: number;
+    total: number;
+    quantity: number
+  }[]
+}
+
+interface TotalByCategoryDetailedResponse {
+  data: {
+    id: number;
+    date: string;
+    description: string;
+    value: number;
+    category: {
+      id: number;
+      name: string;
+    },
+    source: string;
+  }[]
+}
+
 type AccountStatus = 'all' | 'open' | 'paid';
+type ReportType = 'card' | 'account';
 
 export const reportService = {
   getAccountItems: (filterDate: [string, string], status: AccountStatus): Promise<AxiosResponse<AccountReportResponse>> => apiClient.get(`/reports/accounts?&from=${filterDate[0]}&to=${filterDate[1]}&status=${status}`),
+  getTotalByCategory: (filterDate: [string, string]): Promise<AxiosResponse<TotalByCategoryResponse>> => apiClient.get(`/reports/total-by-category?&from=${filterDate[0]}&to=${filterDate[1]}`),
+  getTotalByCategoryDetailed: (filterDate: [string, string], categoryId: number, reportType: ReportType): Promise<AxiosResponse<TotalByCategoryDetailedResponse>> => {
+    return apiClient.get(`/reports/total-by-category/details?from=${filterDate[0]}&to=${filterDate[1]}&category_id=${categoryId}&type=${reportType}`)
+  }
 };
