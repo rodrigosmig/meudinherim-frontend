@@ -9,7 +9,6 @@ import {
 import { Heading } from "../../../components/Heading"
 import { Layout } from "../../../components/Layout"
 import { DateFilter } from "../../../components/DateFilter";
-import { toUsDate } from "../../../utils/helpers";
 import { withSSRAuth } from "../../../utils/withSSRAuth";
 import { setupApiClient } from "../../../services/api";
 import { CategoryReport } from "../../../components/CategoryReport";
@@ -18,12 +17,6 @@ import { useDateFilter } from "../../../contexts/DateFilterContext";
 
 export default function TotalByCategoryReport() {
   const { startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
-
-  const isWideVersion = useBreakpointValue({
-    base: false,
-    md: false,
-    lg: true 
-  });
 
   return (
     <>

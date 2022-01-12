@@ -28,7 +28,7 @@ import { Heading } from "../../components/Heading";
 import { PaymentButton } from "../../components/Buttons/Payment";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { getMessage, toCurrency, toUsDate } from '../../utils/helpers';
+import { getMessage, toCurrency } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
@@ -40,6 +40,7 @@ import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
 import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
 import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
 import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
+import { useDateFilter } from '../../contexts/DateFilterContext';
 
 interface CancelPayableData {
   id: number, 
@@ -92,13 +93,12 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [payableStatus, setPayableStatus] = useState("open");
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
-  const [filterDate, setFilterDate] = useState<[string, string]>(['', '']);
+
+  const { stringDateRange, startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
 
   const [ selectedPayable, setSelectedPayable ] = useState({} as Payable)
 
-  const { data, isLoading, isFetching, isError, refetch } = usePayables(filterDate, page, perPage, payableStatus);
+  const { data, isLoading, isFetching, isError, refetch } = usePayables(stringDateRange, page, perPage, payableStatus);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
   const sizeProps = isWideVersion ? 'md' : 'sm';
@@ -153,14 +153,6 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     const value = parseInt(event.target.value)
     setPage(1)
     setPerPage(value)
-  }
-
-  const handleClickFilter = () => {    
-    if (dateRange[0] && dateRange[1]) {
-      setFilterDate([toUsDate(dateRange[0]), toUsDate(dateRange[1])])
-    } else {
-      setFilterDate(['', ''])
-    }
   }
 
   const cancelPayment = useMutation(async (values: CancelPayableData) => {
@@ -233,13 +225,12 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
         </Flex>
 
         <DateFilter
-          isWideVersion={isWideVersion}
           startDate={startDate}
           endDate={endDate}
           onChange={(update: [Date | null, Date | null]) => {
             setDateRange(update);
           }}
-          onClick={handleClickFilter}
+          onClick={handleDateFilter}
         />
         
         <Flex 

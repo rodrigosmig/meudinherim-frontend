@@ -2,6 +2,7 @@ import {
   Box,
   SimpleGrid,
 } from "@chakra-ui/react"
+import { useDateFilter } from "../../contexts/DateFilterContext";
 import { useAccountsReport } from "../../hooks/useAccountsReport";
 import { toCurrency } from "../../utils/helpers";
 import { Loading } from "../Loading";
@@ -9,12 +10,12 @@ import { AccountReportHeader } from "./Header";
 import { AccountReportTab } from "./Tab";
 
 interface AccountReportProps {
-  rangeDate: [string, string];
   status: 'all' | 'open' | 'paid';
 }
 
-export const AccountReport = ({rangeDate, status}: AccountReportProps) => {
-  const { data, isLoading, isFetching } = useAccountsReport(rangeDate, status);
+export const AccountReport = ({ status }: AccountReportProps) => {
+  const { stringDateRange } = useDateFilter();
+  const { data, isLoading, isFetching } = useAccountsReport(stringDateRange, status);
 
   const getBalanceColor = (value: number) => {
     return value >= 0 ? 'blue.500' : 'red.500'
