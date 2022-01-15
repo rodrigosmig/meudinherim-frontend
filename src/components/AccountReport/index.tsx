@@ -20,9 +20,15 @@ export const AccountReport = ({ status }: AccountReportProps) => {
   const getBalanceColor = (value: number) => {
     return value >= 0 ? 'blue.500' : 'red.500'
   }
+
+  const getBalance = () => {
+    return data?.receivables.total - (data?.payables.total + data?.invoices.total)
+  }
+
   if (isLoading || isFetching) {
     return <Loading />
   }
+
   return (
     <>
       { ( !Array.isArray(data)) && (
@@ -47,9 +53,15 @@ export const AccountReport = ({ status }: AccountReportProps) => {
               />
 
               <AccountReportHeader 
+                title="Faturas Abertas:"
+                color="red.500"
+                content={toCurrency(data?.invoices.total)}
+              />
+
+              <AccountReportHeader 
                 title="Saldo:"
-                color={getBalanceColor(data.receivables.total - data.payables.total)}
-                content={toCurrency(data.receivables.total - data.payables.total)}
+                color={getBalanceColor(getBalance())}
+                content={toCurrency(getBalance())}
               />
             </SimpleGrid>
           </Box>

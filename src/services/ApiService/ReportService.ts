@@ -53,6 +53,9 @@ interface AccountReportResponse {
   receivables: {
     items: Receivable[];
     total: number;
+  },
+  invoices: {
+    total: number;
   }
 }
 
@@ -74,7 +77,7 @@ interface TotalByCategoryResponse {
     id: number;
     total: number;
     quantity: number
-  }[]
+  }[],
 }
 
 interface TotalByCategoryDetailedResponse {
