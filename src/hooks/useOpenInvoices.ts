@@ -22,7 +22,7 @@ export const getOpenInvoices = async () => {
 }
 
 export const useOpenInvoices = () => {
-  const { user, isAuthenticated } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return useQuery(['open_invoices', user?.id], () => getOpenInvoices(), {
     staleTime: 1000 * 5

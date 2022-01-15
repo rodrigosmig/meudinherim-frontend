@@ -19,8 +19,8 @@ import {
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { FaCreditCard } from 'react-icons/fa'
 import { BiTransfer } from "react-icons/bi";
-import { NavAddItem } from "./NavAddItem";
-import { TransferBetweenAccountsModal } from "../../Modals/account_entries/TransferBetweenAccountsModal";
+import { NavAddItem } from "./Item";
+import { TransferBetweenAccountsModal } from "../../../Modals/account_entries/TransferBetweenAccountsModal";
 
 export const NavAdd = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
