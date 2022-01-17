@@ -102,7 +102,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
         refetch();
         onCancel();
       } else {
-        router.push(`/cards/${response.data.card_id}/invoices/${response.data.invoice_id}/entries`)
+        router.push(`/cards/${values.card_id}/invoices`)
       }
     } catch (error) {
       if (error.response?.status === 422) {

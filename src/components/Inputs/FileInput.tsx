@@ -21,6 +21,7 @@ import {
   FormErrorMessage,
   Flex,
   Tooltip,
+  Avatar,
 } from '@chakra-ui/react';
 
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
@@ -150,11 +151,11 @@ const FileInputBase: ForwardRefRenderFunction<
         opacity={isSending ? 0.5 : 1}
       >
         {localImageUrl && !isSending ? (
-          <Image
+          <Avatar
             w="full"
             h="full"
-            src={localImageUrl}
-            alt="Avatar"
+            src={user?.avatar}
+            name={user?.name}
             borderRadius="full"
             objectFit="cover"
           />

@@ -63,8 +63,8 @@ export const AccountReportTab = ({ payables, receivables }: TabReportProps) => {
     <>
       <Tabs isFitted variant='enclosed'>
         <TabList mb='1em'>
-            <Tab>Contas a Receber</Tab>
-            <Tab>Contas a Pagar</Tab>
+            <Tab fontSize={['xs', 'md']}>Contas a Receber</Tab>
+            <Tab fontSize={['xs', 'md']}>Contas a Pagar</Tab>
         </TabList>
 
         <TabPanels>

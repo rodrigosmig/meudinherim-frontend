@@ -44,6 +44,10 @@ export const Pagination = ({
   const bgColor = useColorModeValue('gray.300', 'gray.700')
   const bgHover = useColorModeValue('gray.200', 'gray.500')
   const textColor = useColorModeValue('gray.700', 'gray.300')
+
+  if (currentPage > lastPage) {
+    onPageChange(lastPage);
+  }
     
   return (
     <Stack 
