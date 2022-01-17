@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { 
+  Box,
   Flex, 
   HStack, 
   Select, 
@@ -136,14 +137,14 @@ export default function Categories() {
           </Heading>
         </Flex>
 
-        <Flex 
+        <Flex
           justify="space-between" 
           align="center"
           mb={[6, 6, 8]}
         >
           <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />
 
-          <Flex align="center">
+          <Box>
             <Select
               size={sizeProps}
               variant="unstyled"
@@ -154,7 +155,7 @@ export default function Categories() {
               <option value="1">Entrada</option>
               <option value="2">Saída</option>
             </Select>
-          </Flex>            
+          </Box>            
         </Flex>
 
 

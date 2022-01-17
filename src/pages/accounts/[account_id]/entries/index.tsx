@@ -157,6 +157,13 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
     return account[0];
   }
 
+  const getCurrentPage = () => {
+    const currentpage = page > data.meta.last_page ? data.meta.last_page : page;
+    setPage(currentpage);
+
+    return currentpage;
+  }
+
   return (
     <>
       <CreateAccountEntryModal

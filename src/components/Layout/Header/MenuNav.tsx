@@ -1,7 +1,5 @@
 import { 
-  Box,
   HStack, 
-  Icon,
 } from "@chakra-ui/react";
 import { NavAdd } from "./NavAdd";
 import { NavBalance } from "./NavBalance";

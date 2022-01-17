@@ -30,7 +30,7 @@ const AvatarComponent = ({ showProfileData }: AvatarProps) => {
       console.log(error.response)
     }
   }
-
+console.log
   return (
     <Flex align="center">
       { showProfileData && (

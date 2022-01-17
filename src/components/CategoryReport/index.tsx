@@ -55,9 +55,9 @@ export const CategoryReport = () => {
       { !Array.isArray(data) && (
         <Tabs isFitted variant='enclosed'>
           <TabList mb='1em' >
-              <Tab fontSize={'xs'}>Entrada</Tab>
-              <Tab fontSize={'xs'}>Saída</Tab>
-              <Tab fontSize={'xs'}>Cartão de Crédito</Tab>
+            <Tab fontSize={['xs', 'md']}>Entrada</Tab>
+            <Tab fontSize={['xs', 'md']}>Saída</Tab>
+            <Tab fontSize={['xs', 'md']}>Cartão de Crédito</Tab>
           </TabList>
 
           <TabPanels>

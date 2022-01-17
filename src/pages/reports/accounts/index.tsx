@@ -47,7 +47,11 @@ export default function AccountsReport() {
           </Heading>
         </Flex>
 
-        <Flex align="center" justifyContent={"space-between"}>
+        <Flex
+          direction={["column" , "row", "row"]}
+          justifyContent={"space-between"}
+          mb={[6, 0]}
+        >
           <DateFilter
             label="Selecione um período"
             startDate={startDate}
