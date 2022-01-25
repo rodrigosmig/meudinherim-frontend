@@ -18,6 +18,7 @@ import { getMessage, toUsDate } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
+import { ChangeEvent, useState } from "react";
 
 
 interface FormData {
@@ -52,6 +53,8 @@ const validationSchema = yup.object().shape({
 
 export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: CreateAccountEntryFormProps) => {  
   const router = useRouter();
+
+  const [ entryValue, setEntryValue ] = useState(0);
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
   const { data: formAccounts, isLoading: isLoadingAccounts } = useAccountsForm();
@@ -98,6 +101,12 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
         }
       }
     }
+  }
+
+  const handleChangeEntryValue = (event: ChangeEvent<HTMLInputElement>) => {
+    const amount = parseFloat(event.target.value);
+
+    setEntryValue(amount);
   }
 
   if (isLoadingCategories || isLoadingAccounts) {
@@ -149,12 +158,14 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
         />
 
         <Input
+          value={entryValue}
           name="value"
           type="number"
           label="Valor"
           error={errors.value}
           step="0.01"
           {...register('value')}
+          onChange={v => handleChangeEntryValue(v)}
         />
       </Stack>
       <Flex
