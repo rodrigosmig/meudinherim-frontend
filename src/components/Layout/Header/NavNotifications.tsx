@@ -24,7 +24,7 @@ import { useState } from "react";
 import { RiNotificationLine } from "react-icons/ri";
 import { useNotifications } from "../../../hooks/useNotifications";
 import { notificationService } from "../../../services/ApiService/NotificationService";
-import { getMessage, toBrDate } from "../../../utils/helpers";
+import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
 
 export const NavNotifications = () => {
@@ -89,21 +89,24 @@ export const NavNotifications = () => {
             variant="ghost"
             icon={<>
               <Icon as={RiNotificationLine} fontSize={[18, 20, 20]} />
-              { hasNotifications() && (
-                <Box 
-                  as={'span'} 
+              { (hasNotifications() && !isLoading) && (
+                <Flex 
+                  alignItems={'center'}
+                  justify={'center'}
+                  width={'14px'}
+                  height={'14px'}
                   color={'white'} 
                   position={'absolute'} 
                   top={'4px'} 
-                  right={'4px'} 
-                  fontSize={'0.8rem'}
+                  right={'1px'} 
+                  fontSize={'0.6rem'}
                   bgColor={'red'} 
                   borderRadius={'full'} 
                   zIndex={9999}
-                  p={"1px"}
+                  p={"2px"}
                 >
                   {getQuantity()}
-              </Box>
+                </Flex>
               ) }
           </>}
           />
@@ -170,7 +173,7 @@ export const NavNotifications = () => {
                           align={'center'}
                           fontSize={['sm', "md", "md"]}
                         >
-                          R$ 10.910,00
+                          { toCurrency(notification.data.value) }
                         </Flex>
                       </Stack>
                     </LinkOverlay>                  
