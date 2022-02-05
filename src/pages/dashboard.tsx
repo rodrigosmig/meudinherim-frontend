@@ -192,19 +192,7 @@ export default function Dashboard() {
 }
 
 export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
-  const cookies = parseCookies(context);
   
-  const token = cookies['meudinherim.token'];
-  
-  if(!token) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      }
-    }
-  }
-
   const apiClient = setupApiClient(context);
 
   try {
