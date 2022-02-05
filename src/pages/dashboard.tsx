@@ -193,7 +193,7 @@ export default function Dashboard() {
 }
 
 export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
-  const cookies = parseCookies(context);
+  //const cookies = parseCookies(context);
   
   const token = "sdfsadfsadfsd"
   
@@ -216,7 +216,7 @@ export const getServerSideProps = (async (context: GetServerSidePropsContext) =>
       }
     })
   } catch (error) {
-    destroyCookie(context, 'meudinherim.token');
+    //destroyCookie(context, 'meudinherim.token');
 
     return {
       redirect: {
