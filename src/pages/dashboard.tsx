@@ -27,6 +27,8 @@ import { addMonths, format, getYear, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toUsDate } from "../utils/helpers";
 import { useState } from "react";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { destroyCookie, parseCookies } from "nookies";
 
 export default function Dashboard() {
   const incomeColor = "blue.500";
@@ -189,10 +191,34 @@ export default function Dashboard() {
   )
 }
 
-export const getServerSideProps = withSSRAuth(async (context) => {
+export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
+  const cookies = parseCookies(context);
+  
+  const token = cookies['meudinherim.token'];
+  
+  if(!token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
+
   const apiClient = setupApiClient(context);
 
-  const response = await apiClient.get('/auth/me');
+  try {
+    const response = await apiClient.get('/auth/me');    
+  } catch (error) {
+    destroyCookie(context, 'meudinherim.token');
+
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      },
+    }
+  }
 
   return {
     props: {}
