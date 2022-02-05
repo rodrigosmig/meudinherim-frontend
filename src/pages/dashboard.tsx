@@ -1,5 +1,6 @@
 import Head from "next/head";
-
+import { setupApiClient } from '../services/api';
+import { withSSRAuth } from '../utils/withSSRAuth';
 import { Layout } from '../components/Layout';
 import { Stats } from "../components/Stats";
 import { 
@@ -26,8 +27,6 @@ import { addMonths, format, getYear, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toUsDate } from "../utils/helpers";
 import { useState } from "react";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import axios from "axios";
 
 export default function Dashboard() {
   const incomeColor = "blue.500";
@@ -190,41 +189,12 @@ export default function Dashboard() {
   )
 }
 
-export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
-  //const cookies = parseCookies(context);
-  
-  const token = "sdfsadfsadfsd"
-  
-  if(!token) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      }
-    }
-  }
+export const getServerSideProps = withSSRAuth(async (context) => {
+  const apiClient = setupApiClient(context);
 
-  //const apiClient = setupApiClient(context);
-
-  try {
-    //const response = await apiClient.get('/auth/me');
-    await axios.get('https://meudinherim.ovh/api/auth/me', {
-      headers: {
-        Authorization: 'Bearer ' + token //the token is a variable which holds the token
-      }
-    })
-  } catch (error) {
-    //destroyCookie(context, 'meudinherim.token');
-
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false
-      },
-    }
-  }
+  const response = await apiClient.get('/auth/me');
 
   return {
-    props: {token: token}
+    props: {}
   }
 })
