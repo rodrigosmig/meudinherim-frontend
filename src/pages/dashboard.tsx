@@ -196,7 +196,7 @@ export const getServerSideProps = (async (context: GetServerSidePropsContext) =>
   const apiClient = setupApiClient(context);
 
   try {
-    const response = await apiClient.get('/auth/me');    
+    //const response = await apiClient.get('/auth/me');    
   } catch (error) {
     destroyCookie(context, 'meudinherim.token');
 
