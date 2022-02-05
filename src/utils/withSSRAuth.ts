@@ -19,7 +19,11 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>): GetServerSideProps {
       return await fn(context);      
     } catch (error) {
 
-      console.log(error?.response)
+      if (error.response.status === 404) {
+        return {
+          notFound: true,
+        }
+      }
       
       destroyCookie(context, 'meudinherim.token');
 
