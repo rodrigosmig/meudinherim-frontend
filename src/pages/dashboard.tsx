@@ -1,6 +1,5 @@
 import Head from "next/head";
-import { setupApiClient } from '../services/api';
-import { withSSRAuth } from '../utils/withSSRAuth';
+
 import { Layout } from '../components/Layout';
 import { Stats } from "../components/Stats";
 import { 
@@ -28,7 +27,6 @@ import { ptBR } from 'date-fns/locale';
 import { toUsDate } from "../utils/helpers";
 import { useState } from "react";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { destroyCookie, parseCookies } from "nookies";
 import axios from "axios";
 
 export default function Dashboard() {
