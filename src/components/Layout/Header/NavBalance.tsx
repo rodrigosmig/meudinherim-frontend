@@ -26,7 +26,7 @@ import { Loading } from "../../Loading";
 
 export const NavBalance = () => {
   const bg = useColorModeValue('gray.50', 'gray.800');
-  const { data, isLoading, isFetching, refetch } = useAccountBalance(null);
+  const { data, isLoading, isFetching, refetch } = useAccountBalance('all');
 
   return (
     <Popover 

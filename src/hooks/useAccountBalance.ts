@@ -4,7 +4,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { accountService } from "../services/ApiService/AccountService";
 import { toCurrency } from "../utils/helpers";
 
-export const getAccountBalance = async (id: number | null) => {
+export const getAccountBalance = async (id: number | 'all') => {
   const response = await accountService.balance(id);
 
   const balances = response.data.balances.map(account => {
@@ -27,7 +27,7 @@ export const getAccountBalance = async (id: number | null) => {
   return data
 }
 
-export const useAccountBalance = (id: number | null) => {
+export const useAccountBalance = (id: number | 'all') => {
   const { user } = useContext(AuthContext);
 
   return useQuery(['account_balance', id, user?.id], () => getAccountBalance(id), {
