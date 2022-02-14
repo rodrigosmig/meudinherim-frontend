@@ -41,35 +41,14 @@ import { PopoverTotal } from "../../../../../../components/PopoverTotal";
 import { AnticipateInstallmentsModal } from "../../../../../../components/Modals/invoice_entries/AnticipateInstallmentsModal";
 import { GeneratePayment } from "../../../../../../components/Buttons/GeneratePayment";
 import { GeneratePaymentModal } from "../../../../../../components/Modals/invoices/GeneratePaymentModal";
+import { IInvoiceEntry } from "../../../../../../types/invoiceEntry";
 
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-
-interface InvoiceEntry {
-  id: number;
-  date: string;
-  description: string;
-  value: number;
-  category: Category;
-  card_id: number;
-  invoice_id: number;
-  is_parcel: boolean;
-  parcel_number: number;
-  parcel_total: number;
-  total_purchase: number;
-  parcelable_id: number;
-  anticipated: boolean;
-}
-
-interface InvoiceEntriesProps {
+interface Props {
   cardId: number;
   invoiceId: number;
 }
 
-export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProps) {
+export default function InvoiceEntries({ cardId, invoiceId }: Props) {
   const { data: invoice, isLoading: isLoadingInvoice, refetch: refetchInvoice } = useInvoice(cardId, invoiceId);
 
   const isWideVersion = useBreakpointValue({
@@ -87,7 +66,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: InvoiceEntriesProp
   const [ perPage, setPerPage ] = useState(10);
 
   const [ dateRange, setDateRange ] = useState([null, null]);
-  const [ selectedEntry, setSelectedEntry ] = useState({} as InvoiceEntry)
+  const [ selectedEntry, setSelectedEntry ] = useState({} as IInvoiceEntry)
 
   const { data, isLoading, isFetching, isError, refetch } = useInvoiceEntries(cardId, invoiceId, page, perPage);
 

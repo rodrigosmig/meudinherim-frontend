@@ -14,14 +14,14 @@ import {
 } from "@chakra-ui/react";
 import { GiCancel } from "react-icons/gi";
 
-interface CancelPaymentButtonProps {
+interface Props {
   label: string;
   isPayment?: boolean;
   loading: boolean;
   onCancel: () => void;
 }
 
-const CancelPaymentButtonComponent = ({ label, loading, isPayment = true, onCancel }: CancelPaymentButtonProps) => {
+const CancelPaymentButtonComponent = ({ label, loading, isPayment = true, onCancel }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef();

@@ -2,12 +2,12 @@ import { memo } from "react";
 import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import { RiMoneyDollarBoxLine } from "react-icons/ri";
 
-interface PaymentButtonProps {
+interface Props {
   label?: string
   onClick: () => void;
 }
 
-const PaymentButtonComponent = ({ onClick, label = 'Pagar' }: PaymentButtonProps) => {
+const PaymentButtonComponent = ({ onClick, label = 'Pagar' }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

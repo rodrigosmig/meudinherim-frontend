@@ -1,13 +1,13 @@
 import { CreateAccountForm } from "../../Foms/account/CreateAccountForm";
 import { Modal } from "../Modal";
 
-interface CreateCategoryModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-export const CreateAccountModal = ({ isOpen, onClose, refetch }: CreateCategoryModalProps) => {
+export const CreateAccountModal = ({ isOpen, onClose, refetch }: Props) => {
 return (
   <Modal
     header="Nova Conta"

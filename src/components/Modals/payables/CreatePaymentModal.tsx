@@ -2,7 +2,7 @@ import { CreatePayableForm } from "../../Foms/payable/CreatePayableForm";
 import { Modal } from "../Modal";
 
   
-interface CreatePayableModalProps {
+interface Props {
   categories: {
     value: string;
     label: string
@@ -12,7 +12,7 @@ interface CreatePayableModalProps {
   refetch: () => void;
 }
 
-export const CreatePaymentModal = ({ categories, isOpen, onClose, refetch }: CreatePayableModalProps) => {
+export const CreatePaymentModal = ({ categories, isOpen, onClose, refetch }: Props) => {
   return (
     <Modal
       header="Nova Conta a Pagar"

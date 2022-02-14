@@ -2,12 +2,12 @@ import { memo } from "react";
 import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import { RiPencilLine } from "react-icons/ri";
 
-interface EditButtonProps {
+interface Props {
   isDisabled?: boolean;
   onClick: () => void;
 }
 
-const EditButtonComponent = ({ onClick, isDisabled = false }: EditButtonProps) => {
+const EditButtonComponent = ({ onClick, isDisabled = false }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

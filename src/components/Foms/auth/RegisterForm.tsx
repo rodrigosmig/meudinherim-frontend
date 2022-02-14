@@ -9,14 +9,7 @@ import { Switch } from "../../Inputs/Switch";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
-
-type RegisterFormData = {
-  name: string
-  email: string;
-  password: string;
-  password_confirmation: string;
-  enable_notification: boolean;
-}
+import { IRegisterData } from "../../../types/auth";
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
@@ -33,7 +26,7 @@ export function RegisterForm() {
   });
   const { errors } = formState;
 
-  const handleRegister: SubmitHandler<RegisterFormData> = async (values) => { 
+  const handleRegister: SubmitHandler<IRegisterData> = async (values) => { 
     try {
       const response = await authService.register(values);
       const name = response.data.name;

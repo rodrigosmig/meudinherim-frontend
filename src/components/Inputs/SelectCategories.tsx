@@ -11,7 +11,7 @@ import {
 import { forwardRef, ForwardRefRenderFunction } from "react";
 import { FieldError } from "react-hook-form";
 
-interface SelectCategoriesProps extends ChakraSelectProps {
+interface Props extends ChakraSelectProps {
   name: string;
   label?: string;
   error?: FieldError;
@@ -27,7 +27,7 @@ interface SelectCategoriesProps extends ChakraSelectProps {
   }
 }
 
-export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectCategoriesProps> = ({ name, label, error=null, options, ...rest }, ref) => {
+export const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, Props> = ({ name, label, error=null, options, ...rest }, ref) => {
   const bgColor = useColorModeValue('white', 'gray.800');
 
   return (

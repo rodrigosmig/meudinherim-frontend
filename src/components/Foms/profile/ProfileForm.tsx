@@ -9,23 +9,10 @@ import { AuthContext } from '../../../contexts/AuthContext';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from '../../../utils/helpers';
+import { IProfileUpdateData, IUser } from '../../../types/auth';
 
-type ProfileFormData = {
-  name: string
-  email: string;
-  enable_notification: boolean;
-}
-
-interface User {
-  id: number;
-  name: string
-  email: string;
-  avatar: string;
-  enable_notification: boolean;
-}
-
-interface ProfileFormProps {
-  updateUser: (user: User) => void
+interface Props {
+  updateUser: (user: IUser) => void
 }
 
 const validationSchema = yup.object().shape({
@@ -33,7 +20,7 @@ const validationSchema = yup.object().shape({
   email: yup.string().required("O campo email é obrigatório").email("E-mail inválido")
 })
 
-export function ProfileForm({ updateUser }: ProfileFormProps) {
+export function ProfileForm({ updateUser }: Props) {
   const { user } = useContext(AuthContext);
   const [ name, setName ] = useState(user.name);
   const [ email, setEmail ] = useState(user.email);
@@ -48,7 +35,7 @@ export function ProfileForm({ updateUser }: ProfileFormProps) {
   
   const { errors } = formState;
 
-  const handleUpdateProfile: SubmitHandler<ProfileFormData> = async (values) => {
+  const handleUpdateProfile: SubmitHandler<IProfileUpdateData> = async (values) => {
     try {
       const response = await profileService.updateProfile(values)
       const userUpdated = response.data

@@ -12,13 +12,13 @@ import {
 import { forwardRef, ForwardRefRenderFunction } from 'react';
 import { FieldError } from 'react-hook-form'
 
-interface NumberProps extends NumberInputProps {
+interface Props extends NumberInputProps {
   name: string;
   label?: string;
   error?: FieldError;
 }
   
-const NumberBase: ForwardRefRenderFunction<HTMLInputElement, NumberProps> = ({ name, label, error=null, ...rest }, ref) => {
+const NumberBase: ForwardRefRenderFunction<HTMLInputElement, Props> = ({ name, label, error=null, ...rest }, ref) => {
   return (
     <FormControl isInvalid={!!error}>
       { !!label && <FormLabel htmlFor={name}>{label}</FormLabel>}

@@ -13,7 +13,7 @@ const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
-interface BarChartProps {
+interface Props {
   label: string;
   months: string[];
   data: {
@@ -22,7 +22,7 @@ interface BarChartProps {
   }  
 }
 
-export const BarChart = ({ label, months, data }: BarChartProps) => {
+export const BarChart = ({ label, months, data }: Props) => {
   const bgColor = useColorModeValue('white', 'gray.700');
   const { colorMode } = useColorMode();
 

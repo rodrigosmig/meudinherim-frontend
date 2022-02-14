@@ -7,23 +7,6 @@ import { CreateAccountEntryForm } from "../../../components/Foms/accountEntry/Cr
 import { Heading } from "../../../components/Heading";
 import { useRouter } from "next/router";
 
-type CategoriesForForm = {
-  income: {
-    id: number;
-    label: string
-  }[]
-  expense: {
-    id: number;
-    label: string
-  }[]
-}
-
-interface AccountForm {
-  value: string;
-  label: string;
-}
-
-
 export default function CreateAccountEntry() {
   const router = useRouter();
 

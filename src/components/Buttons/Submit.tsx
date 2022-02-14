@@ -1,10 +1,10 @@
 import { Button, ButtonProps } from "@chakra-ui/react";
 
-interface SubmitButtonProps extends ButtonProps {
+interface Props extends ButtonProps {
   label: string
 }
 
-export const SubmitButton = ({ label, ...rest }: SubmitButtonProps) => {
+export const SubmitButton = ({ label, ...rest }: Props) => {
   return (
     <Button
       type="submit" 

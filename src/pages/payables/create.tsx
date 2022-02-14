@@ -8,14 +8,14 @@ import { Layout } from "../../components/Layout";
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-interface CreatePayableProps {
+interface Props {
   categories: {
     value: string;
     label: string
   }[];
 }
 
-export default function CreatePayable({ categories }: CreatePayableProps) {
+export default function CreatePayable({ categories }: Props) {
   const router = useRouter();
 
   const handleOnCancel = () => {

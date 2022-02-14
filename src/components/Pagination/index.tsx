@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { PaginationItem } from "./PaginationItem";
 
-interface PaginationProps {
+interface Props {
   from: number,
   to: number,
   lastPage: number,
@@ -33,7 +33,7 @@ export const Pagination = ({
   totalRegisters,
   currentPage = 1,
   onPageChange,
-}: PaginationProps ) => {
+}: Props ) => {
   const previousPages = currentPage > 1
     ? generatePagesArray(currentPage - 1 - siblingsCount, currentPage - 1)
     : [];

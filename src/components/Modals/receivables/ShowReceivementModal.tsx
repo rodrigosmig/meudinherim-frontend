@@ -19,9 +19,8 @@ import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
 import { Modal } from "../Modal";
 import { CancelButton } from "../../Buttons/Cancel";
 import { SubmitButton } from "../../Buttons/Submit";
-
   
-  interface ShowReceivementModalProps {
+  interface Props {
     receivableId: number;
     parcelableId?: number; 
     isOpenModal: boolean;
@@ -42,7 +41,7 @@ import { SubmitButton } from "../../Buttons/Submit";
     onCloseModal,
     refetchEntries,
     refetchBalance
-  }: ShowReceivementModalProps) => {
+  }: Props) => {
     const [receivable, setReceivable] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const { isOpen, onOpen, onClose } = useDisclosure()

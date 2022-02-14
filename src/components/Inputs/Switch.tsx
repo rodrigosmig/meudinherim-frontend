@@ -6,12 +6,12 @@ import {
   SwitchProps as ChakraSwitchProps 
 } from "@chakra-ui/react";
 
-interface SwitchProps extends ChakraSwitchProps {
+interface Props extends ChakraSwitchProps {
   id: string;
   label: string
 }
 
-const SwitchBase: ForwardRefRenderFunction<HTMLInputElement, SwitchProps> = ({ id, label, ...rest }, ref) => {
+const SwitchBase: ForwardRefRenderFunction<HTMLInputElement, Props> = ({ id, label, ...rest }, ref) => {
   return (
     <FormControl display="flex" alignItems="center">
       <FormLabel w={100} htmlFor={id} mb="0">

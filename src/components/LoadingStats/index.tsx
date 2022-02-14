@@ -9,12 +9,11 @@ import {
 } from '@chakra-ui/react';
 import { Loading } from '../Loading';
 
-interface LoadingStatsProps {
+interface Props {
   color: string;
 }
 
-
-export const LoadingStats = ({ color }: LoadingStatsProps) => {
+export const LoadingStats = ({ color }: Props) => {
   const bgColor = useColorModeValue('white', 'gray.800');
 
   return (

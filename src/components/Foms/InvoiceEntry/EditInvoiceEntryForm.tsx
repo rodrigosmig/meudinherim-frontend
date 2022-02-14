@@ -14,48 +14,13 @@ import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntri
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { getMessage } from "../../../utils/helpers";
+import { IInvoiceEntry, IInvoiceEntryErrorKey, IInvoiceEntryFormData, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
 
-interface FormData {
-  category_id: number;
-  description: string;
-  value: number;
-}
-
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-
-interface InvoiceEntry {
-  id: number;
-  date: string;
-  description: string;
-  value: number;
-  category: Category;
-  card_id: number;
-  invoice_id: number;
-  is_parcel: boolean;
-  parcel_number: number;
-  parcel_total: number;
-  total_purchase: number;
-  parcelable_id: number;
-  anticipated: boolean;
-}
-
-interface EditInvoiceEntryFormProps {
-  entry: InvoiceEntry;
+interface Props {
+  entry: IInvoiceEntry;
   onClose: () => void,
   refetch: () => void
 }
-
-type ResponseError = {
-  category_id: string[];
-  description: string[];
-  value: string[];
-}
-
-type Key = keyof ResponseError;
 
 const validationSchema = yup.object().shape({
   card_id: yup.number().integer("Cartão de Crédito inválido").typeError("O campo cartão de crédito é inválido"),
@@ -64,7 +29,7 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
 })
 
-export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: EditInvoiceEntryFormProps) => {  
+export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: Props) => {  
   const { data: categories, isLoading } = useCategoriesForm();
 
   const { register, handleSubmit, setError, formState } = useForm({
@@ -78,7 +43,7 @@ export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: EditInvoiceEnt
 
   const { errors } = formState;
 
-  const handleCreateInvoiceEntry: SubmitHandler<FormData> = async (values) => {
+  const handleCreateInvoiceEntry: SubmitHandler<IInvoiceEntryFormData> = async (values) => {
     const data = {
       id: entry.id,
       data: {
@@ -98,9 +63,9 @@ export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: EditInvoiceEnt
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IInvoiceEntryResponseError = error.response.data;
 
-        let key: Key        
+        let key: IInvoiceEntryErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

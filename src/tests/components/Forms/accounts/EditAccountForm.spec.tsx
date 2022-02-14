@@ -3,6 +3,7 @@ import { act } from "react-dom/test-utils";
 import { EditAccountForm } from "../../../../components/Foms/account/EditAccountForm";
 import { accountService } from "../../../../services/ApiService/AccountService";
 import { mocked } from "ts-jest/utils";
+import { IAccount } from "../../../../types/account";
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -23,17 +24,7 @@ const accountServiceMocked = mocked(accountService.update);
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/AccountService')
 
-interface Account {
-  id: number;
-  type: {
-    id: 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  name: string;
-  balance: number;
-}
-
-const account: Account = {
+const account: IAccount = {
   id: 1,
   type: {
     id: 'checking_account',

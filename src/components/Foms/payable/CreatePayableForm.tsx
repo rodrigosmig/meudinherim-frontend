@@ -17,24 +17,12 @@ import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage, toUsDate } from '../../../utils/helpers';
 import { useRouter } from 'next/router';
+import { IPayableCreateData, IPayableResponseError } from '../../../types/payable';
+import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 
-interface FormData {
+interface FormData extends Omit<IPayableCreateData, "due_date"> {
   due_date: Date;
-  category_id: number;
-  description: string;
-  value: number;
-  monthly: boolean;
-  installment: boolean;
-  installments_number: number
 }
-
-type ResponseError = {
-  category_id: string[];
-  description: string[];
-  value: string[];
-}
-
-type Key = keyof ResponseError;
 
 interface CreatePayableFormProps {
   categories: {
@@ -102,9 +90,9 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
       }
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IPayableResponseError = error.response.data;
 
-        let key: Key        
+        let key: IAccountSchedulingErrorKey
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

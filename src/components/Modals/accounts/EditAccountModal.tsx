@@ -1,24 +1,15 @@
+import { IAccount } from "../../../types/account";
 import { EditAccountForm } from "../../Foms/account/EditAccountForm";
 import { Modal } from "../Modal";
 
-interface Account {
-  id: number;
-  type: {
-    id: 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  name: string;
-  balance: number;
-}
-
-interface EditPayableModalProps {
-  account: Account;
+interface Props {
+  account: IAccount;
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-export const EditAccountModal = ({ account, isOpen, onClose, refetch }: EditPayableModalProps) => {
+export const EditAccountModal = ({ account, isOpen, onClose, refetch }: Props) => {
   return (
     <Modal
       header="Editar Conta"

@@ -19,19 +19,15 @@ import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
 import { Modal } from "../Modal";
 import { CancelButton } from "../../Buttons/Cancel";
 import { SubmitButton } from "../../Buttons/Submit";
+import { ICancelData } from "../../../types/accountScheduling";
   
-interface PaymentModalProps {
+interface Props {
   accountId: number;
   parcelableId?: number; 
   isOpenModal: boolean;
   onCloseModal: () => void;
   refetchEntries: () => void;
   refetchBalance: () => void;
-}
-
-interface CancelPayableData {
-  id: number, 
-  parcelable_id: null | number
 }
   
 const ShowPaymentModalComponent = ({ 
@@ -41,7 +37,7 @@ const ShowPaymentModalComponent = ({
   onCloseModal,
   refetchEntries,
   refetchBalance
-}: PaymentModalProps) => {
+}: Props) => {
   const [payable, setPayable] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -68,7 +64,7 @@ const ShowPaymentModalComponent = ({
     onCloseModal()
   }
 
-  const cancelPayment = useMutation(async (values: CancelPayableData) => {
+  const cancelPayment = useMutation(async (values: ICancelData) => {
     const response = await payableService.cancelPayment(values.id, values.parcelable_id);
   
     return response.data;

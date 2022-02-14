@@ -2,33 +2,13 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import Router, { useRouter } from 'next/router';
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import { authService } from '../services/ApiService/AuthService';
-
-interface User {
-  id: number;
-  name: string
-  email: string;
-  avatar: string;
-  enable_notification: boolean;
-}
-
-type SignInCredentials = {
-  email: string;
-  password: string
-}
-
-type AuthContextData = {
-  signIn: (credentials: SignInCredentials) => Promise<void>;
-  signOut: () => void;
-  setUser: (user: User) => void,
-  user: User;
-  isAuthenticated: boolean;
-}
+import { IAuthContextData, ISignInCredentials, IUser } from "../types/auth";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthContext = createContext({} as AuthContextData);
+export const AuthContext = createContext({} as IAuthContextData);
 
 let authChannel: BroadcastChannel;
 
@@ -54,7 +34,7 @@ const logout = async () => {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const router = useRouter()
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<IUser>();
   const isAuthenticated = !!user;
 
   useEffect(() => {
@@ -86,7 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, []);
 
-  const signIn = async ({ email, password }: SignInCredentials) => {
+  const signIn = async ({ email, password }: ISignInCredentials) => {
     const response = await authService.signIn({
       email,
       password,

@@ -15,40 +15,20 @@ import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useQueryClient } from "react-query";
 import { payableService } from "../../../services/ApiService/PayableService";
-
-interface Invoice {
-  id: number;
-  due_date: string;
-  closing_date: string;
-  amount: number;
-  paid: boolean;
-  isClosed: boolean;
-  card: {
-    id: number;
-    name: string;
-  }
-}
-
-type ResponseError = {
-  category_id: string[];
-}
-
-type Key = keyof ResponseError;
-
-interface FormData {
-  category_id: number;
-}
+import { IInvoice } from "../../../types/card";
+import { IGeneratePaymentResponseError, IPayableCreateData } from "../../../types/payable";
+import { IGenerateKeyError } from "../../../types/accountScheduling";
 
 const validationSchema = yup.object().shape({
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
 })
 
-interface GeneratePaymentFormProps {
-  invoice: Invoice;
+interface Props {
+  invoice: IInvoice;
   onCancel: () => void;
 }
 
-export const GeneratePaymentForm = ({ invoice, onCancel }: GeneratePaymentFormProps) => {
+export const GeneratePaymentForm = ({ invoice, onCancel }: Props) => {
   const queryClient = useQueryClient();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
@@ -64,7 +44,7 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: GeneratePaymentFormPr
 
   const payableDescription = `Fatura: ${invoice.card.name}`;
 
-  const handleTransfer: SubmitHandler<FormData> = async (values) => {
+  const handleTransfer: SubmitHandler<IPayableCreateData> = async (values) => {
     const data = {
       ...values,
       due_date: invoice.due_date,
@@ -84,9 +64,9 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: GeneratePaymentFormPr
       onCancel();
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IGeneratePaymentResponseError = error.response.data;
 
-        let key: Key        
+        let key: IGenerateKeyError        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

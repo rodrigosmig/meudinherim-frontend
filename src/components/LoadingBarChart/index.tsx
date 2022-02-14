@@ -6,11 +6,11 @@ import {
 } from '@chakra-ui/react';
 import { Loading } from '../Loading';
 
-interface LoadingBarChartProps {
+interface Props {
   label: string;
 }
 
-export const LoadingBarChart = ({ label }: LoadingBarChartProps) => {
+export const LoadingBarChart = ({ label }: Props) => {
   const bgColor = useColorModeValue('white', 'gray.700');
 
   return (

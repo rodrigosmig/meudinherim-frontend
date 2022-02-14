@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { ReactNode } from "react"
 
-interface ModalProps extends ChakraModalProps {
+interface Props extends ChakraModalProps {
   header: string;
   isOpen: boolean;
   size?: "xs" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl"
@@ -18,7 +18,7 @@ interface ModalProps extends ChakraModalProps {
   children: ReactNode;
 }
 
-export const Modal = ({ header, isOpen, size = "lg", onClose, children }: ModalProps) => {
+export const Modal = ({ header, isOpen, size = "lg", onClose, children }: Props) => {
   const bgColor = useColorModeValue("white", "gray.800");
 
   return (

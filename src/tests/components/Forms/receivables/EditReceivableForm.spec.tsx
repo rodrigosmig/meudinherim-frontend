@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { EditReceivableForm } from "../../../../components/Foms/receivable/EditReceivableForm";
 import { receivableService } from "../../../../services/ApiService/ReceivableService";
+import { IReceivable } from "../../../../types/receivable";
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -33,7 +34,7 @@ const categories = [
   }
 ]
 
-const receivable = {
+const receivable: IReceivable = {
     id: 1,
     due_date: "2021-10-21",
     paid_date: null,
@@ -44,7 +45,7 @@ const receivable = {
         type: 1,
         name: "Category Test"
     },
-    invoice_id: null,
+    invoice: null,
     paid: false,
     monthly: false,
     has_parcels: false,

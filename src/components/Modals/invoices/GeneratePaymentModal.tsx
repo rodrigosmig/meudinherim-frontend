@@ -1,26 +1,14 @@
 import { Modal } from "../Modal";
 import { GeneratePaymentForm } from "../../Foms/payable/GeneratePaymentForm";
+import { IInvoice } from "../../../types/card";
 
-interface Invoice {
-  id: number;
-  due_date: string;
-  closing_date: string;
-  amount: number;
-  paid: boolean;
-  isClosed: boolean;
-  card: {
-    id: number;
-    name: string;
-  }
-}
-
-interface GeneratePaymentModalProps {
-  invoice: Invoice;
+interface Props {
+  invoice: IInvoice;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const GeneratePaymentModal = ({ invoice, isOpen, onClose }: GeneratePaymentModalProps) => {
+export const GeneratePaymentModal = ({ invoice, isOpen, onClose }: Props) => {
 
   return (
     <Modal

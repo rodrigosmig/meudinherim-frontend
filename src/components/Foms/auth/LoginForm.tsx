@@ -13,11 +13,7 @@ import { SubmitButton } from '../../Buttons/Submit';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
-
-type LoginFormData = {
-  email: string;
-  password: string
-}
+import { ISignInCredentials } from "../../../types/auth";
 
 const validationSchema = yup.object().shape({
   email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
@@ -33,7 +29,7 @@ export function LoginForm() {
   });
   const { errors } = formState;
 
-  const handleLogin: SubmitHandler<LoginFormData> = async (values) => {
+  const handleLogin: SubmitHandler<ISignInCredentials> = async (values) => {
     try {
       await signIn(values);
       setIsSubimited(true);

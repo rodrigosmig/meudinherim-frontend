@@ -10,12 +10,12 @@ import {
 } from '@chakra-ui/react';
 import { Loading } from '../Loading';
 
-interface LoadingDonutChartProps {
+interface Props {
   label: string;
   color: string;
 }
 
-export const LoadingDonutChart = ({ label, color }: LoadingDonutChartProps) => {
+export const LoadingDonutChart = ({ label, color }: Props) => {
   const bgColor = useColorModeValue('white', 'gray.700');
 
   return (

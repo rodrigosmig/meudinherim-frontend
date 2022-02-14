@@ -8,7 +8,6 @@ import {
   useContext,
   useEffect,
 } from 'react';
-
 import {
   Box,
   FormLabel,
@@ -23,35 +22,25 @@ import {
   Tooltip,
   Avatar,
 } from '@chakra-ui/react';
-
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
-
 import {
   FieldError,
   FieldValues,
   UseFormSetError,
   UseFormTrigger,
 } from 'react-hook-form';
-
 import { FiAlertCircle, FiPlus } from 'react-icons/fi';
 import { profileService } from '../../services/ApiService/ProfileService';
 import { AuthContext } from '../../contexts/AuthContext';
 import { getMessage } from '../../utils/helpers';
-
-interface User {
-  id: number;
-  name: string
-  email: string;
-  avatar: string;
-  enable_notification: boolean;
-}
+import { IUser } from '../../types/auth';
 
 export interface FileInputProps {
   name: string;
   error?: FieldError;
   localImageUrl: string;
   setLocalImageUrl: Dispatch<SetStateAction<string>>;
-  updateUser: (user: User) => void
+  updateUser: (user: IUser) => void
   setError: UseFormSetError<FieldValues>;
   onChange: (
     event: React.ChangeEvent<HTMLInputElement>

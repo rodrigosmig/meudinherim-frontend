@@ -8,12 +8,11 @@ import {
   Td,
   Text
 } from "@chakra-ui/react";
+import { ReportType } from "../../types/report";
 import { toCurrency } from "../../utils/helpers";
 import { Table } from "../Table";
 
-type ReportType = 'card' | 'account';
-
-interface TabTableProps extends TableProps {
+interface Props extends TableProps {
   reportType: ReportType;
   headList: string[];
   data: {
@@ -25,7 +24,7 @@ interface TabTableProps extends TableProps {
   openModal: (id: number, name: string, reportType: ReportType) => void;
 }
 
-export const TabTable = ({ data, headList, openModal, reportType, ...rest }: TabTableProps) => {
+export const TabTable = ({ data, headList, openModal, reportType, ...rest }: Props) => {
   return (
     <Table tableSize={"md"} {...rest}>
       <Thead>

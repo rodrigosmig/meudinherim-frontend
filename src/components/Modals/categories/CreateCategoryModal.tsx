@@ -1,13 +1,13 @@
 import { CreateCategoryForm } from "../../Foms/categories/CreateCategoryForm";
 import { Modal } from "../Modal";
 
-interface CreateCategoryModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   refetch?: () => void;
 }
 
-export const CreateCategoryModal = ({ isOpen, onClose, refetch }: CreateCategoryModalProps) => {
+export const CreateCategoryModal = ({ isOpen, onClose, refetch }: Props) => {
 return (
   <Modal
       header="Nova Categoria"

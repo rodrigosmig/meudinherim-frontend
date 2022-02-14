@@ -10,7 +10,7 @@ import {
 import { forwardRef, ForwardRefRenderFunction } from "react";
 import { FieldError } from "react-hook-form";
 
-interface SelectProps extends ChakraSelectProps {
+interface Props extends ChakraSelectProps {
   name: string;
   label?: string;
   error?: FieldError;
@@ -20,7 +20,7 @@ interface SelectProps extends ChakraSelectProps {
   }[]
 }
 
-const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ name, label, error = null, options, ...rest }, ref) => {
+const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, Props> = ({ name, label, error = null, options, ...rest }, ref) => {
   
 
   return (

@@ -3,6 +3,7 @@ import { EditCategoryForm } from "../../../../components/Foms/categories/EditCat
 import { act } from "react-dom/test-utils";
 import { mocked } from "ts-jest/utils";
 import { categoryService } from "../../../../services/ApiService/CategoryService";
+import { ICategory } from "../../../../types/category";
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -23,13 +24,7 @@ const categoryServiceMocked = mocked(categoryService.update);
 jest.mock('react-query');
 jest.mock('../../../../services/ApiService/CategoryService');
 
-interface Category {
-  id: number;
-  type: 1 | 2;
-  name: string;
-}
-
-const category: Category = {
+const category: ICategory = {
   id: 1,
   type: 2,
   name: "Category Test"

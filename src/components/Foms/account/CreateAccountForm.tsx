@@ -12,13 +12,9 @@ import { accountService } from '../../../services/ApiService/AccountService';
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage } from "../../../utils/helpers";
+import { IAccountFormData } from "../../../types/account";
 
-interface FormData {
-  type: string;
-  name: string;
-}
-
-interface CreateAccountFormProps {
+interface Props {
   closeModal: () => void,
   refetch: () => void
 }
@@ -28,14 +24,14 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const CreateAccountForm = ({ closeModal, refetch }: CreateAccountFormProps) => {
+export const CreateAccountForm = ({ closeModal, refetch }: Props) => {
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(validationSchema)
   });
 
   const { errors } = formState;
 
-  const handleCreateAccount: SubmitHandler<FormData> = async (values) => {
+  const handleCreateAccount: SubmitHandler<IAccountFormData> = async (values) => {
     try {
       await accountService.create(values);
 

@@ -8,11 +8,11 @@ import {
 import { memo } from "react"
 import { RiAddLine } from "react-icons/ri"
 
-interface AddButtonProps {
+interface Props {
   onClick: () => void
 }
 
-const AddButtonComponent = ({ onClick }: AddButtonProps) => {
+const AddButtonComponent = ({ onClick }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

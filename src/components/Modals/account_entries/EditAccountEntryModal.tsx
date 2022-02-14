@@ -6,41 +6,17 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
+import { IAccountEntry } from "../../../types/accountEntry";
 import { EditAccountEntryForm } from "../../Foms/accountEntry/EditAccountEntryForm";
 
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-
-interface Account {
-  id: number;
-  name: string;
-  type: {
-    id: 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  balance: number;
-}
-
-interface AccountEntry {
-  id: number;
-  date: string;
-  category: Category;
-  description: string;
-  value: number;
-  account: Account;
-}
-
-interface EditAccountEntryModalProps {
-  entry: AccountEntry;
+interface Props {
+  entry: IAccountEntry;
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-export const EditAccountEntryModal = ({ entry, isOpen, onClose, refetch }: EditAccountEntryModalProps) => {
+export const EditAccountEntryModal = ({ entry, isOpen, onClose, refetch }: Props) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={"lg"} closeOnOverlayClick={false}>
       <ModalOverlay />

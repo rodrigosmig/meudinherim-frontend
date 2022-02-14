@@ -10,14 +10,14 @@ import {
 import { toCurrency } from '../../utils/helpers';
 import { IconType } from 'react-icons';
 
-interface StatsProps {
+interface Props {
   label: string;
   amount: number;
   color: string;
   icon: IconType
 }
 
-export const Stats = ({ label, amount, color, icon }: StatsProps) => {
+export const Stats = ({ label, amount, color, icon }: Props) => {
   const bgColor = useColorModeValue('white', 'gray.800')
   return (
     <Flex

@@ -13,7 +13,7 @@ const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
-interface LineChartProps {
+interface Props {
   label: string;
   months: string[];
   series: {
@@ -24,7 +24,7 @@ interface LineChartProps {
 
 type CurveType = "smooth" | "straight" | "stepline"
 
-export const LineChart = ({ label, months, series }: LineChartProps) => {
+export const LineChart = ({ label, months, series }: Props) => {
   const bgColor = useColorModeValue('white', 'gray.700');
   const { colorMode } = useColorMode();
   const curve: CurveType = "smooth";

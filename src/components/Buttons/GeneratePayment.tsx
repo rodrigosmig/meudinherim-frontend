@@ -3,11 +3,11 @@ import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { FaMoneyCheck } from "react-icons/fa";
 
-interface EntriesButtonProps {
+interface Props {
   onClick: () => void;
 }
 
-const GeneratePaymentComponent = ({ onClick, ...rest }: EntriesButtonProps) => {
+const GeneratePaymentComponent = ({ onClick, ...rest }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

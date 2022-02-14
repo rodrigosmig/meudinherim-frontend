@@ -17,37 +17,16 @@ import { Loading } from "../../Loading";
 import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
 import { AnticipateButton } from "../../Buttons/Anticipate";
+import { IInvoiceEntry } from "../../../types/invoiceEntry";
 
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-
-interface InvoiceEntry {
-  id: number;
-  date: string;
-  description: string;
-  value: number;
-  category: Category;
-  card_id: number;
-  invoice_id: number;
-  is_parcel: boolean;
-  parcel_number: number;
-  parcel_total: number;
-  total_purchase: number;
-  parcelable_id: number;
-  anticipated: boolean;
-}
-
-interface EditInvoiceEntryModalProps {
-  entry: InvoiceEntry;
+interface Props {
+  entry: IInvoiceEntry;
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }: EditInvoiceEntryModalProps) => {
+export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -57,7 +36,7 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
   const tableSize = isWideVersion ? 'md' : 'sm';
   const modalSize = isWideVersion ? '4xl' : 'xs'
 
-  const [installments, setInstallments] = useState<InvoiceEntry[]>([]);
+  const [installments, setInstallments] = useState<IInvoiceEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -96,7 +75,7 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
     })
   }
 
-  const handleSelectedInstallments  = (installment: InvoiceEntry) => {
+  const handleSelectedInstallments  = (installment: IInvoiceEntry) => {
     if (installment.anticipated) {
       selected_installments.push(installment.id);
     } else {
@@ -108,7 +87,7 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
     }
   }
 
-  const getInstallmentIndex = (installment: InvoiceEntry) => {
+  const getInstallmentIndex = (installment: IInvoiceEntry) => {
     return selected_installments.indexOf(installment.id)
   }
 
