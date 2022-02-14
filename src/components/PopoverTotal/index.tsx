@@ -8,12 +8,12 @@ import {
 } from "@chakra-ui/react";
 import { toCurrency } from "../../utils/helpers";
 
-interface PopoverTotalProps {
+interface Props {
   description: string;
   amount: number
 }
 
-export const PopoverTotal = ({ description, amount }:PopoverTotalProps) => {
+export const PopoverTotal = ({ description, amount }:Props) => {
   return (
     <Popover trigger={"hover"}>
       <PopoverTrigger>

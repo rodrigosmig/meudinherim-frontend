@@ -4,11 +4,11 @@ import {
   useBreakpointValue
 } from "@chakra-ui/react";
 
-interface SubmitButtonProps extends ButtonProps {
+interface Props extends ButtonProps {
   label?: string;
 }
 
-export const CancelButton = ({ label = 'Cancelar', ...rest }: SubmitButtonProps) => {
+export const CancelButton = ({ label = 'Cancelar', ...rest }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

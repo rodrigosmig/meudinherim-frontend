@@ -38,7 +38,7 @@ const refetch = jest.fn;
 
 describe('CreateReceivableForm Component', () => {
   beforeEach(() => {
-    render(<CreateReceivableForm categories={categories} closeModal={closeModal} refetch={refetch}  />)
+    render(<CreateReceivableForm categories={categories} onCancel={closeModal} refetch={refetch}  />)
   });
 
   afterEach(() => {

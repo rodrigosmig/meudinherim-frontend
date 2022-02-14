@@ -1,14 +1,8 @@
+import { ICategory } from "../../../types/category";
 import { EditCategoryForm } from "../../Foms/categories/EditCategoryForm";
 import { Modal } from "../Modal";
-
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-
 interface EditPayableModalProps {
-  category: Category;
+  category: ICategory;
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;

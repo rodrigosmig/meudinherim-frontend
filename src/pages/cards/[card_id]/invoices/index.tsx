@@ -31,36 +31,15 @@ import { ShowEntriesButton } from "../../../../components/Buttons/ShowEntries";
 import { useRouter } from "next/router";
 import { GeneratePayment } from "../../../../components/Buttons/GeneratePayment";
 import { GeneratePaymentModal } from "../../../../components/Modals/invoices/GeneratePaymentModal";
+import { ICard, IInvoice } from "../../../../types/card";
 
-interface Invoice {
-  id: number;
-  due_date: string;
-  closing_date: string;
-  amount: number;
-  paid: boolean;
-  isClosed: boolean;
-  card: {
-    id: number;
-    name: string;
-  }
-}
-
-interface Card {
-  id: number;
-  name: string;
-  pay_day: number;
-  closing_day: number;
-  credit_limit: number;
-  balance: number;
-}
-
-interface InvoicesProps {
-  card: Card
+interface Props {
+  card: ICard
 }
 
 type StatusType = "open" | "paid";
 
-export default function Invoices({ card }: InvoicesProps) {
+export default function Invoices({ card }: Props) {
   const router = useRouter()
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -68,7 +47,7 @@ export default function Invoices({ card }: InvoicesProps) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice>()
+  const [selectedInvoice, setSelectedInvoice] = useState<IInvoice>()
 
   const { data, isLoading, isFetching, isError } = useInvoices(card.id, invoiceStatus, page, perPage);
 
@@ -94,7 +73,7 @@ export default function Invoices({ card }: InvoicesProps) {
     router.push(`/cards/${cardId}/invoices/${invoiceId}/entries`)
   }
 
-  const handleGeneratePayment = (invoice: Invoice) => {
+  const handleGeneratePayment = (invoice: IInvoice) => {
     setSelectedInvoice(invoice);
     onOpen();
   }

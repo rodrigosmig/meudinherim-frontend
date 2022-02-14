@@ -3,6 +3,7 @@ import { mocked } from 'ts-jest/utils';
 import { EditPayableForm } from "../../../../components/Foms/payable/EditPayableForm";
 import { PaymentForm } from "../../../../components/Foms/payable/PaymentForm";
 import { payableService } from "../../../../services/ApiService/PayableService";
+import { IPayable } from "../../../../types/payable";
 
 const payableServiceMocked = mocked(payableService.payment);
 
@@ -23,7 +24,7 @@ const accounts = [
   }
 ]
 
-const payable = {
+const payable: IPayable = {
     id: 1,
     due_date: "2021-10-21",
     paid_date: null,
@@ -31,9 +32,10 @@ const payable = {
     value: 150.50,
     category: {
         id: 1,
-        name: "Category Test"
+        name: "Category Test",
+        type: 2
     },
-    invoice_id: null,
+    invoice: null,
     paid: false,
     monthly: false,
     has_parcels: false,

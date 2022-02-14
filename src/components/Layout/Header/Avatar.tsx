@@ -14,11 +14,11 @@ import {
   useColorModeValue
 } from "@chakra-ui/react";
 
-interface AvatarProps {
+interface Props {
   showProfileData: boolean
 }
 
-const AvatarComponent = ({ showProfileData }: AvatarProps) => {
+const AvatarComponent = ({ showProfileData }: Props) => {
   const { user, signOut } = useContext(AuthContext)
 
   const color = useColorModeValue('gray.600', 'gray.300')

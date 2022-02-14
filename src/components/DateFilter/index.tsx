@@ -16,18 +16,19 @@ import { RiFilter2Line } from "react-icons/ri"
 registerLocale("ptBR", ptBR);
 
 import 'react-datepicker/dist/react-datepicker.css';
+import { DateRange } from '../../types/date';
 
 const StyledaDatepicker = chakra(DatePicker);
 
-interface DatepickerFilterProps {
+interface Props {
   label?: string;
   startDate: Date;
   endDate: Date;
-  onChange: (date: [Date | null, Date | null]) => void;
+  onChange: (date: DateRange) => void;
   onClick: () => void;
 }
 
-const DateFilterComponent = ({ startDate, endDate, label = 'Filtrar por período', onChange, onClick }: DatepickerFilterProps) => {
+const DateFilterComponent = ({ startDate, endDate, label = 'Filtrar por período', onChange, onClick }: Props) => {
   const bgColor = useColorModeValue('gray.50', 'gray.900');
 
   const isWideVersion = useBreakpointValue({

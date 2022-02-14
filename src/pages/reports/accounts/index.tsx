@@ -13,12 +13,11 @@ import { withSSRAuth } from "../../../utils/withSSRAuth";
 import { setupApiClient } from "../../../services/api";
 import { AccountReport } from "../../../components/AccountReport";
 import { useDateFilter } from "../../../contexts/DateFilterContext";
-
-type AccountStatus = 'all' | 'open' | 'paid';
+import { StatusType } from "../../../types/accountScheduling";
 
 export default function AccountsReport() {
   const { stringDateRange, startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
-  const [AccountStatus, setAccountStatus] = useState<AccountStatus>('open');
+  const [AccountStatus, setAccountStatus] = useState<StatusType>('open');
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -29,7 +28,7 @@ export default function AccountsReport() {
   const sizeProps = isWideVersion ? 'md' : 'sm';
 
   const handleChangeStatus = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value as AccountStatus
+    const value = event.target.value as StatusType
     setAccountStatus(value)
   }
 

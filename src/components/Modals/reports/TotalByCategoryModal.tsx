@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-  Badge,
   Th, 
   Thead, 
   Tr,
   Tbody,
   Td,
   Text,
-  Divider,
   Flex,
   useColorMode
 } from "@chakra-ui/react";
@@ -18,10 +16,9 @@ import { Loading } from "../../Loading";
 import { Modal } from "../Modal";
 import { Table } from "../../Table";
 import { CancelButton } from "../../Buttons/Cancel";
+import { ReportType } from "../../../types/report";
 
-type ReportType = 'card' | 'account';
-
-interface TotalByCategoryModalProps {
+interface Props {
   reportType: ReportType;
   isOpen: boolean;
   onClose: () => void;
@@ -43,7 +40,7 @@ interface Entries {
   source: string;
 }[]
 
-export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType }: TotalByCategoryModalProps) => {
+export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType }: Props) => {
   const { stringDateRange } = useDateFilter();
   const [isLoading, setIsLoading] = useState(true);
   const [entries, setEntries] = useState<Entries[]>();
@@ -67,7 +64,7 @@ export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType }: 
     if (isOpen) {
       fetchData();
     }
-  }, [isOpen, stringDateRange]);
+  }, [isOpen, category, onClose, reportType, stringDateRange]);
 
   const handleOnClose = () => {
     setIsLoading(true)

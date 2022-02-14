@@ -19,25 +19,13 @@ import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
 import { ChangeEvent, useState } from "react";
+import { IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
 
+interface FormData extends Omit<IAccountEntryFormData, "date"> { 
+  date: Date 
+};
 
-interface FormData {
-  account_id: number;
-  date: Date;
-  category_id: number;
-  description: string;
-  value: number;
-}
-
-type ResponseError = {
-  category_id: string[];
-  description: string[];
-  value: string[];
-}
-
-type Key = keyof ResponseError;
-
-interface CreateAccountEntryFormProps {
+interface Props {
   accountId?: number;
   onCancel: () => void;
   refetch?: () => void;
@@ -51,7 +39,7 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
 })
 
-export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: CreateAccountEntryFormProps) => {  
+export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: Props) => {  
   const router = useRouter();
 
   const [ entryValue, setEntryValue ] = useState(0);
@@ -91,9 +79,9 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
       }
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IAccountEntryResponseError = error.response.data;
 
-        let key: Key        
+        let key: IAccountEntryErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

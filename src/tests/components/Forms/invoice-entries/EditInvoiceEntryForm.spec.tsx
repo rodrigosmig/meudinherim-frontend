@@ -4,6 +4,7 @@ import { EditInvoiceEntryForm } from "../../../../components/Foms/InvoiceEntry/E
 import { useCardsForm } from "../../../../hooks/useCards";
 import { useCategoriesForm } from "../../../../hooks/useCategories";
 import { invoiceEntriesService } from "../../../../services/ApiService/InvoiceEntriesService";
+import { IInvoiceEntry } from "../../../../types/invoiceEntry";
 
 const invoiceEntriesServiceMocked = mocked(invoiceEntriesService.update);
 const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
@@ -41,7 +42,7 @@ const formCards = [
   }
 ]
 
-const entry = {
+const entry: IInvoiceEntry = {
   id: 1,
   date: "2021-10-21",
   description: "Invoice Entry Test",

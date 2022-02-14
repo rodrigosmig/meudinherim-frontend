@@ -7,17 +7,6 @@ import { setupApiClient } from "../../../../services/api";
 import { withSSRAuth } from "../../../../utils/withSSRAuth";
 import { useRouter } from 'next/router';
 
-type CategoriesForForm = {
-  income: {
-    id: number;
-    label: string
-  }[]
-  expense: {
-    id: number;
-    label: string
-  }[]
-}
-
 export default function CreateInvoiceEntry() {
   const router = useRouter();
 

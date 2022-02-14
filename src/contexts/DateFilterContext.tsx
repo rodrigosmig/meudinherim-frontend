@@ -1,22 +1,12 @@
 import { createContext, ReactNode, useContext, useState } from "react";
+import { DateRange, IDateFilterContextData } from "../types/date";
 import { toUsDate } from "../utils/helpers";
-
-type DateRange = [Date | null, Date | null];
-
-type DateFilterContextData = {
-  dateRange: [Date | null, Date | null];
-  startDate: Date;
-  endDate: Date;
-  setDateRange: (date: [Date | null, Date | null]) => void;
-  stringDateRange: [string, string];
-  setStringDateRange: (date: [string, string]) => void
-}
 
 interface DateFilterProviderProps {
   children: ReactNode;
 }
 
-const DateFilterContext = createContext({} as DateFilterContextData);
+const DateFilterContext = createContext({} as IDateFilterContextData);
 
 export const DateFilterProvider = ({ children }: DateFilterProviderProps) => {
   const [dateRange, setDateRange] = useState<DateRange>([null, null]);

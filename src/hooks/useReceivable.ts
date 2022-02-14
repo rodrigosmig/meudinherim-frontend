@@ -19,7 +19,7 @@ export const getReceivables = async (filterDate: [string, string], page: number,
         name: receivable.category.name,
         type: receivable.category.type
       },
-      invoice_id: receivable.invoice_id,
+      invoice: receivable.invoice,
       paid: receivable.paid,
       monthly: receivable.monthly,
       has_parcels: receivable.has_parcels,

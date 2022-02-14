@@ -8,6 +8,8 @@ import {
   Tr,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from "@chakra-ui/react"
+import { IPayable } from "../../types/payable";
+import { IReceivable } from "../../types/receivable";
 import { toBrDate, toCurrency } from "../../utils/helpers";
 import { Table } from "../Table";
 
@@ -53,12 +55,12 @@ interface Receivable {
   parcelable_id: number,
 }
 
-interface TabReportProps extends TabProps {
-  payables: Payable[];
-  receivables: Receivable[];
+interface Props extends TabProps {
+  payables: IPayable[];
+  receivables: IReceivable[];
 }
 
-export const AccountReportTab = ({ payables, receivables }: TabReportProps) => {
+export const AccountReportTab = ({ payables, receivables }: Props) => {
   return (
     <>
       <Tabs isFitted variant='enclosed'>

@@ -11,13 +11,7 @@ import { Input } from "../../Inputs/Input";
 import { CancelButton } from "../../Buttons/Cancel";
 import { cardService } from "../../../services/ApiService/CardService";
 import { getMessage } from "../../../utils/helpers";
-
-interface FormData {
-  name: string;
-  pay_day: number;
-  closing_day: number;
-  credit_limit: number;
-}
+import { ICardFormData } from "../../../types/card";
 
 interface CreateCardFormProps {
   closeModal: () => void,
@@ -34,7 +28,7 @@ const validationSchema = yup.object().shape({
     .max(31, 'O valor máximo é 31.'),
   credit_limit: yup.number().positive("O campo limite de crédito deve ser maior que zero")
     .typeError("O campo limite de crédito é obrigatório")
-})
+});
 
 export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => {
   const { register, handleSubmit, setError, formState } = useForm({
@@ -43,7 +37,7 @@ export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => 
 
   const { errors } = formState;
 
-  const handleCreateCard: SubmitHandler<FormData> = async (values) => {
+  const handleCreateCard: SubmitHandler<ICardFormData> = async (values) => {
     try {
       await cardService.create(values)
 

@@ -4,11 +4,11 @@ import {
   useBreakpointValue
 } from "@chakra-ui/react";
 
-interface AnticipateButtonProps extends ButtonProps {
+interface Props extends ButtonProps {
   onClick: () => void;
 }
 
-export const AnticipateButton = ({ onClick, ...rest }: AnticipateButtonProps) => {
+export const AnticipateButton = ({ onClick, ...rest }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

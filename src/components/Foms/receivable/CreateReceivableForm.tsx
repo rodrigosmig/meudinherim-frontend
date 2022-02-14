@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useState, ChangeEvent } from 'react';
 import { useRouter } from "next/router";
 import { 
@@ -18,26 +17,14 @@ import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage, toUsDate } from "../../../utils/helpers";
+import { IAccountSchedulingCreateData, IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
+import { IReceivableResponseError } from '../../../types/receivable';
 
-interface FormData {
+interface FormData extends Omit<IAccountSchedulingCreateData, "due_date"> {
   due_date: Date;
-  category_id: number;
-  description: string;
-  value: number;
-  monthly: boolean;
-  installment: boolean;
-  installments_number: number
 }
 
-type ResponseError = {
-  category_id: string[];
-  description: string[];
-  value: string[];
-}
-
-type Key = keyof ResponseError;
-
-interface CreateReceivableFormProps {
+interface Props {
   categories: {
     value: string;
     label: string
@@ -60,7 +47,7 @@ const validationSchema = yup.object().shape({
   })
 })
 
-export const CreateReceivableForm = ({ categories, onCancel, refetch }: CreateReceivableFormProps) => {  
+export const CreateReceivableForm = ({ categories, onCancel, refetch }: Props) => {  
   const router = useRouter();
 
   const { control, formState, register, handleSubmit, setError  } = useForm({
@@ -104,9 +91,9 @@ export const CreateReceivableForm = ({ categories, onCancel, refetch }: CreateRe
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IReceivableResponseError = error.response.data;
 
-        let key: Key        
+        let key: IAccountSchedulingErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

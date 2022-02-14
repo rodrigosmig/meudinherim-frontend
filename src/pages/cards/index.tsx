@@ -30,15 +30,7 @@ import { EditCardModal } from "../../components/Modals/cards/EditCardModal";
 import { InvoicesButton } from "../../components/Buttons/Invoices";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 import { setupApiClient } from "../../services/api";
-
-interface Card {
-  id: number;
-  name: string;
-  pay_day: number;
-  closing_day: number;
-  credit_limit: number;
-  balance: number;
-}
+import { ICard } from "../../types/card";
 
 export default function Cards() {
   const isWideVersion = useBreakpointValue({
@@ -54,7 +46,7 @@ export default function Cards() {
 
   const tableSize = isWideVersion ? 'md' : 'sm';
 
-  const [ selectedCard, setSelectedCard ] = useState({} as Card)
+  const [ selectedCard, setSelectedCard ] = useState({} as ICard)
 
   const handleEditCard = (category_id: number) => {
     const category = getSelectedCard(category_id);

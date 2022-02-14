@@ -41,13 +41,10 @@ import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
 import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
 import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
 import { useDateFilter } from '../../contexts/DateFilterContext';
+import { IPayable } from '../../types/payable';
+import { ICancelData } from '../../types/accountScheduling';
 
-interface CancelPayableData {
-  id: number, 
-  parcelable_id: null | number
-}
-
-interface AccountPayableProps {
+interface Props {
   categories: {
     value: string;
     label: string
@@ -58,28 +55,7 @@ interface AccountPayableProps {
   }[];
 }
 
-interface Payable {
-  id: number;
-  due_date: string;
-  paid_date: string | null;
-  description: string;
-  value: number;
-  category: {
-    id: number;
-    name: string;
-    type: 2
-  };
-  invoice: null | {invoice_id:number, card_id: number};
-  paid: boolean;
-  monthly: boolean;
-  has_parcels: boolean;
-  is_parcel: boolean,
-  total_purchase: number,
-  parcel_number: number,
-  parcelable_id: number,
-}
-
-export default function AccountPayables({ categories, accounts }: AccountPayableProps) {
+export default function AccountPayables({ categories, accounts }: Props) {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
   const { isOpen: paymentModalIsOpen, onOpen: paymentModalOnOpen, onClose: paymentModalOnClose } = useDisclosure();
@@ -96,7 +72,7 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
 
   const { stringDateRange, startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
 
-  const [ selectedPayable, setSelectedPayable ] = useState({} as Payable)
+  const [ selectedPayable, setSelectedPayable ] = useState({} as IPayable)
 
   const { data, isLoading, isFetching, isError, refetch } = usePayables(stringDateRange, page, perPage, payableStatus);
 
@@ -155,7 +131,7 @@ export default function AccountPayables({ categories, accounts }: AccountPayable
     setPerPage(value)
   }
 
-  const cancelPayment = useMutation(async (values: CancelPayableData) => {
+  const cancelPayment = useMutation(async (values: ICancelData) => {
     const response = await payableService.cancelPayment(values.id, values.parcelable_id);
   
     return response.data;

@@ -1,12 +1,12 @@
 import { ChangeEvent, memo } from 'react';
 import { Box, Flex, Select } from "@chakra-ui/react";
 
-interface FilterPerPageProps {
+interface Props {
   onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   isWideVersion: boolean;
 }
 
-export const FilterPerPage = ({ onChange, isWideVersion }: FilterPerPageProps) => {
+export const FilterPerPage = ({ onChange, isWideVersion }: Props) => {
   return (
     <Flex align="center">
       <Select

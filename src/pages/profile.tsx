@@ -21,24 +21,17 @@ import { ProfileForm } from '../components/Foms/profile/ProfileForm';
 import { Loading } from '../components/Loading/index';
 import { ChangePasswordForm } from '../components/Foms/profile/ChangePasswordForm';
 import { Heading } from '../components/Heading';
+import { IUser } from '../types/auth';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  avatar: string;
-  enable_notification: boolean;
+interface Props {
+  userUpdated: IUser;
 }
 
-interface ProfileProps {
-  userUpdated: User;
-}
-
-export default function Profile({ userUpdated }: ProfileProps) {
+export default function Profile({ userUpdated }: Props) {
   const { user, isAuthenticated, setUser } = useContext(AuthContext);
   const [localImageUrl, setLocalImageUrl] = useState(userUpdated.avatar);  
 
-  const handleUpdateUser = (user: User) => {
+  const handleUpdateUser = (user: IUser) => {
     setUser(user)
   }
 

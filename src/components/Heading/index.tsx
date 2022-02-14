@@ -4,11 +4,11 @@ import {
   HeadingProps as ChakraHeadingProps
 } from "@chakra-ui/react";
 
-interface HeadingProps extends ChakraHeadingProps {
+interface Props extends ChakraHeadingProps {
   children: ReactNode;
 }
 
-export const Heading = ({ children, ...rest }: HeadingProps) => {
+export const Heading = ({ children, ...rest }: Props) => {
 	return (
 		<ChakraHeading 
       fontSize={['md', '2xl']} 

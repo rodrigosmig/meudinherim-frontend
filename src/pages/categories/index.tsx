@@ -33,12 +33,7 @@ import { Table } from "../../components/Table";
 import { EditCategoryModal } from "../../components/Modals/categories/EditCategoryModal";
 import { CreateCategoryModal } from "../../components/Modals/categories/CreateCategoryModal";
 import { getMessage } from "../../utils/helpers";
-
-interface Category {
-  id: number;
-  type: 1 | 2;
-  name: string;
-}
+import { ICategory } from "../../types/category";
 
 export default function Categories() {
   const isWideVersion = useBreakpointValue({
@@ -55,7 +50,7 @@ export default function Categories() {
   const [categoryType, setCategoryType] = useState("");
   const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType, page, perPage);
 
-  const [ selectedCategory, setSelectedCategory ] = useState({} as Category)
+  const [ selectedCategory, setSelectedCategory ] = useState({} as ICategory)
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
 

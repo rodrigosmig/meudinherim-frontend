@@ -16,14 +16,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 const StyledaDatepicker = chakra(DatePicker);
 
-interface DatepickerProps {
+interface Props {
   selected: Date;
   label?: string;
   error?: FieldError;
   onChange: (date: Date) => void;
 }
 
-const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, DatepickerProps> = ({ label, selected, error=null, onChange, ...rest }, ref) => {
+const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, Props> = ({ label, selected, error=null, onChange, ...rest }, ref) => {
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("#B3B5C6", "#353646");
   const hoverColor = useColorModeValue('gray.50', 'gray.900');

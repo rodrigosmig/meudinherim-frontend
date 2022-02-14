@@ -10,33 +10,17 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { payableService } from "../../../services/ApiService/PayableService";
 import { Select } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
 import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
+import { IPayable, IPayableFormData, IPayableResponseError } from "../../../types/payable";
+import { IAccountSchedulingErrorKey } from "../../../types/accountScheduling";
 
-interface Payable {
-  id: number;
-  due_date: string;
-  paid_date: string | null;
-  description: string;
-  value: number;
-  category:{
-    id: number;
-    name: string;
-  };
-  invoice: null | {invoice_id:number, card_id: number};
-  paid: boolean;
-  monthly: boolean;
-  has_parcels: boolean;
-  is_parcel: boolean,
-  parcelable_id: number,
-}
-
-interface EditPayableFormProps {
-  payable: Payable;
+interface Props {
+  payable: IPayable;
   categories: {
     value: string;
     label: string
@@ -45,21 +29,9 @@ interface EditPayableFormProps {
   refetch: () => void
 }
 
-interface FormData {
+interface FormData extends Omit<IPayableFormData, "due_date"> {
   due_date: Date;
-  category_id: number;
-  description: string;
-  value: number;
-  monthly: boolean
 }
-
-type ResponseError = {
-  category_id: string[];
-  description: string[];
-  value: string[];
-}
-
-type Key = keyof ResponseError;
 
 const validationSchema = yup.object().shape({
   due_date: yup.date().typeError("O campo vencimento é obrigatório"),
@@ -68,7 +40,7 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
 })
 
-export const EditPayableForm = ({ payable, categories, closeModal, refetch }: EditPayableFormProps) => {
+export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Props) => {
   const [ monthly, setMonthly ] = useState(payable.monthly);
 
   const { control, register, handleSubmit, setError, formState } = useForm({
@@ -104,9 +76,9 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Ed
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IPayableResponseError = error.response.data;
 
-        let key: Key        
+        let key: IAccountSchedulingErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

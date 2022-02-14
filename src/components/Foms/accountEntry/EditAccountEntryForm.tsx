@@ -11,57 +11,21 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
+import { IAccountEntry, IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
 
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-
-interface Account {
-  id: number;
-  name: string;
-  type: {
-    id: string | 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  balance: number;
-}
-
-interface AccountEntry {
-  id: number;
-  date: string;
-  category: Category;
-  description: string;
-  value: number;
-  account: Account;
-}
-
-interface EditAccountEntryFormProps {
-  entry: AccountEntry;
+interface FormData extends Omit<IAccountEntryFormData, "date"> { 
+  date: Date 
+};
+interface Props {
+  entry: IAccountEntry;
   closeModal: () => void,
   refetch: () => void
 }
-
-interface FormData {
-  date: Date;
-  category_id: number;
-  description: string;
-  value: number;
-}
-
-type ResponseError = {
-  category_id: string[];
-  description: string[];
-  value: string[];
-}
-
-type Key = keyof ResponseError;
 
 const validationSchema = yup.object().shape({
   date: yup.date().typeError("O campo data é obrigatório"),
@@ -70,7 +34,7 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
 })
 
-export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccountEntryFormProps) => {  
+export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {  
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
@@ -105,9 +69,9 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: EditAccount
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IAccountEntryResponseError = error.response.data;
 
-        let key: Key        
+        let key: IAccountEntryErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

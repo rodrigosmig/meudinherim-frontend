@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { 
   Box,
   Button,
@@ -20,31 +19,13 @@ import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
 import { Heading } from "../../Heading";
 import { useQueryClient } from "react-query";
+import { IAccountEntryTransferData, IAccountEntryTransferResponseError, ITransferErrorKey } from "../../../types/accountEntry";
 
+interface FormData extends Omit<IAccountEntryTransferData, "date"> { 
+  date: Date 
+};
 
-interface FormData {
-  date: Date;
-  description: string;
-  value: number;
-  source_category_id: number;
-  destination_category_id: number;
-  source_account_id: number;
-  destination_account_id: number;
-}
-
-type ResponseError = {
-  date: string[];
-  description: string[];
-  value: string[];
-  source_category_id: string[];
-  destination_category_id: string[];
-  source_account_id: string[];
-  destination_account_id: string[];
-}
-
-type Key = keyof ResponseError;
-
-interface CreateAccountEntryFormProps {
+interface Props {
   onCancel: () => void;
 }
 
@@ -58,7 +39,7 @@ const validationSchema = yup.object().shape({
   destination_account_id: yup.number().integer("Categoria inválida").typeError("O campo conta de destino é inválido"),
 })
 
-export const TransferBetweenAccountsForm = ({ onCancel}: CreateAccountEntryFormProps) => {  
+export const TransferBetweenAccountsForm = ({ onCancel}: Props) => {  
   const queryClient = useQueryClient();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
@@ -80,6 +61,7 @@ export const TransferBetweenAccountsForm = ({ onCancel}: CreateAccountEntryFormP
   const { errors } = formState;
 
   const handleTransfer: SubmitHandler<FormData> = async (values) => {
+    console.log(666, values)
     const data = {
       ...values,
         date: values?.date ? toUsDate(values.date) : ''
@@ -96,9 +78,9 @@ export const TransferBetweenAccountsForm = ({ onCancel}: CreateAccountEntryFormP
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IAccountEntryTransferResponseError = error.response.data;
 
-        let key: Key        
+        let key: ITransferErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

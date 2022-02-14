@@ -1,23 +1,15 @@
+import { ICard } from "../../../types/card";
 import { EditCardForm } from "../../Foms/card/EditCardForm";
 import { Modal } from "../Modal";
 
-interface Card {
-  id: number;
-  name: string;
-  pay_day: number;
-  closing_day: number;
-  credit_limit: number;
-  balance: number;
-}
-
-interface EditPayableModalProps {
-  card: Card;
+interface Props {
+  card: ICard;
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-export const EditCardModal = ({ card, isOpen, onClose, refetch }: EditPayableModalProps) => {
+export const EditCardModal = ({ card, isOpen, onClose, refetch }: Props) => {
   return (
     <Modal
       header="Editar Cartão de Crédito"

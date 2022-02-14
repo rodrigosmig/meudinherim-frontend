@@ -3,13 +3,13 @@ import {
   Text
 } from "@chakra-ui/react";
 
-interface AccountReportHeaderProps {
+interface Props {
   title: string;
   color: string;
   content: string;
 }
 
-export const AccountReportHeader = ({title, color, content}: AccountReportHeaderProps) => {
+export const AccountReportHeader = ({title, color, content}: Props) => {
 
   return (
     <>

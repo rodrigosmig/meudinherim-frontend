@@ -11,7 +11,7 @@ const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 })
 
-interface DonutChartProps {
+interface Props {
   label: string;
   color: string;
   data:  {
@@ -20,7 +20,7 @@ interface DonutChartProps {
   }[],
 }
 
-export const DonutChart = ({ label, color, data }: DonutChartProps) => {
+export const DonutChart = ({ label, color, data }: Props) => {
   const bgColor = useColorModeValue('white', 'gray.700');
 
   const series = data.map(entry => {

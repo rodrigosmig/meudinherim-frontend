@@ -1,7 +1,7 @@
 import { CreateReceivableForm } from "../../Foms/receivable/CreateReceivableForm";
 import { Modal } from "../Modal";
 
-interface CreateReceivableModalProps {
+interface Props {
   categories: {
     value: string;
     label: string
@@ -11,7 +11,7 @@ interface CreateReceivableModalProps {
   refetch: () => void;
 }
 
-export const CreateReceivableModal = ({ categories, isOpen, onClose, refetch }: CreateReceivableModalProps) => {
+export const CreateReceivableModal = ({ categories, isOpen, onClose, refetch }: Props) => {
   return (
     <Modal
       header="Nova Conta a Receber"

@@ -1,13 +1,13 @@
 import { CreateCardForm } from "../../Foms/card/CreateCardForm";
 import { Modal } from "../Modal";
 
-interface CreateCategoryModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
 }
 
-export const CreateCardModal = ({ isOpen, onClose, refetch }: CreateCategoryModalProps) => {
+export const CreateCardModal = ({ isOpen, onClose, refetch }: Props) => {
 return (
   <Modal
     header="Novo Cartão de Crédito"

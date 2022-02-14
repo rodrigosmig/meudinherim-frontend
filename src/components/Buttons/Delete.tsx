@@ -13,7 +13,7 @@ import {
 import { memo, useRef, useState } from "react";
 import { RiDeleteBin2Line } from "react-icons/ri"
 
-interface DeleteButtonProps {
+interface Props {
   onDelete: () => void;
   resource: string;
   loading: boolean;
@@ -21,7 +21,7 @@ interface DeleteButtonProps {
   isParcel?: boolean
 }
 
-const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false, isParcel = false }: DeleteButtonProps) => {
+const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false, isParcel = false }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const cancelRef = useRef();
   const onClose = () => setIsOpen(false);

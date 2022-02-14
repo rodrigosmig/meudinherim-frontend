@@ -8,11 +8,11 @@ import {
 } from "@chakra-ui/react";
 import { MdPayment } from "react-icons/md";
 
-interface SubmitButtonProps extends ButtonProps {
+interface Props extends ButtonProps {
   label: string;
 }
 
-export const ShowPaymentButtonComponent = ({ label, ...rest }: SubmitButtonProps) => {
+export const ShowPaymentButtonComponent = ({ label, ...rest }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

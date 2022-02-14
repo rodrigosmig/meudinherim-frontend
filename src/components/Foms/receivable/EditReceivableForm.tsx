@@ -10,53 +10,21 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { Switch } from "../../Inputs/Switch";
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { getMessage, reverseBrDate, toUsDate } from '../../../utils/helpers';
 import { CancelButton } from '../../Buttons/Cancel';
+import { IReceivable, IReceivableFormData, IReceivableResponseError } from '../../../types/receivable';
+import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 
-interface Receivable {
-  id: number;
-  due_date: string;
-  paid_date: string | null;
-  description: string;
-  value: number;
-  category: {
-    id: number;
-    name: string;
-  };
-  invoice_id: number | null;
-  paid: boolean;
-  monthly: boolean;
-  has_parcels: boolean;
-  is_parcel: boolean,
-  total_purchase: number,
-  parcel_number: number,
-  parcelable_id: number,
-}
-
-interface FormData {
+interface FormData extends Omit<IReceivableFormData, "due_date"> {
   due_date: Date;
-  category_id: number;
-  description: string;
-  value: number;
-  monthly: boolean;
-  installment: boolean;
-  installments_number: number
 }
 
-type ResponseError = {
-  category_id: string[];
-  description: string[];
-  value: string[];
-}
-
-type Key = keyof ResponseError;
-
-interface CreateReceivableFormProps {
-  receivable: Receivable,
+interface Props {
+  receivable: IReceivable,
   categories: {
     value: string;
     label: string
@@ -70,16 +38,9 @@ const validationSchema = yup.object().shape({
   category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
-  installment: yup.boolean(),
-  installments_number: yup.number().when('installment', {
-    is: true,
-    then: yup.number().typeError("O número de parcelas é inválido")
-      .min(2, 'O valor mínimo é 2.')
-      .max(12, 'O valor máximo é 12.'),
-  })
 })
 
-export const EditReceivableForm = ({ receivable, categories, closeModal, refetch }: CreateReceivableFormProps) => {  
+export const EditReceivableForm = ({ receivable, categories, closeModal, refetch }: Props) => {  
   const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
       due_date: parseISO(reverseBrDate(receivable.due_date)),
@@ -92,7 +53,6 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
   });
 
   const [ monthly, setMonthly ] = useState(receivable.monthly);
-  const [ hasInstallment, setHasInstallment ] = useState(false);
 
   const { errors } = formState;
 
@@ -102,7 +62,6 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
       data: {
         ...values,
         monthly: monthly,
-        installment: hasInstallment,
         due_date: values?.due_date ? toUsDate(values.due_date) : ''
       }
     }
@@ -117,9 +76,9 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IReceivableResponseError = error.response.data;
 
-        let key: Key        
+        let key: IAccountSchedulingErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

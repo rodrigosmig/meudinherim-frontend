@@ -4,11 +4,11 @@ import Link from "next/link";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 
-interface InvoicesButtonProps {
+interface Props {
   href: string
 }
 
-const InvoicesButtonComponent = ({ href }: InvoicesButtonProps) => {
+const InvoicesButtonComponent = ({ href }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

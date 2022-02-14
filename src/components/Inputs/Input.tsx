@@ -9,13 +9,13 @@ import {
 import { forwardRef, ForwardRefRenderFunction } from 'react';
 import { FieldError } from 'react-hook-form'
 
-interface InputProps extends ChakraInputProps {
+interface Props extends ChakraInputProps {
   name: string;
   label?: string;
   error?: FieldError;
 }
 
-const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = ({ name, label, error=null, ...rest }, ref) => {
+const InputBase: ForwardRefRenderFunction<HTMLInputElement, Props> = ({ name, label, error=null, ...rest }, ref) => {
   const color = useColorModeValue('gray.50', 'gray.900');
 
   return (

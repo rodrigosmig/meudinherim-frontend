@@ -4,13 +4,13 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-interface PaginationItemProps {
+interface Props {
   number: number;
   isCurrent?: boolean;
   onPageChange: (page:number) => void;
 }
 
-export function PaginationItem({ number, isCurrent = false, onPageChange }: PaginationItemProps) {
+export function PaginationItem({ number, isCurrent = false, onPageChange }: Props) {
   const bgColor = useColorModeValue('gray.300', 'gray.700')
   const bgHover = useColorModeValue('gray.200', 'gray.500')
 

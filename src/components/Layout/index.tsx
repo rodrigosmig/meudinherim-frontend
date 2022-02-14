@@ -5,12 +5,12 @@ import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { Card } from '../Card';
 
-interface LayoutProps extends BoxProps {
+interface Props extends BoxProps {
   isDashboard?: boolean
   children: ReactNode
 }
 
-const LayoutComponent = ({ children, isDashboard = false, }: LayoutProps) => {
+const LayoutComponent = ({ children, isDashboard = false, }: Props) => {
   const bgColor = useColorModeValue('gray.50', 'gray.900');
 
   return (
@@ -28,12 +28,9 @@ const LayoutComponent = ({ children, isDashboard = false, }: LayoutProps) => {
             <Card>
               {children}
             </Card>
-          ) }       
-
+          )}
         </Box>
-
     </Box>
-
   )
 }
 

@@ -13,37 +13,20 @@ import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage } from "../../../utils/helpers";
+import { ICategoryErrorKey, ICategory, ICategoryFormData, ICategoryResponseError } from "../../../types/category";
 
-interface EditCategoryFormProps {
-  category: Category;
+interface Props {
+  category: ICategory;
   closeModal: () => void,
   refetch: () => void
 }
-
-interface Category {
-  id: number;
-  type: 1 | 2;
-  name: string;
-}
-
-interface FormData {
-  type: number;
-  name: string;
-}
-
-type ResponseError = {
-  type: string[];
-  name: string[];
-}
-
-type Key = keyof ResponseError
 
 const validationSchema = yup.object().shape({
   type: yup.string().required("O campo tipo é obrigatório"),
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-const EditCategoryFormComponent = ({ category, closeModal, refetch }: EditCategoryFormProps) => {
+const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => {
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       type: category.type,
@@ -54,7 +37,7 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: EditCatego
 
   const { errors } = formState;
 
-  const handleEditCategory: SubmitHandler<FormData> = async (values) => {
+  const handleEditCategory: SubmitHandler<ICategoryFormData> = async (values) => {
     const data = {
       categoryId: category.id,
       data: {
@@ -73,9 +56,9 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: EditCatego
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: ICategoryResponseError = error.response.data;
 
-        let key: Key        
+        let key: ICategoryErrorKey;
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

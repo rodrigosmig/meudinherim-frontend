@@ -3,11 +3,11 @@ import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import Link from "next/link";
 import { FaMoneyBillAlt } from "react-icons/fa";
 
-interface ExtractButtonProps {
+interface Props {
   href: string
 }
 
-const ExtractButtonComponent = ({ href }: ExtractButtonProps) => {
+const ExtractButtonComponent = ({ href }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

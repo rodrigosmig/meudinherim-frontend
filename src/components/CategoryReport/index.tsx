@@ -10,16 +10,13 @@ import {
 import { useState } from "react";
 import { useDateFilter } from "../../contexts/DateFilterContext";
 import { useByCategoryReport } from "../../hooks/useByCategoryReport";
+import { ICategory } from "../../types/category";
+import { ReportType } from "../../types/report";
 import { Loading } from "../Loading";
 import { TotalByCategoryModal } from "../Modals/reports/TotalByCategoryModal";
 import { TabTable } from "./TabTable";
 
-type Category = {
-  id: number,
-  name: string
-}
-
-type ReportType = 'card' | 'account';
+interface Category extends Omit<ICategory, "type"> {}
 
 export const CategoryReport = () => {
   const { stringDateRange } = useDateFilter();

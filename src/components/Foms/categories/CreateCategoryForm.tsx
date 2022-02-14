@@ -13,13 +13,9 @@ import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
 import { useRouter } from "next/router";
 import { getMessage } from "../../../utils/helpers";
+import { ICategoryFormData } from "../../../types/category";
 
-interface FormData {
-  type: number;
-  name: string;
-}
-
-interface CreateCategoryFormProps {
+interface Props {
   onCancel: () => void,
   refetch?: () => void
 }
@@ -29,7 +25,7 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-export const CreateCategoryForm = ({ onCancel, refetch }: CreateCategoryFormProps) => {
+export const CreateCategoryForm = ({ onCancel, refetch }: Props) => {
   const router = useRouter();
 
   const { register, handleSubmit, setError, formState } = useForm({
@@ -38,7 +34,7 @@ export const CreateCategoryForm = ({ onCancel, refetch }: CreateCategoryFormProp
 
   const { errors } = formState;
 
-  const handleCreateCategory: SubmitHandler<FormData> = async (values) => {
+  const handleCreateCategory: SubmitHandler<ICategoryFormData> = async (values) => {
     try {
       await categoryService.create(values);
 
@@ -81,7 +77,7 @@ export const CreateCategoryForm = ({ onCancel, refetch }: CreateCategoryFormProp
           error={errors.type}
           {...register('type')}
         />        
-@
+
         <Input
           name="name"
           type="text"

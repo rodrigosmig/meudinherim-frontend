@@ -6,7 +6,7 @@ interface SidebarDrawerProviderProps {
   children: ReactNode;
 }
 
-type SidebarDrawerContextData = UseDisclosureReturn
+type SidebarDrawerContextData = UseDisclosureReturn;
 
 const SidebarDrawerContext = createContext({} as SidebarDrawerContextData);
 

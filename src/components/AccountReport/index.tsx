@@ -4,16 +4,17 @@ import {
 } from "@chakra-ui/react"
 import { useDateFilter } from "../../contexts/DateFilterContext";
 import { useAccountsReport } from "../../hooks/useAccountsReport";
+import { StatusType } from "../../types/accountScheduling";
 import { toCurrency } from "../../utils/helpers";
 import { Loading } from "../Loading";
 import { AccountReportHeader } from "./Header";
 import { AccountReportTab } from "./Tab";
 
-interface AccountReportProps {
-  status: 'all' | 'open' | 'paid';
+interface Props {
+  status: StatusType;
 }
 
-export const AccountReport = ({ status }: AccountReportProps) => {
+export const AccountReport = ({ status }: Props) => {
   const { stringDateRange } = useDateFilter();
   const { data, isLoading, isFetching } = useAccountsReport(stringDateRange, status);
 

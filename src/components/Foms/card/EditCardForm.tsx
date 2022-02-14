@@ -11,6 +11,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { cardService } from "../../../services/ApiService/CardService";
 import { getMessage } from "../../../utils/helpers";
+import { ICard, ICardErrorKey, ICardFormData, ICardResponseError } from "../../../types/card";
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
@@ -22,40 +23,15 @@ const validationSchema = yup.object().shape({
     .max(31, 'O valor máximo é 31.'),
   credit_limit: yup.number().positive("O campo limite de crédito deve ser maior que zero")
     .typeError("O campo limite de crédito é obrigatório")
-})
+});
 
-interface Card {
-  id: number;
-  name: string;
-  pay_day: number;
-  closing_day: number;
-  credit_limit: number;
-  balance: number;
-}
-
-interface EditCardFormProps {
-  card: Card;
+interface Props {
+  card: ICard;
   closeModal: () => void,
   refetch: () => void
 }
 
-interface FormData {
-  name: string;
-  pay_day: number;
-  closing_day: number;
-  credit_limit: number;
-}
-
-type ResponseError = {
-  name: string[];
-  pay_day: string[];
-  closing_day: string[];
-  credit_limit: string[];
-}
-
-type Key = keyof ResponseError
-
-export const EditCardForm = ({ card, closeModal, refetch }: EditCardFormProps) => {
+export const EditCardForm = ({ card, closeModal, refetch }: Props) => {
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       name: card.name,
@@ -69,7 +45,7 @@ export const EditCardForm = ({ card, closeModal, refetch }: EditCardFormProps) =
 
   const { errors } = formState;
 
-  const handleEditAccount: SubmitHandler<FormData> = async (values) => {
+  const handleEditAccount: SubmitHandler<ICardFormData> = async (values) => {
     const data = {
       cardId: card.id,
       data: {
@@ -90,9 +66,9 @@ export const EditCardForm = ({ card, closeModal, refetch }: EditCardFormProps) =
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: ICardResponseError = error.response.data;
 
-        let key: Key        
+        let key: ICardErrorKey
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

@@ -3,31 +3,8 @@ import { mocked } from "ts-jest/utils";
 import { accountEntriesService } from "../../../../services/ApiService/AccountEntriesService";
 import { EditAccountEntryForm } from "../../../../components/Foms/accountEntry/EditAccountEntryForm";
 import { useCategoriesForm } from "../../../../hooks/useCategories";
-
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-
-interface AccountEntry {
-  id: number;
-  date: string;
-  category: Category;
-  description: string;
-  value: number;
-  account: Account;
-}
-
-interface Account {
-  id: number;
-  name: string;
-  type: {
-    id: string | 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  balance: number;
-}
+import { IAccount } from "../../../../types/account";
+import { IAccountEntry } from "../../../../types/accountEntry";
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -49,7 +26,7 @@ jest.mock('react-query')
 jest.mock('../../../../services/ApiService/AccountEntriesService');
 jest.mock('../../../../hooks/useCategories');
 
-const account: Account = {
+const account: IAccount = {
   id: 1,
   type: {
     id: 'checking_account',
@@ -59,7 +36,7 @@ const account: Account = {
   name: "Account Test"
 }
 
-const entry: AccountEntry = {
+const entry: IAccountEntry = {
   id: 1,
   date: '2021-09-01',
   category: {

@@ -6,12 +6,12 @@ import {
 } from "@chakra-ui/react"
 import { ReactNode } from "react"
 
-interface TableProps extends ChakraTableProps {
+interface Props extends ChakraTableProps {
   tableSize: 'sm' | 'md' | 'lg';
   children: ReactNode;
 }
 
-export const Table = ({ tableSize, children, ...rest }: TableProps) => {
+export const Table = ({ tableSize, children, ...rest }: Props) => {
   const { colorMode } = useColorMode();
 
   const colorScheme = colorMode === 'light' ? 'blackAlpha' : 'whiteAlpha'

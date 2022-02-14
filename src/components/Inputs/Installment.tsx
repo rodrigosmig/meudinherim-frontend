@@ -15,13 +15,13 @@ import { FieldError } from 'react-hook-form'
 import { Select } from "./Select"
 import { toCurrency } from "../../utils/helpers";
 
-interface InstallmentProps extends SelectProps {
+interface Props extends SelectProps {
   amount: number;
   isChecked: boolean;
   error?: FieldError;
 }
 
-const InstallmentBase: ForwardRefRenderFunction<HTMLSelectElement, InstallmentProps> = ({ amount, isChecked, error = null, ...rest }, ref) => {
+const InstallmentBase: ForwardRefRenderFunction<HTMLSelectElement, Props> = ({ amount, isChecked, error = null, ...rest }, ref) => {
   const [ installmentValue, setInstallmentValue ] = useState(0)
   const [ installmentNumber, setInstallmentNumber ] = useState(2)
 

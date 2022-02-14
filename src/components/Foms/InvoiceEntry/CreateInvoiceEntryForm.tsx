@@ -21,25 +21,11 @@ import { useCardsForm } from "../../../hooks/useCards";
 import { Installment } from "../../Inputs/Installment";
 import { Switch } from "../../Inputs/Switch";
 import { getMessage, toUsDate } from "../../../utils/helpers";
+import { IInvoiceEntryCreateData, IInvoiceEntryErrorKey, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
 
-interface FormData {
-  card_id: number;
+interface FormData extends Omit<IInvoiceEntryCreateData, "date"> {
   date: Date;
-  category_id: number;
-  description: string;
-  value: number;
-  installment: boolean;
-  installments_number: number
 }
-
-type ResponseError = {
-  category_id: string[];
-  description: string[];
-  value: string[];
-  date: string[];
-}
-
-type Key = keyof ResponseError;
 
 interface CreateInvoiceEntryFormProps {
   card_id?: number;
@@ -110,9 +96,9 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
       }
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IInvoiceEntryResponseError = error.response.data;
 
-        let key: Key        
+        let key: IInvoiceEntryErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

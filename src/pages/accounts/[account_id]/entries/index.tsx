@@ -38,36 +38,14 @@ import { ShowPaymentButton } from '../../../../components/Buttons/ShowPayment';
 import { AddButton } from '../../../../components/Buttons/Add';
 import { CreateAccountEntryModal } from '../../../../components/Modals/account_entries/CreateAccountEntryModal';
 import { useDateFilter } from '../../../../contexts/DateFilterContext';
+import { IAccount } from '../../../../types/account';
+import { IAccountEntry } from '../../../../types/accountEntry';
 
-interface Category {
-  id: number,
-  type: 1 | 2,
-  name: string,
-}
-interface Account {
-  id: number;
-  type: {
-    id: 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  name: string;
-  balance: number;
+interface Props {
+  account: IAccount
 }
 
-interface AccountEntriesProps {
-  account: Account
-}
-
-interface AccountEntry {
-  id: number;
-  date: string;
-  category: Category;
-  description: string;
-  value: number;
-  account: Account;
-}
-
-export default function AccountEntries({ account }: AccountEntriesProps) {  
+export default function AccountEntries({ account }: Props) {  
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -87,7 +65,7 @@ export default function AccountEntries({ account }: AccountEntriesProps) {
   const [payableId, setPayableId] = useState(null);
   const [parcelableId, setParcelableId ] = useState(null);
   const [receivableId, setReceivableId] = useState(null);
-  const [ selectedEntry, setSelectedEntry ] = useState({} as AccountEntry)
+  const [ selectedEntry, setSelectedEntry ] = useState({} as IAccountEntry)
 
   const { data, isLoading, isFetching, isError, refetch } = useAccountEntries(account.id, stringDateRange, page, perPage);
   const { data: dataBalance, isLoading: isLoadingBalance, refetch: refetchBalance } = useAccountBalance(account.id);

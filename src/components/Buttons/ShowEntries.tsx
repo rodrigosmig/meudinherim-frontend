@@ -2,11 +2,11 @@ import { memo } from "react";
 import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 
-interface EntriesButtonProps {
+interface Props {
   onClick: () => void;
 }
 
-const ShowEntriesButtonComponent = ({ onClick, ...rest }: EntriesButtonProps) => {
+const ShowEntriesButtonComponent = ({ onClick, ...rest }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

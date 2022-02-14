@@ -14,7 +14,6 @@ import {
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { Layout } from "../../components/Layout";
 import { AddButton } from "../../components/Buttons/Add";
 import { Loading } from "../../components/Loading";
@@ -24,7 +23,7 @@ import { Table } from "../../components/Table";
 import { Heading } from "../../components/Heading";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { getMessage, toCurrency, toUsDate } from '../../utils/helpers';
+import { getMessage, toCurrency } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
@@ -39,13 +38,10 @@ import { EditReceivableModal } from '../../components/Modals/receivables/EditRec
 import { PaymentButton } from '../../components/Buttons/Payment';
 import { ReceivementModal } from '../../components/Modals/receivables/ReceivementModal';
 import { useDateFilter } from '../../contexts/DateFilterContext';
+import { ICancelData } from '../../types/accountScheduling';
+import { IReceivable } from '../../types/receivable';
 
-interface CancelReceivableData {
-  id: number, 
-  parcelable_id: null | number
-}
-
-interface AccountReceivableProps {
+interface Props {
   categories: {
     value: string;
     label: string
@@ -56,30 +52,7 @@ interface AccountReceivableProps {
   }[];
 }
 
-interface Receivable {
-  id: number;
-  due_date: string;
-  paid_date: string | null;
-  description: string;
-  value: number;
-  category: {
-    id: number;
-    name: string;
-    type: 1
-  };
-  invoice_id: number | null;
-  paid: boolean;
-  monthly: boolean;
-  has_parcels: boolean;
-  is_parcel: boolean,
-  total_purchase: number,
-  parcel_number: number,
-  parcelable_id: number,
-}
-
-export default function AccountReceivable({ categories, accounts }: AccountReceivableProps) {
-  const router = useRouter();
-
+export default function AccountReceivable({ categories, accounts }: Props) {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
   const { isOpen: receivementModalIsOpen, onOpen: receivementModalOnOpen, onClose: receivementModalOnClose } = useDisclosure();
@@ -94,11 +67,8 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
   const [perPage, setPerPage] = useState(10);
   const [receivableStatus, setReceivableStatus] = useState("open");
   const { stringDateRange, startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
-/*   const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
-  const [filterDate, setFilterDate] = useState<[string, string]>(['', '']); */
 
-  const [ selectedReceivable, setSelectedReceivable ] = useState({} as Receivable)
+  const [ selectedReceivable, setSelectedReceivable ] = useState({} as IReceivable)
 
   const { data, isLoading, isFetching, isError, refetch } = useReceivables(stringDateRange, page, perPage, receivableStatus);
 
@@ -157,7 +127,7 @@ export default function AccountReceivable({ categories, accounts }: AccountRecei
     setPerPage(value)
   }
 
-  const cancelPayment = useMutation(async (values: CancelReceivableData) => {
+  const cancelPayment = useMutation(async (values: ICancelData) => {
     const response = await receivableService.cancelReceivement(values.id, values.parcelable_id);
   
     return response.data;

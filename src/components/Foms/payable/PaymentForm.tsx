@@ -1,4 +1,3 @@
-import React from "react"
 import { 
     Box,
     Button,
@@ -8,8 +7,6 @@ import {
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { format } from 'date-fns';
-
 import { Input } from "../../Inputs/Input"
 import { Switch } from "../../Inputs/Switch"
 import { getMessage, toBrDate, toUsDate } from "../../../utils/helpers"
@@ -17,29 +14,10 @@ import { payableService } from "../../../services/ApiService/PayableService";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
 import { Select } from "../../Inputs/Select";
+import { IPayable, IPaymentFormData } from "../../../types/payable";
 
-interface Payable {
-  id: number;
-  due_date: string;
-  paid_date: string | null;
-  description: string;
-  value: number;
-  category: {
-    id: number;
-    name: string;
-  };
-  invoice: null | {invoice_id:number, card_id: number};
-  paid: boolean;
-  monthly: boolean;
-  has_parcels: boolean;
-  is_parcel: boolean,
-  total_purchase: number,
-  parcel_number: number,
-  parcelable_id: number,
-}
-
-interface PaymentFormProps {
-    payable: Payable;
+interface Props {
+    payable: IPayable;
     accounts: {
       value: string;
       label: string;
@@ -48,11 +26,8 @@ interface PaymentFormProps {
     refetch: () => void;
 }
 
-interface FormData {
+interface FormData extends Omit<IPaymentFormData, "paid_date">  {
   paid_date: Date;
-  account_id: number;
-  value: number;
-  parcelable_id?: number
 }
 
 type ResponseError = {
@@ -69,7 +44,7 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
 })
 
-export const PaymentForm = ({ payable, accounts, onCancel, refetch }: PaymentFormProps) => {
+export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => {
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       account_id: "",

@@ -8,14 +8,14 @@ import { Layout } from "../../components/Layout";
 import { setupApiClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-interface CreateReceivableProps {
+interface Props {
   categories: {
     value: string;
     label: string
   }[];
 }
 
-export default function CreateReceivable({ categories }: CreateReceivableProps) {
+export default function CreateReceivable({ categories }: Props) {
   const router = useRouter();
 
   const handleOnCancel = () => {

@@ -19,8 +19,7 @@ export const Logo = () => {
   return (
     <>
     <Flex ml={[0, 4]}>
-      {isWideVersion && (
-        
+      {isWideVersion && (        
         <Image
           alt="Meu Dinherim"
           w={[6]}
@@ -40,7 +39,6 @@ export const Logo = () => {
         Meu Dinherim
         <Text as="span" color="pink.500" ml="1">.</Text>
       </Text>
-
     </Flex>
     </>
   )

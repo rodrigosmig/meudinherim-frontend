@@ -1,46 +1,18 @@
 import { setupApiClient } from "../api";
 import { AxiosResponse } from "axios";
-
-import { parseCookies } from 'nookies';
-
-type SignInCredentials = {
-  email: string;
-  password: string
-  device: string
-}
-
-interface User {
-  id: number;
-  name: string
-  email: string;
-  avatar: string;
-  enable_notification: boolean
-}
-
-type SignInResponse = {
-  token: string;
-  user: User
-}
-
-type RegisterData = {
-  name: string
-  email: string;
-  password: string;
-  password_confirmation: string;
-  enable_notification: boolean
-}
+import { IRegisterData, ISignInCredentials, ISignInResponse, IUser } from "../../types/auth";
 
 const apiClient = setupApiClient();
 
 export const authService = {
-  register: (data: RegisterData): Promise<AxiosResponse<User>> => apiClient.post(
+  register: (data: IRegisterData): Promise<AxiosResponse<IUser>> => apiClient.post(
     "/auth/register",
     data
     ),
-  signIn: (credentials: SignInCredentials): Promise<AxiosResponse<SignInResponse>> => apiClient.post(
+  signIn: (credentials: ISignInCredentials): Promise<AxiosResponse<ISignInResponse>> => apiClient.post(
     "/auth/login",
     credentials
     ),  
   signOut: (): Promise<AxiosResponse> => apiClient.post("/auth/logout"),
-  me: (): Promise<AxiosResponse<User>> => apiClient.get("/auth/me")
+  me: (): Promise<AxiosResponse<IUser>> => apiClient.get("/auth/me")
 };

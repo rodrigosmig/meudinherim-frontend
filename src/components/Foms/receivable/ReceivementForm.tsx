@@ -16,29 +16,11 @@ import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage, toUsDate } from "../../../utils/helpers";
+import { ITransactionErrorKey, ITransactionResponseError } from "../../../types/accountScheduling";
+import { IReceivable, IReceivementFormData } from "../../../types/receivable";
 
-interface Receivable {
-  id: number;
-  due_date: string;
-  paid_date: string | null;
-  description: string;
-  value: number;
-  category: {
-    id: number;
-    name: string;
-  };
-  invoice_id: number | null;
-  paid: boolean;
-  monthly: boolean;
-  has_parcels: boolean;
-  is_parcel: boolean,
-  total_purchase: number,
-  parcel_number: number,
-  parcelable_id: number,
-}
-
-interface ReceivementFormProps {
-    receivable: Receivable;
+interface Props {
+    receivable: IReceivable;
     accounts: {
       value: string;
       label: string;
@@ -47,20 +29,9 @@ interface ReceivementFormProps {
     refetch: () => void;
 }
 
-interface FormData {
+interface FormData extends Omit<IReceivementFormData, "paid_date"> {
   paid_date: Date;
-  account_id: number;
-  value: number;
-  parcelable_id?: number
 }
-
-type ResponseError = {
-  paid_date: string[];
-  account_id: string[];
-  value: string[];
-}
-
-type Key = keyof ResponseError;
 
 const validationSchema = yup.object().shape({
   paid_date: yup.date().typeError("O campo data de pagamento é obrigatório"),
@@ -68,7 +39,7 @@ const validationSchema = yup.object().shape({
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
 })
 
-export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: ReceivementFormProps) => {
+export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Props) => {
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       account_id: "",
@@ -100,9 +71,9 @@ export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Rec
       onCancel();  
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: ITransactionResponseError = error.response.data;
   
-        let key: Key        
+        let key: ITransactionErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

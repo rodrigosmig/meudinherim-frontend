@@ -30,16 +30,7 @@ import { EditAccountModal } from "../../components/Modals/accounts/EditAccountMo
 import { CreateAccountModal } from "../../components/Modals/accounts/CreateAccountModal";
 import { Table } from "../../components/Table";
 import { getMessage } from "../../utils/helpers";
-
-interface Account {
-  id: number;
-  type: {
-    id: 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  name: string;
-  balance: number;
-}
+import { IAccount } from "../../types/account";
 
 export default function Accounts() {
   const isWideVersion = useBreakpointValue({
@@ -55,7 +46,7 @@ export default function Accounts() {
 
   const tableSize = isWideVersion ? 'md' : 'sm';
 
-  const [ selectedAccount, setSelectedAccount ] = useState({} as Account)
+  const [ selectedAccount, setSelectedAccount ] = useState({} as IAccount)
 
   const handleEditAccount = (account_id: number) => {
     const account = getSelectedAccount(account_id);

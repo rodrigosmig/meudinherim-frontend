@@ -12,41 +12,20 @@ import { Input } from "../../Inputs/Input";
 import { Select } from "../../Inputs/Select";
 import { accountService } from '../../../services/ApiService/AccountService';
 import { getMessage } from "../../../utils/helpers";
+import { IAccountErrorKey, IAccount, IAccountFormData, IAccountResponseError } from "../../../types/account";
 
 const validationSchema = yup.object().shape({
   type: yup.string().required("O campo tipo é obrigatório"),
   name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
 })
 
-interface Account {
-  id: number;
-  type: {
-    id: 'money' | 'savings' | 'checking_account' | 'investment';
-    desc: string;
-  }
-  name: string;
-  balance: number;
-}
-
-interface EditAccountFormProps {
-  account: Account;
+interface Props {
+  account: IAccount;
   closeModal: () => void,
   refetch: () => void
 }
 
-interface FormData {
-  type: string;
-  name: string;
-}
-
-type ResponseError = {
-  type: string[];
-  name: string[];
-}
-
-type Key = keyof ResponseError
-
-export const EditAccountForm = ({ account, closeModal, refetch }: EditAccountFormProps) => {
+export const EditAccountForm = ({ account, closeModal, refetch }: Props) => {
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       type: account.type.id,
@@ -57,7 +36,7 @@ export const EditAccountForm = ({ account, closeModal, refetch }: EditAccountFor
 
   const { errors } = formState;
 
-  const handleEditAccount: SubmitHandler<FormData> = async (values) => {
+  const handleEditAccount: SubmitHandler<IAccountFormData> = async (values) => {
     const data = {
       accountId: account.id,
       data: {
@@ -76,9 +55,9 @@ export const EditAccountForm = ({ account, closeModal, refetch }: EditAccountFor
 
     } catch (error) {
       if (error.response?.status === 422) {
-        const data: ResponseError = error.response.data;
+        const data: IAccountResponseError = error.response.data;
 
-        let key: Key        
+        let key: IAccountErrorKey        
         for (key in data) {          
           data[key].map(error => {
             setError(key, {message: error})

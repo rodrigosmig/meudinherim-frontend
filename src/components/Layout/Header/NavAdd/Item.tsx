@@ -8,14 +8,14 @@ import {
 import NextLink from 'next/link';
 import { ReactElement } from "react";
 
-interface NavAddItemProps {
+interface Props {
   url: string;
   label: string;
   icon: ReactElement
   onClick?: () => void;
 }
 
-export const NavAddItem = ({ icon, label, url, onClick }: NavAddItemProps) => {
+export const NavAddItem = ({ icon, label, url, onClick }: Props) => {
   const bg = useColorModeValue('gray.50', 'gray.800');
 
   return (

@@ -2,12 +2,12 @@ import { TransferBetweenAccountsForm } from "../../Foms/accountEntry/TransferBet
 import { CreateCardForm } from "../../Foms/card/CreateCardForm";
 import { Modal } from "../Modal";
 
-interface CreateCategoryModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const TransferBetweenAccountsModal = ({ isOpen, onClose }: CreateCategoryModalProps) => {
+export const TransferBetweenAccountsModal = ({ isOpen, onClose }: Props) => {
 return (
   <Modal
     header="Transferência entre contas"
