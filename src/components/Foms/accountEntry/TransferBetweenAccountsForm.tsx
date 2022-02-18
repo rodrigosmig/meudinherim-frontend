@@ -61,7 +61,6 @@ export const TransferBetweenAccountsForm = ({ onCancel}: Props) => {
   const { errors } = formState;
 
   const handleTransfer: SubmitHandler<FormData> = async (values) => {
-    console.log(666, values)
     const data = {
       ...values,
         date: values?.date ? toUsDate(values.date) : ''
