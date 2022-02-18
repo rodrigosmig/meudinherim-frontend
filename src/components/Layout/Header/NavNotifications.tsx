@@ -102,7 +102,6 @@ export const NavNotifications = () => {
                   fontSize={'0.6rem'}
                   bgColor={'red'} 
                   borderRadius={'full'} 
-                  zIndex={9999}
                   p={"2px"}
                 >
                   {getQuantity()}
