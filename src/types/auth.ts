@@ -29,6 +29,8 @@ export interface IRegisterData extends UserFormData {
   enable_notification: boolean
 }
 
+export interface IResetPasswordData extends Omit<IRegisterData, "name" | "enable_notification"> {}
+
 export interface IProfileUpdateData {
   name: string
   email: string;
@@ -41,6 +43,17 @@ export interface IPasswordUpdateData {
   password_confirmation: string;
 }
 
+export interface IForgotPasswordData {
+  email: string
+}
+
+export interface IForgotPasswordResponse {
+  message: string;
+  errors?: {
+    email: string[]
+  }
+}
+
 export interface ISignInResponse {
   token: string;
   user: IUser
@@ -50,3 +63,11 @@ export interface IAvatarUpdateResponse {
   message: string;
   avatar: string
 }
+
+export interface IResetPasswordResponseError {
+  token: string[];
+  email: string[];
+  password: string[];
+}
+
+export type IResetPaaswordErrorKey = keyof IResetPasswordResponseError;
