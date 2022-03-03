@@ -1,76 +1,86 @@
+import { 
+  Flex, 
+  Stack, 
+  useColorModeValue 
+} from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useRouter } from 'next/router';
-import { Box, Flex, Stack, useColorModeValue } from "@chakra-ui/react";
 import { Input } from '../../Inputs/Input';
-import { authService } from '../../../services/ApiService/AuthService';
 import { SubmitButton } from '../../Buttons/Submit';
-import { Switch } from "../../Inputs/Switch";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
-import { IRegisterData } from "../../../types/auth";
-import { Link } from "../../Link";
+import { authService } from "../../../services/ApiService/AuthService";
+import { IResetPaaswordErrorKey, IResetPasswordData, IResetPasswordResponseError } from "../../../types/auth";
 import { Heading } from "../../Heading";
+import { Link } from "../../Link";
+import { useRouter } from "next/router";
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
   email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
   password: yup.string().required("O campo senha é obrigatório").min(8, "O campo senha deve ter no mínimo 8 caracteres"),
   password_confirmation: yup.string().oneOf([null, yup.ref('password')], 'As senhas precisam ser iguais')
-})
+});
 
-export function RegisterForm() {
-  const router = useRouter()
+interface Props {
+  token: string;
+}
 
-  const { register, reset, handleSubmit, setError, formState } = useForm({
+export const ResetPasswordForm = ({ token }: Props) => {
+  const router = useRouter();
+  
+  const { register, handleSubmit, setError, reset, formState } = useForm({
     resolver: yupResolver(validationSchema)
   });
   const { errors } = formState;
 
-  const handleRegister: SubmitHandler<IRegisterData> = async (values) => { 
+  const handleSendEmail: SubmitHandler<IResetPasswordData> = async (values) => {
+    const data = {
+      token: token,
+      ...values
+    }
     try {
-      const response = await authService.register(values);
-      const name = response.data.name;
+      const response = await authService.resetPassword(data);
+      const message = response.data.message;
 
-      getMessage("Sucesso", `Usuário ${name} cadastrado com sucesso`);
+      getMessage("Sucesso", message, 'success');
 
       reset();
-      
-      router.push('/')
+
+      router.push("/");
+
     } catch (error) {
       if (error.response?.status === 422) {
-        const data = error.response.data;
+        const data: IResetPasswordResponseError = error.response.data;
 
-        for (const key in data) {          
+        let key: IResetPaaswordErrorKey
+        for (key in data) {   
           data[key].map(error => {
             setError(key, {message: error})
           })
         }
+      }
+
+      if (error.response?.status === 400) {
+        getMessage("Dados inválidos", error.response.data.message, 'error');
       }
     }
   }
 
   return (
     <Flex
-      as="form"      
-      w={[360]}
+      as="form"
+      w={['100%']}
+      maxW={[340, 340, 360]}
       flexDir={["column"]}
       bg={useColorModeValue('white', 'gray.800')}
-      p={8}
+      p={[8]}
+      mb={8}
       borderRadius={[8]}
-      onSubmit={handleSubmit(handleRegister)}
+      onSubmit={handleSubmit(handleSendEmail)}
     >
-      <Heading mb={8}>Cadastrar Usuário</Heading>
+      <Heading mb={8}>Resetar senha</Heading>
 
       <Stack spacing={[4]}>
-        <Input 
-          name='name'
-          type='text'
-          label='Nome'
-          error={errors.name}
-          {...register('name')}
-        />
-
         <Input 
           name='email'
           type='email'
@@ -94,26 +104,21 @@ export function RegisterForm() {
           error={errors.password_confirmation}
           {...register('password_confirmation')}
         />
-        
-        <Switch
-          id="notifications" 
-          label="Receber notificações"
-          {...register('enable_notification')}
-        />
-      </Stack>
 
+      </Stack>
 
       <SubmitButton
         mt={[6]}
-        label="Cadastrar"
+        label="Resetar Senha"
         isLoading={formState.isSubmitting}
       />
-      
+
       <Flex mt={8}>
         <Link href="/">
-          Já tenho um usuário
+          Voltar
         </Link>
       </Flex>
+
     </Flex>
   )
 }

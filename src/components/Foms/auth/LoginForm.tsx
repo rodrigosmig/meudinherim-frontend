@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { useState, useContext } from "react";
 import { 
-  Box, 
+  Box,
   Flex, 
   Stack, 
   useColorModeValue 
@@ -14,6 +13,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
 import { ISignInCredentials } from "../../../types/auth";
+import { Link } from "../../Link";
 
 const validationSchema = yup.object().shape({
   email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
@@ -86,16 +86,18 @@ export function LoginForm() {
         isLoading={formState.isSubmitting || isSubimited}
       />
 
-      <Link href="/register" passHref>
-        <Box as="a" mt={[8]} 
-          _hover={{
-            cursor: 'pointer',
-            color: 'pink.400'
-          }}
-        >
-          Cadastrar novo usuário        
-        </Box>
-      </Link>
+      <Flex 
+        direction={"column"}
+        mt={8}
+      >
+        <Link href="/forgot-password">
+            Esqueci minha senha
+        </Link>
+
+        <Link href="/register">
+            Cadastrar novo usuário
+        </Link>
+      </Flex>
     </Flex>
   )
 }
