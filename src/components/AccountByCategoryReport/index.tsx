@@ -39,7 +39,7 @@ export const AccountByCategoryReport = ({ accountId }: Props) => {
   const handleSelectedCategory = useCallback((id: number, name: string) => {
     setCategory({id, name});
     onOpen();
-  }, [])
+  }, [onOpen])
 
   if (isLoading || isFetching ) {
     return <Loading />

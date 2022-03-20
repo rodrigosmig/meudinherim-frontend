@@ -67,7 +67,7 @@ export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, ac
     if (isOpen) {
       fetchData();
     }
-  }, [isOpen, category, onClose, reportType, stringDateRange]);
+  }, [isOpen, category, onClose, reportType, stringDateRange, selectedAccountId]);
 
   const handleOnClose = () => {
     setIsLoading(true)
