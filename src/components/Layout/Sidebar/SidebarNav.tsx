@@ -27,22 +27,23 @@ export const SidebarNav = () => {
         </NavSection>
 
         <NavSection title="Contas">
-            <NavLink href="/accounts" icon={RiBankLine}>Contas</NavLink>
+          <NavLink href="/accounts" icon={RiBankLine}>Contas</NavLink>
         </NavSection>
       
         <NavSection title="Cartão de Crédito">
-            <NavLink href="/cards" icon={FaCreditCard}>Cartão de Crédito</NavLink>
+          <NavLink href="/cards" icon={FaCreditCard}>Cartão de Crédito</NavLink>
         </NavSection>
 
         <NavSection title="Agendamento">
-            <NavLink href="/receivables" icon={GiReceiveMoney}>Contas a Receber</NavLink>
-            <NavLink href="/payables" icon={GiPayMoney}>Contas a Pagar</NavLink>
+          <NavLink href="/receivables" icon={GiReceiveMoney}>Contas a Receber</NavLink>
+          <NavLink href="/payables" icon={GiPayMoney}>Contas a Pagar</NavLink>
         </NavSection>
 
 
         <NavSection title="Relatórios">
-            <NavLink href="/reports/accounts" icon={FaMoneyBillAlt}>Contas a Pagar/Receber</NavLink>
-            <NavLink href="/reports/total-by-category" icon={RiPriceTag3Line}>Total por Categoria</NavLink>
+          <NavLink href="/reports/accounts" icon={FaMoneyBillAlt}>Contas a Pagar/Receber</NavLink>
+          <NavLink href="/reports/account-total-by-category" icon={RiPriceTag3Line}>Total de Contas por Categoria</NavLink>
+          <NavLink href="/reports/credit-total-by-category" icon={RiPriceTag3Line}>Total de Crédito por Categoria</NavLink>
         </NavSection>
         
       </Stack>

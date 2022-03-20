@@ -15,6 +15,17 @@ export interface IAccountReportResponse {
   }
 }
 
+export interface TotalByCategoryResponse {
+  category: string;
+  id: number;
+  total: number;
+  quantity: number
+}
+
+export interface ITotalCreditByCategory {
+  data: TotalByCategoryResponse[]
+}
+
 export interface ITotalByCategoryResponse {
   incomes: {
     category: string;

@@ -8,35 +8,48 @@ import {
   Td,
   Text
 } from "@chakra-ui/react";
-import { ReportType } from "../../types/report";
+import { memo } from "react";
+import { ReportType, TotalByCategoryResponse } from "../../types/report";
 import { toCurrency } from "../../utils/helpers";
 import { Table } from "../Table";
 
 interface Props extends TableProps {
   reportType: ReportType;
   headList: string[];
-  data: {
-    category: string;
-    id: number;
-    total: number;
-    quantity: number
-  }[],
+  data: TotalByCategoryResponse[],
   openModal: (id: number, name: string, reportType: ReportType) => void;
 }
 
-export const TabTable = ({ data, headList, openModal, reportType, ...rest }: Props) => {
+const TableReportComponent = ({ data, headList, openModal, reportType, ...rest }: Props) => {
+
+  const isEmpty = () => {
+    return data.length === 0;
+  }
+
   return (
     <Table tableSize={"md"} {...rest}>
       <Thead>
-        <Tr>
-          { headList.map(head => (
-            <Th key={head}>{ head }</Th>
-          ))}
-        </Tr>
+        { isEmpty() 
+          ? (
+              <Text
+                fontWeight={"bold"}
+                mt={[4]}
+              >
+                Nenhum Lançamento encontrado
+              </Text>
+            ) 
+          : (
+            <Tr>
+              { headList.map(head => (
+                <Th key={head}>{ head }</Th>
+              ))}
+            </Tr>
+          )
+        }
       </Thead>
 
       <Tbody>
-        { data.map(category => (
+        { !isEmpty() && data.map(category => (
           <Tr key={category.id}>
             <Td fontSize={["xs", "md"]}>
               <Text>{ category.category }</Text>
@@ -61,3 +74,5 @@ export const TabTable = ({ data, headList, openModal, reportType, ...rest }: Pro
     </Table>
   )
 }
+
+export const TableReport = memo(TableReportComponent);

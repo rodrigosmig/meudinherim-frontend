@@ -1,33 +1,30 @@
-import { ChangeEvent, useState } from "react";
 import Head from "next/head";
 import { 
   Flex,
-  useBreakpointValue,
   Box,
-  Select
 } from "@chakra-ui/react"
 import { Heading } from "../../../components/Heading"
 import { Layout } from "../../../components/Layout"
 import { DateFilter } from "../../../components/DateFilter";
 import { withSSRAuth } from "../../../utils/withSSRAuth";
 import { setupApiClient } from "../../../services/api";
-import { CategoryReport } from "../../../components/CategoryReport";
 import { useDateFilter } from "../../../contexts/DateFilterContext";
+import { CreditByCategoryReport } from "../../../components/CreditByCategoryReport";
 
 
-export default function TotalByCategoryReport() {
+export default function CreditTotalByCategoryReport() {
   const { startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
 
   return (
     <>
       <Head>
-        <title>Relatório Total por Categoria | Meu Dinherim</title>
+        <title>Relatório de Crédito por Categoria | Meu Dinherim</title>
       </Head>
       <Layout>
         <Flex mb={[6, 6, 8]} justify="space-between" align="center">
           <Heading>
             <>
-              Relatório Total por Categoria
+              Total de Gastos no Crédito por Categoria
             </>
           </Heading>
         </Flex>
@@ -43,7 +40,7 @@ export default function TotalByCategoryReport() {
           />
           
         <Box>
-          <CategoryReport />
+          <CreditByCategoryReport />
         </Box>
         
       </Layout>

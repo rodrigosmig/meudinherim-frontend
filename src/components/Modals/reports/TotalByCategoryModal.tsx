@@ -26,6 +26,7 @@ interface Props {
     id: number;
     name: string
   };
+  accountId?: number;
 }
 
 interface Entries {
@@ -40,7 +41,7 @@ interface Entries {
   source: string;
 }[]
 
-export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType }: Props) => {
+export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, accountId }: Props) => {
   const { stringDateRange } = useDateFilter();
   const [isLoading, setIsLoading] = useState(true);
   const [entries, setEntries] = useState<Entries[]>();
@@ -48,10 +49,12 @@ export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType }: 
 
   const colorScheme = colorMode === 'light' ? 'blackAlpha' : 'gray';
 
+  const selectedAccountId = accountId ? accountId : 0
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const receivableResponse = await reportService.getTotalByCategoryDetailed(stringDateRange, category.id, reportType);
+        const receivableResponse = await reportService.getTotalByCategoryDetailed(stringDateRange, category.id, reportType, selectedAccountId);
         const newEntries = receivableResponse.data.data;
 
         setEntries(newEntries)
@@ -64,7 +67,7 @@ export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType }: 
     if (isOpen) {
       fetchData();
     }
-  }, [isOpen, category, onClose, reportType, stringDateRange]);
+  }, [isOpen, category, onClose, reportType, stringDateRange, selectedAccountId]);
 
   const handleOnClose = () => {
     setIsLoading(true)

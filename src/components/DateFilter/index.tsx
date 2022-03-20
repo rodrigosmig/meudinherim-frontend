@@ -7,7 +7,8 @@ import {
   IconButton, 
   HStack, 
   useColorModeValue, 
-  useBreakpointValue
+  useBreakpointValue,
+  Text
 } from '@chakra-ui/react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import ptBR from "date-fns/locale/pt-BR";
@@ -38,26 +39,28 @@ const DateFilterComponent = ({ startDate, endDate, label = 'Filtrar por período
   });
 
   return (
+    <>
     <HStack spacing={3} mb={[6, 8]}>
-      <Flex w={[200, 250]}>
+      { isWideVersion && <Text fontSize="lg">Período:</Text> }
+      <Flex w={[200, 250]} >
         <StyledaDatepicker
-            w={[200, 250]}
-            h={[10, 12]}
-            fontSize={["sm", "md"]}
-            px={[2, 4]}
-            borderRadius="0.375rem"
-            bgColor={bgColor}
-            _focus={{
-              outline: '2px solid #D53F8C',
-            }}
-            dateFormat="dd/MM/yyyy"
-            locale={ptBR}
-            selectsRange={true}
-            startDate={startDate}
-            endDate={endDate}
-            onChange={onChange}
-            isClearable={true}
-            placeholderText={label}
+          w={[200, 250]}
+          h={[10, 12]}
+          fontSize={["sm", "md"]}
+          px={[2, 4]}
+          borderRadius="0.375rem"
+          bgColor={bgColor}
+          _focus={{
+            outline: '2px solid #D53F8C',
+          }}
+          dateFormat="dd/MM/yyyy"
+          locale={ptBR}
+          selectsRange={true}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={onChange}
+          isClearable={true}
+          placeholderText={label}
         />
       </Flex>
 
@@ -89,10 +92,9 @@ const DateFilterComponent = ({ startDate, endDate, label = 'Filtrar por período
           icon={<RiFilter2Line />} 
           onClick={onClick}
         />
-      )}
-
-        
+      )}        
     </HStack>
+    </>
   )
 }
 

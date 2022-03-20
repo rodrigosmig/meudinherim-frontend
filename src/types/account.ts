@@ -42,3 +42,5 @@ export interface IAccountUpdateData {
   accountId: number;
   data: IAccountFormData;
 }
+
+export type AccountIdType = number | 'all';
