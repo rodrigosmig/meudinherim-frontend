@@ -7,7 +7,7 @@ import {
   Text,
   useColorModeValue
 } from "@chakra-ui/react";
-import { forwardRef, ForwardRefRenderFunction } from "react";
+import { forwardRef, ForwardRefRenderFunction, memo } from "react";
 import { FieldError } from "react-hook-form";
 
 interface Props extends ChakraSelectProps {
@@ -48,4 +48,4 @@ const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, Props> = ({ name, 
   );
 }
 
-export const Select = forwardRef(SelectBase);
+export const Select = memo(forwardRef(SelectBase));

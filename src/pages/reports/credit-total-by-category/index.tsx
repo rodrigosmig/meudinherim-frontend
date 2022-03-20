@@ -18,13 +18,13 @@ export default function CreditTotalByCategoryReport() {
   return (
     <>
       <Head>
-        <title>Total Gastos de Crédito por Categoria | Meu Dinherim</title>
+        <title>Relatório de Crédito por Categoria | Meu Dinherim</title>
       </Head>
       <Layout>
         <Flex mb={[6, 6, 8]} justify="space-between" align="center">
           <Heading>
             <>
-              Total Gastos no Crédito por Categoria
+              Total de Gastos no Crédito por Categoria
             </>
           </Heading>
         </Flex>

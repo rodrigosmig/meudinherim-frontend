@@ -42,7 +42,7 @@ export const SidebarNav = () => {
 
         <NavSection title="Relatórios">
           <NavLink href="/reports/accounts" icon={FaMoneyBillAlt}>Contas a Pagar/Receber</NavLink>
-          <NavLink href="/reports/total-by-category" icon={RiPriceTag3Line}>Contas: Total por Categoria</NavLink>
+          <NavLink href="/reports/account-total-by-category" icon={RiPriceTag3Line}>Total de Contas por Categoria</NavLink>
           <NavLink href="/reports/credit-total-by-category" icon={RiPriceTag3Line}>Total de Crédito por Categoria</NavLink>
         </NavSection>
         

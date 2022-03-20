@@ -7,37 +7,41 @@ import {
   useColorMode,
   useDisclosure
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useDateFilter } from "../../contexts/DateFilterContext";
-import { useByCategoryReport } from "../../hooks/useByCategoryReport";
+import { useAccountByCategoryReport } from "../../hooks/useAccountByCategoryReport";
+import { AccountIdType } from "../../types/account";
 import { ICategory } from "../../types/category";
-import { ReportType } from "../../types/report";
 import { Loading } from "../Loading";
 import { TotalByCategoryModal } from "../Modals/reports/TotalByCategoryModal";
-import { TabTable } from "./TabTable";
+import { TableReport } from "../TableReport";
 
 interface Category extends Omit<ICategory, "type"> {}
 
-export const CategoryReport = () => {
+interface Props {
+  accountId: number;
+}
+
+export const AccountByCategoryReport = ({ accountId }: Props) => {
   const { stringDateRange } = useDateFilter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
   const [category, setCategory] = useState({} as Category);
-  const [reportType, setReportType] = useState<ReportType>()
+  
   
   const colorScheme = colorMode === 'light' ? 'blackAlpha' : 'gray';
 
-  const { data, isLoading, isFetching } = useByCategoryReport(stringDateRange);  
+  const { data, isLoading, isFetching } = useAccountByCategoryReport(stringDateRange, accountId);
+   
 
   const headList = ['Categoria', 'Quantidade', 'Total'];
 
-  const handleSelectedCategory = (id: number, name: string, type: ReportType) => {
+  const handleSelectedCategory = useCallback((id: number, name: string) => {
     setCategory({id, name});
-    setReportType(type)
     onOpen();
-  }
+  }, [])
 
-  if (isLoading || isFetching) {
+  if (isLoading || isFetching ) {
     return <Loading />
   }
 
@@ -47,19 +51,19 @@ export const CategoryReport = () => {
         isOpen={isOpen}
         onClose={onClose}
         category={category}
-        reportType={reportType}
+        reportType="account"
+        accountId={accountId}
       />
       { !Array.isArray(data) && (
         <Tabs isFitted variant='enclosed'>
           <TabList mb='1em' >
             <Tab fontSize={['xs', 'md']}>Entrada</Tab>
             <Tab fontSize={['xs', 'md']}>Saída</Tab>
-            <Tab fontSize={['xs', 'md']}>Cartão de Crédito</Tab>
           </TabList>
 
           <TabPanels>
             <TabPanel>
-              <TabTable
+              <TableReport
                 reportType="account"
                 data={data.incomes}
                 headList={headList}
@@ -70,7 +74,7 @@ export const CategoryReport = () => {
             </TabPanel>
 
             <TabPanel>
-              <TabTable
+              <TableReport
                 reportType="account"
                 data={data.expenses}
                 headList={headList}
@@ -79,18 +83,6 @@ export const CategoryReport = () => {
                 openModal={handleSelectedCategory}
               />
             </TabPanel>
-
-            <TabPanel>
-              <TabTable
-                reportType="card"
-                data={data.creditCard}
-                headList={headList}
-                variant='striped'
-                colorScheme={colorScheme}
-                openModal={handleSelectedCategory}
-              />
-            </TabPanel>
-
           </TabPanels>
         </Tabs>
       ) }
