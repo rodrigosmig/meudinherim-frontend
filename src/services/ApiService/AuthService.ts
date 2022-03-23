@@ -11,11 +11,13 @@ interface ResetPasswordData extends IResetPasswordData {
 export const authService = {
   register: (data: IRegisterData): Promise<AxiosResponse<IUser>> => apiClient.post(
     "/auth/register",
-    data
+    data,
+    {timeout: 5000}
     ),
   signIn: (credentials: ISignInCredentials): Promise<AxiosResponse<ISignInResponse>> => apiClient.post(
     "/auth/login",
-    credentials
+    credentials,
+    {timeout: 5000}
     ),  
   signOut: (): Promise<AxiosResponse> => apiClient.post("/auth/logout"),
   me: (): Promise<AxiosResponse<IUser>> => apiClient.get("/auth/me"),

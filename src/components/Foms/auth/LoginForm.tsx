@@ -1,8 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useCallback, useEffect } from "react";
 import { 
   Box,
   Flex, 
   Stack, 
+  useColorMode, 
   useColorModeValue 
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -14,6 +15,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
 import { ISignInCredentials } from "../../../types/auth";
 import { Link } from "../../Link";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const validationSchema = yup.object().shape({
   email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
@@ -22,6 +24,10 @@ const validationSchema = yup.object().shape({
 
 export function LoginForm() {
   const [isSubimited, setIsSubimited] = useState(false);
+  const [reCaptchaToken, setReCaptchaToken] = useState('');
+  const [isHuman, setIsHuman] = useState(false);
+
+  const { colorMode } = useColorMode();
 
   const { signIn } = useContext(AuthContext);  
   const { register, handleSubmit, formState } = useForm({
@@ -30,10 +36,19 @@ export function LoginForm() {
   const { errors } = formState;
 
   const handleLogin: SubmitHandler<ISignInCredentials> = async (values) => {
+    const newValues = {
+      ...values,
+      reCaptchaToken: reCaptchaToken
+    }
+
     try {
-      await signIn(values);
+      await signIn(newValues);
       setIsSubimited(true);
     } catch (error) {
+      if (error?.code === 'ECONNABORTED') {
+        return getMessage("Falha ao Entrar", "Servidor indisponível", 'error');
+      }
+
       const data = error.response.data
 
       if (data.error) {
@@ -49,6 +64,15 @@ export function LoginForm() {
         }
       }
     }
+  }
+
+  const handleClickRecaptcha = (token: string) => {
+    setReCaptchaToken(token);
+    setIsHuman(true);
+  }
+
+  const handleExpiredToken = () => {
+    setIsHuman(false);
   }
 
   return (
@@ -80,10 +104,21 @@ export function LoginForm() {
         />
       </Stack>
 
+      <Box marginTop={6}>
+        <ReCAPTCHA
+          sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY}
+          theme={colorMode}
+          hl="pt-BR"
+          onChange={handleClickRecaptcha}
+          onExpired={handleExpiredToken}
+        />
+      </Box>
+
       <SubmitButton
         mt={[6]}
         label="Entrar"
         isLoading={formState.isSubmitting || isSubimited}
+        isDisabled={!isHuman}
       />
 
       <Flex 
