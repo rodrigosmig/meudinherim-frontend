@@ -66,10 +66,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, []);
 
-  const signIn = async ({ email, password }: ISignInCredentials) => {
+  const signIn = async ({ email, password, reCaptchaToken }: ISignInCredentials) => {
     const response = await authService.signIn({
       email,
       password,
+      reCaptchaToken,
       device: 'web'
     })
 

@@ -3,8 +3,21 @@ import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
 import { mocked } from 'ts-jest/utils';
 import { RegisterForm } from "../../../components/Foms/auth/RegisterForm";
 import { authService } from "../../../services/ApiService/AuthService";
+import React from "react";
 
-jest.mock('../../../services/ApiService/AuthService')
+jest.mock('../../../services/ApiService/AuthService');
+
+jest.mock('react-google-recaptcha', () => {
+  const ReCaptchaV2 = () => {
+    return (
+      <input type="checkbox" 
+        data-testid="recaptcha-register"
+        onChange={jest.fn}
+      />
+    )
+  }
+  return ReCaptchaV2;
+});
 
 describe('RegisterForm Component', () => {
   beforeEach(() => {
@@ -21,7 +34,7 @@ describe('RegisterForm Component', () => {
     expect(screen.getByText("O campo senha é obrigatório")).toBeInTheDocument();
   });
 
-  it('validates user inputs', async () => {
+   it('validates user inputs', async () => {
     fireEvent.input(screen.getByLabelText('Nome'), {
       target: {value: 'T'}
     })

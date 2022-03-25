@@ -12,7 +12,8 @@ export interface IUser {
 }
 
 export interface ISignInCredentials extends UserFormData {
-  device?: string
+  device?: string;
+  reCaptchaToken: string;
 }
 
 export interface IAuthContextData {
@@ -26,7 +27,8 @@ export interface IAuthContextData {
 export interface IRegisterData extends UserFormData {
   name: string
   password_confirmation: string;
-  enable_notification: boolean
+  enable_notification: boolean;
+  reCaptchaToken: string;
 }
 
 export interface IResetPasswordData extends Omit<IRegisterData, "name" | "enable_notification"> {}
