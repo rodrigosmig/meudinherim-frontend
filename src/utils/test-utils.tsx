@@ -13,7 +13,8 @@ const user = {
   name: 'test',
   email: 'test@test.com',
   avatar: 'test',
-  enable_notification: false
+  enable_notification: false,
+  hasEmailVerified: true
 }
 
 const AllTheProviders:FC = ({ children }) => {

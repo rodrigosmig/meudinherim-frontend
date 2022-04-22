@@ -57,8 +57,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     if (token) {
       authService.me().then(response => {
-        const { id, name, email, avatar, enable_notification } = response.data;
-        setUser({ id, name, email, avatar, enable_notification })
+        const { id, name, email, avatar, enable_notification, hasEmailVerified } = response.data;
+        setUser({ id, name, email, avatar, enable_notification, hasEmailVerified })
       })
       .catch((error) => {
         if (error.response?.status === 403) {

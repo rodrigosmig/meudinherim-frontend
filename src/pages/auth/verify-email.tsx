@@ -25,11 +25,6 @@ export default function VerifyEmail({ url }: Props) {
   const bgColor = useColorModeValue('white', 'gray.800')
 
   useEffect(() => {
-    /* if (!expires || !hash || !signature) {
-      getMessage("Token de verificação inválido", "Não é possível fazer a verificação de e-mail", 'error', 5000);
-      router.push("/")
-    } */
-
     const verifyEmail = async () => {
 
       if (!url || url.length === 0) {
@@ -66,7 +61,7 @@ export default function VerifyEmail({ url }: Props) {
     }
 
     verifyEmail()
-  }, [router]);
+  }, [router, url]);
 
   if (isLoading) {
     return (
