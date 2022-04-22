@@ -1,16 +1,16 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { AuthLayout } from "../components/AuthLayout";
-import { ResetPasswordForm } from "../components/Foms/auth/ResetPasswordForm";
-import { getMessage } from "../utils/helpers";
-import { withSsrGuest } from "../utils/withSSRGuest";
+import { AuthLayout } from "../../components/AuthLayout";
+import { ResetPasswordForm } from "../../components/Foms/auth/ResetPasswordForm";
+import { getMessage } from "../../utils/helpers";
+import { withSsrGuest } from "../../utils/withSSRGuest";
 
 interface Props {
   token: string;
 }
 
-export default function ForgotPassword({ token }) {
+export default function ForgotPassword({ token }: Props) {
   const router = useRouter()
 
   useEffect(() => {

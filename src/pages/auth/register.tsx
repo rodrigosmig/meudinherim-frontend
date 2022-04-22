@@ -1,6 +1,6 @@
 import Head from "next/head";
-import { AuthLayout } from "../components/AuthLayout";
-import { RegisterForm } from "../components/Foms/auth/RegisterForm";
+import { AuthLayout } from "../../components/AuthLayout";
+import { RegisterForm } from "../../components/Foms/auth/RegisterForm";
 
 export default function Register() {  
   return (

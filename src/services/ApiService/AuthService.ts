@@ -1,6 +1,6 @@
 import { setupApiClient } from "../api";
 import { AxiosResponse } from "axios";
-import { IForgotPasswordData, IForgotPasswordResponse, IRegisterData, IResetPasswordData, ISignInCredentials, ISignInResponse, IUser } from "../../types/auth";
+import { IForgotPasswordData, IForgotPasswordResponse, IRegisterData, IResendVerificationEmailData, IResetPasswordData, ISignInCredentials, ISignInResponse, IUser, IVerifyEmail } from "../../types/auth";
 
 const apiClient = setupApiClient();
 
@@ -23,4 +23,5 @@ export const authService = {
   me: (): Promise<AxiosResponse<IUser>> => apiClient.get("/auth/me"),
   forgotPassword: (data: IForgotPasswordData): Promise<AxiosResponse<IForgotPasswordResponse>> => apiClient.post("/auth/forgot-password", data),
   resetPassword: (data: ResetPasswordData): Promise<AxiosResponse> => apiClient.post("/auth/reset-password", data),
+  resendVerificationEmail: (data: IResendVerificationEmailData): Promise<AxiosResponse> => apiClient.post(`/auth/resend-email/`, data),
 };

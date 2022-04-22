@@ -66,11 +66,13 @@ describe('RegisterForm Component', () => {
       headers: {},
       statusText: "",
       config: {},
-      data:{id: 1,
+      data:{
+        id: 1,
         name: 'Test',
         email: 'test@test.com',
         avatar: 'test',
-        enable_notification: false
+        enable_notification: false,
+        hasEmailVerified: true
       }
     })
 

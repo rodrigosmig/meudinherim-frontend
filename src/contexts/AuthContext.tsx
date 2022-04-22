@@ -60,7 +60,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const { id, name, email, avatar, enable_notification } = response.data;
         setUser({ id, name, email, avatar, enable_notification })
       })
-      .catch(() => {
+      .catch((error) => {
+        if (error.response?.status === 403) {
+          destroyCookie(null, 'meudinherim.token', {
+            maxAge: 60 * 60 * 2, // 2 hours
+            path: '/'
+          });
+        }
+
         signOut()
       })
     }

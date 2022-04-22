@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
 import { mocked } from 'ts-jest/utils';
-import { ForgotPasswordForm } from "../../../components/Foms/auth/ForgotPasswordForm";
 import { authService } from "../../../services/ApiService/AuthService";
 import { ResetPasswordForm } from "../../../components/Foms/auth/ResetPasswordForm";
 
