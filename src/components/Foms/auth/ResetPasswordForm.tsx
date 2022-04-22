@@ -27,6 +27,8 @@ interface Props {
 
 export const ResetPasswordForm = ({ token }: Props) => {
   const router = useRouter();
+
+  const bgColor = useColorModeValue('white', 'gray.800')
   
   const { register, handleSubmit, setError, reset, formState } = useForm({
     resolver: yupResolver(validationSchema)
@@ -72,7 +74,7 @@ export const ResetPasswordForm = ({ token }: Props) => {
       w={['100%']}
       maxW={[340, 340, 360]}
       flexDir={["column"]}
-      bg={useColorModeValue('white', 'gray.800')}
+      bg={bgColor}
       p={[8]}
       mb={8}
       borderRadius={[8]}

@@ -125,11 +125,11 @@ export function LoginForm() {
         direction={"column"}
         mt={8}
       >
-        <Link href="/forgot-password">
+        <Link href="/auth/forgot-password">
             Esqueci minha senha
         </Link>
 
-        <Link href="/register">
+        <Link href="/auth/register">
             Cadastrar novo usuário
         </Link>
       </Flex>

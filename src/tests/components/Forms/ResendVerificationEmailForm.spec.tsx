@@ -2,27 +2,32 @@ import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
 import { mocked } from 'ts-jest/utils';
 import { ForgotPasswordForm } from "../../../components/Foms/auth/ForgotPasswordForm";
 import { authService } from "../../../services/ApiService/AuthService";
+import { ResendVerificationEmailForm } from "../../../components/Foms/auth/ResendVerificationEmailForm";
 
-const authServiceMocked = mocked(authService.forgotPassword);
+const authServiceMocked = mocked(authService.resendVerificationEmail);
 
 jest.mock('../../../services/ApiService/AuthService');
 
-describe('ForgotPasswordForm Component', () => {
+describe('ResendVerificationEmailForm Component', () => {
   beforeEach(() => {
-    render(<ForgotPasswordForm />)
+    render(<ResendVerificationEmailForm />)
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('renders corretly', async () => {
-    expect(screen.getByRole("button", {name: "Enviar e-mail de recuperação"}))
-    expect(screen.getByText("Esqueci minha senha")).toBeInTheDocument();
+    expect(screen.getByRole("button", {name: "Enviar e-mail de verificação"}));
+    expect(screen.getByLabelText("E-mail")).toBeInTheDocument();
     expect(screen.getByText("Fazer login")).toBeInTheDocument();
     expect(screen.getByRole("link")).toHaveAttribute('href', '/');
   });
 
   it('validates required fields inputs', async () => {
     await waitFor(() => {
-      fireEvent.submit(screen.getByRole("button", {name: "Enviar e-mail de recuperação"}));
-    })
+      fireEvent.submit(screen.getByRole("button", {name: "Enviar e-mail de verificação"}));
+    });
 
     expect(screen.getByText("O campo email é obrigatório")).toBeInTheDocument();
   });
@@ -31,8 +36,8 @@ describe('ForgotPasswordForm Component', () => {
     fireEvent.input(screen.getByLabelText('E-mail'), {target: { value: "test" }});
 
     await waitFor(() => {
-      fireEvent.submit(screen.getByRole("button", {name: "Enviar e-mail de recuperação"}));
-    })
+      fireEvent.submit(screen.getByRole("button", {name: "Enviar e-mail de verificação"}));
+    });
 
     expect(screen.getByText("E-mail inválido")).toBeInTheDocument();
     expect(authServiceMocked).not.toBeCalled();
@@ -41,17 +46,14 @@ describe('ForgotPasswordForm Component', () => {
   it('tests an unregistered email', async () => {
     const responseMessage = "We couldn't find any users with the given email address."
 
-    authServiceMocked.mockRejectedValue({
+    authServiceMocked.mockRejectedValueOnce({
       response: {
         status: 422,
         headers: {},
         statusText: "",
         config: {},
         data:{
-          message: 'Invalid data',
-          errors: {
-            email: [responseMessage]
-          }
+          email: [responseMessage]
         }
       }
       
@@ -60,18 +62,18 @@ describe('ForgotPasswordForm Component', () => {
     fireEvent.change(screen.getByLabelText('E-mail'), {target: { value: "test@test.com" }});
 
     await waitFor(() => {
-      fireEvent.submit(screen.getByRole("button", {name: "Enviar e-mail de recuperação"}));
-    })
+      fireEvent.submit(screen.getByRole("button", {name: "Enviar e-mail de verificação"}));
+    });
 
     expect(authServiceMocked).toBeCalled();
     expect(screen.getByText("Dados inválidos")).toBeInTheDocument();
     expect(screen.getByText(responseMessage)).toBeInTheDocument();
   });
 
-  it('tests sending recovery e-mail successfully', async () => {
-    const responseMessage = "Recovery email sent successfully"
+  it('tests sending verification e-mail successfully', async () => {
+    const responseMessage = "Verification email sent successfully"
 
-    authServiceMocked.mockResolvedValue({
+    authServiceMocked.mockResolvedValueOnce({
       status: 200,
       headers: {},
       statusText: "",
@@ -84,7 +86,7 @@ describe('ForgotPasswordForm Component', () => {
     fireEvent.change(screen.getByLabelText('E-mail'), {target: { value: "test@test.com" }});
 
     await waitFor(() => {
-      fireEvent.submit(screen.getByRole("button", {name: "Enviar e-mail de recuperação"}));
+      fireEvent.submit(screen.getByRole("button", {name: "Enviar e-mail de verificação"}));
     })
 
     expect(authServiceMocked).toBeCalled();

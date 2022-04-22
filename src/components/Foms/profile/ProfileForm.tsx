@@ -21,7 +21,7 @@ const validationSchema = yup.object().shape({
 })
 
 export function ProfileForm({ updateUser }: Props) {
-  const { user } = useContext(AuthContext);
+  const { user, signOut } = useContext(AuthContext);
   const [ name, setName ] = useState(user.name);
   const [ email, setEmail ] = useState(user.email);
   const [ enableNotification, setEnableNotification ] = useState(user.enable_notification);
@@ -39,6 +39,16 @@ export function ProfileForm({ updateUser }: Props) {
     try {
       const response = await profileService.updateProfile(values)
       const userUpdated = response.data
+
+      if (!userUpdated.hasEmailVerified) {
+        getMessage("Atenção", "Uma mensagem com um link de confirmação foi enviada para seu e-mail.", 'warning');
+        
+        setTimeout(() => {
+          signOut();
+        }, 1000);
+
+        return;
+      }
 
       updateUser(userUpdated);
 

@@ -6,7 +6,7 @@ import { AuthContext } from "../contexts/AuthContext";
 export const getItems = async (filterDate: [string, string]) => {
   const response = await reportService.getTotalCreditByCategory(filterDate);
   const data = response.data;
-  console.log(666, data)
+
   return data
 }
 

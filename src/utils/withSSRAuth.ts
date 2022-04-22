@@ -19,6 +19,15 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>): GetServerSideProps {
       return await fn(context);      
     } catch (error) {
 
+      if (error.response.status === 403) {
+        return {
+          redirect: {
+            destination: '/auth/resend-verification-email?verified=false',
+            permanent: false,
+          }
+        }
+      }
+
       if (error.response.status === 404) {
         return {
           notFound: true,

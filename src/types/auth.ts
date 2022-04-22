@@ -9,6 +9,7 @@ export interface IUser {
   email: string;
   avatar: string;
   enable_notification: boolean;
+  hasEmailVerified: boolean;
 }
 
 export interface ISignInCredentials extends UserFormData {
@@ -73,3 +74,13 @@ export interface IResetPasswordResponseError {
 }
 
 export type IResetPaaswordErrorKey = keyof IResetPasswordResponseError;
+
+export interface IVerifyEmail {
+  expires: string;
+  hash: string;
+  signature: string;
+}
+
+export interface IResendVerificationEmailData {
+  email: string
+}

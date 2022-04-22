@@ -24,7 +24,8 @@ export const toUsDate = (date: Date) => {
 export const getMessage = (
   title: string,
   description: string,
-  status: 'success' | 'error' = 'success'
+  status: 'success' | 'error' | 'warning' = 'success',
+  duration: number = 3000
 ) => {
   const toast = createStandaloneToast({theme: theme})
 
@@ -33,7 +34,7 @@ export const getMessage = (
     description: description,
     position: "top-right",
     status: status,
-    duration: 3000,
+    duration: duration,
     isClosable: true,
   })
 }
