@@ -33,14 +33,13 @@ import { FiAlertCircle, FiPlus } from 'react-icons/fi';
 import { profileService } from '../../services/ApiService/ProfileService';
 import { AuthContext } from '../../contexts/AuthContext';
 import { getMessage } from '../../utils/helpers';
-import { IUser } from '../../types/auth';
+import { useUser } from '../../hooks/useUser';
 
 export interface FileInputProps {
   name: string;
   error?: FieldError;
   localImageUrl: string;
   setLocalImageUrl: Dispatch<SetStateAction<string>>;
-  updateUser: (user: IUser) => void
   setError: UseFormSetError<FieldValues>;
   onChange: (
     event: React.ChangeEvent<HTMLInputElement>
@@ -57,7 +56,6 @@ const FileInputBase: ForwardRefRenderFunction<
     error = null,
     localImageUrl,
     setLocalImageUrl,
-    updateUser,
     setError,
     onChange,
     trigger,
@@ -71,6 +69,7 @@ const FileInputBase: ForwardRefRenderFunction<
   const [cancelToken, setCancelToken] = useState<CancelTokenSource>(
     {} as CancelTokenSource
   );
+  const { setUser}  = useUser();
 
   const handleImageUpload = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -107,7 +106,7 @@ const FileInputBase: ForwardRefRenderFunction<
 
         const userUpdated = {...user, avatar: response.data.avatar}
 
-        updateUser(userUpdated);
+        setUser(userUpdated);
 
         getMessage("Sucesso", 'Imagem alterada com sucesso');
       } catch (err) {
@@ -119,7 +118,7 @@ const FileInputBase: ForwardRefRenderFunction<
         setProgress(0);
       }
     },
-    [onChange, setError, setLocalImageUrl, updateUser, trigger, user]
+    [onChange, setError, setLocalImageUrl, setUser, trigger, user]
   );
 
   useEffect(() => {

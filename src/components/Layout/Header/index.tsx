@@ -44,7 +44,7 @@ const HeaderComponent = () => {
       >
         <MenuNav />
 
-        <Avatar showProfileData={isWideVersion} />
+        <Avatar />
       </Flex>
     </Flex>
   )

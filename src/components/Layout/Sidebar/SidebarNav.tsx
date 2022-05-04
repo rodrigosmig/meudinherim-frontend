@@ -2,12 +2,12 @@
 import { Stack } from '@chakra-ui/react';
 import { NavLink } from './NavLink';
 import { NavSection } from './NavSection';
-import { HiDocumentReport } from "react-icons/hi";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import {
   RiPriceTag3Line, 
   RiDashboardLine, 
-  RiBankLine 
+  RiBankLine,
+  RiUserSettingsLine
 } from "react-icons/ri";
 
 import { FaMoneyBillAlt, FaCreditCard } from 'react-icons/fa'
@@ -24,6 +24,7 @@ export const SidebarNav = () => {
         <NavSection title="Geral" >
           <NavLink href="/dashboard" icon={RiDashboardLine}>Dashboard</NavLink>
           <NavLink href="/categories" icon={RiPriceTag3Line}>Categorias</NavLink>
+          <NavLink href="/profile" icon={RiUserSettingsLine}>Perfil</NavLink>
         </NavSection>
 
         <NavSection title="Contas">
