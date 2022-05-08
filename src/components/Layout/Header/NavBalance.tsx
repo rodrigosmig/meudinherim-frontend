@@ -19,14 +19,25 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { useAccountBalance } from "../../../hooks/useAccountBalance";
+import { IBalanceData, ITotalData } from "../../../types/account";
 import { Loading } from "../../Loading";
 
 export const NavBalance = () => {
-  const bg = useColorModeValue('gray.50', 'gray.800');
+  const [balances, setBalances] = useState([] as IBalanceData[]);
+  const [total, setTotal] = useState({} as ITotalData);
+  const bgColor = useColorModeValue('gray.50', 'gray.800');
+
   const { data, isLoading, isFetching, refetch } = useAccountBalance('all');
+
+  useEffect(() => {
+    if (data) {
+      setBalances(data.balances)
+      setTotal(data.total)
+    }
+  }, [data])
 
   return (
     <Popover 
@@ -57,11 +68,11 @@ export const NavBalance = () => {
           </Center>
         </PopoverHeader>
           { isLoading ? (
-            <Loading />
+            <Loading mb={4} />
           ) : (
             <>
               <PopoverBody>
-                { data.balances.map(account => (
+                { balances.map(account => (
                   <Fragment key={account.account_id}>
                     <LinkBox>
                       <NextLink href={`/accounts/${account.account_id}/entries`} passHref>
@@ -70,7 +81,7 @@ export const NavBalance = () => {
                           display={'block'}
                           p={2}
                           rounded={'md'}
-                          _hover={{ bg: bg }}>
+                          _hover={{ bg: bgColor }}>
                           <Stack direction={'row'} align={'center'}>
                             <Box>
                               <Text
@@ -105,8 +116,8 @@ export const NavBalance = () => {
                   <Text as="span" fontWeight="bold" mr="1">
                     Total:
                   </Text>
-                  <Text as="span" color={data.total.positive ? 'blue.500' : 'red.500'}>
-                    { data.total.value }
+                  <Text as="span" color={total.positive ? 'blue.500' : 'red.500'}>
+                    { total.value }
                   </Text>
                 </Box>
               </PopoverFooter>

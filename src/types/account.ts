@@ -44,3 +44,15 @@ export interface IAccountUpdateData {
 }
 
 export type AccountIdType = number | 'all';
+
+export interface IBalanceData {
+  balance: string;
+  positive: boolean;
+  account_id: number;
+  account_name: string;
+};
+
+export interface ITotalData {
+  value: string;
+  positive: boolean 
+}

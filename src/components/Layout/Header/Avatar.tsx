@@ -57,14 +57,6 @@ const AvatarComponent = () => {
         </MenuButton>
         
         <MenuList>
-          <Link href="/profile" passHref>
-            <MenuItem>
-              Perfil
-            </MenuItem>
-          </Link>
-
-          <MenuDivider />
-
           <MenuItem onClick={handleSignOut}>
             Logout
           </MenuItem>
