@@ -90,7 +90,7 @@ export const NavAdd = () => {
 
             <NavAddItem
               url="#"
-              label="Transferência entre contras"
+              label="Transferência entre contas"
               icon={<Icon as={BiTransfer} fontSize={20} />}
               onClick={onOpen}
             />
