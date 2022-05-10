@@ -13,14 +13,7 @@ import { Link } from "../../Link";
 import { Heading } from "../../Heading";
 import ReCaptcha from "react-google-recaptcha";
 import { useState } from "react";
-
-
-const validationSchema = yup.object().shape({
-  name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
-  email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
-  password: yup.string().required("O campo senha é obrigatório").min(8, "O campo senha deve ter no mínimo 8 caracteres"),
-  password_confirmation: yup.string().oneOf([null, yup.ref('password')], 'As senhas precisam ser iguais')
-})
+import { registerValidation } from "../../../validations/auth";
 
 export function RegisterForm() {
   const [reCaptchaToken, setReCaptchaToken] = useState('');
@@ -30,7 +23,7 @@ export function RegisterForm() {
   const { colorMode } = useColorMode();
 
   const { register, reset, handleSubmit, setError, formState } = useForm({
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(registerValidation)
   });
   const { errors } = formState;
 

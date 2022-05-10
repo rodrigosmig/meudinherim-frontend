@@ -6,20 +6,16 @@ import { profileService } from "../../../services/ApiService/ProfileService";
 
 jest.mock('../../../services/ApiService/ProfileService')
 
-const mockProfile = jest.fn((user) => {
-  return Promise.resolve({ user });
-});
-
 describe('ProfileForm Component', () => {
   beforeEach(() => {
-    render(<ProfileForm updateUser={mockProfile}/>)
+    render(<ProfileForm />)
   });
 
   it('change button is disabled when render component', async () => {
     expect(screen.getByRole("button")).toBeDisabled();
   })
   
-  it('validates user inputs', async () => {
+  it('validates required inputs', async () => {
     fireEvent.input(screen.getByLabelText('Nome'), {
       target: {value: ''}
     })
@@ -43,7 +39,6 @@ describe('ProfileForm Component', () => {
       target: {value: 'T'}
     })
 
-
     fireEvent.input(screen.getByLabelText('E-mail'), {
       target: {value: 'Test'}
     })
@@ -57,7 +52,7 @@ describe('ProfileForm Component', () => {
     expect(screen.getByText("E-mail inválido")).toBeInTheDocument();
   });
 
-  it('allows the user to register successfuly', async () => {
+  it('allows the user to change data successfuly', async () => {
     const getAuthServiceMocked = mocked(profileService.updateProfile);
 
     getAuthServiceMocked.mockResolvedValueOnce({
@@ -70,7 +65,8 @@ describe('ProfileForm Component', () => {
         name: 'Test Changed',
         email: 'test2@test.com',
         avatar: 'test',
-        enable_notification: false
+        enable_notification: false,
+        hasEmailVerified: true
       }
     })
     
@@ -86,7 +82,7 @@ describe('ProfileForm Component', () => {
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button"));
     })
-    
+
     expect(screen.getByText("Alterar")).not.toBeDisabled();
     expect(screen.getByText("Sucesso")).toBeInTheDocument();
     expect(screen.getByText("Alteração realizada com sucesso")).toBeInTheDocument();

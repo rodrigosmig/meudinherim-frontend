@@ -6,7 +6,6 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../../Inputs/Input';
 import { SubmitButton } from '../../Buttons/Submit';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
 import { authService } from "../../../services/ApiService/AuthService";
@@ -14,12 +13,7 @@ import { IResetPaaswordErrorKey, IResetPasswordData, IResetPasswordResponseError
 import { Heading } from "../../Heading";
 import { Link } from "../../Link";
 import { useRouter } from "next/router";
-
-const validationSchema = yup.object().shape({
-  email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
-  password: yup.string().required("O campo senha é obrigatório").min(8, "O campo senha deve ter no mínimo 8 caracteres"),
-  password_confirmation: yup.string().oneOf([null, yup.ref('password')], 'As senhas precisam ser iguais')
-});
+import { resetPasswordValidation } from "../../../validations/auth";
 
 interface Props {
   token: string;
@@ -31,7 +25,7 @@ export const ResetPasswordForm = ({ token }: Props) => {
   const bgColor = useColorModeValue('white', 'gray.800')
   
   const { register, handleSubmit, setError, reset, formState } = useForm({
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(resetPasswordValidation)
   });
   const { errors } = formState;
 

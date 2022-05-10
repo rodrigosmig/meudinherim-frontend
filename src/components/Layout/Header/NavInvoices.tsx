@@ -23,11 +23,26 @@ import { FaCreditCard } from 'react-icons/fa';
 import { useOpenInvoices } from "../../../hooks/useOpenInvoices";
 import { Loading } from "../../Loading";
 import NextLink from 'next/link'
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { IInvoice } from "../../../types/card";
+
+interface IInvoiceData extends Omit<IInvoice, 'amount'> {
+  amount: string;
+}
 
 export const NavInvoices = () => {
-  const bg = useColorModeValue('gray.50', 'gray.800');
+  const [invoices, setInvoices] = useState([] as IInvoiceData[]);
+  const [total, setTotal] = useState("");
+  const bgColor = useColorModeValue('gray.50', 'gray.800');
+
   const { data, isLoading, isFetching, refetch } = useOpenInvoices();
+
+  useEffect(() => {
+    if (data) {
+      setInvoices(data.invoices)
+      setTotal(data.total)
+    }
+  }, [data])
 
   return (
     <Popover 
@@ -59,11 +74,11 @@ export const NavInvoices = () => {
           </Center>
         </PopoverHeader>
           { isLoading ? (
-            <Loading />
+            <Loading mb={4} />
           ) : (
             <>
               <PopoverBody>
-                { data.invoices.map(invoice => (
+                { invoices.map(invoice => (
                   <Fragment key={invoice.id}>
                     <LinkBox>
                       <NextLink href={`/cards/${invoice.card.id}/invoices/${invoice.id}/entries`} passHref  key={invoice.id}>
@@ -72,7 +87,7 @@ export const NavInvoices = () => {
                           display={'block'}
                           p={2}
                           rounded={'md'}
-                          _hover={{ bg: bg }}>
+                          _hover={{ bg: bgColor }}>
                           <Stack direction={'row'} align={'center'}>
                             <Box>
                               <Text
@@ -117,7 +132,7 @@ export const NavInvoices = () => {
                     Total:
                   </Text>
                   <Text as="span" color="red.500">
-                    {data.total }
+                    { total }
                   </Text>
                 </Box>
               </PopoverFooter>

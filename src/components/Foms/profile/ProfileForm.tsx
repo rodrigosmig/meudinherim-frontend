@@ -1,33 +1,24 @@
-import { ChangeEvent, useContext, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Flex, Stack } from "@chakra-ui/react";
 import { profileService } from '../../../services/ApiService/ProfileService';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../../Inputs/Input';
 import { SubmitButton } from "../../Buttons/Submit";
 import { Switch } from "../../Inputs/Switch";
-import { AuthContext } from '../../../contexts/AuthContext';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from '../../../utils/helpers';
-import { IProfileUpdateData, IUser } from '../../../types/auth';
+import { IProfileUpdateData } from '../../../types/auth';
+import { useUser } from '../../../hooks/useUser';
+import { profileValidation } from '../../../validations/auth';
 
-interface Props {
-  updateUser: (user: IUser) => void
-}
-
-const validationSchema = yup.object().shape({
-  name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
-  email: yup.string().required("O campo email é obrigatório").email("E-mail inválido")
-})
-
-export function ProfileForm({ updateUser }: Props) {
-  const { user, signOut } = useContext(AuthContext);
+export function ProfileForm() {
+  const { user, setUser } = useUser();
   const [ name, setName ] = useState(user.name);
   const [ email, setEmail ] = useState(user.email);
   const [ enableNotification, setEnableNotification ] = useState(user.enable_notification);
   
   const { register, handleSubmit, setError, setValue, getValues, formState } = useForm({
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(profileValidation)
   });
 
   setValue('name', name)
@@ -40,7 +31,7 @@ export function ProfileForm({ updateUser }: Props) {
       const response = await profileService.updateProfile(values)
       const userUpdated = response.data
 
-      if (!userUpdated.hasEmailVerified) {
+      /* if (!userUpdated.hasEmailVerified) {
         getMessage("Atenção", "Uma mensagem com um link de confirmação foi enviada para seu e-mail.", 'warning');
         
         setTimeout(() => {
@@ -48,11 +39,11 @@ export function ProfileForm({ updateUser }: Props) {
         }, 1000);
 
         return;
-      }
+      } */
 
-      updateUser(userUpdated);
+      setUser(userUpdated);
 
-      getMessage("Sucesso", "Alteração realizada com sucesso");
+      return getMessage("Sucesso", "Alteração realizada com sucesso");
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;

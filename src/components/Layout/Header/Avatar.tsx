@@ -10,16 +10,19 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Spinner,
   Text,
+  useBreakpointValue,
   useColorModeValue
 } from "@chakra-ui/react";
 
-interface Props {
-  showProfileData: boolean
-}
+const AvatarComponent = () => {
+  const { isAuthenticated, user, signOut } = useContext(AuthContext);
 
-const AvatarComponent = ({ showProfileData }: Props) => {
-  const { user, signOut } = useContext(AuthContext)
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true 
+  });
 
   const color = useColorModeValue('gray.600', 'gray.300')
 
@@ -33,13 +36,19 @@ const AvatarComponent = ({ showProfileData }: Props) => {
 
   return (
     <Flex align="center">
-      { showProfileData && (
-        <Box mr="4" textAlign="right">
-          <Text>{user?.name}</Text>  
-          <Text color={color} fontSize="small">
-            {user?.email}
-          </Text>
-        </Box>
+      { isWideVersion && (
+        !isAuthenticated 
+          ? (
+            <Spinner mr={4}/>
+          ) 
+          : (
+            <Box mr="4" textAlign="right">
+              <Text>{user?.name}</Text>  
+              <Text color={color} fontSize="small">
+                {user?.email}
+              </Text>
+            </Box>
+          )
       )}
         
       <Menu isLazy>
@@ -48,14 +57,6 @@ const AvatarComponent = ({ showProfileData }: Props) => {
         </MenuButton>
         
         <MenuList>
-          <Link href="/profile" passHref>
-            <MenuItem>
-              Perfil
-            </MenuItem>
-          </Link>
-
-          <MenuDivider />
-
           <MenuItem onClick={handleSignOut}>
             Logout
           </MenuItem>
