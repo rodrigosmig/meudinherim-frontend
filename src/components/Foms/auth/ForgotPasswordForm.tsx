@@ -6,7 +6,6 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../../Inputs/Input';
 import { SubmitButton } from '../../Buttons/Submit';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
 import { authService } from "../../../services/ApiService/AuthService";
@@ -14,16 +13,13 @@ import { IForgotPasswordData } from "../../../types/auth";
 import { Heading } from "../../Heading";
 import { Link } from "../../Link";
 import { useRouter } from "next/router";
-
-const validationSchema = yup.object().shape({
-  email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
-})
+import { forgotPasswordValidation } from "../../../validations/auth";
 
 export const ForgotPasswordForm = () => {
   const router = useRouter();
 
   const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(forgotPasswordValidation)
   });
   const { errors } = formState;
 

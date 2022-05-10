@@ -20,15 +20,21 @@ describe('LoginForm Component', () => {
   });
 
   it('validates required fields', async () => {
+    const enterButton = screen.getByText('Entrar');
+
     await act(async () => {
-      fireEvent.submit(screen.getByText('Entrar'))
+      fireEvent.submit(enterButton)
     })
 
+    expect(enterButton).toBeDisabled();
     expect(screen.getByText("O campo email é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo senha é obrigatório")).toBeInTheDocument();
   });
 
-  /* it('validates user inputs', async () => {
+  it('validates user inputs', async () => {
+    const enterButton = screen.getByText('Entrar') as HTMLInputElement;
+    enterButton.disabled = false;
+
     fireEvent.input(screen.getByLabelText('E-mail'), {
       target: {value: 'Test'}
     })
@@ -38,10 +44,11 @@ describe('LoginForm Component', () => {
     })
 
     await act(async () => {
-      fireEvent.click(screen.getByText('Entrar'))
+      fireEvent.click(enterButton)
     })
 
+    expect(enterButton).not.toBeDisabled();
     expect(screen.getByText("E-mail inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo senha deve ter no mínimo 8 caracteres")).toBeInTheDocument();
-  }); */
+  });
 })

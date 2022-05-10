@@ -1,29 +1,24 @@
-import { ChangeEvent, useContext, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Flex, Stack } from "@chakra-ui/react";
 import { profileService } from '../../../services/ApiService/ProfileService';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../../Inputs/Input';
 import { SubmitButton } from "../../Buttons/Submit";
 import { Switch } from "../../Inputs/Switch";
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from '../../../utils/helpers';
-import { IProfileUpdateData, IUser } from '../../../types/auth';
+import { IProfileUpdateData } from '../../../types/auth';
 import { useUser } from '../../../hooks/useUser';
-
-const validationSchema = yup.object().shape({
-  name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
-  email: yup.string().required("O campo email é obrigatório").email("E-mail inválido")
-}) //////////////separar
+import { profileValidation } from '../../../validations/auth';
 
 export function ProfileForm() {
-  const { user, signOut, setUser } = useUser();
+  const { user, setUser } = useUser();
   const [ name, setName ] = useState(user.name);
   const [ email, setEmail ] = useState(user.email);
   const [ enableNotification, setEnableNotification ] = useState(user.enable_notification);
   
   const { register, handleSubmit, setError, setValue, getValues, formState } = useForm({
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(profileValidation)
   });
 
   setValue('name', name)

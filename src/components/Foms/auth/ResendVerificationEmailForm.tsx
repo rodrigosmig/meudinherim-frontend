@@ -16,10 +16,7 @@ import { Link } from "../../Link";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
-
-const validationSchema = yup.object().shape({
-  email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
-})
+import { resendEmailVerificationValidation } from "../../../validations/auth";
 
 export const ResendVerificationEmailForm = () => {
   const router = useRouter();
@@ -27,7 +24,7 @@ export const ResendVerificationEmailForm = () => {
   const { signOut } = useContext(AuthContext);
 
   const { register, handleSubmit, reset, formState } = useForm({
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(resendEmailVerificationValidation)
   });
   const { errors } = formState;
 

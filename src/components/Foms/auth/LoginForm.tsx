@@ -10,17 +10,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../../Inputs/Input';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { SubmitButton } from '../../Buttons/Submit';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
 import { ISignInCredentials } from "../../../types/auth";
 import { Link } from "../../Link";
 import ReCAPTCHA from "react-google-recaptcha";
-
-const validationSchema = yup.object().shape({
-  email: yup.string().required("O campo email é obrigatório").email("E-mail inválido"),
-  password: yup.string().required("O campo senha é obrigatório").min(8, "O campo senha deve ter no mínimo 8 caracteres"),
-})
+import { loginValidation } from "../../../validations/auth";
 
 export function LoginForm() {
   const [isSubimited, setIsSubimited] = useState(false);
@@ -31,7 +26,7 @@ export function LoginForm() {
 
   const { signIn } = useContext(AuthContext);  
   const { register, handleSubmit, formState } = useForm({
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(loginValidation)
   });
   const { errors } = formState;
 
