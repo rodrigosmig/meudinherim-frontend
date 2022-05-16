@@ -31,7 +31,7 @@ export const useAccountBalance = (id: AccountIdType) => {
   const { user } = useUser();
 
   return useQuery(['account_balance', id, user?.id], () => getAccountBalance(id), {
-    refetchOnWindowFocus: false,
-    enabled: false
+    refetchOnWindowFocus: id === 'all' ? false : true,
+    enabled: id === 'all' ? false : true
   })
 }
