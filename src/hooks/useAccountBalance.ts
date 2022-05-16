@@ -6,7 +6,7 @@ import { useUser } from "./useUser";
 
 export const getAccountBalance = async (id: AccountIdType) => {
   const response = await accountService.balance(id);
-
+  console.log(777, response.data)
   const balances = response.data.balances.map(account => {
     return {
       ...account,
@@ -31,7 +31,7 @@ export const useAccountBalance = (id: AccountIdType) => {
   const { user } = useUser();
 
   return useQuery(['account_balance', id, user?.id], () => getAccountBalance(id), {
-    refetchOnWindowFocus: false,
-    enabled: false
+    refetchOnWindowFocus: id === 'all' ? false : true,
+    enabled: id === 'all' ? false : true
   })
 }
