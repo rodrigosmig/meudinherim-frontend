@@ -6,7 +6,7 @@ import { useUser } from "./useUser";
 
 export const getAccountBalance = async (id: AccountIdType) => {
   const response = await accountService.balance(id);
-  console.log(777, response.data)
+
   const balances = response.data.balances.map(account => {
     return {
       ...account,
