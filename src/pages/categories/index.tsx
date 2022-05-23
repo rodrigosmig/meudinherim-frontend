@@ -14,7 +14,7 @@ import {
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Layout } from '../../components/Layout';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { Loading } from "../../components/Loading";
@@ -34,6 +34,7 @@ import { EditCategoryModal } from "../../components/Modals/categories/EditCatego
 import { CreateCategoryModal } from "../../components/Modals/categories/CreateCategoryModal";
 import { getMessage } from "../../utils/helpers";
 import { ICategory } from "../../types/category";
+import { Input } from "../../components/Inputs/Input";
 
 export default function Categories() {
   const isWideVersion = useBreakpointValue({
@@ -49,10 +50,16 @@ export default function Categories() {
   const [perPage, setPerPage] = useState(10);
   const [categoryType, setCategoryType] = useState("");
   const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType, page, perPage);
-
-  const [ selectedCategory, setSelectedCategory ] = useState({} as ICategory)
+  const [ selectedCategory, setSelectedCategory ] = useState({} as ICategory);
+  const [filteredCategories, setFilteredCategories] = useState([] as ICategory[]);
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
+
+  useEffect(() => {
+    if (data) {
+      setFilteredCategories(oldValue => data.categories);
+    }
+  }, [data])
 
   const handleChangeCategoryType = (event: ChangeEvent<HTMLSelectElement>) => {
     setCategoryType(event.target.value)
@@ -85,11 +92,21 @@ export default function Categories() {
   }
 
   const getSelectedCategory = (id: number) => {
-    const category = data.categories.filter(c => {
+    const category = filteredCategories.filter(c => {
       return c.id === id
     })
 
     return category[0];
+  }
+
+  const handleFilterCategories = (categoryName: string) => {
+    if (categoryName.length === 0) {
+      return setFilteredCategories(data.categories);
+    }
+
+    const filtered = data.categories.filter(category => category.name.includes(categoryName));
+
+    setFilteredCategories(oldValue => filtered)
   }
   
   const deleteCategory = useMutation(async (id: number) => {
@@ -135,7 +152,7 @@ export default function Categories() {
         <Flex
           justify="space-between" 
           align="center"
-          mb={[6, 6, 8]}
+          mb={[4, 4, 6]}
         >
           <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />
 
@@ -150,9 +167,16 @@ export default function Categories() {
               <option value="1">Entrada</option>
               <option value="2">Saída</option>
             </Select>
-          </Box>            
+          </Box>
         </Flex>
 
+        <Input
+          mb={[4, 4, 6]}
+          name="email"
+          type="email"
+          placeholder="Filtrar por nome da categoria"
+          onChange={event => handleFilterCategories(event.target.value)}
+        />
 
         { isLoading ? (
             <Loading />
@@ -170,7 +194,7 @@ export default function Categories() {
                 </Thead>
 
                 <Tbody>
-                  { data.categories.map(category => (
+                  { filteredCategories.map(category => (
                     <Tr key={category.id}>
                       <Td fontSize={["xs", "md"]}>
                         <Text fontWeight="bold">{category.name}</Text>
