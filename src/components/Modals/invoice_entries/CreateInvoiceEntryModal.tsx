@@ -11,7 +11,7 @@ interface Props {
 export const CreateInvoiceEntryModal = ({ card_id, isOpen, onClose, refetch }: Props) => {
 return (
   <Modal
-      header="Nova Lançamento no Cartão de Crédito"
+      header="Novo Lançamento no Cartão de Crédito"
       isOpen={isOpen}
       onClose={onClose}
     >

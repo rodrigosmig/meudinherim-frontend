@@ -4,7 +4,6 @@ import {
   Flex,
   Stack,
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -17,6 +16,7 @@ import { useCategoriesForm } from "../../../hooks/useCategories";
 import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
 import { IAccountEntry, IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
+import { editEntryValidation } from "../../../validations/accountEntry";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
@@ -26,13 +26,6 @@ interface Props {
   closeModal: () => void,
   refetch: () => void
 }
-
-const validationSchema = yup.object().shape({
-  date: yup.date().typeError("O campo data é obrigatório"),
-  category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
-  description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
-})
 
 export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {  
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
@@ -44,7 +37,7 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
       description: entry.description,
       value: entry.value
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(editEntryValidation)
   });
 
   const { errors } = formState;
