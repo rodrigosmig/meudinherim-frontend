@@ -44,7 +44,7 @@ const TableComponent = ({
             ) : (
               <Tr>
                 { theadData.map(head => (
-                    <Th>{ head }</Th>
+                    <Th key={head}>{ head }</Th>
                   ))
                 }
                 

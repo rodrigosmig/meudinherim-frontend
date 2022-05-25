@@ -13,7 +13,7 @@ export default function CreateAccountEntry() {
 
   const handleOnCancel = useCallback(() => {
     router.push('/accounts');
-  }, [])
+  }, [router])
 
   return (
     <>
