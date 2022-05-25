@@ -3,28 +3,19 @@ import Head from "next/head";
 import { 
   Box,
   Flex, 
-  HStack, 
   Spinner, 
-  Table, 
   Tbody, 
-  Td, 
-  Text, 
-  Th, 
-  Thead, 
-  Tr,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
 import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../../services/api';
-import { getMessage, toCurrency } from '../../../../utils/helpers';
+import { getMessage } from '../../../../utils/helpers';
 import { useAccountEntries } from '../../../../hooks/useAccountEntries';
 import { useAccountBalance } from '../../../../hooks/useAccountBalance';
 import { FilterPerPage } from '../../../../components/Pagination/FilterPerPage';
 import { Loading } from '../../../../components/Loading/index';
-import { EditButton } from '../../../../components/Buttons/Edit';
-import { DeleteButton } from '../../../../components/Buttons/Delete';
 import { Pagination } from '../../../../components/Pagination';
 import { useMutation } from 'react-query';
 import { accountEntriesService } from '../../../../services/ApiService/AccountEntriesService';
@@ -34,13 +25,14 @@ import { Heading } from '../../../../components/Heading';
 import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
 import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
 import { EditAccountEntryModal } from '../../../../components/Modals/account_entries/EditAccountEntryModal';
-import { ShowPaymentButton } from '../../../../components/Buttons/ShowPayment';
 import { AddButton } from '../../../../components/Buttons/Add';
 import { CreateAccountEntryModal } from '../../../../components/Modals/account_entries/CreateAccountEntryModal';
 import { useDateFilter } from '../../../../contexts/DateFilterContext';
 import { IAccount } from '../../../../types/account';
 import { IAccountEntry } from '../../../../types/accountEntry';
 import { Input } from '../../../../components/Inputs/Input';
+import { Table } from '../../../../components/Table';
+import { AccountEntryItemsTable } from '../../../../components/ItemsTable/AccountEntryItemsTable';
 
 interface Props {
   account: IAccount
@@ -157,6 +149,13 @@ export default function AccountEntries({ account }: Props) {
     setFilteredEntries(oldValue => filtered)
   }
 
+  const theadData = [
+    "Data",
+    "Categoria",
+    "Descrição",
+    "Valor"
+  ];
+
   return (
     <>
       <CreateAccountEntryModal
@@ -232,8 +231,8 @@ export default function AccountEntries({ account }: Props) {
 
         <Input
           mb={[4, 4, 6]}
-          name="email"
-          type="email"
+          name="search"
+          type="text"
           placeholder="Pesquisar lançamento"
           onChange={event => handleSearchEntry(event.target.value)}
         />
@@ -244,70 +243,21 @@ export default function AccountEntries({ account }: Props) {
             <Flex justify="center">Falha ao obter as lançamentos</Flex>
           ) : (
             <>
-            <Box overflowX="auto">
-              <Table size={sizeProps}>
-                <Thead>
-                  <Tr>
-                    <Th>Data</Th>
-                    <Th>Categoria</Th>
-                    <Th>Descrição</Th>
-                    <Th>Valor</Th>
-                    <Th w="8"></Th>
-                  </Tr>
-                </Thead>
-
+              <Table
+                theadData={theadData}
+                size={sizeProps}              
+              >
                 <Tbody>
-                  { filteredEntries.map(entry => (
-                    <Tr key={entry.id}>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{ entry.date }</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{entry.category.name}</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{entry.description}</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text 
-                        fontWeight="bold" 
-                        color={entry.category.type == 1 ? "blue.500" : "red.500"}
-                      >
-                        { toCurrency(entry.value) }
-                      </Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                      { entry.account_scheduling == null ? (
-                        <HStack spacing={[2]}>                              
-                          <EditButton onClick={() => handleEditEntry(entry.id)} />
-                          <DeleteButton 
-                            onDelete={() => handleDeleteEntry(entry.id)} 
-                            resource="Lançamento"
-                            loading={deleteEntry.isLoading}
-                          />
-                        </HStack>
-                        ) : (
-                          entry.category.type === 1 ? (
-                            <ShowPaymentButton
-                              label="Ver Recebimento"
-                              onClick={() => handleShowReceivement(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}
-                            />
-                            
-                          ) : (
-                            <ShowPaymentButton
-                              label="Ver Pagamento"
-                              onClick={() => handleShowPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}
-                            />
-                          )
-                        )
-                      }
-                      </Td>
-                    </Tr>
-                  )) }
+                  <AccountEntryItemsTable
+                    data={filteredEntries}
+                    isLoading={deleteEntry.isLoading}
+                    onEdit={handleEditEntry}
+                    onDelete={handleDeleteEntry}
+                    showPayment={handleShowPayment}
+                    showReceivement={handleShowReceivement}
+                  />
                 </Tbody>
               </Table>
-
-            </Box>
 
               <Pagination
                 from={data.meta.from}

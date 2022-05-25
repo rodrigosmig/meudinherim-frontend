@@ -21,10 +21,10 @@ const ExtractButtonComponent = ({ href }: Props) => {
         <Button
           size="sm"
           fontSize="sm"
-          bg="purple.500"
-          _hover={{ bg: "purple.300" }}
+          bg="green.500"
+          _hover={{ bg: "green.300" }}
           _active={{
-            bg: "purple.400",
+            bg: "green.400",
             transform: "scale(0.98)",
           }}
           leftIcon={<Icon as={FaMoneyBillAlt} fontSize="16" />}
@@ -39,10 +39,10 @@ const ExtractButtonComponent = ({ href }: Props) => {
         <IconButton
           size="xs"
           aria-label="Extract"
-          bg="purple.500"
-          _hover={{ bg: "purple.300" }}
+          bg="green.500"
+          _hover={{ bg: "green.300" }}
           _active={{
-            bg: "purple.400",
+            bg: "green.400",
             transform: "scale(0.98)",
           }}
           icon={<FaMoneyBillAlt />} 

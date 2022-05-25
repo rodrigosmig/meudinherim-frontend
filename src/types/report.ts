@@ -47,18 +47,20 @@ export interface ITotalByCategoryResponse {
   }[],
 }
 
-export interface ITotalByCategoryDetailedResponse {
-  data: {
+export interface IEntries {
+  id: number;
+  date: string;
+  description: string;
+  value: number;
+  category: {
     id: number;
-    date: string;
-    description: string;
-    value: number;
-    category: {
-      id: number;
-      name: string;
-    },
-    source: string;
-  }[]
+    name: string;
+  },
+  source: string;
+}
+
+export interface ITotalByCategoryDetailedResponse {
+  data: IEntries[]
 }
 
 export type ReportType = 'card' | 'account';

@@ -119,6 +119,11 @@ export default function Categories() {
     }
   });
 
+  const headList = [
+    'Nome',
+    'Tipo'
+  ];
+
   return (
     <>
       <CreateCategoryModal
@@ -172,8 +177,8 @@ export default function Categories() {
 
         <Input
           mb={[4, 4, 6]}
-          name="email"
-          type="email"
+          name="search"
+          type="text"
           placeholder="Filtrar por nome da categoria"
           onChange={event => handleFilterCategories(event.target.value)}
         />
@@ -184,15 +189,10 @@ export default function Categories() {
             <Flex justify="center">Falha ao obter as categorias</Flex>
           ) : (
             <>
-              <Table tableSize={sizeProps}>
-                <Thead>
-                  <Tr>
-                    <Th>Nome da Categoria</Th>
-                    <Th>Tipo</Th>
-                    <Th w="8"></Th>
-                  </Tr>
-                </Thead>
-
+              <Table
+                theadData={headList}
+                size={sizeProps}
+              >
                 <Tbody>
                   { filteredCategories.map(category => (
                     <Tr key={category.id}>

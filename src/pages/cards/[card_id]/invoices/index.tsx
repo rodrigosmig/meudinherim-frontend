@@ -5,10 +5,8 @@ import { setupApiClient } from "../../../../services/api";
 import { withSSRAuth } from "../../../../utils/withSSRAuth";
 import {
   Box,
-  Button,
   Flex,
   HStack,
-  Icon,
   Select,
   Spinner,
   Tbody, 
@@ -78,6 +76,12 @@ export default function Invoices({ card }: Props) {
     onOpen();
   }
 
+  const headList = [
+    'Vencimento',
+    'Data do Fechamento',
+    'Valor da Fatura'
+  ]
+
   return (
     <>
       <GeneratePaymentModal
@@ -128,16 +132,10 @@ export default function Invoices({ card }: Props) {
             <Flex justify="center">Falha ao obter as faturas</Flex>
           ) : (
             <>
-              <Table tableSize={sizeProps}>
-                <Thead>
-                  <Tr>
-                    <Th>Vencimento</Th>
-                    <Th>Data do Fechamento</Th>
-                    <Th>Valor da Fatura</Th>
-                    <Th w="8"></Th>
-                  </Tr>
-                </Thead>
-
+              <Table
+                theadData={headList}
+                size={sizeProps}
+              >
                 <Tbody>
                   { data.invoices.map(invoice => (
                     <Tr key={invoice.id}>

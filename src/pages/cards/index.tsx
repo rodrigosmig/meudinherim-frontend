@@ -86,6 +86,14 @@ export default function Cards() {
     }
   }
 
+  const headList = [
+    'Nome',
+    'Limite de Crédito',
+    'Limite Disponível',
+    'Dia do Fechamento',
+    'Dia do Pagamento'
+  ];
+
   return (
     <>
       <CreateCardModal
@@ -126,18 +134,9 @@ export default function Cards() {
             <Text>Nenhum cartão cadastrado</Text>
           ) : (
             <>
-              <Table tableSize={tableSize}>
-                <Thead>
-                  <Tr >
-                    <Th>Nome</Th>
-                    <Th>Limite de Crédito</Th>
-                    <Th>Limite Disponível</Th>
-                    <Th>Dia do Fechamento</Th>
-                    <Th>Dia do Pagamento</Th>
-                    <Th w="8"></Th>
-                  </Tr>
-                </Thead>
-
+              <Table
+                theadData={headList}
+                size={tableSize}>
                 <Tbody>
                   { data.map(card => (
                     <Tr key={card.id} px={[8]}>

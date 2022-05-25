@@ -43,6 +43,7 @@ import { GeneratePayment } from "../../../../../../components/Buttons/GeneratePa
 import { GeneratePaymentModal } from "../../../../../../components/Modals/invoices/GeneratePaymentModal";
 import { IInvoiceEntry } from "../../../../../../types/invoiceEntry";
 import { Input } from "../../../../../../components/Inputs/Input";
+import { InvoiceEntryItemsTable } from "../../../../../../components/ItemsTable/InvoiceEntryItemsTable";
 
 interface Props {
   cardId: number;
@@ -108,7 +109,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
     return entry[0];
   }
 
-  const deleteEntry = useMutation(async (id: number) => {
+  const deleteEntry = useMutation(async (id: IInvoiceEntry['id']) => {
     const response = await invoiceEntriesService.delete(id);
   
     return response.data;
@@ -124,7 +125,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
     generatePaymentOnClose();
   }
 
-  const handleDeleteEntry = async (id: number) => {
+  const handleDeleteEntry = async (id: IInvoiceEntry['id']) => {
     try {
       await deleteEntry.mutateAsync(id);
 
@@ -150,6 +151,13 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
 
     setFilteredEntries(oldValue => filtered)
   }
+
+  const theadData = [
+    "Data",
+    "Categoria",
+    "Descrição",
+    "Valor"
+  ];
 
   return (
     <>
@@ -221,8 +229,8 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
 
         <Input
           mb={[4, 4, 6]}
-          name="email"
-          type="email"
+          name="search"
+          type="text"
           placeholder="Pesquisar lançamento"
           onChange={event => handleSearchEntry(event.target.value)}
         />
@@ -233,96 +241,20 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
             <Flex justify="center">Falha ao obter as lançamentos</Flex>
           ) : (
             <>
-            <Box overflowX="auto">
-              <Table tableSize={sizeProps}>
-                <Thead>
-                  <Tr>
-                    <Th>Data</Th>
-                    <Th>Categoria</Th>
-                    <Th>Descrição</Th>
-                    <Th>Valor</Th>
-                    <Th w="8"></Th>
-                  </Tr>
-                </Thead>
-
+              <Table
+                theadData={theadData}
+                size={sizeProps}
+              >
                 <Tbody>
-                  { filteredEntries.map(entry => (
-                    <Tr key={entry.id}>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{ entry.date }</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{entry.category.name}</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        { entry.is_parcel ? (
-                          <PopoverTotal
-                            description={entry.description}
-                            amount={entry.total_purchase}
-                          />
-                          ) : (
-                            entry.description
-                          )
-                        }
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text 
-                        fontWeight="bold" 
-                        color={entry.category.type == 1 ? "blue.500" : "red.500"}
-                      >
-                        { toCurrency(entry.value) }
-                      </Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <HStack spacing={[2]}>
-                          { (!entry.is_parcel && !entry.anticipated) && (
-                            <>
-                              <EditButton onClick={() => handleEditEntry(entry.id, entry.parcelable_id)} />
-                              <DeleteButton
-                                onDelete={() => handleDeleteEntry(entry.id)} 
-                                resource="Lançamento"
-                                loading={deleteEntry.isLoading}
-                              />
-                            </>
-                          )}
-
-                          {((entry.is_parcel || !entry.anticipated) && entry.parcel_number === 1) && (
-                            <>
-                              <DeleteButton
-                                onDelete={() => handleDeleteEntry(entry.is_parcel ? entry.parcelable_id : entry.id)} 
-                                resource="todas as parcelas"
-                                loading={deleteEntry.isLoading}
-                              />
-                            </>
-                          )}
-
-                          {((entry.is_parcel || entry.anticipated) && entry.parcel_number < entry.parcel_total) && (
-                            <>
-                              <Button
-                                size="sm"
-                                fontSize="sm"
-                                bg="green.500"
-                                _hover={{ bg: "green.300" }}
-                                _active={{
-                                  bg: "green.400",
-                                  transform: "scale(0.98)",
-                                }}
-                                leftIcon={<Icon as={BsClock} fontSize="16" />}
-                                onClick={() => handleAnticipateInstallments(entry.id, entry.parcelable_id)} 
-                              >
-                                Antecipar
-                              </Button>
-                            </>
-                          )}
-                          
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  )) }
+                  <InvoiceEntryItemsTable
+                    data={filteredEntries}
+                    isLoading={deleteEntry.isLoading}
+                    onEdit={handleEditEntry}
+                    onDelete={handleDeleteEntry}
+                    onAnticipateInstallments={handleAnticipateInstallments}
+                  />
                 </Tbody>
               </Table>
-
-            </Box>
 
               <Pagination
                 from={data.meta.from}
@@ -332,7 +264,6 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
                 totalRegisters={data.meta.total}
                 onPageChange={setPage}
               />
-
             </>
           )
         }
