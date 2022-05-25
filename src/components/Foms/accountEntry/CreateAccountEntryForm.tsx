@@ -5,7 +5,6 @@ import {
   Flex,
   Stack, 
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -18,8 +17,8 @@ import { getMessage, toUsDate } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
-import { ChangeEvent, useState } from "react";
 import { IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
+import { createEntryValidation } from "../../../validations/accountEntry";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
@@ -31,18 +30,8 @@ interface Props {
   refetch?: () => void;
 }
 
-const validationSchema = yup.object().shape({
-  account_id: yup.number().integer("Conta inválida").typeError("O campo conta é inválido"),
-  date: yup.date().typeError("O campo data é obrigatório"),
-  category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
-  description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
-})
-
 export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: Props) => {  
   const router = useRouter();
-
-  const [ entryValue, setEntryValue ] = useState(0);
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
   const { data: formAccounts, isLoading: isLoadingAccounts } = useAccountsForm();
@@ -55,7 +44,7 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
       description: "",
       value: ""
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(createEntryValidation)
   });
 
   const { errors } = formState;
@@ -89,12 +78,6 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
         }
       }
     }
-  }
-
-  const handleChangeEntryValue = (event: ChangeEvent<HTMLInputElement>) => {
-    const amount = parseFloat(event.target.value);
-
-    setEntryValue(amount);
   }
 
   if (isLoadingCategories || isLoadingAccounts) {
@@ -146,14 +129,12 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
         />
 
         <Input
-          value={entryValue}
           name="value"
           type="number"
           label="Valor"
           error={errors.value}
           step="0.01"
           {...register('value')}
-          onChange={v => handleChangeEntryValue(v)}
         />
       </Stack>
       <Flex

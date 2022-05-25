@@ -12,7 +12,7 @@ interface Props extends ButtonProps {
   label: string;
 }
 
-export const ShowPaymentButtonComponent = ({ label, ...rest }: Props) => {
+const ShowPaymentButtonComponent = ({ label, ...rest }: Props) => {
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,

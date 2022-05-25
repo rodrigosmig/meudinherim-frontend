@@ -27,27 +27,12 @@ const TableReportComponent = ({ data, headList, openModal, reportType, ...rest }
   }
 
   return (
-    <Table tableSize={"md"} {...rest}>
-      <Thead>
-        { isEmpty() 
-          ? (
-              <Text
-                fontWeight={"bold"}
-                mt={[4]}
-              >
-                Nenhum Lançamento encontrado
-              </Text>
-            ) 
-          : (
-            <Tr>
-              { headList.map(head => (
-                <Th key={head}>{ head }</Th>
-              ))}
-            </Tr>
-          )
-        }
-      </Thead>
-
+    <Table
+      theadData={headList}
+      isEmpty={isEmpty()}
+      size={"md"} 
+      {...rest}
+    >
       <Tbody>
         { !isEmpty() && data.map(category => (
           <Tr key={category.id}>

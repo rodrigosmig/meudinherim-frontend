@@ -10,7 +10,6 @@ import {
 import { useCallback, useState } from "react";
 import { useDateFilter } from "../../contexts/DateFilterContext";
 import { useAccountByCategoryReport } from "../../hooks/useAccountByCategoryReport";
-import { AccountIdType } from "../../types/account";
 import { ICategory } from "../../types/category";
 import { Loading } from "../Loading";
 import { TotalByCategoryModal } from "../Modals/reports/TotalByCategoryModal";

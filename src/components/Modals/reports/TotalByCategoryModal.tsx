@@ -16,7 +16,7 @@ import { Loading } from "../../Loading";
 import { Modal } from "../Modal";
 import { Table } from "../../Table";
 import { CancelButton } from "../../Buttons/Cancel";
-import { ReportType } from "../../../types/report";
+import { IEntries, ReportType } from "../../../types/report";
 
 interface Props {
   reportType: ReportType;
@@ -29,22 +29,10 @@ interface Props {
   accountId?: number;
 }
 
-interface Entries {
-  id: number;
-  date: string;
-  description: string;
-  value: number;
-  category: {
-    id: number;
-    name: string;
-  },
-  source: string;
-}[]
-
 export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, accountId }: Props) => {
   const { stringDateRange } = useDateFilter();
   const [isLoading, setIsLoading] = useState(true);
-  const [entries, setEntries] = useState<Entries[]>();
+  const [entries, setEntries] = useState<IEntries[]>();
   const { colorMode } = useColorMode();
 
   const colorScheme = colorMode === 'light' ? 'blackAlpha' : 'gray';
@@ -74,6 +62,13 @@ export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, ac
     onClose()
   }
 
+  const headList = [
+    'Data',
+    'Descrição',
+    'Valor',
+    reportType === 'account' ? 'Conta' : 'Cartão'
+  ]
+
   return (
     <Modal
       size="4xl"
@@ -84,16 +79,13 @@ export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, ac
       {isLoading ? (
         <Loading />
       ) : (
-        <Table tableSize={"md"} variant={"striped"} colorScheme={colorScheme}>
-          <Thead>
-            <Tr>
-              <Th>Data</Th>
-              <Th>Descrição</Th>
-              <Th>Valor</Th>
-              <Th>{ reportType === 'account' ? 'Conta' : 'Cartão' }</Th>
-            </Tr>
-          </Thead>
-
+        <Table
+          theadData={headList}
+          showAdditionalColumn={false}
+          size={"md"} 
+          variant={"striped"} 
+          colorScheme={colorScheme}
+        >
           <Tbody>
             { entries.map(entry => (
               <Tr key={entry.id}>

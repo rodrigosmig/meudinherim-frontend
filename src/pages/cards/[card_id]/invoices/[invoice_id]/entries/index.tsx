@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 import {
@@ -42,6 +42,8 @@ import { AnticipateInstallmentsModal } from "../../../../../../components/Modals
 import { GeneratePayment } from "../../../../../../components/Buttons/GeneratePayment";
 import { GeneratePaymentModal } from "../../../../../../components/Modals/invoices/GeneratePaymentModal";
 import { IInvoiceEntry } from "../../../../../../types/invoiceEntry";
+import { Input } from "../../../../../../components/Inputs/Input";
+import { InvoiceEntryItemsTable } from "../../../../../../components/ItemsTable/InvoiceEntryItemsTable";
 
 interface Props {
   cardId: number;
@@ -65,12 +67,19 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
   const [ page, setPage ] = useState(1);
   const [ perPage, setPerPage ] = useState(10);
 
-  const [ dateRange, setDateRange ] = useState([null, null]);
   const [ selectedEntry, setSelectedEntry ] = useState({} as IInvoiceEntry)
 
   const { data, isLoading, isFetching, isError, refetch } = useInvoiceEntries(cardId, invoiceId, page, perPage);
 
+  const [filteredEntries, setFilteredEntries] = useState([] as IInvoiceEntry[]);
+
   const sizeProps = isWideVersion ? 'md' : 'sm';
+
+  useEffect(() => {
+    if (data) {
+      setFilteredEntries(oldValue => data.entries);
+    }
+  }, [data]);
 
   const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value)
@@ -93,14 +102,14 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
   }
 
   const getSelectedEntry = (id: number, parcelable_id: number | null) => {
-    const entry = data.entries.filter(e => {
+    const entry = filteredEntries.filter(e => {
       return e.id === id && e.parcelable_id === parcelable_id
     })
 
     return entry[0];
   }
 
-  const deleteEntry = useMutation(async (id: number) => {
+  const deleteEntry = useMutation(async (id: IInvoiceEntry['id']) => {
     const response = await invoiceEntriesService.delete(id);
   
     return response.data;
@@ -116,7 +125,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
     generatePaymentOnClose();
   }
 
-  const handleDeleteEntry = async (id: number) => {
+  const handleDeleteEntry = async (id: IInvoiceEntry['id']) => {
     try {
       await deleteEntry.mutateAsync(id);
 
@@ -129,6 +138,26 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
       getMessage("Erro", data.message, 'error');
     }
   }
+
+  const handleSearchEntry = (categoryName: string) => {
+    if (categoryName.length === 0) {
+      return setFilteredEntries(data.entries);
+    }
+
+    const filtered = data.entries.filter(entry => (
+      entry.description.toLocaleLowerCase().includes(categoryName) 
+      || entry.category.name.toLocaleLowerCase().includes(categoryName))
+    );
+
+    setFilteredEntries(oldValue => filtered)
+  }
+
+  const theadData = [
+    "Data",
+    "Categoria",
+    "Descrição",
+    "Valor"
+  ];
 
   return (
     <>
@@ -198,102 +227,34 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
           <AddButton onClick={createModalOnOpen} />
         </Flex>
 
+        <Input
+          mb={[4, 4, 6]}
+          name="search"
+          type="text"
+          placeholder="Pesquisar lançamento"
+          onChange={event => handleSearchEntry(event.target.value)}
+        />
+
         { isLoading ? (
             <Loading />
           ) : isError ? (
             <Flex justify="center">Falha ao obter as lançamentos</Flex>
           ) : (
             <>
-            <Box overflowX="auto">
-              <Table tableSize={sizeProps}>
-                <Thead>
-                  <Tr>
-                    <Th>Data</Th>
-                    <Th>Categoria</Th>
-                    <Th>Descrição</Th>
-                    <Th>Valor</Th>
-                    <Th w="8"></Th>
-                  </Tr>
-                </Thead>
-
+              <Table
+                theadData={theadData}
+                size={sizeProps}
+              >
                 <Tbody>
-                  { data.entries.map(entry => (
-                    <Tr key={entry.id}>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{ entry.date }</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{entry.category.name}</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        { entry.is_parcel ? (
-                          <PopoverTotal
-                            description={entry.description}
-                            amount={entry.total_purchase}
-                          />
-                          ) : (
-                            entry.description
-                          )
-                        }
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text 
-                        fontWeight="bold" 
-                        color={entry.category.type == 1 ? "blue.500" : "red.500"}
-                      >
-                        { toCurrency(entry.value) }
-                      </Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <HStack spacing={[2]}>
-                          { (!entry.is_parcel && !entry.anticipated) && (
-                            <>
-                              <EditButton onClick={() => handleEditEntry(entry.id, entry.parcelable_id)} />
-                              <DeleteButton
-                                onDelete={() => handleDeleteEntry(entry.id)} 
-                                resource="Lançamento"
-                                loading={deleteEntry.isLoading}
-                              />
-                            </>
-                          )}
-
-                          {((entry.is_parcel || !entry.anticipated) && entry.parcel_number === 1) && (
-                            <>
-                              <DeleteButton
-                                onDelete={() => handleDeleteEntry(entry.is_parcel ? entry.parcelable_id : entry.id)} 
-                                resource="todas as parcelas"
-                                loading={deleteEntry.isLoading}
-                              />
-                            </>
-                          )}
-
-                          {((entry.is_parcel || entry.anticipated) && entry.parcel_number < entry.parcel_total) && (
-                            <>
-                              <Button
-                                size="sm"
-                                fontSize="sm"
-                                bg="green.500"
-                                _hover={{ bg: "green.300" }}
-                                _active={{
-                                  bg: "green.400",
-                                  transform: "scale(0.98)",
-                                }}
-                                leftIcon={<Icon as={BsClock} fontSize="16" />}
-                                onClick={() => handleAnticipateInstallments(entry.id, entry.parcelable_id)} 
-                              >
-                                Antecipar
-                              </Button>
-                            </>
-                          )}
-                          
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  )) }
+                  <InvoiceEntryItemsTable
+                    data={filteredEntries}
+                    isLoading={deleteEntry.isLoading}
+                    onEdit={handleEditEntry}
+                    onDelete={handleDeleteEntry}
+                    onAnticipateInstallments={handleAnticipateInstallments}
+                  />
                 </Tbody>
               </Table>
-
-            </Box>
 
               <Pagination
                 from={data.meta.from}
@@ -303,7 +264,6 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
                 totalRegisters={data.meta.total}
                 onPageChange={setPage}
               />
-
             </>
           )
         }

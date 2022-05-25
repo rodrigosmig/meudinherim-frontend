@@ -6,13 +6,14 @@ import { setupApiClient } from '../../../services/api';
 import { CreateAccountEntryForm } from "../../../components/Foms/accountEntry/CreateAccountEntryForm";
 import { Heading } from "../../../components/Heading";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 export default function CreateAccountEntry() {
   const router = useRouter();
 
-  const handleOnCancel = () => {
+  const handleOnCancel = useCallback(() => {
     router.push('/accounts');
-  }
+  }, [router])
 
   return (
     <>

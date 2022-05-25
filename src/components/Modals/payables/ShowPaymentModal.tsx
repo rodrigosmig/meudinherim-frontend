@@ -159,7 +159,7 @@ const ShowPaymentModalComponent = ({
             />
 
             <SubmitButton
-              label="Cancelar Recebimento"
+              label="Cancelar Pagamento"
               size="md"
               onClick={onOpen}
             />

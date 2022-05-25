@@ -1,19 +1,11 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Head from "next/head";
-import NextLink from "next/link";
+
 import {
   Flex, 
-  HStack,
-  LinkBox,
-  LinkOverlay,
   Select,
   Spinner,
   Tbody, 
-  Td,
-  Text,
-  Th, 
-  Thead, 
-  Tr,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
@@ -21,28 +13,25 @@ import { Layout } from "../../components/Layout";
 import { usePayables } from "../../hooks/usePayables";
 import { AddButton } from "../../components/Buttons/Add";
 import { Loading } from "../../components/Loading";
-import { EditButton } from "../../components/Buttons/Edit";
-import { DeleteButton } from "../../components/Buttons/Delete";
 import { Table } from "../../components/Table";
 import { Heading } from "../../components/Heading";
-import { PaymentButton } from "../../components/Buttons/Payment";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { getMessage, toCurrency } from '../../utils/helpers';
+import { getMessage } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
-import { PopoverTotal } from '../../components/PopoverTotal';
 import { payableService } from '../../services/ApiService/PayableService';
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
-import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
 import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
 import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
 import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
 import { useDateFilter } from '../../contexts/DateFilterContext';
 import { IPayable } from '../../types/payable';
 import { ICancelData } from '../../types/accountScheduling';
+import { PayableItemsTable } from '../../components/ItemsTable/PayableItemsTable';
+import { Input } from '../../components/Inputs/Input';
 
 interface Props {
   categories: {
@@ -76,8 +65,15 @@ export default function AccountPayables({ categories, accounts }: Props) {
 
   const { data, isLoading, isFetching, isError, refetch } = usePayables(stringDateRange, page, perPage, payableStatus);
 
-  const tableSize = isWideVersion ? 'md' : 'sm';
+  const [filteredPayables, setFilteredPayables] = useState([] as IPayable[]);
+
   const sizeProps = isWideVersion ? 'md' : 'sm';
+
+  useEffect(() => {
+    if (data) {
+      setFilteredPayables(oldValue => data.payables);
+    }
+  }, [data]);
 
   const deletePayable = useMutation(async (id: number) => {
   const response = await payableService.delete(id);
@@ -118,7 +114,7 @@ export default function AccountPayables({ categories, accounts }: Props) {
   }
 
   const getSelectedPayable = (id: number, parcelable_id: number | null) => {
-    const payable = data.payables.filter(r => {
+    const payable = filteredPayables.filter(r => {
       return r.id === id && r.parcelable_id === parcelable_id
     })
 
@@ -159,6 +155,27 @@ export default function AccountPayables({ categories, accounts }: Props) {
       getMessage("Erro", data.message, 'error');
     }
   }
+
+  const handleSearchPayable = (categoryName: string) => {
+    if (categoryName.length === 0) {
+      return setFilteredPayables(data.payables);
+    }
+
+    const filtered = data.payables.filter(payable => (
+      payable.description.toLocaleLowerCase().includes(categoryName) 
+      || payable.category.name.toLocaleLowerCase().includes(categoryName))
+    );
+
+    setFilteredPayables(oldValue => filtered)
+  }
+
+  const theadData = [
+    "Vencimento",
+    "Pagamento",
+    "Categoria",
+    "Descrição",
+    "Valor"
+  ];
 
   return (
     <>
@@ -230,6 +247,14 @@ export default function AccountPayables({ categories, accounts }: Props) {
             </Select>
           </Flex>          
         </Flex>
+
+        <Input
+          mb={[4, 4, 6]}
+          name="search"
+          type="text"
+          placeholder="Pesquisar conta"
+          onChange={event => handleSearchPayable(event.target.value)}
+        />
       
         { isLoading ? (
             <Loading />
@@ -237,93 +262,21 @@ export default function AccountPayables({ categories, accounts }: Props) {
             <Flex justify="center">Falha ao obter as contas</Flex>
           ) : (
             <>
-              <Table tableSize={tableSize}>
-                <>
-                  <Thead>
-                    <Tr >
-                      <Th>Vencimento</Th>
-                      <Th>Pagamento</Th>
-                      <Th>Categoria</Th>
-                      <Th>Descrição</Th>
-                      <Th>Valor</Th>
-                      <Th w="8"></Th>
-                    </Tr>
-                  </Thead>
-
-                  <Tbody>
-                    { data.payables.map(payable => (
-                      <Tr key={ payable.id } px={[8]}>
-                        <Td fontSize={["xs", "md"]}>
-                          <Text fontWeight="bold">{payable.due_date}</Text>
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { payable.paid_date}
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { payable.category.name}
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { payable.is_parcel ? (
-                            <PopoverTotal
-                              description={payable.description}
-                              amount={payable.total_purchase}
-                            />
-                            ) : (
-                              payable.invoice ? (
-                                <LinkBox>
-                                  <NextLink href={`/cards/${payable.invoice.card_id}/invoices/${payable.invoice.invoice_id}/entries`} passHref>
-                                    <LinkOverlay
-                                      title='Ver Fatura'
-                                      fontWeight={"bold"}
-                                      _hover={{ color: "pink.500" }}
-                                    >
-                                      { payable.description }                                   
-                                    </LinkOverlay>
-                                  </NextLink>
-                                
-                                </LinkBox>
-                              ) : (
-                                payable.description
-
-                              )
-                            )
-                          }
-
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { toCurrency(payable.value) }
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { !payable.paid ? (
-                            <HStack spacing={[2]}>
-                              <EditButton 
-                                isDisabled={payable.is_parcel}
-                                onClick={() => handlePayableForEdit(payable.id, payable.parcelable_id)}
-                              />
-
-                              <DeleteButton
-                                isDisabled={payable.is_parcel && payable.parcel_number !== 1}
-                                onDelete={() => handleDeletePayable(payable.is_parcel ? payable.parcelable_id : payable.id)} 
-                                resource="Conta a Pagar"
-                                loading={deletePayable.isLoading}
-                                isParcel={payable.is_parcel}
-                              />
-
-                              <PaymentButton onClick={() => handlePayment(payable.id, payable.parcelable_id)} />
-                            </HStack>
-                          ) : (
-                            <CancelPaymentButton 
-                              label="Cancelar Pagamento"
-                              loading={cancelPayment.isLoading}
-                              onCancel={() => handleCancelPayment(payable.id, payable.parcelable_id)} 
-                            />
-                          )}
-                          
-                        </Td>
-                      </Tr>
-                    )) }
-                  </Tbody>
-                </>
+              <Table
+                theadData={theadData}
+                size={sizeProps}
+              >
+                <Tbody>
+                  <PayableItemsTable 
+                    data={filteredPayables}
+                    isLoadingonDelete={deletePayable.isLoading}
+                    isLoadingOnCancel={cancelPayment.isLoading}
+                    onEdit={handlePayableForEdit}
+                    onDelete={handleDeletePayable}
+                    onPayment={handlePayment}
+                    cancelPayment={handleCancelPayment}
+                  />
+                </Tbody>
               </Table>
 
               <Pagination

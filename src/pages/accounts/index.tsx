@@ -86,6 +86,11 @@ export default function Accounts() {
     }
   }
 
+  const headList = [
+    'Nome',
+    'Tipo'
+  ];
+
   return (
     <>
       <CreateAccountModal
@@ -124,15 +129,10 @@ export default function Accounts() {
             <Flex justify="center">Falha ao obter as contas</Flex>
           ) : (
             <>
-              <Table tableSize={tableSize}>
-                <Thead>
-                  <Tr >
-                    <Th>Nome</Th>
-                    <Th>Tipo</Th>
-                    <Th w="8"></Th>
-                  </Tr>
-                </Thead>
-
+              <Table
+                theadData={headList}
+                size={tableSize}
+              >
                 <Tbody>
                   { data.map(account => (
                     <Tr key={account.id} px={[8]}>

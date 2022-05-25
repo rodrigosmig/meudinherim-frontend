@@ -11,7 +11,7 @@ interface CreateCategoryModalProps {
 export const CreateAccountEntryModal = ({ accountId, isOpen, onClose, refetch }: CreateCategoryModalProps) => {
 return (
   <Modal
-      header="Nova Lançamento | Conta"
+      header="Novo Lançamento na Conta"
       isOpen={isOpen}
       onClose={onClose}
     >

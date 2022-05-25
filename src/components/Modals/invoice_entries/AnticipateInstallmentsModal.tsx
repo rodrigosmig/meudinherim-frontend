@@ -4,8 +4,6 @@ import {
   Tbody, 
   Td, 
   Text, 
-  Th, 
-  Thead, 
   Tr,
   useBreakpointValue
 } from "@chakra-ui/react";
@@ -124,6 +122,14 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
 
   }
 
+  const theadData = [
+    "Parcela",
+    "Data",
+    "Descrição",
+    "Valor",
+    "Antecipar"
+  ]
+
   return (
     <Modal
       size={modalSize}
@@ -139,17 +145,10 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
         ) 
         : (
         <>
-          <Table tableSize={tableSize}>
-            <Thead>
-              <Tr >
-                <Th>Parcela</Th>
-                <Th>Data</Th>
-                <Th>Descrição</Th>
-                <Th>Valor</Th>
-                <Th>Antecipar</Th>
-              </Tr>
-            </Thead>
-
+          <Table 
+            size={tableSize}
+            theadData={theadData}
+          >
             <Tbody>
               { installments.map(installment => (
                 <Tr key={installment.id} px={[8]}>
@@ -174,9 +173,9 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
           </Table>
 
           <Flex
-          mt={[10]}
-          justify="flex-end"
-          align="center"
+            mt={[10]}
+            justify="flex-end"
+            align="center"
           >
           <CancelButton
             mr={4}

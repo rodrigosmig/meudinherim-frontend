@@ -20,6 +20,7 @@ import { useAccountsForm } from "../../../hooks/useAccounts";
 import { Heading } from "../../Heading";
 import { useQueryClient } from "react-query";
 import { IAccountEntryTransferData, IAccountEntryTransferResponseError, ITransferErrorKey } from "../../../types/accountEntry";
+import { transferValidation } from "../../../validations/accountEntry";
 
 interface FormData extends Omit<IAccountEntryTransferData, "date"> { 
   date: Date 
@@ -28,16 +29,6 @@ interface FormData extends Omit<IAccountEntryTransferData, "date"> {
 interface Props {
   onCancel: () => void;
 }
-
-const validationSchema = yup.object().shape({
-  date: yup.date().typeError("O campo vencimento é obrigatório"),
-  description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
-  source_category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria de origem é inválido"),
-  destination_category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria de destino é inválido"),
-  source_account_id: yup.number().integer("Categoria inválida").typeError("O campo conta de origem é inválido"),
-  destination_account_id: yup.number().integer("Categoria inválida").typeError("O campo conta de destino é inválido"),
-})
 
 export const TransferBetweenAccountsForm = ({ onCancel}: Props) => {  
   const queryClient = useQueryClient();
@@ -55,7 +46,7 @@ export const TransferBetweenAccountsForm = ({ onCancel}: Props) => {
       source_category_id: "",
       destination_category_id: ""
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(transferValidation)
   });
 
   const { errors } = formState;

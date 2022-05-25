@@ -49,33 +49,7 @@ const entry: IAccountEntry = {
   account: account
 }
 
-const categoriesForm = {
-  income: [
-    {
-      id: 1,
-      label: "Income Category"
-    }
-  ],
-  expense: [
-    {
-      id: 2,
-      label: "Expense Category"
-    }
-  ]
-}
-
-type CategoriesForForm = {
-  income: {
-    id: number;
-    label: string
-  }[]
-  expense: {
-    id: number;
-    label: string
-  }[]
-}
-
-const data = {
+const categories = {
   income: [
     {
       id: 1, label: "Income Category Test"
@@ -93,7 +67,8 @@ const refetch = jest.fn;
 
 describe('EditAccountEntryForm Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data }));
+    jest.resetModules();
+    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
 
     render(<EditAccountEntryForm entry={entry} closeModal={closeModal} refetch={refetch} />)
   });
@@ -110,7 +85,7 @@ describe('EditAccountEntryForm Component', () => {
 
     expect(screen.getByText("Income Category Test")).toBeInTheDocument();
     expect(screen.getByText("Expense Category Test")).toBeInTheDocument();
-  })
+  });
 
 
   it('validates required fields inputs', async () => {
@@ -122,14 +97,14 @@ describe('EditAccountEntryForm Component', () => {
 
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
-    })
+    });
 
     expect(accountEntriesServiceMocked).toHaveBeenCalledTimes(0);
     expect(screen.getByText("O campo categoria é inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo descrição é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo data é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo valor é obrigatório")).toBeInTheDocument();
-  })
+  });
 
   it('validates user inputs', async () => {
     fireEvent.change(screen.getByLabelText('Descrição'), {target: { value: "Te" }})
@@ -137,12 +112,12 @@ describe('EditAccountEntryForm Component', () => {
 
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
-    })
+    });
     
     expect(accountEntriesServiceMocked).toHaveBeenCalledTimes(0);
     expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
     expect(screen.getByText("O campo descrição deve ter no mínimo 3 caracteres")).toBeInTheDocument();
-  })
+  });
 
   it('edit account successfuly', async () => {
     fireEvent.change(screen.getByLabelText('Descrição'), {target: { value: "Account entry updated" }})
@@ -153,5 +128,33 @@ describe('EditAccountEntryForm Component', () => {
 
     expect(accountEntriesServiceMocked).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Alteração realizada com sucesso")).toBeInTheDocument();
-  })
+  });
+
+  it('error when validates form by server', async () => {
+    const response = {
+      date: ["error date"],
+      description: ["error description"],
+      value: ["error value"]
+    } 
+
+    accountEntriesServiceMocked.mockRejectedValue({
+      response: {
+        status: 422,
+        headers: {},
+        statusText: "",
+        config: {},
+        data: response
+      }
+      
+    });
+
+    await waitFor(() => {
+      fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    });
+
+    expect(accountEntriesServiceMocked).toBeCalledTimes(1);
+    expect(screen.getByText(response.date[0])).toBeInTheDocument();
+    expect(screen.getByText(response.description[0])).toBeInTheDocument();
+    expect(screen.getByText(response.value[0])).toBeInTheDocument();
+  });
 })

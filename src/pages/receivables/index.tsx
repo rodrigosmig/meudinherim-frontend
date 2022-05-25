@@ -1,45 +1,36 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Head from "next/head";
 import {
   Flex, 
-  HStack,
   Select,
   Spinner,
   Tbody, 
-  Td,
-  Text,
-  Th, 
-  Thead, 
-  Tr,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
 import { Layout } from "../../components/Layout";
 import { AddButton } from "../../components/Buttons/Add";
 import { Loading } from "../../components/Loading";
-import { EditButton } from "../../components/Buttons/Edit";
-import { DeleteButton } from "../../components/Buttons/Delete";
 import { Table } from "../../components/Table";
 import { Heading } from "../../components/Heading";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { getMessage, toCurrency } from '../../utils/helpers';
+import { getMessage } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
-import { PopoverTotal } from '../../components/PopoverTotal';
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
-import { CancelPaymentButton } from '../../components/Buttons/CancelPayment';
 import { receivableService } from '../../services/ApiService/ReceivableService';
 import { useReceivables } from '../../hooks/useReceivable';
 import { CreateReceivableModal } from '../../components/Modals/receivables/CreateReceivableModal';
 import { EditReceivableModal } from '../../components/Modals/receivables/EditReceivableModal';
-import { PaymentButton } from '../../components/Buttons/Payment';
 import { ReceivementModal } from '../../components/Modals/receivables/ReceivementModal';
 import { useDateFilter } from '../../contexts/DateFilterContext';
 import { ICancelData } from '../../types/accountScheduling';
 import { IReceivable } from '../../types/receivable';
+import { ReceivableItemsTable } from '../../components/ItemsTable/ReceivableItemsTable';
+import { Input } from '../../components/Inputs/Input';
 
 interface Props {
   categories: {
@@ -72,8 +63,15 @@ export default function AccountReceivable({ categories, accounts }: Props) {
 
   const { data, isLoading, isFetching, isError, refetch } = useReceivables(stringDateRange, page, perPage, receivableStatus);
 
-  const tableSize = isWideVersion ? 'md' : 'sm';
+  const [filteredReceivables, setFilteredReceivables] = useState([] as IReceivable[]);
+
   const sizeProps = isWideVersion ? 'md' : 'sm';
+
+  useEffect(() => {
+    if (data) {
+      setFilteredReceivables(oldValue => data.receivables);
+    }
+  }, [data]);
 
   const deleteReceivable = useMutation(async (id: number) => {
     const response = await receivableService.delete(id);
@@ -114,7 +112,7 @@ export default function AccountReceivable({ categories, accounts }: Props) {
   }
 
   const getSelectedReceivable = (id: number, parcelable_id: number | null) => {
-    const receivable = data.receivables.filter(r => {
+    const receivable = filteredReceivables.filter(r => {
       return r.id === id && r.parcelable_id === parcelable_id
     })
     
@@ -155,6 +153,27 @@ export default function AccountReceivable({ categories, accounts }: Props) {
       getMessage("Erro", data.message, 'error');
     }
   }
+
+  const handleSearchReceivable = (categoryName: string) => {
+    if (categoryName.length === 0) {
+      return setFilteredReceivables(data.receivables);
+    }
+
+    const filtered = data.receivables.filter(receivable => (
+      receivable.description.toLocaleLowerCase().includes(categoryName) 
+      || receivable.category.name.toLocaleLowerCase().includes(categoryName))
+    );
+
+    setFilteredReceivables(oldValue => filtered)
+  }
+
+  const theadData = [
+    "Vencimento",
+    "Pagamento",
+    "Categoria",
+    "Descrição",
+    "Valor"
+  ];
 
   return (
     <>
@@ -224,6 +243,14 @@ export default function AccountReceivable({ categories, accounts }: Props) {
             </Select>
           </Flex>          
         </Flex>
+
+        <Input
+          mb={[4, 4, 6]}
+          name="search"
+          type="text"
+          placeholder="Pesquisar conta"
+          onChange={event => handleSearchReceivable(event.target.value)}
+        />
       
         { isLoading ? (
             <Loading />
@@ -231,80 +258,21 @@ export default function AccountReceivable({ categories, accounts }: Props) {
             <Flex justify="center">Falha ao obter as contas</Flex>
           ) : (
             <>
-              <Table tableSize={tableSize}>
-                <>
-                  <Thead>
-                    <Tr >
-                      <Th>Vencimento</Th>
-                      <Th>Pagamento</Th>
-                      <Th>Categoria</Th>
-                      <Th>Descrição</Th>
-                      <Th>Valor</Th>
-                      <Th w="8"></Th>
-                    </Tr>
-                  </Thead>
-
-                  <Tbody>
-                    { data.receivables.map(receivable => (
-                      <Tr key={ receivable.id } px={[8]}>
-                        <Td fontSize={["xs", "md"]}>
-                          <Text fontWeight="bold">{receivable.due_date}</Text>
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { receivable.paid_date}
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { receivable.category.name}
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { receivable.is_parcel ? (
-                            <PopoverTotal
-                              description={receivable.description}
-                              amount={receivable.total_purchase}
-                            />
-                            ) : (
-                              receivable.description
-                            )
-                          }
-
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { toCurrency(receivable.value) }
-                        </Td>
-                        <Td fontSize={["xs", "md"]}>
-                          { !receivable.paid ? (
-                            <HStack spacing={[2]}>
-                              <EditButton 
-                                isDisabled={receivable.is_parcel}
-                                onClick={() => handleReceivableForEdit(receivable.id, receivable.parcelable_id)}
-                              />
-
-                              <DeleteButton
-                                isDisabled={receivable.is_parcel && receivable.parcel_number !== 1}
-                                onDelete={() => handleDeleteReceivable(receivable.is_parcel ? receivable.parcelable_id : receivable.id)} 
-                                resource="Conta a Receber"
-                                loading={deleteReceivable.isLoading}
-                                isParcel={receivable.is_parcel}
-                              />
-
-                              <PaymentButton
-                                label={"Receber"}
-                                onClick={() => handleReceivement(receivable.id, receivable.parcelable_id)} 
-                              />
-                            </HStack>
-                          ) : (
-                            <CancelPaymentButton 
-                              label="Cancelar Pagamento"
-                              loading={cancelPayment.isLoading}
-                              onCancel={() => handleCancelReceivement(receivable.id, receivable.parcelable_id)} 
-                            />
-                          )}
-                          
-                        </Td>
-                      </Tr>
-                    )) }
-                  </Tbody>
-                </>
+              <Table
+                theadData={theadData}
+                size={sizeProps}
+              >
+                <Tbody>
+                  <ReceivableItemsTable 
+                    data={filteredReceivables}
+                    isLoadingonDelete={deleteReceivable.isLoading}
+                    isLoadingOnCancel={cancelPayment.isLoading}
+                    onEdit={handleReceivableForEdit}
+                    onDelete={handleDeleteReceivable}
+                    onReceivement={handleReceivement}
+                    cancelReceivement={handleCancelReceivement}
+                  />
+                </Tbody>
               </Table>
 
               <Pagination
