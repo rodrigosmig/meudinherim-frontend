@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 import {
@@ -42,6 +42,7 @@ import { AnticipateInstallmentsModal } from "../../../../../../components/Modals
 import { GeneratePayment } from "../../../../../../components/Buttons/GeneratePayment";
 import { GeneratePaymentModal } from "../../../../../../components/Modals/invoices/GeneratePaymentModal";
 import { IInvoiceEntry } from "../../../../../../types/invoiceEntry";
+import { Input } from "../../../../../../components/Inputs/Input";
 
 interface Props {
   cardId: number;
@@ -65,12 +66,19 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
   const [ page, setPage ] = useState(1);
   const [ perPage, setPerPage ] = useState(10);
 
-  const [ dateRange, setDateRange ] = useState([null, null]);
   const [ selectedEntry, setSelectedEntry ] = useState({} as IInvoiceEntry)
 
   const { data, isLoading, isFetching, isError, refetch } = useInvoiceEntries(cardId, invoiceId, page, perPage);
 
+  const [filteredEntries, setFilteredEntries] = useState([] as IInvoiceEntry[]);
+
   const sizeProps = isWideVersion ? 'md' : 'sm';
+
+  useEffect(() => {
+    if (data) {
+      setFilteredEntries(oldValue => data.entries);
+    }
+  }, [data]);
 
   const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value)
@@ -93,7 +101,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
   }
 
   const getSelectedEntry = (id: number, parcelable_id: number | null) => {
-    const entry = data.entries.filter(e => {
+    const entry = filteredEntries.filter(e => {
       return e.id === id && e.parcelable_id === parcelable_id
     })
 
@@ -128,6 +136,19 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
 
       getMessage("Erro", data.message, 'error');
     }
+  }
+
+  const handleSearchEntry = (categoryName: string) => {
+    if (categoryName.length === 0) {
+      return setFilteredEntries(data.entries);
+    }
+
+    const filtered = data.entries.filter(entry => (
+      entry.description.toLocaleLowerCase().includes(categoryName) 
+      || entry.category.name.toLocaleLowerCase().includes(categoryName))
+    );
+
+    setFilteredEntries(oldValue => filtered)
   }
 
   return (
@@ -198,6 +219,14 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
           <AddButton onClick={createModalOnOpen} />
         </Flex>
 
+        <Input
+          mb={[4, 4, 6]}
+          name="email"
+          type="email"
+          placeholder="Pesquisar lançamento"
+          onChange={event => handleSearchEntry(event.target.value)}
+        />
+
         { isLoading ? (
             <Loading />
           ) : isError ? (
@@ -217,7 +246,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
                 </Thead>
 
                 <Tbody>
-                  { data.entries.map(entry => (
+                  { filteredEntries.map(entry => (
                     <Tr key={entry.id}>
                       <Td fontSize={["xs", "md"]}>
                         <Text fontWeight="bold">{ entry.date }</Text>
