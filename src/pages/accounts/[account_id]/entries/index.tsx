@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import Head from "next/head";
 import { 
   Box,
@@ -103,11 +103,11 @@ export default function AccountEntries({ account }: Props) {
     }
   }
 
-  const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
+  const handleChangePerPage = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value)
     setPage(1)
     setPerPage(value)
-  }
+  }, []);
   
   const handleShowPayment = (id: number, parcelable_id: null | number) => {
     setParcelableId(parcelable_id);
@@ -229,21 +229,22 @@ export default function AccountEntries({ account }: Props) {
           <AddButton onClick={createModalOnOpen} />
         </Flex>
 
-        <Input
-          mb={[4, 4, 6]}
-          name="search"
-          type="text"
-          placeholder="Pesquisar lançamento"
-          onChange={event => handleSearchEntry(event.target.value)}
-        />
-
         { isLoading ? (
             <Loading />
           ) : isError ? (
             <Flex justify="center">Falha ao obter as lançamentos</Flex>
           ) : (
             <>
+              <Input
+                mb={[4, 4, 6]}
+                name="search"
+                type="text"
+                placeholder="Pesquisar lançamento"
+                onChange={event => handleSearchEntry(event.target.value)}
+              />
+
               <Table
+                isEmpty={filteredEntries.length === 0}
                 theadData={theadData}
                 size={sizeProps}              
               >

@@ -6,6 +6,7 @@ import {
   Tooltip, 
   useColorModeValue 
 } from "@chakra-ui/react";
+import { memo } from "react";
 import { PaginationItem } from "./PaginationItem";
 
 interface Props {
@@ -26,7 +27,7 @@ function generatePagesArray(from: number, to: number) {
   .filter(page => page > 0)
 }
 
-export const Pagination = ({
+const PaginationComponent = ({
   from,
   to,
   lastPage,
@@ -129,3 +130,5 @@ export const Pagination = ({
     </Stack>
   )
 }
+
+export const Pagination = memo(PaginationComponent);
