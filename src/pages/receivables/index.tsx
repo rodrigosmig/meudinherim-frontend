@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import Head from "next/head";
 import {
   Flex, 
@@ -119,11 +119,11 @@ export default function AccountReceivable({ categories, accounts }: Props) {
     return receivable[0];
   }
 
-  const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
+  const handleChangePerPage = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value)
     setPage(1)
     setPerPage(value)
-  }
+  }, []);
 
   const cancelPayment = useMutation(async (values: ICancelData) => {
     const response = await receivableService.cancelReceivement(values.id, values.parcelable_id);
@@ -243,14 +243,6 @@ export default function AccountReceivable({ categories, accounts }: Props) {
             </Select>
           </Flex>          
         </Flex>
-
-        <Input
-          mb={[4, 4, 6]}
-          name="search"
-          type="text"
-          placeholder="Pesquisar conta"
-          onChange={event => handleSearchReceivable(event.target.value)}
-        />
       
         { isLoading ? (
             <Loading />
@@ -258,7 +250,16 @@ export default function AccountReceivable({ categories, accounts }: Props) {
             <Flex justify="center">Falha ao obter as contas</Flex>
           ) : (
             <>
+              <Input
+                mb={[4, 4, 6]}
+                name="search"
+                type="text"
+                placeholder="Pesquisar conta"
+                onChange={event => handleSearchReceivable(event.target.value)}
+              />
+
               <Table
+                isEmpty={filteredReceivables.length === 0}
                 theadData={theadData}
                 size={sizeProps}
               >

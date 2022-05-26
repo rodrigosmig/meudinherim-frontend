@@ -6,7 +6,7 @@ interface Props {
   isWideVersion: boolean;
 }
 
-export const FilterPerPage = ({ onChange, isWideVersion }: Props) => {
+export const FilterPerPageComponent = ({ onChange, isWideVersion }: Props) => {
   return (
     <Flex align="center">
       <Select
@@ -28,3 +28,5 @@ export const FilterPerPage = ({ onChange, isWideVersion }: Props) => {
     </Flex>
   )
 }
+
+export const FilterPerPage = memo(FilterPerPageComponent)
