@@ -139,7 +139,6 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
 
         <SubmitButton
           label="Salvar"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>

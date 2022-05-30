@@ -110,7 +110,6 @@ export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => 
 
         <SubmitButton
           label="Salvar"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>

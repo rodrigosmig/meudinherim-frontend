@@ -213,7 +213,6 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
         <SubmitButton
           mr={[4]}
           label="Salvar"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>

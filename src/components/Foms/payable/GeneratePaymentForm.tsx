@@ -149,7 +149,6 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: Props) => {
 
         <SubmitButton
           label="Gerar Pagamento"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>

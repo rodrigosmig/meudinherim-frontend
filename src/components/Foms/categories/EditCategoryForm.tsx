@@ -108,7 +108,6 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => 
 
         <SubmitButton
           label="Salvar"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>

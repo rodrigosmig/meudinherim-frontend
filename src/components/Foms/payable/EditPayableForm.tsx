@@ -157,7 +157,6 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Pr
 
         <SubmitButton
           label="Salvar"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>

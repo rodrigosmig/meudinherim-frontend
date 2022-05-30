@@ -217,7 +217,6 @@ export const TransferBetweenAccountsForm = ({ onCancel}: Props) => {
 
         <SubmitButton
           label="Salvar"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>
