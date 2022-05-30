@@ -5,6 +5,20 @@ import { RegisterForm } from "../../../components/Foms/auth/RegisterForm";
 import { authService } from "../../../services/ApiService/AuthService";
 import React from "react";
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 jest.mock('../../../services/ApiService/AuthService');
 
 jest.mock('react-google-recaptcha', () => {

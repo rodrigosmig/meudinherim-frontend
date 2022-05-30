@@ -55,7 +55,7 @@ const formCards = [
   }
 ]
 
-describe('CreateAccountEntryForm Component', () => {
+describe('CreateInvoiceEntryForm Component', () => {
   beforeEach(() => {
     useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
     useCardsFormMocked.mockImplementation(() => ({ isLoading: false, data: formCards }));

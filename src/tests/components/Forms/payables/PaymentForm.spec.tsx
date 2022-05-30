@@ -1,10 +1,22 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
-import { EditPayableForm } from "../../../../components/Foms/payable/EditPayableForm";
 import { PaymentForm } from "../../../../components/Foms/payable/PaymentForm";
 import { payableService } from "../../../../services/ApiService/PayableService";
 import { IPayable } from "../../../../types/payable";
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
 const payableServiceMocked = mocked(payableService.payment);
 
 jest.mock('react-query')
@@ -45,7 +57,7 @@ const payable: IPayable = {
     parcelable_id: null,
   }
 
-describe('EditPayableForm Component', () => {
+describe('PaymentForm Component', () => {
   beforeEach(() => {
     render(<PaymentForm 
         payable={payable} 
