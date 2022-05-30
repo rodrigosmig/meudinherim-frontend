@@ -112,7 +112,6 @@ export function ProfileForm() {
       <SubmitButton
         mt={[6]}
         label="Alterar"
-        size="md"
         isLoading={formState.isSubmitting}
         isDisabled={hasChange()}
       />

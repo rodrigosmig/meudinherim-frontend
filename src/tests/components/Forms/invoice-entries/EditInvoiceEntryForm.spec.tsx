@@ -6,6 +6,20 @@ import { useCategoriesForm } from "../../../../hooks/useCategories";
 import { invoiceEntriesService } from "../../../../services/ApiService/InvoiceEntriesService";
 import { IInvoiceEntry } from "../../../../types/invoiceEntry";
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 const invoiceEntriesServiceMocked = mocked(invoiceEntriesService.update);
 const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
 const useCardsFormMocked = useCardsForm as jest.Mock<any>;
@@ -62,7 +76,7 @@ const entry: IInvoiceEntry = {
   anticipated: false,
 }
 
-describe('CreateAccountEntryForm Component', () => {
+describe('EditInvoiceEntryForm Component', () => {
   beforeEach(() => {
     useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
     useCardsFormMocked.mockImplementation(() => ({ isLoading: false, data: formCards }));

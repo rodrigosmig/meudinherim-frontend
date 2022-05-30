@@ -213,7 +213,6 @@ export const CreateReceivableForm = ({ categories, onCancel, refetch }: Props) =
 
         <SubmitButton
           label="Salvar"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>

@@ -90,7 +90,6 @@ export function ChangePasswordForm() {
                 <SubmitButton
                     mt={[6]}
                     label="Alterar Senha"
-                    size="md"
                     isLoading={formState.isSubmitting}
                 />
             </Flex>

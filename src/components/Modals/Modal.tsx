@@ -6,7 +6,8 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalProps as ChakraModalProps,
-  useColorModeValue
+  useColorModeValue,
+  useBreakpointValue
 } from "@chakra-ui/react";
 import { ReactNode } from "react"
 
@@ -21,8 +22,16 @@ interface Props extends ChakraModalProps {
 export const Modal = ({ header, isOpen, size = "lg", onClose, children }: Props) => {
   const bgColor = useColorModeValue("white", "gray.800");
 
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    md: false,
+    lg: true 
+  });
+
+  const modalSize =  isWideVersion ? size : 'xs';
+
   return (
-    <ChakraModal isOpen={isOpen} onClose={onClose} size={size} closeOnOverlayClick={false}>
+    <ChakraModal isOpen={isOpen} onClose={onClose} size={modalSize} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent bgColor={bgColor}>
         <ModalHeader fontSize={"md"}>{header}</ModalHeader>

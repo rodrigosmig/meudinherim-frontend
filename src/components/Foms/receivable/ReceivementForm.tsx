@@ -169,7 +169,6 @@ export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Pro
 
             <SubmitButton
               label="Receber"
-              size="md"
               isLoading={formState.isSubmitting}
             />
           </Flex>

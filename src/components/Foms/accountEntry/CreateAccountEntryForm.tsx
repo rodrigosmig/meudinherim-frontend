@@ -153,7 +153,6 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
 
         <SubmitButton
           label="Salvar"
-          size="md"
           isLoading={formState.isSubmitting}
         />
       </Flex>

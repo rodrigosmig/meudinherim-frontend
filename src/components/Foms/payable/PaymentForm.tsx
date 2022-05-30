@@ -175,7 +175,6 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => 
 
             <SubmitButton
               label="Pagar"
-              size="md"
               isLoading={formState.isSubmitting}
             />
           </Flex>
