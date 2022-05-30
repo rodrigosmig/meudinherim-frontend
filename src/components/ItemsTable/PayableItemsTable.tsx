@@ -15,6 +15,8 @@ import { IPayable } from "../../types/payable";
 import { DeleteButton } from "../Buttons/Delete";
 import { PaymentButton } from "../Buttons/Payment";
 import { CancelPaymentButton } from "../Buttons/CancelPayment";
+import { Check } from "../Icons/Check";
+import { Close } from "../Icons/Close";
 
 interface Props {
   data: IPayable[];
@@ -75,6 +77,9 @@ const PayableItemsTableComponent = ({
               )
             }
 
+          </Td>
+          <Td>
+            { payable.monthly ? <Check /> : <Close /> }
           </Td>
           <Td fontSize={["xs", "md"]}>
             { toCurrency(payable.value) }

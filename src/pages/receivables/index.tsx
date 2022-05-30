@@ -172,6 +172,7 @@ export default function AccountReceivable({ categories, accounts }: Props) {
     "Pagamento",
     "Categoria",
     "Descrição",
+    "Mensal",
     "Valor"
   ];
 

@@ -174,6 +174,7 @@ export default function AccountPayables({ categories, accounts }: Props) {
     "Pagamento",
     "Categoria",
     "Descrição",
+    "Mensal",
     "Valor"
   ];
 
