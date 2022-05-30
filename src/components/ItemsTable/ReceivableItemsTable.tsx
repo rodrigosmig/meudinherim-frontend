@@ -12,6 +12,8 @@ import { EditButton } from "../Buttons/Edit";
 import { DeleteButton } from "../Buttons/Delete";
 import { PaymentButton } from "../Buttons/Payment";
 import { CancelPaymentButton } from "../Buttons/CancelPayment";
+import { Check } from "../Icons/Check";
+import { Close } from "../Icons/Close";
 
 interface Props {
   data: IReceivable[];
@@ -56,6 +58,9 @@ const ReceivableItemsTableComponent = ({
                 )
               }
 
+            </Td>
+            <Td>
+              { receivable.monthly ? <Check /> : <Close /> }
             </Td>
             <Td fontSize={["xs", "md"]}>
               { toCurrency(receivable.value) }

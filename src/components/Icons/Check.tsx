@@ -3,7 +3,7 @@ import { RiCheckLine } from "react-icons/ri";
 
 export const Check = () => {
   return (
-    <Flex justify="center">
+    <Flex justify={["center", "flex-start"]}>
       <Icon as={RiCheckLine} fontSize="16" color="blue.600" />
     </Flex>
   )
