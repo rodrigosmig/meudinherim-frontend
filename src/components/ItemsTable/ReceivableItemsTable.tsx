@@ -42,9 +42,6 @@ const ReceivableItemsTableComponent = ({
               <Text fontWeight="bold">{receivable.due_date}</Text>
             </Td>
             <Td fontSize={["xs", "md"]}>
-              { receivable.paid_date}
-            </Td>
-            <Td fontSize={["xs", "md"]}>
               { receivable.category.name}
             </Td>
             <Td fontSize={["xs", "md"]}>

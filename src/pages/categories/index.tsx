@@ -176,6 +176,7 @@ export default function Categories() {
         </Flex>
 
         <Input
+          bgColor="gray.900"
           mb={[4, 4, 6]}
           name="search"
           type="text"

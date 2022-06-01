@@ -45,9 +45,6 @@ const PayableItemsTableComponent = ({
             <Text fontWeight="bold">{payable.due_date}</Text>
           </Td>
           <Td fontSize={["xs", "md"]}>
-            { payable.paid_date}
-          </Td>
-          <Td fontSize={["xs", "md"]}>
             { payable.category.name}
           </Td>
           <Td fontSize={["xs", "md"]}>
