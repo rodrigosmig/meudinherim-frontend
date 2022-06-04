@@ -42,7 +42,7 @@ const validationSchema = yup.object().shape({
 export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Props) => {
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
-      account_id: "",
+      account_id: 0,
       paid_date: new Date(),
       value: receivable.value
     },

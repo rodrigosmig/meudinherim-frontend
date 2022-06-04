@@ -40,9 +40,9 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
     defaultValues:{
       date: new Date(),
       account_id: accountId,
-      category_id: "",
+      category_id: 0,
       description: "",
-      value: ""
+      value: 0
     },
     resolver: yupResolver(createEntryValidation)
   });

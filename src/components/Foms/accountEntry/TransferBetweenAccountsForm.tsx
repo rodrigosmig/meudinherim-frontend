@@ -40,11 +40,11 @@ export const TransferBetweenAccountsForm = ({ onCancel}: Props) => {
     defaultValues:{
       date: new Date(),
       description: "",
-      value: "",
-      source_account_id: "",
-      destination_account_id: "",
-      source_category_id: "",
-      destination_category_id: ""
+      value: 0,
+      source_account_id: 0,
+      destination_account_id: 0,
+      source_category_id: 0,
+      destination_category_id: 0
     },
     resolver: yupResolver(transferValidation)
   });
