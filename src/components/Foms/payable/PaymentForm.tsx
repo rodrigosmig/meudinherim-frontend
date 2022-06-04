@@ -4,7 +4,6 @@ import {
     Flex,
     Stack
 } from "@chakra-ui/react"
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../../Inputs/Input"
@@ -15,6 +14,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
 import { Select } from "../../Inputs/Select";
 import { IPayable, IPaymentFormData } from "../../../types/payable";
+import { paymentValidation } from "../../../validations/payable";
 
 interface Props {
     payable: IPayable;
@@ -38,12 +38,6 @@ type ResponseError = {
 
 type Key = keyof ResponseError;
 
-const validationSchema = yup.object().shape({
-  paid_date: yup.date().typeError("O campo data de pagamento é obrigatório"),
-  account_id: yup.number().integer("Conta inválida").moreThan(0, "Conta inválida").typeError("O campo conta é inválido"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
-})
-
 export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => {
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
@@ -51,7 +45,7 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => 
       paid_date: new Date(),
       value: payable.value
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(paymentValidation)
   });
 
   const { errors } = formState;

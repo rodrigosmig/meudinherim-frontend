@@ -16,7 +16,7 @@ import { useCategoriesForm } from "../../../hooks/useCategories";
 import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
 import { IAccountEntry, IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
-import { editEntryValidation } from "../../../validations/accountEntry";
+import { editValidation } from "../../../validations/accountEntry";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
@@ -37,7 +37,7 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
       description: entry.description,
       value: entry.value
     },
-    resolver: yupResolver(editEntryValidation)
+    resolver: yupResolver(editValidation)
   });
 
   const { errors } = formState;

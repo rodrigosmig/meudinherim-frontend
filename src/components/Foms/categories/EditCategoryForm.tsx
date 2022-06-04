@@ -4,7 +4,6 @@ import {
   Flex,
   Stack
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -14,6 +13,7 @@ import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage } from "../../../utils/helpers";
 import { ICategoryErrorKey, ICategory, ICategoryFormData, ICategoryResponseError } from "../../../types/category";
+import { editValidation } from "../../../validations/categories";
 
 interface Props {
   category: ICategory;
@@ -21,18 +21,13 @@ interface Props {
   refetch: () => void
 }
 
-const validationSchema = yup.object().shape({
-  type: yup.string().required("O campo tipo é obrigatório"),
-  name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
-})
-
 const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => {
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       type: category.type,
       name: category.name
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(editValidation)
   });
 
   const { errors } = formState;

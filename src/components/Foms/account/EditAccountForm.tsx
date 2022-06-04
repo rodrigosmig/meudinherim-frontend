@@ -13,11 +13,7 @@ import { Select } from "../../Inputs/Select";
 import { accountService } from '../../../services/ApiService/AccountService';
 import { getMessage } from "../../../utils/helpers";
 import { IAccountErrorKey, IAccount, IAccountFormData, IAccountResponseError } from "../../../types/account";
-
-const validationSchema = yup.object().shape({
-  type: yup.string().required("O campo tipo é obrigatório"),
-  name: yup.string().required("O campo nome é obrigatório").min(3, "O campo nome deve ter no mínimo 3 caracteres"),
-})
+import { editValidation } from "../../../validations/account";
 
 interface Props {
   account: IAccount;
@@ -31,7 +27,7 @@ export const EditAccountForm = ({ account, closeModal, refetch }: Props) => {
       type: account.type.id,
       name: account.name
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(editValidation)
   });
 
   const { errors } = formState;

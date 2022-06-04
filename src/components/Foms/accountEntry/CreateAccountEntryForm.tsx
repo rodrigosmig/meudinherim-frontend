@@ -18,7 +18,7 @@ import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
 import { IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
-import { createEntryValidation } from "../../../validations/accountEntry";
+import { createValidation } from "../../../validations/accountEntry";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
@@ -44,7 +44,7 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
       description: "",
       value: 0
     },
-    resolver: yupResolver(createEntryValidation)
+    resolver: yupResolver(createValidation)
   });
 
   const { errors } = formState;

@@ -6,7 +6,6 @@ import {
   Flex,
   Stack
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -22,6 +21,7 @@ import { Installment } from "../../Inputs/Installment";
 import { Switch } from "../../Inputs/Switch";
 import { getMessage, toUsDate } from "../../../utils/helpers";
 import { IInvoiceEntryCreateData, IInvoiceEntryErrorKey, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
+import { createValidation } from "../../../validations/invoiceEntry";
 
 interface FormData extends Omit<IInvoiceEntryCreateData, "date"> {
   date: Date;
@@ -32,21 +32,6 @@ interface CreateInvoiceEntryFormProps {
   onCancel: () => void;
   refetch?: () => void;
 }
-
-const validationSchema = yup.object().shape({
-  card_id: yup.number().integer("Cartão de Crédito inválido").typeError("O campo cartão de crédito é inválido"),
-  date: yup.date().typeError("O campo data é obrigatório"),
-  category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
-  description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório"),
-  installment: yup.boolean(),
-  installments_number: yup.number().when('installment', {
-    is: true,
-    then: yup.number().typeError("O número de parcelas é inválido")
-      .min(2, 'O valor mínimo é 2.')
-      .max(12, 'O valor máximo é 12.'),
-  })
-})
 
 export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: CreateInvoiceEntryFormProps) => {  
   const router = useRouter();
@@ -67,7 +52,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
       installment: false,
       installments_number: 2
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(createValidation)
   });
 
   const { errors } = formState;
