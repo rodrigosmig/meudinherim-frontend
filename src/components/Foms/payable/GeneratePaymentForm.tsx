@@ -18,10 +18,7 @@ import { payableService } from "../../../services/ApiService/PayableService";
 import { IInvoice } from "../../../types/card";
 import { IGeneratePaymentResponseError, IPayableCreateData } from "../../../types/payable";
 import { IGenerateKeyError } from "../../../types/accountScheduling";
-
-const validationSchema = yup.object().shape({
-  category_id: yup.number().integer("Categoria inválida").moreThan(0, "Categoria inválida").typeError("O campo categoria é inválido"),
-})
+import { generatePaymentValidation } from "../../../validations/payable";
 
 interface Props {
   invoice: IInvoice;
@@ -37,7 +34,7 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: Props) => {
     defaultValues:{
       category_id: 0
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(generatePaymentValidation)
   });
 
   const { errors } = formState;

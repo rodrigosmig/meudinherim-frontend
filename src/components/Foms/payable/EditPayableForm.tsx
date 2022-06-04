@@ -4,7 +4,6 @@ import {
   Flex,
   Stack
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -18,6 +17,7 @@ import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
 import { IPayable, IPayableFormData, IPayableResponseError } from "../../../types/payable";
 import { IAccountSchedulingErrorKey } from "../../../types/accountScheduling";
+import { editValidation } from "../../../validations/payable";
 
 interface Props {
   payable: IPayable;
@@ -33,13 +33,6 @@ interface FormData extends Omit<IPayableFormData, "due_date"> {
   due_date: Date;
 }
 
-const validationSchema = yup.object().shape({
-  due_date: yup.date().typeError("O campo vencimento é obrigatório"),
-  category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
-  description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
-})
-
 export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Props) => {
   const [ monthly, setMonthly ] = useState(payable.monthly);
 
@@ -51,7 +44,7 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Pr
       value: payable.value,
       monthly: payable.monthly,
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(editValidation)
   });
 
   const { errors } = formState;

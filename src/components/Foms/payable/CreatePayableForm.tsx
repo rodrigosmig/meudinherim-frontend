@@ -4,7 +4,6 @@ import {
   Flex,
   Stack, 
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -19,6 +18,7 @@ import { getMessage, toUsDate } from '../../../utils/helpers';
 import { useRouter } from 'next/router';
 import { IPayableCreateData, IPayableResponseError } from '../../../types/payable';
 import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
+import { createValidation } from '../../../validations/payable';
 
 interface FormData extends Omit<IPayableCreateData, "due_date"> {
   due_date: Date;
@@ -33,20 +33,6 @@ interface CreatePayableFormProps {
   refetch?: () => void
 }
 
-const validationSchema = yup.object().shape({
-  due_date: yup.date().typeError("O campo vencimento é obrigatório"),
-  category_id: yup.number().integer("Categoria inválida").moreThan(0, "O campo categoria é inválido").typeError("O campo categoria é inválido"),
-  description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
-  installment: yup.boolean(),
-  installments_number: yup.number().when('installment', {
-    is: true,
-    then: yup.number().typeError("O número de parcelas é inválido")
-      .min(2, 'O valor mínimo é 2.')
-      .max(12, 'O valor máximo é 12.'),
-  })
-})
-
 export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayableFormProps) => {  
   const router = useRouter();
 
@@ -60,7 +46,7 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
       installment: false,
       installments_number: 2
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(createValidation)
   });
 
   const [ monthly, setMonthly ] = useState(false);

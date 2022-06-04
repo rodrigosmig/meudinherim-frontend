@@ -4,10 +4,8 @@ import {
     Flex,
     Stack,
 } from "@chakra-ui/react"
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
 import { Input } from "../../Inputs/Input"
 import { Switch } from "../../Inputs/Switch"
 import { SubmitButton } from "../../Buttons/Submit";
@@ -18,6 +16,7 @@ import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage, toUsDate } from "../../../utils/helpers";
 import { ITransactionErrorKey, ITransactionResponseError } from "../../../types/accountScheduling";
 import { IReceivable, IReceivementFormData } from "../../../types/receivable";
+import { receivementValidation } from "../../../validations/receivables";
 
 interface Props {
     receivable: IReceivable;
@@ -33,12 +32,6 @@ interface FormData extends Omit<IReceivementFormData, "paid_date"> {
   paid_date: Date;
 }
 
-const validationSchema = yup.object().shape({
-  paid_date: yup.date().typeError("O campo data de pagamento é obrigatório"),
-  account_id: yup.number().integer("Conta inválida").typeError("O campo conta é inválido"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
-})
-
 export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Props) => {
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
@@ -46,7 +39,7 @@ export const ReceivementForm = ({ receivable, accounts, onCancel, refetch }: Pro
       paid_date: new Date(),
       value: receivable.value
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(receivementValidation)
   });
 
   const { errors } = formState;

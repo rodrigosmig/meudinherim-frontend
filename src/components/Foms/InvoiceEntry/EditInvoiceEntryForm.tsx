@@ -15,19 +15,13 @@ import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { getMessage } from "../../../utils/helpers";
 import { IInvoiceEntry, IInvoiceEntryErrorKey, IInvoiceEntryFormData, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
+import { editValidation } from "../../../validations/invoiceEntry";
 
 interface Props {
   entry: IInvoiceEntry;
   onClose: () => void,
   refetch: () => void
 }
-
-const validationSchema = yup.object().shape({
-  card_id: yup.number().integer("Cartão de Crédito inválido").typeError("O campo cartão de crédito é inválido"),
-  category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
-  description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
-  value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é obrigatório")
-})
 
 export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: Props) => {  
   const { data: categories, isLoading } = useCategoriesForm();
@@ -38,7 +32,7 @@ export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: Props) => {
       description: entry.description,
       value: entry.value,
     },
-    resolver: yupResolver(validationSchema)
+    resolver: yupResolver(editValidation)
   });
 
   const { errors } = formState;
