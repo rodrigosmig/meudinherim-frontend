@@ -24,10 +24,6 @@ describe('ProfileForm Component', () => {
   beforeEach(() => {
     render(<ProfileForm />)
   });
-
-  it('change button is disabled when render component', async () => {
-    expect(screen.getByRole("button")).toBeDisabled();
-  })
   
   it('validates required inputs', async () => {
     fireEvent.input(screen.getByLabelText('Nome'), {
@@ -39,7 +35,7 @@ describe('ProfileForm Component', () => {
     })
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole("button"));
+      fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
     })
     
     expect(screen.getByRole("button")).not.toBeDisabled();
@@ -58,7 +54,7 @@ describe('ProfileForm Component', () => {
     })
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole("button"));
+      fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
     })
 
     expect(screen.getByRole("button")).not.toBeDisabled();
@@ -94,11 +90,21 @@ describe('ProfileForm Component', () => {
     })
 
     await waitFor(() => {
-      fireEvent.submit(screen.getByRole("button"));
+      fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
     })
 
     expect(screen.getByText("Alterar")).not.toBeDisabled();
     expect(screen.getByText("Sucesso")).toBeInTheDocument();
     expect(screen.getByText("Alteração realizada com sucesso")).toBeInTheDocument();
   });
+
+  it('send the data without any changes', async () => {
+    await act(async () => {
+      fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
+    })
+
+    expect(screen.getByText("Sem alteração")).toBeInTheDocument();
+    expect(screen.getByText("Nenhuma alteração foi realizada")).toBeInTheDocument();
+  });
+  
 })

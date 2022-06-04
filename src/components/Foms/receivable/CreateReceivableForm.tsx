@@ -35,7 +35,7 @@ interface Props {
 
 const validationSchema = yup.object().shape({
   due_date: yup.date().typeError("O campo vencimento é obrigatório"),
-  category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
+  category_id: yup.number().integer("Categoria inválida").moreThan(0, "O campo categoria é inválido").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
   installment: yup.boolean(),
@@ -53,7 +53,7 @@ export const CreateReceivableForm = ({ categories, onCancel, refetch }: Props) =
   const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
       due_date: new Date(),
-      category_id: "",
+      category_id: 0,
       description: "",
       value: 0,
       monthly: false,

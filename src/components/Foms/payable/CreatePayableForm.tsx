@@ -35,7 +35,7 @@ interface CreatePayableFormProps {
 
 const validationSchema = yup.object().shape({
   due_date: yup.date().typeError("O campo vencimento é obrigatório"),
-  category_id: yup.number().integer("Categoria inválida").typeError("O campo categoria é inválido"),
+  category_id: yup.number().integer("Categoria inválida").moreThan(0, "O campo categoria é inválido").typeError("O campo categoria é inválido"),
   description: yup.string().required("O campo descrição é obrigatório").min(3, "O campo descrição deve ter no mínimo 3 caracteres"),
   value: yup.number().positive("O valor deve ser maior que zero").typeError("O campo valor é inválido"),
   installment: yup.boolean(),
@@ -53,9 +53,9 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
       due_date: new Date(),
-      category_id: "",
+      category_id: 0,
       description: "",
-      value: "",
+      value: 0,
       monthly: false,
       installment: false,
       installments_number: 2
@@ -130,14 +130,14 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
       <Stack spacing={[4]}>
         <Controller
           control={control}
-            name="due_date"
-            render={({ field }) => (
-              <Datepicker
-                label="Vencimento"
-                error={errors.due_date}
-                selected={field.value}
-                onChange={(date) => field.onChange(date)}
-              />
+          name="due_date"
+          render={({ field }) => (
+            <Datepicker
+              label="Vencimento"
+              error={errors.due_date}
+              selected={field.value}
+              onChange={(date) => field.onChange(date)}
+            />
            )}
         />
 

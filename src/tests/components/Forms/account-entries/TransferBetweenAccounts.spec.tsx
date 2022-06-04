@@ -57,7 +57,7 @@ const accounts = [
 
 const closeModal = jest.fn();
 
-describe('TransferBeetAccountsForm Component', () => {
+describe('TransferBetweenAccounts Component', () => {
   beforeEach(() => {
     useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
     useAccountsFormMocked.mockImplementation(() => ({ isLoading: false, data: accounts }));
@@ -87,8 +87,7 @@ describe('TransferBeetAccountsForm Component', () => {
 
     //Accounts
     expect(screen.getAllByRole("option", {name: "Account Test"}).length).toEqual(2);
-
-  })
+  });
 
   it('validates required fields inputs', async () => {
     
@@ -102,8 +101,8 @@ describe('TransferBeetAccountsForm Component', () => {
     expect(screen.getByText("O campo conta de destino é inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo categoria de destino é inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo descrição é obrigatório")).toBeInTheDocument();
-    expect(screen.getByText("O campo valor é inválido")).toBeInTheDocument();
-  })
+    expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
+  });
 
   it('validates user inputs', async () => {
     fireEvent.change(screen.getByLabelText('Categoria de origem'), {target: { value: "2" }});
@@ -120,7 +119,7 @@ describe('TransferBeetAccountsForm Component', () => {
     expect(accountEntriesServiceMocked).toHaveBeenCalledTimes(0);  
     expect(screen.getByText("O campo descrição deve ter no mínimo 3 caracteres")).toBeInTheDocument();
     expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
-  })
+  });
 
   it('transfers successfuly', async () => {
     fireEvent.change(screen.getByLabelText('Categoria de origem'), {target: { value: "2" }});
@@ -137,5 +136,47 @@ describe('TransferBeetAccountsForm Component', () => {
 
     expect(accountEntriesServiceMocked).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Transferência realizada com sucesso")).toBeInTheDocument(); 
-  })
+  });
+
+  it('tests server validation error', async () => {
+    const response = {
+      date: ["error date"],
+      description: ["error description"],
+      value: ["error value"],
+      source_category_id: ["error source_category_id"],
+      destination_category_id: ["error destination_category_id"],
+      source_account_id: ["error source_account_id"],
+      destination_account_id: ["error destination_account_id"],
+    }
+
+    accountEntriesServiceMocked.mockRejectedValue({
+      response: {
+        status: 422,
+        headers: {},
+        statusText: "",
+        config: {},
+        data: response
+      }
+    });
+
+    fireEvent.change(screen.getByLabelText('Categoria de origem'), {target: { value: "2" }});
+    fireEvent.change(screen.getByLabelText('Categoria de destino'), {target: { value: "1" }});
+    fireEvent.change(screen.getByLabelText('Conta de origem'), {target: { value: "2" }});
+    fireEvent.change(screen.getByLabelText('Conta de destino'), {target: { value: "1" }});
+    fireEvent.input(screen.getByLabelText('Valor'), {target: { value: 100}})
+    fireEvent.input(screen.getByLabelText('Descrição'), {target: {value: 'Test'}})
+
+    await waitFor(() => {
+      fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    })
+
+    expect(accountEntriesServiceMocked).toBeCalled();
+    expect(screen.getByText(response.date[0])).toBeInTheDocument();
+    expect(screen.getByText(response.value[0])).toBeInTheDocument();
+    expect(screen.getByText(response.source_category_id[0])).toBeInTheDocument();
+    expect(screen.getByText(response.destination_category_id[0])).toBeInTheDocument();
+    expect(screen.getByText(response.source_account_id[0])).toBeInTheDocument();
+    expect(screen.getByText(response.destination_account_id[0])).toBeInTheDocument();
+    expect(screen.getByText(response.description[0])).toBeInTheDocument();
+  });
 })

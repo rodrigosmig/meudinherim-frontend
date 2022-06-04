@@ -95,7 +95,7 @@ describe('PaymentForm Component', () => {
     })
 
     expect(payableServiceMocked).toHaveBeenCalledTimes(0);
-    expect(screen.getByText("O campo conta é inválido")).toBeInTheDocument();
+    expect(screen.getByText("Conta inválida")).toBeInTheDocument();
     expect(screen.getByText("O campo data de pagamento é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo valor é inválido")).toBeInTheDocument();
   })

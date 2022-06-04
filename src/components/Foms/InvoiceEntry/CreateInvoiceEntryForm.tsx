@@ -61,7 +61,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
     defaultValues:{
       date: new Date(),
       card_id: card_id,
-      category_id: "",
+      category_id: 0,
       description: "",
       value: 0,
       installment: false,

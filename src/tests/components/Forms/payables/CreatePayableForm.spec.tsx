@@ -66,7 +66,7 @@ describe('CreatePayableForm Component', () => {
   it('validates required fields inputs', async () => {
     fireEvent.input(screen.getByLabelText('Categoria'), {target: { value: "" }})
     fireEvent.input(screen.getByLabelText('Vencimento'), {target: { value: "" }})
-    fireEvent.input(screen.getByLabelText('Valor'), {target: { value: -1 }})
+    fireEvent.input(screen.getByLabelText('Valor'), {target: { value: 0 }})
 
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
@@ -77,7 +77,7 @@ describe('CreatePayableForm Component', () => {
     expect(screen.getByText("O campo vencimento é obrigatório")).toBeInTheDocument();
     expect(screen.getByText("O campo categoria é inválido")).toBeInTheDocument();
     expect(screen.getByText("O campo descrição é obrigatório")).toBeInTheDocument();
-    expect(screen.getByText("O campo valor é inválido")).toBeInTheDocument();
+    expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
   })
 
   it('validates user inputs', async () => {
@@ -93,7 +93,7 @@ describe('CreatePayableForm Component', () => {
     expect(payableServiceMocked).toHaveBeenCalledTimes(0);
     expect(screen.getByLabelText("Parcelar")).toBeDisabled();
     expect(screen.getByText("O campo descrição deve ter no mínimo 3 caracteres")).toBeInTheDocument();
-    expect(screen.getByText("O campo valor é inválido")).toBeInTheDocument();
+    expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
   })
 
   it('tests installments', async () => {

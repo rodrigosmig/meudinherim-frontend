@@ -83,7 +83,7 @@ describe('GeneratePaymentForm Component', () => {
   });
 
   it('validates required fields inputs', async () => {
-    fireEvent.input(screen.getByLabelText('Categoria'), {target: { value: "" }})
+    fireEvent.change(screen.getByLabelText('Categoria'), {target: { value: "" }})
 
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button", {name: "Gerar Pagamento"}));
@@ -115,4 +115,29 @@ describe('GeneratePaymentForm Component', () => {
     expect(onCancel).toHaveBeenCalledTimes(0);
     expect(screen.getByText("Conta a pagar gerado com sucesso")).toBeInTheDocument(); 
   })
+
+  it('tests server validation error', async () => {
+    const response = {
+      category_id: ["error category"]
+    }
+
+    payableServiceMocked.mockRejectedValue({
+      response: {
+        status: 422,
+        headers: {},
+        statusText: "",
+        config: {},
+        data: response
+      }
+    })
+
+    fireEvent.change(screen.getByLabelText('Categoria'), {target: { value: "2" }})
+
+    await waitFor(() => {
+      fireEvent.submit(screen.getByRole("button", {name: "Gerar Pagamento"}));
+    })
+
+    expect(payableServiceMocked).toBeCalled();
+    expect(screen.getByText(response.category_id[0])).toBeInTheDocument();
+  });
 })

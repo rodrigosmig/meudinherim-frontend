@@ -40,6 +40,14 @@ export interface IProfileUpdateData {
   enable_notification: boolean;
 }
 
+export interface IProfileUpdateDataError {
+  name: string[]
+  email: string[];
+  enable_notification: string[];
+}
+
+export type IProfileUpdateDataErrorKey = keyof IProfileUpdateDataError;
+
 export interface IPasswordUpdateData {
   current_password: string
   password: string;
