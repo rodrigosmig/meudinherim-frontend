@@ -29,7 +29,8 @@ export default function VerifyEmail({ url }: Props) {
 
       if (!url || url.length === 0) {
         getMessage("Erro", "Token de verificação inválido", 'error', 5000);
-        setIsError(true);
+        setIsLoading(oldValue => !oldValue);
+        setIsError(oldValue => !oldValue);
         return router.push("/");
       }
 
@@ -38,23 +39,22 @@ export default function VerifyEmail({ url }: Props) {
 
         getMessage("Sucesso", response.data.message, 'success', 5000)
 
+        setIsLoading(oldValue => !oldValue);
         return router.push("/"); 
       } catch (error) {  
+        setIsError(oldValue => !oldValue);
+        setIsLoading(oldValue => !oldValue);
+
         const data = error.response.data;
-        setIsLoading(false);
         
         if (error.response.status === 400) {
-          getMessage("Erro", data?.message, 'error', 5000)
+          getMessage("Erro", data?.message, 'warning', 5000)
           return router.push("/");
         }
-
-        setIsError(true);
 
         if (error.response.status === 404) {
           return getMessage("Erro", "Token de verificação inválido", 'error', 5000);
         }
-
-        
 
         getMessage("Erro", data?.message, 'error', 5000)
       }
