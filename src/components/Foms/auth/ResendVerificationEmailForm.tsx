@@ -7,21 +7,19 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from '../../Inputs/Input';
 import { SubmitButton } from '../../Buttons/Submit';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage } from "../../../utils/helpers";
 import { authService } from "../../../services/ApiService/AuthService";
 import { IForgotPasswordData } from "../../../types/auth";
 import { Link } from "../../Link";
 import { useRouter } from "next/router";
-import { useContext } from "react";
-import { AuthContext } from "../../../contexts/AuthContext";
 import { resendEmailVerificationValidation } from "../../../validations/auth";
+import { useUser } from "../../../hooks/useUser";
 
 export const ResendVerificationEmailForm = () => {
   const router = useRouter();
 
-  const { signOut } = useContext(AuthContext);
+  const { isAuthenticated, signOut } = useUser();
 
   const { register, handleSubmit, reset, formState } = useForm({
     resolver: yupResolver(resendEmailVerificationValidation)
@@ -37,11 +35,15 @@ export const ResendVerificationEmailForm = () => {
 
       reset();
 
-      setTimeout(() => {
-        signOut();        
-      }, 3000);
-
-      return;
+      if (isAuthenticated) {
+        setTimeout(() => {
+          signOut();        
+        }, 2000);
+      } else {
+        setTimeout(() => {
+          router.push("/")
+        }, 2000);
+      }
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;
