@@ -23,5 +23,5 @@ export const authService = {
   me: (): Promise<AxiosResponse<IUser>> => apiClient.get("/auth/me"),
   forgotPassword: (data: IForgotPasswordData): Promise<AxiosResponse<IForgotPasswordResponse>> => apiClient.post("/auth/forgot-password", data),
   resetPassword: (data: ResetPasswordData): Promise<AxiosResponse> => apiClient.post("/auth/reset-password", data),
-  resendVerificationEmail: (data: IResendVerificationEmailData): Promise<AxiosResponse> => apiClient.post(`/auth/resend-email/`, data),
+  resendVerificationEmail: (data: IResendVerificationEmailData): Promise<AxiosResponse> => apiClient.post("/auth/resend-email", data),
 };
