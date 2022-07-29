@@ -3,6 +3,7 @@ import { Pagination } from "./pagination";
 interface Category {
   type: CategoryType
   name: string;
+  active: boolean;
 }
 
 export interface ICategory extends Category {

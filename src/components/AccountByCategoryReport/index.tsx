@@ -15,7 +15,7 @@ import { Loading } from "../Loading";
 import { TotalByCategoryModal } from "../Modals/reports/TotalByCategoryModal";
 import { TableReport } from "../TableReport";
 
-interface Category extends Omit<ICategory, "type"> {}
+interface Category extends Omit<ICategory, "type" | "active"> {}
 
 interface Props {
   accountId: number;

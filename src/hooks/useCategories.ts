@@ -3,8 +3,8 @@ import { useQuery } from "react-query";
 import { AuthContext } from "../contexts/AuthContext";
 import { categoryService } from "../services/ApiService/CategoryService";
 
-export const getCategories = async (type: string, page: number, perPage: number) => {
-  const response = await categoryService.list(type, page, perPage);
+export const getCategories = async (type: string, active: boolean, page: number, perPage: number) => {
+  const response = await categoryService.list(type, active, page, perPage);
   const data = {
     categories: response.data.data,
     meta: {
@@ -28,10 +28,10 @@ export const getCategoriesForForm = async () => {
   return data;
 }
 
-export const useCategories = (type: string, page: number, perPage: number) => {
+export const useCategories = (type: string, active: boolean, page: number, perPage: number) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['categories', type, page, perPage, user?.id], () => getCategories(type, page, perPage), {
+  return useQuery(['categories', type, active, page, perPage, user?.id], () => getCategories(type, active, page, perPage), {
     staleTime: 1000 * 5
   })
 }
