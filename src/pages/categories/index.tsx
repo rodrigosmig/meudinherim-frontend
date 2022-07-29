@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { 
   Box,
+  Checkbox,
   Flex, 
   HStack, 
   Select, 
@@ -49,7 +50,8 @@ export default function Categories() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [categoryType, setCategoryType] = useState("");
-  const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType, page, perPage);
+  const [active, setActive] = useState(true);
+  const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType, active, page, perPage);
   const [ selectedCategory, setSelectedCategory ] = useState({} as ICategory);
   const [filteredCategories, setFilteredCategories] = useState([] as ICategory[]);
 
@@ -161,18 +163,29 @@ export default function Categories() {
         >
           <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />
 
-          <Box>
+          <Flex 
+            width={200}
+            justify="space-between"
+          >
+            <Checkbox 
+              colorScheme={'pink'}
+              isChecked={active}
+              onChange={() => setActive(!active)}
+            >
+              Ativas
+            </Checkbox>
+
             <Select
               size={sizeProps}
               variant="unstyled"
-              maxW={[150]}
+              maxW={[100]}
               onChange={event => handleChangeCategoryType(event)}
             >
               <option value="">Todas</option>
               <option value="1">Entrada</option>
               <option value="2">Saída</option>
             </Select>
-          </Box>
+          </Flex>
         </Flex>
 
         <Input

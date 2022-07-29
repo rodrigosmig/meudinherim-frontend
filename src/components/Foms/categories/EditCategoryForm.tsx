@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { 
   Box,
   Flex,
@@ -14,6 +14,7 @@ import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage } from "../../../utils/helpers";
 import { ICategoryErrorKey, ICategory, ICategoryFormData, ICategoryResponseError } from "../../../types/category";
 import { editValidation } from "../../../validations/categories";
+import { Switch } from "../../Inputs/Switch";
 
 interface Props {
   category: ICategory;
@@ -22,10 +23,13 @@ interface Props {
 }
 
 const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => {
+  const [ isActive, setIsActive ] = useState(category.active);
+
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       type: category.type,
-      name: category.name
+      name: category.name,
+      active: category.active
     },
     resolver: yupResolver(editValidation)
   });
@@ -38,6 +42,7 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => 
       data: {
         type: values.type,
         name: values.name,
+        active: isActive
       }
     }
 
@@ -88,6 +93,16 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => 
           label="Nome da Categoria"
           error={errors.name}
           {...register('name')}
+        />
+
+        <Switch
+          size="lg"
+          id="active" 
+          name='active'
+          label="Ativo"
+          {...register('active')}
+          isChecked={isActive}
+          onChange={() => setIsActive(!isActive)}
         />
       </Stack>
       <Flex

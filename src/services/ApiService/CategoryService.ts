@@ -12,7 +12,7 @@ import { setupApiClient } from "../api";
 const apiClient = setupApiClient();
 
 export const categoryService = {
-  list: (type: string, page: number, perPage: number): Promise<AxiosResponse<ICategoryResponse>> => apiClient.get(`/categories?type=${type}&page=${page}&per_page=${perPage}`),
+  list: (type: string, active: boolean, page: number, perPage: number): Promise<AxiosResponse<ICategoryResponse>> => apiClient.get(`/categories?type=${type}&active=${active}&page=${page}&per_page=${perPage}`),
   getAllByType: (type: CategoryType): Promise<AxiosResponse<ICategoryResponse>> => apiClient.get(`/categories?type=${type}&per_page=1000`),
   listForForm: (): Promise<AxiosResponse<ICategoryForm>> => apiClient.get(`/categories?type=all`),
   update: (values: ICategoryUpdateData): Promise<AxiosResponse<ICategory>> => apiClient.put(`/categories/${values.categoryId}`, values.data),
