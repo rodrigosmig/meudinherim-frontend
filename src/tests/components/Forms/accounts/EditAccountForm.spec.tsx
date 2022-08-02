@@ -31,7 +31,8 @@ const account: IAccount = {
     desc: "Saving"
   },
   balance: 50,
-  name: "Account Test"
+  name: "Account Test",
+  active: true
 }
 
 const closeModal = jest.fn;

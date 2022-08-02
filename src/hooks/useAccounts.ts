@@ -3,8 +3,8 @@ import { useQuery } from "react-query";
 import { AuthContext } from "../contexts/AuthContext";
 import { accountService } from "../services/ApiService/AccountService";
 
-export const getAccounts = async () => {
-  const response = await accountService.list();
+export const getAccounts = async (active: boolean) => {
+  const response = await accountService.list(active);
 
   const data = response.data.data
 
@@ -12,7 +12,7 @@ export const getAccounts = async () => {
 }
 
 export const getAccountsForForm = async (valueDefault = false) => {
-  const response = await accountService.list();
+  const response = await accountService.list(true);
 
   const formAccounts = response.data.data.map(account => {
     return {
@@ -36,10 +36,10 @@ export const getAccountsForForm = async (valueDefault = false) => {
   return data;
 }
 
-export const useAccounts = () => {
+export const useAccounts = (active: boolean) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['accounts', user?.id], () => getAccounts(), {
+  return useQuery(['accounts', active, user?.id], () => getAccounts(active), {
     staleTime: 1000 * 5
   })
 }

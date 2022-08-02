@@ -14,6 +14,8 @@ import { accountService } from '../../../services/ApiService/AccountService';
 import { getMessage } from "../../../utils/helpers";
 import { IAccountErrorKey, IAccount, IAccountFormData, IAccountResponseError } from "../../../types/account";
 import { editValidation } from "../../../validations/account";
+import { Switch } from "../../Inputs/Switch";
+import { useState } from "react";
 
 interface Props {
   account: IAccount;
@@ -22,10 +24,13 @@ interface Props {
 }
 
 export const EditAccountForm = ({ account, closeModal, refetch }: Props) => {
+  const [ isActive, setIsActive ] = useState(account.active);
+
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       type: account.type.id,
-      name: account.name
+      name: account.name,
+      active: account.active
     },
     resolver: yupResolver(editValidation)
   });
@@ -38,6 +43,7 @@ export const EditAccountForm = ({ account, closeModal, refetch }: Props) => {
       data: {
         type: values.type,
         name: values.name,
+        active: values.active
       }
     }
 
@@ -90,6 +96,16 @@ export const EditAccountForm = ({ account, closeModal, refetch }: Props) => {
           label="Nome da Conta"
           error={errors.name}
           {...register('name')}
+        />
+
+        <Switch
+          size="lg"
+          id="active" 
+          name='active'
+          label="Ativo"
+          {...register('active')}
+          isChecked={isActive}
+          onChange={() => setIsActive(!isActive)}
         />
       </Stack>
       <Flex

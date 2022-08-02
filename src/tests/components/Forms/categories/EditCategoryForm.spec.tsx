@@ -27,7 +27,8 @@ jest.mock('../../../../services/ApiService/CategoryService');
 const category: ICategory = {
   id: 1,
   type: 2,
-  name: "Category Test"
+  name: "Category Test",
+  active: true
 }
 
 const closeModal = jest.fn;
