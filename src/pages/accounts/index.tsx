@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Head from "next/head";
 import {
+  Checkbox,
   Flex, 
   HStack, 
   Spinner, 
@@ -42,7 +43,9 @@ export default function Accounts() {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
 
-  const { data, isLoading, isFetching, isError, refetch } = useAccounts();
+  const [active, setActive] = useState(true);
+
+  const { data, isLoading, isFetching, isError, refetch } = useAccounts(active);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
 
@@ -121,6 +124,20 @@ export default function Accounts() {
           <Heading>
             <AddButton onClick={createModalOnOpen} />
           </Heading>
+        </Flex>
+
+        <Flex
+          justify="space-between" 
+          align="center"
+          mb={[4, 4, 6]}
+        >
+          <Checkbox
+              colorScheme={'pink'}
+              isChecked={active}
+              onChange={() => setActive(!active)}
+            >
+              Ativas
+            </Checkbox>
         </Flex>
 
         { isLoading ? (

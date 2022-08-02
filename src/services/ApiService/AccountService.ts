@@ -5,7 +5,7 @@ import { setupApiClient } from "../api";
 const apiClient = setupApiClient();
 
 export const accountService = {
-  list: (): Promise<AxiosResponse<IAccountResponse>> => apiClient.get(`/accounts`),
+  list: (active: boolean): Promise<AxiosResponse<IAccountResponse>> => apiClient.get(`/accounts?active=${active}`),
   create: (values: IAccountFormData): Promise<AxiosResponse<IAccount>> => apiClient.post(`/accounts`, values),
   update: (values: IAccountUpdateData): Promise<AxiosResponse<IAccount>> => apiClient.put(`/accounts/${values.accountId}`, values.data),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/accounts/${id}`),

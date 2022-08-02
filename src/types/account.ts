@@ -10,11 +10,13 @@ export interface IAccount {
   type: AccountType;
   name: string;
   balance: number;
+  active: boolean;
 }
 
 export interface IAccountFormData {
   type: string;
   name: string;
+  active: boolean;
 }
 
 export type IAccountResponseError = {
