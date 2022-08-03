@@ -4,10 +4,9 @@ import { Modal } from "../Modal";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const CreateCardModal = ({ isOpen, onClose, refetch }: Props) => {
+export const CreateCardModal = ({ isOpen, onClose }: Props) => {
 return (
   <Modal
     header="Novo Cartão de Crédito"
@@ -15,8 +14,7 @@ return (
     onClose={onClose}
   >
     <CreateCardForm
-      closeModal={onClose}
-      refetch={refetch}
+      onClose={onClose}
     />
   </Modal>
 )

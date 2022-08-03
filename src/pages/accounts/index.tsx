@@ -20,9 +20,8 @@ import { useAccounts } from "../../hooks/useAccounts";
 import { EditButton } from '../../components/Buttons/Edit';
 import { DeleteButton } from '../../components/Buttons/Delete';
 import { Loading } from '../../components/Loading/index';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { accountService } from "../../services/ApiService/AccountService";
-import { queryClient } from '../../services/queryClient';
 import { ExtractButton } from '../../components/Buttons/Extract';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
@@ -34,6 +33,8 @@ import { getMessage } from "../../utils/helpers";
 import { IAccount } from "../../types/account";
 
 export default function Accounts() {
+  const queryClient = useQueryClient();
+
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -45,7 +46,7 @@ export default function Accounts() {
 
   const [active, setActive] = useState(true);
 
-  const { data, isLoading, isFetching, isError, refetch } = useAccounts(active);
+  const { data, isLoading, isFetching, isError } = useAccounts(active);
 
   const tableSize = isWideVersion ? 'md' : 'sm';
 
@@ -72,6 +73,7 @@ export default function Accounts() {
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('accounts')
+      queryClient.invalidateQueries('accounts-form')
     }
   });
 
@@ -81,7 +83,6 @@ export default function Accounts() {
 
       getMessage("Sucesso", "Conta deletada com sucesso");
 
-      refetch();
     } catch (error) {
       const data = error.response.data;
 
@@ -99,14 +100,12 @@ export default function Accounts() {
       <CreateAccountModal
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={refetch}
       />
       
       <EditAccountModal
         account={selectedAccount}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
-        refetch={refetch}
       />
 
       <Head>

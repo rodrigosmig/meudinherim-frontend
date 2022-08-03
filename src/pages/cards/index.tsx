@@ -22,8 +22,7 @@ import { Table } from "../../components/Table";
 import { Loading } from "../../components/Loading";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
-import { useMutation } from "react-query";
-import { queryClient } from "../../services/queryClient";
+import { useMutation, useQueryClient } from "react-query";
 import { getMessage, toCurrency } from "../../utils/helpers";
 import { CreateCardModal } from "../../components/Modals/cards/CreateCardModal";
 import { EditCardModal } from "../../components/Modals/cards/EditCardModal";
@@ -33,6 +32,8 @@ import { setupApiClient } from "../../services/api";
 import { ICard } from "../../types/card";
 
 export default function Cards() {
+  const queryClient = useQueryClient();
+
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -42,7 +43,7 @@ export default function Cards() {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
 
-  const { data, isLoading, isFetching, isError, refetch } = useCards();
+  const { data, isLoading, isFetching, isError } = useCards();
 
   const tableSize = isWideVersion ? 'md' : 'sm';
 
@@ -69,6 +70,7 @@ export default function Cards() {
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('cards')
+      queryClient.invalidateQueries('cards-form')
     }
   });
 
@@ -77,8 +79,6 @@ export default function Cards() {
       await deleteCard.mutateAsync(id);
 
       getMessage("Sucesso", "Cartão deletado com sucesso");
-
-      refetch();
     } catch (error) {
       const data = error.response.data;
 
@@ -99,14 +99,12 @@ export default function Cards() {
       <CreateCardModal
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={refetch}
       />
 
       <EditCardModal
         card={selectedCard}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
-        refetch={refetch}
       />
 
       <Head>

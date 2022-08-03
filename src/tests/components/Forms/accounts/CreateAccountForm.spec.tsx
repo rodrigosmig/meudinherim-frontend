@@ -28,7 +28,7 @@ const refetch = jest.fn;
 
 describe('CreateAccountForm Component', () => {
   beforeEach(() => {
-    render(<CreateAccountForm closeModal={closeModal} refetch={refetch} />)
+    render(<CreateAccountForm onClose={closeModal} />)
   });
 
   afterEach(() => {

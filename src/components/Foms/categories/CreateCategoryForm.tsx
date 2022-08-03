@@ -10,18 +10,17 @@ import { Input } from "../../Inputs/Input";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
-import { useRouter } from "next/router";
 import { getMessage } from "../../../utils/helpers";
 import { ICategoryFormData } from "../../../types/category";
 import { createValidation } from "../../../validations/categories";
+import { useQueryClient } from "react-query";
 
 interface Props {
-  onCancel: () => void,
-  refetch?: () => void
+  onClose: () => void,
 }
 
-export const CreateCategoryForm = ({ onCancel, refetch }: Props) => {
-  const router = useRouter();
+export const CreateCategoryForm = ({ onClose }: Props) => {
+  const queryClient = useQueryClient();
 
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(createValidation)
@@ -35,12 +34,10 @@ export const CreateCategoryForm = ({ onCancel, refetch }: Props) => {
 
       getMessage("Sucesso", `Categoria ${values.name} criada com sucesso`);
 
-      if (typeof refetch !== 'undefined') {
-        refetch();
-        onCancel();
-      } else {
-        router.push(`/categories`)
-      }
+      queryClient.invalidateQueries('categories')
+      queryClient.invalidateQueries('categories-form')
+
+      onClose();
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;
@@ -89,7 +86,7 @@ export const CreateCategoryForm = ({ onCancel, refetch }: Props) => {
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={onCancel}
+          onClick={onClose}
         />
 
         <SubmitButton

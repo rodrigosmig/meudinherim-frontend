@@ -12,14 +12,16 @@ import { cardService } from "../../../services/ApiService/CardService";
 import { getMessage } from "../../../utils/helpers";
 import { ICard, ICardErrorKey, ICardFormData, ICardResponseError } from "../../../types/card";
 import { editValidation } from "../../../validations/card";
+import { useQueryClient } from "react-query";
 
 interface Props {
   card: ICard;
-  closeModal: () => void,
-  refetch: () => void
+  onClose: () => void,
 }
 
-export const EditCardForm = ({ card, closeModal, refetch }: Props) => {
+export const EditCardForm = ({ card, onClose }: Props) => {
+  const queryClient = useQueryClient();
+
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       name: card.name,
@@ -49,8 +51,10 @@ export const EditCardForm = ({ card, closeModal, refetch }: Props) => {
 
       getMessage("Sucesso", "Alteração realizada com sucesso");
 
-      refetch();
-      closeModal();
+      queryClient.invalidateQueries('cards')
+      queryClient.invalidateQueries('cards-form')
+
+      onClose();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -120,7 +124,7 @@ export const EditCardForm = ({ card, closeModal, refetch }: Props) => {
           mr={[4]}
           variant="outline"
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onClose}
         >
           Cancelar
         </Button>

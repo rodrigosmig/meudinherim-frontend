@@ -4,7 +4,6 @@ import {
   Flex,
   Stack, 
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -16,14 +15,15 @@ import { IAccountErrorKey, IAccount, IAccountFormData, IAccountResponseError } f
 import { editValidation } from "../../../validations/account";
 import { Switch } from "../../Inputs/Switch";
 import { useState } from "react";
+import { useQueryClient } from "react-query";
 
 interface Props {
   account: IAccount;
-  closeModal: () => void,
-  refetch: () => void
+  onClose: () => void,
 }
 
-export const EditAccountForm = ({ account, closeModal, refetch }: Props) => {
+export const EditAccountForm = ({ account, onClose }: Props) => {
+  const queryClient = useQueryClient();
   const [ isActive, setIsActive ] = useState(account.active);
 
   const { register, handleSubmit, setError, formState } = useForm({
@@ -52,8 +52,10 @@ export const EditAccountForm = ({ account, closeModal, refetch }: Props) => {
 
       getMessage("Sucesso", "Alteração realizada com sucesso");
 
-      refetch();
-      closeModal();
+      queryClient.invalidateQueries('accounts')
+      queryClient.invalidateQueries('accounts-form')
+
+      onClose();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -117,7 +119,7 @@ export const EditAccountForm = ({ account, closeModal, refetch }: Props) => {
           mr={[4]}
           variant="outline"
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onClose}
         >
           Cancelar
         </Button>

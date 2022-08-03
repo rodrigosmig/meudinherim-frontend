@@ -12,13 +12,15 @@ import { cardService } from "../../../services/ApiService/CardService";
 import { getMessage } from "../../../utils/helpers";
 import { ICardFormData } from "../../../types/card";
 import { createValidation } from "../../../validations/card";
+import { useQueryClient } from "react-query";
 
 interface CreateCardFormProps {
-  closeModal: () => void,
-  refetch: () => void
+  onClose: () => void
 }
 
-export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => {
+export const CreateCardForm = ({ onClose }: CreateCardFormProps) => {
+  const queryClient = useQueryClient();
+
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(createValidation)
   });
@@ -31,8 +33,10 @@ export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => 
 
       getMessage("Sucesso", `Cartão de Crédito ${values.name} criado com sucesso`);
 
-      refetch();
-      closeModal();
+      queryClient.invalidateQueries('cards')
+      queryClient.invalidateQueries('cards-form')
+
+      onClose();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -93,7 +97,7 @@ export const CreateCardForm = ({ closeModal, refetch }: CreateCardFormProps) => 
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onClose}
         />
 
         <SubmitButton

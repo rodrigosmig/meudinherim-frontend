@@ -32,7 +32,7 @@ export const useCategories = (type: string, active: boolean, page: number, perPa
   const { user } = useContext(AuthContext);
 
   return useQuery(['categories', type, active, page, perPage, user?.id], () => getCategories(type, active, page, perPage), {
-    staleTime: 1000 * 5
+    staleTime: 1000 * 60 * 15
   })
 }
 
@@ -40,6 +40,6 @@ export const useCategoriesForm = () => {
   const { user } = useContext(AuthContext);
 
   return useQuery(['categories-form', user?.id], () => getCategoriesForForm(), {
-    staleTime: 1000 * 5
+    staleTime: 1000 * 60 * 15
   })
 }

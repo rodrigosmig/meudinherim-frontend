@@ -6,10 +6,9 @@ interface Props {
   account: IAccount;
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const EditAccountModal = ({ account, isOpen, onClose, refetch }: Props) => {
+export const EditAccountModal = ({ account, isOpen, onClose }: Props) => {
   return (
     <Modal
       header="Editar Conta"
@@ -18,8 +17,7 @@ export const EditAccountModal = ({ account, isOpen, onClose, refetch }: Props) =
     >
       <EditAccountForm
         account={account}
-        closeModal={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
     </Modal>
   )

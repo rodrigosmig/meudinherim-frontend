@@ -21,15 +21,22 @@ import { FaCreditCard } from 'react-icons/fa'
 import { BiTransfer } from "react-icons/bi";
 import { NavAddItem } from "./Item";
 import { TransferBetweenAccountsModal } from "../../../Modals/account_entries/TransferBetweenAccountsModal";
+import { CreateCategoryModal } from "../../../Modals/categories/CreateCategoryModal";
 
 export const NavAdd = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
+  const { isOpen: isOpenTransfer, onOpen: onOpenTransfer, onClose: onCloseTransfer } = useDisclosure();
 
   return (
     <>
       <TransferBetweenAccountsModal
-        isOpen={isOpen} 
-        onClose={onClose}
+        isOpen={isOpenTransfer} 
+        onClose={onCloseTransfer}
+      />
+
+      <CreateCategoryModal
+        isOpen={createModalIsOpen} 
+        onClose={createModalOnClose}
       />
 
       <Popover
@@ -71,9 +78,10 @@ export const NavAdd = () => {
             />
 
             <NavAddItem
-              url="/categories/create"
+              url="#"
               label="Categoria"
               icon={<Icon as={RiPriceTag3Line} fontSize={20} />}
+              onClick={createModalOnOpen}
             />
             
             <NavAddItem
@@ -92,7 +100,7 @@ export const NavAdd = () => {
               url="#"
               label="Transferência entre contas"
               icon={<Icon as={BiTransfer} fontSize={20} />}
-              onClick={onOpen}
+              onClick={onOpenTransfer}
             />
 
             <Divider mt={2} mb={2} />

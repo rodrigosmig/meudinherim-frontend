@@ -28,7 +28,7 @@ export const useCards = () => {
   const { user } = useContext(AuthContext);
 
   return useQuery(['cards', user?.id], () => getCards(), {
-    staleTime: 1000 * 5
+    staleTime: 1000 * 60 * 15
   })
 }
 
@@ -36,6 +36,6 @@ export const useCardsForm = () => {
   const { user } = useContext(AuthContext);
 
   return useQuery(['cards-form', user?.id], () => getCardsForForm(), {
-    staleTime: 1000 * 5
+    staleTime: 1000 * 60 * 15
   })
 }

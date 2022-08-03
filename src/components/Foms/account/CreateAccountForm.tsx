@@ -13,13 +13,15 @@ import { CancelButton } from "../../Buttons/Cancel";
 import { getMessage } from "../../../utils/helpers";
 import { IAccountFormData } from "../../../types/account";
 import { createValidation } from "../../../validations/account";
+import { useQueryClient } from "react-query";
 
 interface Props {
-  closeModal: () => void,
-  refetch: () => void
+  onClose: () => void,
 }
 
-export const CreateAccountForm = ({ closeModal, refetch }: Props) => {
+export const CreateAccountForm = ({ onClose }: Props) => {
+  const queryClient = useQueryClient();
+
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(createValidation)
   });
@@ -32,8 +34,10 @@ export const CreateAccountForm = ({ closeModal, refetch }: Props) => {
 
       getMessage("Sucesso", `Conta ${values.name} criada com sucesso`);
 
-      refetch();
-      closeModal();
+      queryClient.invalidateQueries('accounts')
+      queryClient.invalidateQueries('accounts-form')
+
+      onClose();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -84,7 +88,7 @@ export const CreateAccountForm = ({ closeModal, refetch }: Props) => {
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onClose}
         />
 
         <SubmitButton
