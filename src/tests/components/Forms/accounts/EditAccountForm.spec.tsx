@@ -36,11 +36,10 @@ const account: IAccount = {
 }
 
 const closeModal = jest.fn;
-const refetch = jest.fn;
 
 describe('EditAccountForm Component', () => {
   beforeEach(() => {
-    render(<EditAccountForm account={account} closeModal={closeModal} refetch={refetch} />)
+    render(<EditAccountForm account={account} onClose={closeModal} />)
   });
 
   afterEach(() => {

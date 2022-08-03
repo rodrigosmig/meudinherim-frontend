@@ -40,7 +40,7 @@ export const useAccounts = (active: boolean) => {
   const { user } = useContext(AuthContext);
 
   return useQuery(['accounts', active, user?.id], () => getAccounts(active), {
-    staleTime: 1000 * 5
+    staleTime: 1000 * 60 * 15
   })
 }
 
@@ -48,6 +48,6 @@ export const useAccountsForm = (valueDefault = false) => {
   const { user } = useContext(AuthContext);
 
   return useQuery(['accounts-form', user?.id], () => getAccountsForForm(valueDefault), {
-    staleTime: 1000 * 5
+    staleTime: 1000 * 60 * 15
   })
 }

@@ -15,14 +15,15 @@ import { getMessage } from "../../../utils/helpers";
 import { ICategoryErrorKey, ICategory, ICategoryFormData, ICategoryResponseError } from "../../../types/category";
 import { editValidation } from "../../../validations/categories";
 import { Switch } from "../../Inputs/Switch";
+import { useQueryClient } from "react-query";
 
 interface Props {
   category: ICategory;
-  closeModal: () => void,
-  refetch: () => void
+  onClose: () => void,
 }
 
-const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => {
+const EditCategoryFormComponent = ({ category, onClose }: Props) => {
+  const queryClient = useQueryClient();
   const [ isActive, setIsActive ] = useState(category.active);
 
   const { register, handleSubmit, setError, formState } = useForm({
@@ -51,8 +52,10 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => 
 
       getMessage("Sucesso", "Categoria alterada com sucesso");
 
-      refetch();
-      closeModal();
+      queryClient.invalidateQueries('categories')
+      queryClient.invalidateQueries('categories-form')
+
+      onClose();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -113,7 +116,7 @@ const EditCategoryFormComponent = ({ category, closeModal, refetch }: Props) => 
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onClose}
         />
 
         <SubmitButton

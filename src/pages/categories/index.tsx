@@ -25,8 +25,7 @@ import { AddButton } from "../../components/Buttons/Add";
 import { useCategories } from "../../hooks/useCategories";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
-import { useMutation } from "react-query";
-import { queryClient } from "../../services/queryClient";
+import { useMutation, useQueryClient } from "react-query";
 import { Pagination } from "../../components/Pagination";
 import { FilterPerPage } from '../../components/Pagination/FilterPerPage';
 import { Heading } from "../../components/Heading";
@@ -38,6 +37,8 @@ import { ICategory } from "../../types/category";
 import { Input } from "../../components/Inputs/Input";
 
 export default function Categories() {
+  const queryClient = useQueryClient();
+
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -51,7 +52,7 @@ export default function Categories() {
   const [perPage, setPerPage] = useState(10);
   const [categoryType, setCategoryType] = useState("");
   const [active, setActive] = useState(true);
-  const { data, isLoading, isFetching, isError, refetch } = useCategories(categoryType, active, page, perPage);
+  const { data, isLoading, isFetching, isError } = useCategories(categoryType, active, page, perPage);
   const [ selectedCategory, setSelectedCategory ] = useState({} as ICategory);
   const [filteredCategories, setFilteredCategories] = useState([] as ICategory[]);
 
@@ -71,9 +72,7 @@ export default function Categories() {
     try {
       await deleteCategory.mutateAsync(id);
 
-      getMessage("Sucesso", "Categoria deletada com sucesso");
-
-      refetch();
+      getMessage("Sucesso", "Categoria deletada com sucesso");      
     } catch (error) {
       const data = error.response.data;
 
@@ -118,6 +117,7 @@ export default function Categories() {
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('categories')
+      queryClient.invalidateQueries('categories-form')
     }
   });
 
@@ -131,13 +131,11 @@ export default function Categories() {
       <CreateCategoryModal
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={refetch}
       />
       <EditCategoryModal
         category={selectedCategory}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
-        refetch={refetch}
       />
       <Head>
         <title>Categorias | Meu Dinherim</title>

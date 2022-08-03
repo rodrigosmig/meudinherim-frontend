@@ -4,10 +4,9 @@ import { Modal } from "../Modal";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const CreateAccountModal = ({ isOpen, onClose, refetch }: Props) => {
+export const CreateAccountModal = ({ isOpen, onClose }: Props) => {
 return (
   <Modal
     header="Nova Conta"
@@ -15,8 +14,7 @@ return (
     onClose={onClose}
   >
     <CreateAccountForm
-      closeModal={onClose}
-      refetch={refetch}
+      onClose={onClose}
     />
   </Modal>
 )

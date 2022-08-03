@@ -5,10 +5,9 @@ interface EditPayableModalProps {
   category: ICategory;
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const EditCategoryModal = ({ category, isOpen, onClose, refetch }: EditPayableModalProps) => {
+export const EditCategoryModal = ({ category, isOpen, onClose }: EditPayableModalProps) => {
   return (
     <Modal
       header="Editar Categoria"
@@ -17,8 +16,7 @@ export const EditCategoryModal = ({ category, isOpen, onClose, refetch }: EditPa
     >
       <EditCategoryForm
         category={category}
-        closeModal={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
     </Modal>
   )

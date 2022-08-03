@@ -24,11 +24,10 @@ jest.mock('react-query');
 jest.mock('../../../../services/ApiService/CategoryService');
 
 const closeModal = jest.fn;
-const refetch = jest.fn;
 
 describe('CreateCategoryForm Component', () => {
   beforeEach(() => {
-    render(<CreateCategoryForm onCancel={closeModal} refetch={refetch} />)
+    render(<CreateCategoryForm onClose={closeModal} />)
   });
 
   afterEach(() => {

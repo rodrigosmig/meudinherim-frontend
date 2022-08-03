@@ -4,10 +4,9 @@ import { Modal } from "../Modal";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  refetch?: () => void;
 }
 
-export const CreateCategoryModal = ({ isOpen, onClose, refetch }: Props) => {
+export const CreateCategoryModal = ({ isOpen, onClose }: Props) => {
 return (
   <Modal
       header="Nova Categoria"
@@ -15,8 +14,7 @@ return (
       onClose={onClose}
     >
       <CreateCategoryForm
-        onCancel={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
   </Modal>
 )

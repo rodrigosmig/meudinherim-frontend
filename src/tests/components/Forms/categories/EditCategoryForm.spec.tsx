@@ -32,11 +32,10 @@ const category: ICategory = {
 }
 
 const closeModal = jest.fn;
-const refetch = jest.fn;
 
 describe('EditCategoryForm Component', () => {
   beforeEach(() => {
-    render(<EditCategoryForm category={category} closeModal={closeModal} refetch={refetch} />)
+    render(<EditCategoryForm category={category} onClose={closeModal} />)
   });
 
   afterEach(() => {

@@ -6,10 +6,9 @@ interface Props {
   card: ICard;
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const EditCardModal = ({ card, isOpen, onClose, refetch }: Props) => {
+export const EditCardModal = ({ card, isOpen, onClose }: Props) => {
   return (
     <Modal
       header="Editar Cartão de Crédito"
@@ -18,8 +17,7 @@ export const EditCardModal = ({ card, isOpen, onClose, refetch }: Props) => {
     >
       <EditCardForm
         card={card}
-        closeModal={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
     </Modal>
   )
