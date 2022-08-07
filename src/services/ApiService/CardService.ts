@@ -17,5 +17,6 @@ export const cardService = {
   ): Promise<AxiosResponse<IInvoiceResponse>> => apiClient.get(`/cards/${cardId}/invoices?status=${status}&page=${page}&per_page=${perPage}`),
   getInvoice: (cardId: number, invoiceId: number): Promise<AxiosResponse<IInvoice>> => apiClient.get(`/cards/${cardId}/invoices/${invoiceId}`),
   getOpenInvoices: (): Promise<AxiosResponse<IOpenInvoicesResponse>> => apiClient.get(`/cards/invoices/open`),
-  partialPayment: (data: IPartialPaymentInvoiceData): Promise<AxiosResponse> => apiClient.post("/cards/invoices/partial-payment", data)
+  partialPayment: (data: IPartialPaymentInvoiceData): Promise<AxiosResponse> => apiClient.post("/cards/invoices/partial-payment", data),
+  setInvoiceAsPaid: (invoiceId: number): Promise<AxiosResponse> => apiClient.put(`cards/invoices/${invoiceId}/paid`),
 };

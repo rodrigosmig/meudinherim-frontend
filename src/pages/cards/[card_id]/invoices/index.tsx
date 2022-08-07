@@ -19,7 +19,7 @@ import {
   useDisclosure
 } from "@chakra-ui/react";
 import { Heading } from "../../../../components/Heading";
-import { toBrDate, toCurrency } from "../../../../utils/helpers";
+import { getMessage, toBrDate, toCurrency } from "../../../../utils/helpers";
 import { FilterPerPage } from "../../../../components/Pagination/FilterPerPage";
 import { useInvoices } from "../../../../hooks/useInvoices";
 import { Loading } from "../../../../components/Loading";
@@ -30,6 +30,9 @@ import { useRouter } from "next/router";
 import { GeneratePayment } from "../../../../components/Buttons/GeneratePayment";
 import { GeneratePaymentModal } from "../../../../components/Modals/invoices/GeneratePaymentModal";
 import { ICard, IInvoice } from "../../../../types/card";
+import { SetPaidButton } from "../../../../components/Buttons/SetPaid";
+import { useMutation, useQueryClient } from "react-query";
+import { cardService } from "../../../../services/ApiService/CardService";
 
 interface Props {
   card: ICard
@@ -38,6 +41,8 @@ interface Props {
 type StatusType = "open" | "paid";
 
 export default function Invoices({ card }: Props) {
+  const queryClient = useQueryClient();
+
   const router = useRouter()
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -74,6 +79,33 @@ export default function Invoices({ card }: Props) {
   const handleGeneratePayment = (invoice: IInvoice) => {
     setSelectedInvoice(invoice);
     onOpen();
+  }
+
+  const isEmpty = (invoice: IInvoice) => {
+    return invoice.amount === 0;
+  }
+
+  const setPaid = useMutation(async (invoiceId: number) => {
+    const response = await cardService.setInvoiceAsPaid(invoiceId);
+  
+    return response.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('invoices')
+      queryClient.invalidateQueries('invoice')
+    }
+  });
+
+  const handleSetAsPaid = async (invoiceId: number) => {
+    try {
+      await setPaid.mutateAsync(invoiceId);
+
+      getMessage("Sucesso", "Fatura marcada como paga com sucesso");
+    } catch (error) {
+      const data = error.response.data;
+
+      getMessage("Erro", data.message, 'error');
+    }
   }
 
   const headList = [
@@ -152,8 +184,15 @@ export default function Invoices({ card }: Props) {
                         <HStack spacing={[2]}>                              
                           <ShowEntriesButton onClick={() => handleShowEntries(card.id, invoice.id)} />7
                           
-                          { (invoice.isClosed && !invoice.hasPayable) && (
+                          { (!isEmpty(invoice) && invoice.isClosed && !invoice.hasPayable) && (
                             <GeneratePayment onClick={() => handleGeneratePayment(invoice)} />
+                          )}
+
+                          { (isEmpty(invoice) && invoice.isClosed && !invoice.hasPayable && !invoice.paid) && (
+                            <SetPaidButton
+                              onSetPaid={() => handleSetAsPaid(invoice.id)}
+                              loading={setPaid.isLoading}
+                            />
                           )}
 
                         </HStack>

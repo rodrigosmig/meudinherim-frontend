@@ -146,6 +146,14 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
     setFilteredEntries(oldValue => filtered)
   }
 
+  const showPartialPaymentButton = () => {
+    return invoice?.amount > 0 && !invoice?.isClosed
+  }
+  
+  const showGeneratePaymentButton = () => {
+    return invoice.isClosed && !invoice.hasPayable && !invoice.paid && invoice.amount > 0;
+  }
+
   const theadData = [
     "Data",
     "Categoria",
@@ -226,10 +234,12 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
           
           <Flex>
             <Stack spacing={[2]} direction="row" >
-              <ParcialPayment
-                label={"Pagar Parcial"}
-                onClick={partialPaymentonOpen} 
-              />
+              { showPartialPaymentButton() && (
+                <ParcialPayment
+                  label={"Pagar Parcial"}
+                  onClick={partialPaymentonOpen} 
+                />
+              )}
 
               <AddButton onClick={createModalOnOpen} />
             </Stack>
@@ -294,7 +304,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
             </Button>
           </NextLink>
 
-          { (!isLoadingInvoice && invoice.isClosed && !invoice.hasPayable) && (
+          { (!isLoadingInvoice && showGeneratePaymentButton()) && (
             <Box mt={[1, 0]} ml={2}>
               <GeneratePayment onClick={generatePaymentonOpen} />
             </Box>
