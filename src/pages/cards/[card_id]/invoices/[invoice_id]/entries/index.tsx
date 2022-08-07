@@ -6,16 +6,11 @@ import {
   Box,
   Flex,
   Icon,
-  HStack,
   Spinner,
   Tbody, 
-  Td, 
-  Text, 
-  Th, 
-  Thead, 
-  Tr,
   useBreakpointValue,
-  useDisclosure
+  useDisclosure,
+  Stack
 } from "@chakra-ui/react";
 import { Heading } from "../../../../../../components/Heading";
 import { FilterPerPage } from "../../../../../../components/Pagination/FilterPerPage";
@@ -28,22 +23,20 @@ import { useInvoiceEntries } from "../../../../../../hooks/useInvoiceEntries";
 import { Pagination } from "../../../../../../components/Pagination";
 import { Table } from "../../../../../../components/Table";
 import { Loading } from "../../../../../../components/Loading";
-import { EditButton } from "../../../../../../components/Buttons/Edit";
 import { AddButton } from "../../../../../../components/Buttons/Add";
 import { EditInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/EditInvoiceEntryModal";
 import { useMutation } from "react-query";
 import { invoiceEntriesService } from "../../../../../../services/ApiService/InvoiceEntriesService";
-import { DeleteButton } from "../../../../../../components/Buttons/Delete";
 import { useInvoice } from "../../../../../../hooks/useInvoices";
 import { CreateInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/CreateInvoiceEntryModal";
-import { BsClock } from "react-icons/bs"
-import { PopoverTotal } from "../../../../../../components/PopoverTotal";
 import { AnticipateInstallmentsModal } from "../../../../../../components/Modals/invoice_entries/AnticipateInstallmentsModal";
 import { GeneratePayment } from "../../../../../../components/Buttons/GeneratePayment";
 import { GeneratePaymentModal } from "../../../../../../components/Modals/invoices/GeneratePaymentModal";
 import { IInvoiceEntry } from "../../../../../../types/invoiceEntry";
 import { Input } from "../../../../../../components/Inputs/Input";
 import { InvoiceEntryItemsTable } from "../../../../../../components/ItemsTable/InvoiceEntryItemsTable";
+import { ParcialPayment } from "../../../../../../components/Buttons/PartialPayment";
+import { PartialPaymentModal } from "../../../../../../components/Modals/invoices/PartialPaymentModal";
 
 interface Props {
   cardId: number;
@@ -63,6 +56,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
   const { isOpen: anticipateModalIsOpen, onOpen: anticipateModalonOpen, onClose: anticipateModalOnClose } = useDisclosure();
   const { isOpen: generatePaymentIsOpen, onOpen: generatePaymentonOpen, onClose: generatePaymentOnClose } = useDisclosure();
+  const { isOpen: partialPaymentIsOpen, onOpen: partialPaymentonOpen, onClose: partialPaymentOnClose } = useDisclosure();
 
   const [ page, setPage ] = useState(1);
   const [ perPage, setPerPage ] = useState(10);
@@ -161,6 +155,12 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
 
   return (
     <>
+      <PartialPaymentModal
+        cardId={cardId}
+        isOpen={partialPaymentIsOpen}
+        onClose={partialPaymentOnClose}
+      />
+
       <GeneratePaymentModal
         invoice={invoice}
         isOpen={generatePaymentIsOpen}
@@ -223,8 +223,18 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
           mb={[6, 6, 8]}
         >
           <FilterPerPage onChange={handleChangePerPage} isWideVersion={isWideVersion} />
+          
+          <Flex>
+            <Stack spacing={[2]} direction="row" >
+              <ParcialPayment
+                label={"Pagar Parcial"}
+                onClick={partialPaymentonOpen} 
+              />
 
-          <AddButton onClick={createModalOnOpen} />
+              <AddButton onClick={createModalOnOpen} />
+            </Stack>
+
+          </Flex>
         </Flex>
 
         { isLoading ? (
