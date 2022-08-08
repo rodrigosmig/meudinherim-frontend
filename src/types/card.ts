@@ -57,3 +57,25 @@ export type ICardResponseError = {
 }
 
 export type ICardErrorKey = keyof ICardResponseError
+
+export interface IPartialPaymentInvoiceData {
+  date: string;
+  description: string;
+  value: number;
+  account_id: number;
+  card_id: number;
+  income_category_id: number;
+  expense_category_id: number;
+}
+
+export interface IPartialPaymentInvoiceResponseError {
+  date: string[];
+  description: string[];
+  value: string[];
+  account_id: string[];
+  card_id: string[];
+  income_category_id: string[];
+  expense_category_id: string[];
+}
+
+export type IPartialPaymentErrorKey = keyof IPartialPaymentInvoiceResponseError;
