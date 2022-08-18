@@ -27,9 +27,15 @@ const InstallmentBase: ForwardRefRenderFunction<HTMLSelectElement, Props> = ({ a
 
   useEffect(() => {
     setInstallmentValue(amount / installmentNumber);
-  }, [amount, installmentNumber])
+  }, [amount, installmentNumber]);
+  
+  const quantity_installments = [];
 
-  const options = [2,3,4,5,6,7,8,9,10,11,12].map((value) => {
+  for (let index = 2; index < 31; index++) {
+    quantity_installments.push(index);    
+  }
+
+  const options = quantity_installments.map((value) => {
     return {
       value: String(value),
       label: String(value)
