@@ -10,7 +10,7 @@ export const createValidation = yup.object().shape({
     is: true,
     then: yup.number().typeError("O número de parcelas é inválido")
       .min(2, 'O valor mínimo é 2.')
-      .max(12, 'O valor máximo é 12.'),
+      .max(30, 'O valor máximo é 30.'),
   })
 });
 
