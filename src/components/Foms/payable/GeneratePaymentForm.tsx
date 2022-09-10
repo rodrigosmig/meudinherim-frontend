@@ -10,7 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Select } from "../../Inputs/Select";
-import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
+import { ACCOUNTS_REPORT, getMessage, INVOICE, OPEN_INVOICES, PAYABLES, toBrDate, toCurrency } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useQueryClient } from "react-query";
@@ -57,6 +57,11 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: Props) => {
 
       queryClient.invalidateQueries('open_invoices');
       queryClient.invalidateQueries('invoice');
+
+      queryClient.invalidateQueries(OPEN_INVOICES);
+      queryClient.invalidateQueries(INVOICE);
+      queryClient.invalidateQueries(PAYABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
       
       onCancel();
     } catch (error) {

@@ -8,13 +8,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../../Inputs/Input"
 import { Switch } from "../../Inputs/Switch"
-import { getMessage, toBrDate, toUsDate } from "../../../utils/helpers"
+import { ACCOUNTS_ENTRIES, ACCOUNTS_REPORT, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, PAYABLES, toBrDate, toUsDate } from "../../../utils/helpers"
 import { payableService } from "../../../services/ApiService/PayableService";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
 import { Select } from "../../Inputs/Select";
 import { IPayable, IPaymentFormData } from "../../../types/payable";
 import { paymentValidation } from "../../../validations/payable";
+import { useQueryClient } from "react-query";
 
 interface Props {
     payable: IPayable;
@@ -39,6 +40,8 @@ type ResponseError = {
 type Key = keyof ResponseError;
 
 export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => {
+  const queryClient = useQueryClient();
+
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       account_id: 0,
@@ -64,6 +67,12 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => 
       await payableService.payment(data);
 
       getMessage("Sucesso", "Conta paga com sucesso");
+
+      queryClient.invalidateQueries(PAYABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
+      queryClient.invalidateQueries(ACCOUNT_BALANCE);
+      queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
 
       refetch();
       onCancel();  

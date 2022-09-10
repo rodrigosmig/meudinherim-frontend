@@ -25,12 +25,14 @@ import { TransferBetweenAccountsModal } from "../../../Modals/account_entries/Tr
 import { CreateCategoryModal } from "../../../Modals/categories/CreateCategoryModal";
 import { CreateInvoiceEntryModal } from "../../../Modals/invoice_entries/CreateInvoiceEntryModal";
 import { CreateAccountEntryModal } from "../../../Modals/account_entries/CreateAccountEntryModal";
+import { CreatePaymentModal } from "../../../Modals/payables/CreatePaymentModal";
 
 export const NavAdd = () => {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: isOpenTransfer, onOpen: onOpenTransfer, onClose: onCloseTransfer } = useDisclosure();
   const { isOpen: isOpenInvoiceEntry, onOpen: onOpenInvoiceEntry, onClose: onCloseInvoiceEntry } = useDisclosure();
   const { isOpen: isOpenAccountEntry, onOpen: onOpenAccountEntry, onClose: onCloseAccountEntry } = useDisclosure();
+  const { isOpen: isOpenPayable, onOpen: onOpenPayable, onClose: onClosePayable } = useDisclosure();
 
   return (
     <Box>
@@ -47,6 +49,11 @@ export const NavAdd = () => {
       <CreateCategoryModal
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
+      />
+
+      <CreatePaymentModal
+        isOpen={isOpenPayable} 
+        onClose={onClosePayable}
       />
 
       <TransferBetweenAccountsModal
@@ -96,16 +103,17 @@ export const NavAdd = () => {
               label="Categoria"
               icon={<Icon as={RiPriceTag3Line} fontSize={20} />}
               onClick={createModalOnOpen}
-            />
+              />
             
             <NavAddItem
               label="Contas a receber"
               icon={<Icon as={GiReceiveMoney} fontSize={20} />}
-            />
+              />
 
             <NavAddItem
               label="Contas a pagar"
               icon={<Icon as={GiPayMoney} fontSize={20} />}
+              onClick={onOpenPayable}
             />
 
             <NavAddItem

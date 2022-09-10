@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { 
   Box,
   Flex,
@@ -13,28 +13,42 @@ import { parseISO } from 'date-fns';
 import { payableService } from "../../../services/ApiService/PayableService";
 import { Select } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
-import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_REPORT, getMessage, PAYABLES, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
 import { IPayable, IPayableFormData, IPayableResponseError } from "../../../types/payable";
 import { IAccountSchedulingErrorKey } from "../../../types/accountScheduling";
 import { editValidation } from "../../../validations/payable";
+import { useQueryClient } from "react-query";
+import { useCategoriesForm } from "../../../hooks/useCategories";
+import { Loading } from "../../Loading";
 
 interface Props {
   payable: IPayable;
-  categories: {
-    value: string;
-    label: string
-  }[];
-  closeModal: () => void,
-  refetch: () => void
+  onClose: () => void,
+}
+
+interface IPayableCategories {
+  value: number | string;
+  label: string;
 }
 
 interface FormData extends Omit<IPayableFormData, "due_date"> {
   due_date: Date;
 }
 
-export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Props) => {
+export const EditPayableForm = ({ payable, onClose }: Props) => {
+  const queryClient = useQueryClient();
+
+  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+
   const [ monthly, setMonthly ] = useState(payable.monthly);
+
+  const categories = data?.expense.map(category => {
+    return {
+      value: category.id,
+      label: category.label
+    }
+  });
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
@@ -64,8 +78,10 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Pr
 
       getMessage("Sucesso", "Conta a Pagar alterada com sucesso");
 
-      refetch();
-      closeModal();
+      queryClient.invalidateQueries(PAYABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
+
+      onClose();
 
     } catch (error) {
       if (error.response?.status === 422) {
@@ -79,6 +95,12 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Pr
         }
       }
     }
+  }
+
+  if (isLoadingCategories) {
+    return (
+      <Loading />
+    )
   }
 
   return (
@@ -145,7 +167,7 @@ export const EditPayableForm = ({ payable, categories, closeModal, refetch }: Pr
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onClose}
         />
 
         <SubmitButton

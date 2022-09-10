@@ -15,6 +15,8 @@ export const ACCOUNTS_ENTRIES = "account_entries";
 export const ACCOUNT_BALANCE = "account_balance";
 export const ACCOUNT_TOTAL_BY_CATEGORY = "account_total_by_category";
 export const CREDIT_TOTAL_BY_CATEGORY = "credit_total_by_category";
+export const ACCOUNTS_REPORT = "accounts_report";
+export const PAYABLES = "payables";
 
 export const toCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {

@@ -1,18 +1,12 @@
 import { CreatePayableForm } from "../../Foms/payable/CreatePayableForm";
 import { Modal } from "../Modal";
-
   
 interface Props {
-  categories: {
-    value: string;
-    label: string
-  }[],
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const CreatePaymentModal = ({ categories, isOpen, onClose, refetch }: Props) => {
+export const CreatePaymentModal = ({ isOpen, onClose }: Props) => {
   return (
     <Modal
       header="Nova Conta a Pagar"
@@ -20,9 +14,7 @@ export const CreatePaymentModal = ({ categories, isOpen, onClose, refetch }: Pro
       onClose={onClose}
     >
       <CreatePayableForm
-        categories={categories} 
-        onCancel={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
     </Modal>
   )

@@ -17,13 +17,12 @@ import { Table } from "../../components/Table";
 import { Heading } from "../../components/Heading";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { getMessage } from '../../utils/helpers';
+import { ACCOUNTS_ENTRIES, ACCOUNTS_REPORT, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, PAYABLES } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
 import { payableService } from '../../services/ApiService/PayableService';
-import { queryClient } from '../../services/queryClient';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
 import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
 import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
@@ -45,6 +44,8 @@ interface Props {
 }
 
 export default function AccountPayables({ categories, accounts }: Props) {
+  const queryClient = useQueryClient();
+
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
   const { isOpen: paymentModalIsOpen, onOpen: paymentModalOnOpen, onClose: paymentModalOnClose } = useDisclosure();
@@ -81,7 +82,8 @@ export default function AccountPayables({ categories, accounts }: Props) {
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('payables')
+      queryClient.invalidateQueries(PAYABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
     }
   });
 
@@ -133,7 +135,11 @@ export default function AccountPayables({ categories, accounts }: Props) {
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('payables')
+      queryClient.invalidateQueries(PAYABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
+      queryClient.invalidateQueries(ACCOUNT_BALANCE);
+      queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
     }
   });
 
@@ -180,18 +186,14 @@ export default function AccountPayables({ categories, accounts }: Props) {
   return (
     <>
       <CreatePaymentModal
-        categories={categories}
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={refetch}
       />
 
       <EditPayableModal
         payable={selectedPayable}
-        categories={categories}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
-        refetch={refetch}
       />
 
       <PaymentModal
