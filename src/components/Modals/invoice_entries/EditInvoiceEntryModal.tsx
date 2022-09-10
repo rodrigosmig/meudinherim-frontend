@@ -6,10 +6,9 @@ interface Props {
   entry: IInvoiceEntry;
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const EditInvoiceEntryModal = ({ entry, isOpen, onClose, refetch }: Props) => {
+export const EditInvoiceEntryModal = ({ entry, isOpen, onClose}: Props) => {
   return (
     <Modal
       header="Editar lançamento"
@@ -19,7 +18,6 @@ export const EditInvoiceEntryModal = ({ entry, isOpen, onClose, refetch }: Props
       <EditInvoiceEntryForm
         entry={entry}
         onClose={onClose}
-        refetch={refetch}
       />
     </Modal>
   )

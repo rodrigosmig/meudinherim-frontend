@@ -179,14 +179,12 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
         card_id={cardId}
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={handleRefetchData}
       />
 
       <EditInvoiceEntryModal
         entry={selectedEntry}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
-        refetch={handleRefetchData}
       />
 
       <AnticipateInstallmentsModal

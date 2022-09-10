@@ -2,6 +2,12 @@ import { createStandaloneToast  } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { theme } from '../styles/theme';
 
+//cache keys constants
+export const INVOICE = "invoice";
+export const INVOICES = "invoices";
+export const INVOICE_ENTRIES = "invoiceEntries";
+export const OPEN_INVOICES = "open_invoices";
+
 export const toCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',

@@ -19,9 +19,10 @@ import { Loading } from "../../Loading";
 import { useCardsForm } from "../../../hooks/useCards";
 import { Installment } from "../../Inputs/Installment";
 import { Switch } from "../../Inputs/Switch";
-import { getMessage, toUsDate } from "../../../utils/helpers";
+import { getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toUsDate } from "../../../utils/helpers";
 import { IInvoiceEntryCreateData, IInvoiceEntryErrorKey, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
 import { createValidation } from "../../../validations/invoiceEntry";
+import { useQueryClient } from "react-query";
 
 interface FormData extends Omit<IInvoiceEntryCreateData, "date"> {
   date: Date;
@@ -29,12 +30,11 @@ interface FormData extends Omit<IInvoiceEntryCreateData, "date"> {
 
 interface CreateInvoiceEntryFormProps {
   card_id?: number;
-  onCancel: () => void;
-  refetch?: () => void;
+  onClose: () => void;
 }
 
-export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: CreateInvoiceEntryFormProps) => {  
-  const router = useRouter();
+export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoiceEntryFormProps) => {  
+  const queryClient = useQueryClient();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
   const { data: formCards, isLoading: isLoadingCardsForm } = useCardsForm();
@@ -69,16 +69,12 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
 
       getMessage("Sucesso", `Lançamento ${values.description} criado com sucesso`);
 
-      if (typeof refetch !== 'undefined') {
-        refetch();
-        onCancel();
-      } else {
-        if (isNaN(response.data.card_id) || isNaN(response.data.invoice_id)) {
-          router.push(`/cards/${values.card_id}/invoices`);
-        } else {
-          router.push(`/cards/${response.data.card_id}/invoices/${response.data.invoice_id}/entries`);
-        }
-      }
+      queryClient.invalidateQueries(INVOICE)
+      queryClient.invalidateQueries(INVOICES)
+      queryClient.invalidateQueries(INVOICE_ENTRIES)
+      queryClient.invalidateQueries(OPEN_INVOICES)
+
+      onClose();
     } catch (error) {
       if (error.response?.status === 422) {
         const data: IInvoiceEntryResponseError = error.response.data;
@@ -185,7 +181,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
       />
 
       <Flex
-        mt={[10]}
+        mt={[4]}
         justify="flex-end"
         align="center"
       >
@@ -193,7 +189,8 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onCancel, refetch }: Cr
           mr={[4]}
           variant="outline"
           isDisabled={formState.isSubmitting}
-          onClick={onCancel}
+          onClick={onClose}
+          disabled={formState.isSubmitting}
         >
           Cancelar
         </Button>

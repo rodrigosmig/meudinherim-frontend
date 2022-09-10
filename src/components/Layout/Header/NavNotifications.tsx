@@ -75,7 +75,7 @@ export const NavNotifications = () => {
   }
 
   return (
-    <>
+    <Box>
       <Popover
         isLazy 
         trigger={'hover'}
@@ -202,6 +202,6 @@ export const NavNotifications = () => {
 
         </PopoverContent>
       </Popover>    
-    </>
+    </Box>
   )
 }

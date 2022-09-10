@@ -2,13 +2,12 @@ import { CreateInvoiceEntryForm } from "../../Foms/InvoiceEntry/CreateInvoiceEnt
 import { Modal } from "../Modal";
 
 interface Props {
-  card_id: number;
+  card_id?: number;
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const CreateInvoiceEntryModal = ({ card_id, isOpen, onClose, refetch }: Props) => {
+export const CreateInvoiceEntryModal = ({ card_id, isOpen, onClose }: Props) => {
 return (
   <Modal
       header="Novo Lançamento no Cartão de Crédito"
@@ -17,8 +16,7 @@ return (
     >
       <CreateInvoiceEntryForm
         card_id={card_id}
-        onCancel={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
   </Modal>
 )
