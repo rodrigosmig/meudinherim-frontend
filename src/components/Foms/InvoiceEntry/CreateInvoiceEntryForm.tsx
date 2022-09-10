@@ -19,7 +19,7 @@ import { Loading } from "../../Loading";
 import { useCardsForm } from "../../../hooks/useCards";
 import { Installment } from "../../Inputs/Installment";
 import { Switch } from "../../Inputs/Switch";
-import { getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toUsDate } from "../../../utils/helpers";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toUsDate } from "../../../utils/helpers";
 import { IInvoiceEntryCreateData, IInvoiceEntryErrorKey, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
 import { createValidation } from "../../../validations/invoiceEntry";
 import { useQueryClient } from "react-query";
@@ -73,6 +73,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
       queryClient.invalidateQueries(INVOICES)
       queryClient.invalidateQueries(INVOICE_ENTRIES)
       queryClient.invalidateQueries(OPEN_INVOICES)
+      queryClient.invalidateQueries(CARDS)
 
       onClose();
     } catch (error) {

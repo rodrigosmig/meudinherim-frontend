@@ -13,10 +13,11 @@ import { SelectCategories } from "../../Inputs/SelectCategories";
 import { parseISO } from 'date-fns';
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { useCategoriesForm } from "../../../hooks/useCategories";
-import { getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
 import { Loading } from "../../Loading";
 import { IAccountEntry, IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
 import { editValidation } from "../../../validations/accountEntry";
+import { useQueryClient } from "react-query";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
@@ -27,7 +28,9 @@ interface Props {
   refetch: () => void
 }
 
-export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {  
+export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
+  const queryClient = useQueryClient();
+
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
@@ -57,7 +60,10 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
 
       getMessage("Sucesso", "Alteração realizada com sucesso");
 
-      refetch();
+      queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
+      queryClient.invalidateQueries(ACCOUNT_BALANCE);
+      queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+
       closeModal();
 
     } catch (error) {

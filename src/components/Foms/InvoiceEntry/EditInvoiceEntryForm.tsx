@@ -13,7 +13,7 @@ import { SelectCategories } from "../../Inputs/SelectCategories";
 import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
-import { getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES } from "../../../utils/helpers";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES } from "../../../utils/helpers";
 import { IInvoiceEntry, IInvoiceEntryErrorKey, IInvoiceEntryFormData, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
 import { editValidation } from "../../../validations/invoiceEntry";
 import { useQueryClient } from "react-query";
@@ -58,6 +58,7 @@ export const EditInvoiceEntryForm = ({ entry, onClose }: Props) => {
       queryClient.invalidateQueries(INVOICES)
       queryClient.invalidateQueries(INVOICE_ENTRIES)
       queryClient.invalidateQueries(OPEN_INVOICES)
+      queryClient.invalidateQueries(CARDS)
 
       onClose();
 

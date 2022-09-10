@@ -29,7 +29,6 @@ jest.mock('../../../../hooks/useCategories');
 jest.mock('../../../../hooks/useAccounts');
 
 const onCancel = jest.fn();
-const refetch = jest.fn();
 
 const categories = {
   income: [
@@ -58,7 +57,7 @@ describe('CreateAccountEntryForm Component', () => {
     useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
     useAccountsFormMocked.mockImplementation(() => ({ isLoading: false, data: accounts }));
 
-    render(<CreateAccountEntryForm  onCancel={onCancel} refetch={refetch} />)
+    render(<CreateAccountEntryForm  onClose={onCancel} />)
   });
 
   afterEach(() => {

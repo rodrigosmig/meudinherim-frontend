@@ -35,7 +35,7 @@ export const NavInvoices = () => {
   const [total, setTotal] = useState("");
   const bgColor = useColorModeValue('gray.50', 'gray.800');
 
-  const { data, isLoading, isFetching, isStale, refetch } = useOpenInvoices();
+  const { data, isLoading, isFetching } = useOpenInvoices();
 
   useEffect(() => {
     if (data) {
@@ -43,10 +43,6 @@ export const NavInvoices = () => {
       setTotal(data.total)
     }
   }, [data])
-
-  useEffect(() => {
-    refetch();
-  }, [isStale])
 
   return (
     <Box>

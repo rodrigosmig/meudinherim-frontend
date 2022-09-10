@@ -24,17 +24,24 @@ import { NavAddItem } from "./Item";
 import { TransferBetweenAccountsModal } from "../../../Modals/account_entries/TransferBetweenAccountsModal";
 import { CreateCategoryModal } from "../../../Modals/categories/CreateCategoryModal";
 import { CreateInvoiceEntryModal } from "../../../Modals/invoice_entries/CreateInvoiceEntryModal";
+import { CreateAccountEntryModal } from "../../../Modals/account_entries/CreateAccountEntryModal";
 
 export const NavAdd = () => {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: isOpenTransfer, onOpen: onOpenTransfer, onClose: onCloseTransfer } = useDisclosure();
   const { isOpen: isOpenInvoiceEntry, onOpen: onOpenInvoiceEntry, onClose: onCloseInvoiceEntry } = useDisclosure();
+  const { isOpen: isOpenAccountEntry, onOpen: onOpenAccountEntry, onClose: onCloseAccountEntry } = useDisclosure();
 
   return (
     <Box>
       <CreateInvoiceEntryModal
         isOpen={isOpenInvoiceEntry} 
         onClose={onCloseInvoiceEntry}
+      />
+
+      <CreateAccountEntryModal
+        isOpen={isOpenAccountEntry} 
+        onClose={onCloseAccountEntry}
       />
 
       <CreateCategoryModal
@@ -82,6 +89,7 @@ export const NavAdd = () => {
             <NavAddItem
               label="Lançamento na conta"
               icon={<Icon as={RiBankLine} fontSize={20} />}
+              onClick={onOpenAccountEntry}
             />
 
             <NavAddItem

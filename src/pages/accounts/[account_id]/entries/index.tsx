@@ -11,13 +11,13 @@ import {
 import { Layout } from '../../../../components/Layout/index';
 import { withSSRAuth } from '../../../../utils/withSSRAuth';
 import { setupApiClient } from '../../../../services/api';
-import { getMessage } from '../../../../utils/helpers';
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage } from '../../../../utils/helpers';
 import { useAccountEntries } from '../../../../hooks/useAccountEntries';
 import { useAccountBalance } from '../../../../hooks/useAccountBalance';
 import { FilterPerPage } from '../../../../components/Pagination/FilterPerPage';
 import { Loading } from '../../../../components/Loading/index';
 import { Pagination } from '../../../../components/Pagination';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { accountEntriesService } from '../../../../services/ApiService/AccountEntriesService';
 import { queryClient } from '../../../../services/queryClient';
 import { DateFilter } from '../../../../components/DateFilter';
@@ -38,7 +38,9 @@ interface Props {
   account: IAccount
 }
 
-export default function AccountEntries({ account }: Props) {  
+export default function AccountEntries({ account }: Props) { 
+  const queryClient = useQueryClient();
+
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -94,8 +96,10 @@ export default function AccountEntries({ account }: Props) {
 
       getMessage("Sucesso", "Lançamento deletado com sucesso");
 
-      refetch();
-      refetchBalance();
+      queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
+      queryClient.invalidateQueries(ACCOUNT_BALANCE);
+      queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+
     } catch (error) {
       const data = error.response.data;
 
@@ -162,7 +166,6 @@ export default function AccountEntries({ account }: Props) {
         accountId={account.id}
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={handleRefetchData}
       />
 
       <EditAccountEntryModal

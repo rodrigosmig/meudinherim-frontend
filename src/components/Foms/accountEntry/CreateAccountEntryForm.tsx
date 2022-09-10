@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { 
   Box,
   Button,
@@ -13,12 +12,13 @@ import { Datepicker } from "../../DatePicker";
 import { SelectCategories } from "../../Inputs/SelectCategories";
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { Select } from "../../Inputs/Select";
-import { getMessage, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, getMessage, ACCOUNT_TOTAL_BY_CATEGORY, toUsDate } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
 import { IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
 import { createValidation } from "../../../validations/accountEntry";
+import { useQueryClient } from "react-query";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
@@ -26,12 +26,11 @@ interface FormData extends Omit<IAccountEntryFormData, "date"> {
 
 interface Props {
   accountId?: number;
-  onCancel: () => void;
-  refetch?: () => void;
+  onClose: () => void;
 }
 
-export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: Props) => {  
-  const router = useRouter();
+export const CreateAccountEntryForm = ({ accountId = null, onClose }: Props) => {  
+  const queryClient = useQueryClient();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
   const { data: formAccounts, isLoading: isLoadingAccounts } = useAccountsForm();
@@ -56,16 +55,15 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
     }
 
     try {
-      const response = await accountEntriesService.create(data);
+      await accountEntriesService.create(data);
 
       getMessage("Sucesso", `Lançamento ${values.description} criado com sucesso`);
 
-      if (typeof refetch !== 'undefined') {
-        refetch();
-        onCancel();
-      } else {
-        router.push(`/accounts/${response.data.account.id}/entries`)
-      }
+      queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
+      queryClient.invalidateQueries(ACCOUNT_BALANCE);
+      queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+
+      onClose();
     } catch (error) {
       if (error.response?.status === 422) {
         const data: IAccountEntryResponseError = error.response.data;
@@ -146,7 +144,7 @@ export const CreateAccountEntryForm = ({ accountId = null, onCancel, refetch }: 
           mr={[4]}
           variant="outline"
           isDisabled={formState.isSubmitting}
-          onClick={onCancel}
+          onClick={onClose}
         >
           Cancelar
         </Button>
