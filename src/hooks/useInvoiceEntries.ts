@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useQuery } from "react-query";
 import { AuthContext } from "../contexts/AuthContext";
 import { invoiceEntriesService } from "../services/ApiService/InvoiceEntriesService";
-import { toBrDate } from '../utils/helpers';
+import { INVOICE_ENTRIES, toBrDate } from '../utils/helpers';
 
 export const getInvoiceEntries = async (cardId: number, invoiceId: number, page: number, perPage: number) => {
   const response = await invoiceEntriesService.list(cardId, invoiceId, page, perPage);
@@ -32,7 +32,7 @@ export const getInvoiceEntries = async (cardId: number, invoiceId: number, page:
 export const useInvoiceEntries = (cardId: number, invoiceId: number, page: number, perPage: number) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['invoiceEntries', cardId, invoiceId, page, perPage, user?.id], () => getInvoiceEntries(cardId, invoiceId, page, perPage), {
-    staleTime: 1000 * 5
+  return useQuery([INVOICE_ENTRIES, cardId, invoiceId, page, perPage, user?.id], () => getInvoiceEntries(cardId, invoiceId, page, perPage), {
+    staleTime: 1000 * 60 * 15
   })
 }

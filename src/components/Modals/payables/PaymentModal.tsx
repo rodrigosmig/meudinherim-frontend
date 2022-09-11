@@ -23,9 +23,7 @@ const PaymentModalComponent = ({ payable, accounts, isOpen, onClose, refetch }: 
     >
       <PaymentForm 
         payable={payable} 
-        accounts={accounts}
         onCancel={onClose} 
-        refetch={refetch}
       />
     </Modal>
   )

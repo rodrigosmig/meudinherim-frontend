@@ -13,17 +13,19 @@ import { SelectCategories } from "../../Inputs/SelectCategories";
 import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
-import { getMessage } from "../../../utils/helpers";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES } from "../../../utils/helpers";
 import { IInvoiceEntry, IInvoiceEntryErrorKey, IInvoiceEntryFormData, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
 import { editValidation } from "../../../validations/invoiceEntry";
+import { useQueryClient } from "react-query";
 
 interface Props {
   entry: IInvoiceEntry;
   onClose: () => void,
-  refetch: () => void
 }
 
-export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: Props) => {  
+export const EditInvoiceEntryForm = ({ entry, onClose }: Props) => {  
+  const queryClient = useQueryClient();
+
   const { data: categories, isLoading } = useCategoriesForm();
 
   const { register, handleSubmit, setError, formState } = useForm({
@@ -48,11 +50,16 @@ export const EditInvoiceEntryForm = ({ entry, onClose, refetch }: Props) => {
     }
 
     try {
-      const response = await invoiceEntriesService.update(data)
+      await invoiceEntriesService.update(data)
 
       getMessage("Sucesso", `Lançamento ${values.description} alterado com sucesso`);
 
-      refetch();
+      queryClient.invalidateQueries(INVOICE)
+      queryClient.invalidateQueries(INVOICES)
+      queryClient.invalidateQueries(INVOICE_ENTRIES)
+      queryClient.invalidateQueries(OPEN_INVOICES)
+      queryClient.invalidateQueries(CARDS)
+
       onClose();
 
     } catch (error) {

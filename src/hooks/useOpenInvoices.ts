@@ -1,4 +1,4 @@
-import { toBrDate, toCurrency } from './../utils/helpers';
+import { OPEN_INVOICES, toBrDate, toCurrency } from './../utils/helpers';
 import { useQuery } from "react-query";
 import { cardService } from "../services/ApiService/CardService";
 import { useUser } from './useUser';
@@ -23,8 +23,7 @@ export const getOpenInvoices = async () => {
 export const useOpenInvoices = () => {
   const { user } = useUser();
 
-  return useQuery(['open_invoices', user?.id], () => getOpenInvoices(), {
-    refetchOnWindowFocus: false,
-    enabled: false
+  return useQuery([OPEN_INVOICES, user?.id], () => getOpenInvoices(), {
+    staleTime: 1000 * 60 * 15
   })
 }

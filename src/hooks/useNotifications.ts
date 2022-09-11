@@ -14,6 +14,6 @@ export const useNotifications = () => {
   const { user } = useContext(AuthContext);
 
   return useQuery(['notifications', 1, user?.id], () => getNotification(), {
-    staleTime: 1000 * 5
+    staleTime: 1000 * 60 * 30
   })
 }

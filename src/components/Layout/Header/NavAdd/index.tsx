@@ -9,7 +9,8 @@ import {
   PopoverBody,
   PopoverArrow,
   Divider,
-  useDisclosure
+  useDisclosure,
+  Box
 } from "@chakra-ui/react";
 import {
   RiBankLine,
@@ -22,21 +23,49 @@ import { BiTransfer } from "react-icons/bi";
 import { NavAddItem } from "./Item";
 import { TransferBetweenAccountsModal } from "../../../Modals/account_entries/TransferBetweenAccountsModal";
 import { CreateCategoryModal } from "../../../Modals/categories/CreateCategoryModal";
+import { CreateInvoiceEntryModal } from "../../../Modals/invoice_entries/CreateInvoiceEntryModal";
+import { CreateAccountEntryModal } from "../../../Modals/account_entries/CreateAccountEntryModal";
+import { CreatePaymentModal } from "../../../Modals/payables/CreatePaymentModal";
+import { CreateReceivableModal } from "../../../Modals/receivables/CreateReceivableModal";
 
 export const NavAdd = () => {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: isOpenTransfer, onOpen: onOpenTransfer, onClose: onCloseTransfer } = useDisclosure();
+  const { isOpen: isOpenInvoiceEntry, onOpen: onOpenInvoiceEntry, onClose: onCloseInvoiceEntry } = useDisclosure();
+  const { isOpen: isOpenAccountEntry, onOpen: onOpenAccountEntry, onClose: onCloseAccountEntry } = useDisclosure();
+  const { isOpen: isOpenPayable, onOpen: onOpenPayable, onClose: onClosePayable } = useDisclosure();
+  const { isOpen: isOpenReceivable, onOpen: onOpenReceivable, onClose: onCloseReceivable } = useDisclosure();
 
   return (
-    <>
-      <TransferBetweenAccountsModal
-        isOpen={isOpenTransfer} 
-        onClose={onCloseTransfer}
+    <Box>
+      <CreateInvoiceEntryModal
+        isOpen={isOpenInvoiceEntry} 
+        onClose={onCloseInvoiceEntry}
+      />
+
+      <CreateAccountEntryModal
+        isOpen={isOpenAccountEntry} 
+        onClose={onCloseAccountEntry}
       />
 
       <CreateCategoryModal
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
+      />
+
+      <CreateReceivableModal
+        isOpen={isOpenReceivable} 
+        onClose={onCloseReceivable}
+      />
+
+      <CreatePaymentModal
+        isOpen={isOpenPayable} 
+        onClose={onClosePayable}
+      />
+
+      <TransferBetweenAccountsModal
+        isOpen={isOpenTransfer} 
+        onClose={onCloseTransfer}
       />
 
       <Popover
@@ -66,38 +95,36 @@ export const NavAdd = () => {
           </PopoverHeader>
           <PopoverBody>
             <NavAddItem
-              url="/cards/invoices/entries/create"
               label="Lançamento no cartão"
               icon={<Icon as={FaCreditCard} fontSize={[18, 20, 20]} />}
+              onClick={onOpenInvoiceEntry}
             />
 
             <NavAddItem
-              url="/accounts/entries/create"
               label="Lançamento na conta"
               icon={<Icon as={RiBankLine} fontSize={20} />}
+              onClick={onOpenAccountEntry}
             />
 
             <NavAddItem
-              url="#"
               label="Categoria"
               icon={<Icon as={RiPriceTag3Line} fontSize={20} />}
               onClick={createModalOnOpen}
-            />
+              />
             
             <NavAddItem
-              url="/receivables/create"
               label="Contas a receber"
               icon={<Icon as={GiReceiveMoney} fontSize={20} />}
-            />
+              onClick={onOpenReceivable}
+              />
 
             <NavAddItem
-              url="/payables/create"
               label="Contas a pagar"
               icon={<Icon as={GiPayMoney} fontSize={20} />}
+              onClick={onOpenPayable}
             />
 
             <NavAddItem
-              url="#"
               label="Transferência entre contas"
               icon={<Icon as={BiTransfer} fontSize={20} />}
               onClick={onOpenTransfer}
@@ -108,6 +135,6 @@ export const NavAdd = () => {
             </PopoverBody>
         </PopoverContent>
       </Popover>    
-    </>
+    </Box>
   )
 }

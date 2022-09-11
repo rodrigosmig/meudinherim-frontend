@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Heading } from "../../../../../../components/Heading";
 import { FilterPerPage } from "../../../../../../components/Pagination/FilterPerPage";
-import { getMessage, toBrDate, toCurrency } from "../../../../../../utils/helpers";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toBrDate, toCurrency } from "../../../../../../utils/helpers";
 import { Layout } from "../../../../../../components/Layout";
 import { withSSRAuth } from "../../../../../../utils/withSSRAuth";
 import { setupApiClient } from "../../../../../../services/api";
@@ -25,7 +25,7 @@ import { Table } from "../../../../../../components/Table";
 import { Loading } from "../../../../../../components/Loading";
 import { AddButton } from "../../../../../../components/Buttons/Add";
 import { EditInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/EditInvoiceEntryModal";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { invoiceEntriesService } from "../../../../../../services/ApiService/InvoiceEntriesService";
 import { useInvoice } from "../../../../../../hooks/useInvoices";
 import { CreateInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/CreateInvoiceEntryModal";
@@ -44,6 +44,8 @@ interface Props {
 }
 
 export default function InvoiceEntries({ cardId, invoiceId }: Props) {
+  const queryClient = useQueryClient();
+
   const { data: invoice, isLoading: isLoadingInvoice, refetch: refetchInvoice } = useInvoice(cardId, invoiceId);
 
   const isWideVersion = useBreakpointValue({
@@ -125,7 +127,12 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
 
       getMessage("Sucesso", "Lançamento deletado com sucesso");
 
-      handleRefetchData();
+      queryClient.invalidateQueries(INVOICE);
+      queryClient.invalidateQueries(INVOICES);
+      queryClient.invalidateQueries(INVOICE_ENTRIES);
+      queryClient.invalidateQueries(OPEN_INVOICES);
+      queryClient.invalidateQueries(CARDS);
+
     } catch (error) {
       const data = error.response.data;
 
@@ -179,14 +186,12 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
         card_id={cardId}
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={handleRefetchData}
       />
 
       <EditInvoiceEntryModal
         entry={selectedEntry}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
-        refetch={handleRefetchData}
       />
 
       <AnticipateInstallmentsModal

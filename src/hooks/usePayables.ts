@@ -1,4 +1,4 @@
-import { toBrDate } from './../utils/helpers';
+import { PAYABLES, toBrDate } from './../utils/helpers';
 import { useQuery } from "react-query";
 import { payableService } from "../services/ApiService/PayableService";
 import { useContext } from 'react';
@@ -48,7 +48,7 @@ export const getPayables = async (filterDate: [string, string], page: number, pe
 export const usePayables = (filterDate: [string, string], page: number, perPage: number, status: string) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['payables', filterDate, page, perPage, status, user?.id], () => getPayables(filterDate, page, perPage, status), {
-    staleTime: 1000 * 5
+  return useQuery([PAYABLES, filterDate, page, perPage, status, user?.id], () => getPayables(filterDate, page, perPage, status), {
+    staleTime: 1000 * 60 * 15
   })
 }

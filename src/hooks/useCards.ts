@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useQuery } from "react-query";
 import { AuthContext } from "../contexts/AuthContext";
 import { cardService } from "../services/ApiService/CardService";
+import { CARDS, CARDS_FORM } from "../utils/helpers";
 
 export const getCards = async () => {
   const response = await cardService.list();
@@ -27,7 +28,7 @@ export const getCardsForForm = async () => {
 export const useCards = () => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['cards', user?.id], () => getCards(), {
+  return useQuery([CARDS, user?.id], () => getCards(), {
     staleTime: 1000 * 60 * 15
   })
 }
@@ -35,7 +36,7 @@ export const useCards = () => {
 export const useCardsForm = () => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['cards-form', user?.id], () => getCardsForForm(), {
+  return useQuery([CARDS_FORM, user?.id], () => getCardsForForm(), {
     staleTime: 1000 * 60 * 15
   })
 }

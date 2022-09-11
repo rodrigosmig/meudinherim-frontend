@@ -4,16 +4,11 @@ import { Modal } from "../Modal";
 
 interface EditPayableModalProps {
   payable: IPayable;
-  categories: {
-    value: string;
-    label: string
-  }[],
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const EditPayableModal = ({ payable, categories, isOpen, onClose, refetch }: EditPayableModalProps) => {
+export const EditPayableModal = ({ payable, isOpen, onClose }: EditPayableModalProps) => {
   return (
     <Modal
       header="Editar Conta a Pagar"
@@ -22,9 +17,7 @@ export const EditPayableModal = ({ payable, categories, isOpen, onClose, refetch
     >
       <EditPayableForm
         payable={payable}
-        categories={categories}
-        closeModal={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
     </Modal>
 

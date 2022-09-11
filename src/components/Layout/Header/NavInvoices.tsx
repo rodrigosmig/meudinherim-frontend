@@ -35,7 +35,7 @@ export const NavInvoices = () => {
   const [total, setTotal] = useState("");
   const bgColor = useColorModeValue('gray.50', 'gray.800');
 
-  const { data, isLoading, isFetching, refetch } = useOpenInvoices();
+  const { data, isLoading, isFetching } = useOpenInvoices();
 
   useEffect(() => {
     if (data) {
@@ -45,100 +45,101 @@ export const NavInvoices = () => {
   }, [data])
 
   return (
-    <Popover 
-      isLazy 
-      trigger={'hover'}
-      onOpen={refetch}
-    >
-      <PopoverTrigger>
-        <IconButton
-          aria-label="add menu"
-          size="sm"
-          variant="ghost"
-          icon={<Icon as={FaCreditCard} fontSize={[18, 20, 20]} />}
-        />
-      </PopoverTrigger>
-      <PopoverContent
-        border={0}
-        boxShadow={'xl'}
-        rounded={'xl'}
-        minW={['xs', 'sm']}
+    <Box>
+      <Popover 
+        isLazy 
+        trigger={'hover'}
       >
-        <PopoverArrow />
-        <PopoverHeader 
-          fontWeight="bold" 
-          fontSize={['sm', "lg", "lg"]}
+        <PopoverTrigger>
+          <IconButton
+            aria-label="add menu"
+            size="sm"
+            variant="ghost"
+            icon={<Icon as={FaCreditCard} fontSize={[18, 20, 20]} />}
+          />
+        </PopoverTrigger>
+        <PopoverContent
+          border={0}
+          boxShadow={'xl'}
+          rounded={'xl'}
+          minW={['xs', 'sm']}
         >
-          <Center>
-            Faturas { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
-          </Center>
-        </PopoverHeader>
-          { isLoading ? (
-            <Loading mb={4} />
-          ) : (
-            <>
-              <PopoverBody>
-                { invoices.map(invoice => (
-                  <Fragment key={invoice.id}>
-                    <LinkBox>
-                      <NextLink href={`/cards/${invoice.card.id}/invoices/${invoice.id}/entries`} passHref  key={invoice.id}>
-                        <LinkOverlay 
-                          role={'group'}
-                          display={'block'}
-                          p={2}
-                          rounded={'md'}
-                          _hover={{ bg: bgColor }}>
-                          <Stack direction={'row'} align={'center'}>
-                            <Box>
-                              <Text
-                                transition={'all .3s ease'}
+          <PopoverArrow />
+          <PopoverHeader 
+            fontWeight="bold" 
+            fontSize={['sm', "lg", "lg"]}
+          >
+            <Center>
+              Faturas { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+            </Center>
+          </PopoverHeader>
+            { isLoading ? (
+              <Loading mb={4} />
+            ) : (
+              <>
+                <PopoverBody>
+                  { invoices.map(invoice => (
+                    <Fragment key={invoice.id}>
+                      <LinkBox>
+                        <NextLink href={`/cards/${invoice.card.id}/invoices/${invoice.id}/entries`} passHref  key={invoice.id}>
+                          <LinkOverlay 
+                            role={'group'}
+                            display={'block'}
+                            p={2}
+                            rounded={'md'}
+                            _hover={{ bg: bgColor }}>
+                            <Stack direction={'row'} align={'center'}>
+                              <Box>
+                                <Text
+                                  transition={'all .3s ease'}
+                                  _groupHover={{ color: 'pink.400' }}
+                                  fontWeight={500}
+                                  fontSize={['sm', "md", "md"]}
+                                >
+                                  { invoice.card.name }
+                                </Text>
+                                <Text fontSize={['xs', "md", "md"]}>Vencimento: { invoice.due_date }</Text>
+                              </Box>
+                              <Flex
                                 _groupHover={{ color: 'pink.400' }}
-                                fontWeight={500}
+                                justify={'flex-end'}
+                                align={'center'}
+                                flex={1}
                                 fontSize={['sm', "md", "md"]}
                               >
-                                { invoice.card.name }
-                              </Text>
-                              <Text fontSize={['xs', "md", "md"]}>Vencimento: { invoice.due_date }</Text>
-                            </Box>
-                            <Flex
-                              _groupHover={{ color: 'pink.400' }}
-                              justify={'flex-end'}
-                              align={'center'}
-                              flex={1}
-                              fontSize={['sm', "md", "md"]}
-                            >
-                              { invoice.amount }
-                            </Flex>
-                          </Stack>
-                        </LinkOverlay>
-                      </NextLink>
-                    
-                    </LinkBox>
+                                { invoice.amount }
+                              </Flex>
+                            </Stack>
+                          </LinkOverlay>
+                        </NextLink>
+                      
+                      </LinkBox>
 
-                    <Divider mt={2} mb={2} />
-                  </Fragment>
-                ))}
-              </PopoverBody>
+                      <Divider mt={2} mb={2} />
+                    </Fragment>
+                  ))}
+                </PopoverBody>
 
-              <PopoverFooter
-                border='0'
-                d='flex'
-                alignItems='center'
-                justifyContent='center'
-                pb={4}
-              >
-                <Box fontSize={['sm', "md", "md"]}>
-                  <Text as="span" fontWeight="bold" mr="1">
-                    Total:
-                  </Text>
-                  <Text as="span" color="red.500">
-                    { total }
-                  </Text>
-                </Box>
-              </PopoverFooter>
-            </>
-          )}
-      </PopoverContent>
-    </Popover>
+                <PopoverFooter
+                  border='0'
+                  d='flex'
+                  alignItems='center'
+                  justifyContent='center'
+                  pb={4}
+                >
+                  <Box fontSize={['sm', "md", "md"]}>
+                    <Text as="span" fontWeight="bold" mr="1">
+                      Total:
+                    </Text>
+                    <Text as="span" color="red.500">
+                      { total }
+                    </Text>
+                  </Box>
+                </PopoverFooter>
+              </>
+            )}
+        </PopoverContent>
+      </Popover>
+    </Box>
   )
 }

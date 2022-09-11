@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useQuery } from "react-query";
 import { AuthContext } from "../contexts/AuthContext";
 import { accountService } from "../services/ApiService/AccountService";
+import { ACCOUNTS, ACCOUNTS_FORM } from "../utils/helpers";
 
 export const getAccounts = async (active: boolean) => {
   const response = await accountService.list(active);
@@ -39,7 +40,7 @@ export const getAccountsForForm = async (valueDefault = false) => {
 export const useAccounts = (active: boolean) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['accounts', active, user?.id], () => getAccounts(active), {
+  return useQuery([ACCOUNTS, active, user?.id], () => getAccounts(active), {
     staleTime: 1000 * 60 * 15
   })
 }
@@ -47,7 +48,7 @@ export const useAccounts = (active: boolean) => {
 export const useAccountsForm = (valueDefault = false) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['accounts-form', user?.id], () => getAccountsForForm(valueDefault), {
+  return useQuery([ACCOUNTS_FORM, user?.id], () => getAccountsForForm(valueDefault), {
     staleTime: 1000 * 60 * 15
   })
 }

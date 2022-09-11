@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { accountService } from "../services/ApiService/AccountService";
 import { AccountIdType } from "../types/account";
-import { toCurrency } from "../utils/helpers";
+import { ACCOUNT_BALANCE, toCurrency } from "../utils/helpers";
 import { useUser } from "./useUser";
 
 export const getAccountBalance = async (id: AccountIdType) => {
@@ -30,8 +30,7 @@ export const getAccountBalance = async (id: AccountIdType) => {
 export const useAccountBalance = (id: AccountIdType) => {
   const { user } = useUser();
 
-  return useQuery(['account_balance', id, user?.id], () => getAccountBalance(id), {
-    refetchOnWindowFocus: id === 'all' ? false : true,
-    enabled: id === 'all' ? false : true
+  return useQuery([ACCOUNT_BALANCE, id, user?.id], () => getAccountBalance(id), {
+    staleTime: 1000 * 60 * 15
   })
 }

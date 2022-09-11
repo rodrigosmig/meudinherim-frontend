@@ -14,27 +14,33 @@ import { payableService } from '../../../services/ApiService/PayableService';
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
-import { getMessage, toUsDate } from '../../../utils/helpers';
-import { useRouter } from 'next/router';
+import { ACCOUNTS_REPORT, getMessage, PAYABLES, toUsDate } from '../../../utils/helpers';
 import { IPayableCreateData, IPayableResponseError } from '../../../types/payable';
 import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 import { createValidation } from '../../../validations/payable';
+import { useQueryClient } from 'react-query';
+import { useCategoriesForm } from '../../../hooks/useCategories';
+import { Loading } from '../../Loading';
 
 interface FormData extends Omit<IPayableCreateData, "due_date"> {
   due_date: Date;
 }
 
 interface CreatePayableFormProps {
-  categories: {
-    value: string;
-    label: string
-  }[];
-  onCancel: () => void,
-  refetch?: () => void
+  onClose: () => void,
 }
 
-export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayableFormProps) => {  
-  const router = useRouter();
+export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {  
+  const queryClient = useQueryClient();
+
+  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+
+  const categories = data?.expense.map(category => {
+    return {
+      value: category.id,
+      label: category.label
+    }
+  });
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
@@ -68,12 +74,10 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
 
       getMessage("Sucesso", "Conta a Pagar adicionada com sucesso");
 
-      if (typeof refetch !== 'undefined') {
-        refetch();
-        onCancel();
-      } else {
-        router.push(`/payables`)
-      }
+      queryClient.invalidateQueries(PAYABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
+
+      onClose();
     } catch (error) {
       if (error.response?.status === 422) {
         const data: IPayableResponseError = error.response.data;
@@ -106,6 +110,12 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
     const amount = parseFloat(event.target.value);
 
     setPayableValue(amount);
+  }
+
+  if (isLoadingCategories) {
+    return (
+      <Loading />
+    )
   }
 
   return (
@@ -193,7 +203,7 @@ export const CreatePayableForm = ({ categories, onCancel, refetch }: CreatePayab
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={onCancel}
+          onClick={onClose}
         />
 
         <SubmitButton

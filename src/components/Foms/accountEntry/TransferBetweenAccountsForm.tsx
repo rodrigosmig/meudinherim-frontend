@@ -13,7 +13,7 @@ import { Input } from "../../Inputs/Input";
 import { Datepicker } from "../../DatePicker";
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { Select } from "../../Inputs/Select";
-import { getMessage, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, toUsDate } from "../../../utils/helpers";
 import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
 import { useAccountsForm } from "../../../hooks/useAccounts";
@@ -62,9 +62,10 @@ export const TransferBetweenAccountsForm = ({ onCancel}: Props) => {
 
       getMessage("Sucesso", "Transferência realizada com sucesso");
 
+      queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
+      queryClient.invalidateQueries(ACCOUNT_BALANCE);
+      queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
       onCancel();
-      queryClient.invalidateQueries('accountEntries');
-      queryClient.invalidateQueries('account_balance');
 
     } catch (error) {
       if (error.response?.status === 422) {

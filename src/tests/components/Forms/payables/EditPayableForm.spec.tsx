@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { EditPayableForm } from "../../../../components/Foms/payable/EditPayableForm";
+import { useCategoriesForm } from "../../../../hooks/useCategories";
 import { payableService } from "../../../../services/ApiService/PayableService";
 import { IPayable } from "../../../../types/payable";
 
@@ -17,22 +18,25 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
-
+const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
 const payableServiceMocked = mocked(payableService.update);
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/PayableService')
+jest.mock('../../../../hooks/useCategories')
 
-const categories = [
-  {
-    value: "1",
-    label: "Category Expense"
-  },
-  {
-    value: "2",
-    label: "Category Test"
-  }
-]
+const categoriesForm = {
+  income: [
+    {
+      id: 1, label: "Income Category Test"
+    },
+  ],
+  expense: [
+    {
+      id: 2, label: "Expense Category Test"
+    },
+  ],
+}
 
 const payable: IPayable = {
   id: 1,
@@ -56,11 +60,12 @@ const payable: IPayable = {
 }
 
 const closeModal = jest.fn;
-const refetch = jest.fn;
 
 describe('EditPayableForm Component', () => {
   beforeEach(() => {
-    render(<EditPayableForm payable={payable} categories={categories} closeModal={closeModal} refetch={refetch} />)
+    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categoriesForm }));
+
+    render(<EditPayableForm payable={payable} onClose={closeModal} />)
   });
 
   afterEach(() => {
@@ -75,9 +80,7 @@ describe('EditPayableForm Component', () => {
     expect(screen.getByText("Valor")).toBeInTheDocument();
     expect(screen.getByLabelText("Mensal")).toBeInTheDocument();
     //Categories
-    expect(screen.getByRole("option", {name: "Category Expense"})).toBeInTheDocument();
-    expect(screen.getByRole("option", {name: "Category Test"})).toBeInTheDocument();
-
+    expect(screen.getByRole("option", {name: "Expense Category Test"})).toBeInTheDocument();
   })
 
   it('validates required fields inputs', async () => {

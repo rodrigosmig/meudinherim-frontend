@@ -16,26 +16,33 @@ import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { CancelButton } from "../../Buttons/Cancel";
-import { getMessage, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, toUsDate } from "../../../utils/helpers";
 import { IAccountSchedulingCreateData, IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 import { IReceivableResponseError } from '../../../types/receivable';
 import { createValidation } from '../../../validations/receivables';
+import { useQueryClient } from 'react-query';
+import { useCategoriesForm } from '../../../hooks/useCategories';
+import { Loading } from '../../Loading';
 
 interface FormData extends Omit<IAccountSchedulingCreateData, "due_date"> {
   due_date: Date;
 }
 
 interface Props {
-  categories: {
-    value: string;
-    label: string
-  }[];
-  onCancel: () => void,
-  refetch?: () => void
+  onClose: () => void,
 }
 
-export const CreateReceivableForm = ({ categories, onCancel, refetch }: Props) => {  
-  const router = useRouter();
+export const CreateReceivableForm = ({ onClose }: Props) => {  
+  const queryClient = useQueryClient();
+
+  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+
+  const categories = data?.income.map(category => {
+    return {
+      value: category.id,
+      label: category.label
+    }
+  });
 
   const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
@@ -69,13 +76,10 @@ export const CreateReceivableForm = ({ categories, onCancel, refetch }: Props) =
 
       getMessage("Sucesso", "Conta a Receber adicionada com sucesso");
 
-      if (typeof refetch !== 'undefined') {
-        refetch();
-        onCancel();
-      } else {
-        router.push(`/receivables`)
-      }
+      queryClient.invalidateQueries(RECEIVABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
 
+      onClose();
     } catch (error) {
       if (error.response?.status === 422) {
         const data: IReceivableResponseError = error.response.data;
@@ -108,6 +112,12 @@ export const CreateReceivableForm = ({ categories, onCancel, refetch }: Props) =
     const amount = parseFloat(event.target.value);
 
     setReceivableValue(amount);
+  }
+
+  if (isLoadingCategories) {
+    return (
+      <Loading />
+    )
   }
 
   return (
@@ -195,7 +205,7 @@ export const CreateReceivableForm = ({ categories, onCancel, refetch }: Props) =
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={onCancel}
+          onClick={onClose}
         />
 
         <SubmitButton

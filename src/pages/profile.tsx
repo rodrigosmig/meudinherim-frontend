@@ -60,31 +60,35 @@ export default function Profile({ userUpdated }: Props) {
                   </Heading>
                 </Flex>
 
-                <Box align="center">
-                <Box
-                  width={['full', 'xs']}
-                  bgColor="gray.900"
-                  p={[4, 8]}
-                  mt={[4]}
-                >
-                  <FileInput
-                    localImageUrl={localImageUrl}
-                    setLocalImageUrl={setLocalImageUrl}
-                    setError={setError}
-                    trigger={trigger}
-                    error={errors.image}
-                    {...register('image')}
-                  />
-                  
-                </Box>
+                <Box>
+                  <Flex
+                    flexDirection={"column"}
+                    align="center"
+                  >
+                    <Box
+                      width={['full', 'xs']}
+                      bgColor="gray.900"
+                      p={[4, 8]}
+                      mt={[4]}
+                    >
+                      <FileInput
+                        localImageUrl={localImageUrl}
+                        setLocalImageUrl={setLocalImageUrl}
+                        setError={setError}
+                        trigger={trigger}
+                        error={errors.image}
+                        {...register('image')}
+                      />                    
+                    </Box>
 
-                  <ChakraHeading mt={[6, 6, 8]} fontSize={['3xl', '4xl']}>
-                    {user.name}
-                  </ChakraHeading>
+                    <ChakraHeading mt={[6, 6, 8]} fontSize={['3xl', '4xl']}>
+                      {user.name}
+                    </ChakraHeading>
 
-                  <Text fontSize={['sm', 'md']} mb={[6, 6, 8]}>
-                    {user.email}
-                  </Text>
+                    <Text fontSize={['sm', 'md']} mb={[6, 6, 8]}>
+                      {user.email}
+                    </Text>
+                  </Flex>
 
                   <Box>
                     <Tabs colorScheme="pink">

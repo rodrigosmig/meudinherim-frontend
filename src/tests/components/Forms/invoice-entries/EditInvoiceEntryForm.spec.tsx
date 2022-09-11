@@ -20,6 +20,14 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+jest.mock('@chakra-ui/react', () => {
+  const toast = jest.requireActual('@chakra-ui/react');
+  return {
+    ...toast,
+    createStandaloneToast: () => jest.fn,
+  };
+});
+
 const invoiceEntriesServiceMocked = mocked(invoiceEntriesService.update);
 const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
 const useCardsFormMocked = useCardsForm as jest.Mock<any>;
@@ -29,8 +37,8 @@ jest.mock('../../../../services/ApiService/InvoiceEntriesService')
 jest.mock('../../../../hooks/useCards')
 jest.mock('../../../../hooks/useCategories')
 
+
 const onClose = jest.fn();
-const refetch = jest.fn();
 
 const categories = {
   income: [
@@ -64,7 +72,8 @@ const entry: IInvoiceEntry = {
   category: {
     id: 1,
     type: 1,
-    name: "Category Test"
+    name: "Category Test",
+    active: true
   },
   card_id: 1,
   invoice_id: 1,
@@ -81,7 +90,7 @@ describe('EditInvoiceEntryForm Component', () => {
     useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
     useCardsFormMocked.mockImplementation(() => ({ isLoading: false, data: formCards }));
 
-    render(<EditInvoiceEntryForm entry={entry} onClose={onClose} refetch={refetch} />)
+    render(<EditInvoiceEntryForm entry={entry} onClose={onClose} />)
   });
 
   afterEach(() => {

@@ -33,7 +33,8 @@ const account: IAccount = {
     desc: "Saving"
   },
   balance: 50,
-  name: "Account Test"
+  name: "Account Test",
+  active: true
 }
 
 const entry: IAccountEntry = {
@@ -42,7 +43,8 @@ const entry: IAccountEntry = {
   category: {
     id: 1,
     type: 2,
-    name: 'Category test'
+    name: 'Category test',
+    active: true
   },
   description: 'Account entry test',
   value: 50,

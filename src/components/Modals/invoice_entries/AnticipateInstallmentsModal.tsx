@@ -1,4 +1,5 @@
 import {
+  Center,
   Checkbox,
   Flex,
   Tbody, 
@@ -148,6 +149,7 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
           <Table 
             size={tableSize}
             theadData={theadData}
+            showAdditionalColumn={false}
           >
             <Tbody>
               { installments.map(installment => (
@@ -165,7 +167,9 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
                     { toCurrency(installment.value) }
                   </Td>
                   <Td fontSize={["xs", "md"]}>
-                    <Checkbox onChange={() => handleCheckAnticipate(installment.id)} colorScheme="pink" align="center" />
+                    <Center>
+                      <Checkbox onChange={() => handleCheckAnticipate(installment.id)} colorScheme="pink" />
+                    </Center>
                   </Td>
                 </Tr>
               )) }

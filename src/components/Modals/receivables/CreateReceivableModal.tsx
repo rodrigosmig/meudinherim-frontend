@@ -2,16 +2,11 @@ import { CreateReceivableForm } from "../../Foms/receivable/CreateReceivableForm
 import { Modal } from "../Modal";
 
 interface Props {
-  categories: {
-    value: string;
-    label: string
-  }[],
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const CreateReceivableModal = ({ categories, isOpen, onClose, refetch }: Props) => {
+export const CreateReceivableModal = ({ isOpen, onClose }: Props) => {
   return (
     <Modal
       header="Nova Conta a Receber"
@@ -19,9 +14,7 @@ export const CreateReceivableModal = ({ categories, isOpen, onClose, refetch }: 
       onClose={onClose}
     >
       <CreateReceivableForm 
-        categories={categories} 
-        onCancel={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
     </Modal>
   )

@@ -39,7 +39,7 @@ describe('Cancel Payment button Component', () => {
 
     expect(onClick).toHaveBeenCalledTimes(0)
     expect(screen.getByRole('alertdialog')).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Cancel Payment'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Cancel'})).toBeInTheDocument();
   });
 
   it('renders correctly cancel payment confirmation', async () => {

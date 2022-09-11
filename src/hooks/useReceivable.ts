@@ -1,4 +1,4 @@
-import { toBrDate } from '../utils/helpers';
+import { RECEIVABLES, toBrDate } from '../utils/helpers';
 import { useQuery } from "react-query";
 import { receivableService } from '../services/ApiService/ReceivableService';
 import { useContext } from 'react';
@@ -48,7 +48,7 @@ export const getReceivables = async (filterDate: [string, string], page: number,
 export const useReceivables = (filterDate: [string, string], page: number, perPage: number, status: string) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['receivables', filterDate, page, perPage, status, user?.id], () => getReceivables(filterDate, page, perPage, status), {
+  return useQuery([RECEIVABLES, filterDate, page, perPage, status, user?.id], () => getReceivables(filterDate, page, perPage, status), {
     staleTime: 1000 * 5
   })
 }
