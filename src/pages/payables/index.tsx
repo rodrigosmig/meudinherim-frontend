@@ -43,7 +43,7 @@ interface Props {
   }[];
 }
 
-export default function AccountPayables({ categories, accounts }: Props) {
+export default function AccountPayables({ accounts }: Props) {
   const queryClient = useQueryClient();
 
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();

@@ -16,15 +16,12 @@ import { Select } from "../../Inputs/Select";
 import { IPayable, IPaymentFormData } from "../../../types/payable";
 import { paymentValidation } from "../../../validations/payable";
 import { useQueryClient } from "react-query";
+import { useAccountsForm } from "../../../hooks/useAccounts";
+import { Loading } from "../../Loading";
 
 interface Props {
-    payable: IPayable;
-    accounts: {
-      value: string;
-      label: string;
-    }[];
-    onCancel: () => void;
-    refetch: () => void;
+  payable: IPayable;
+  onCancel: () => void;
 }
 
 interface FormData extends Omit<IPaymentFormData, "paid_date">  {
@@ -39,8 +36,10 @@ type ResponseError = {
 
 type Key = keyof ResponseError;
 
-export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => {
+export const PaymentForm = ({ payable, onCancel }: Props) => {
   const queryClient = useQueryClient();
+
+  const { data: accounts, isLoading: isLoadingAccounts } = useAccountsForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
@@ -74,7 +73,6 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => 
       queryClient.invalidateQueries(ACCOUNT_BALANCE);
       queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
 
-      refetch();
       onCancel();  
     } catch (error) {
       if (error.response?.status === 422) {
@@ -86,101 +84,108 @@ export const PaymentForm = ({ payable, accounts, onCancel, refetch }: Props) => 
             setError(key, {message: error})
           })
         }
-      } else if (error.response.data.message) {
+      } else if (error.response?.data.message) {
         getMessage('Erro', error.response.data.message, 'error')
 
         onCancel(); 
       }
     }
   }
+
+  if (isLoadingAccounts) {
     return (
-        <Box
-          as="form"
-          onSubmit={handleSubmit(handlePayment)}
-        >
-          <Stack spacing={[4]}>
-            <Select
-              name="type"
-              label="Conta"
-              options={accounts}
-              error={errors.account_id}
-              {...register('account_id')}
-            />
-            <Controller
-              control={control}
-                name="paid_date"
-                render={({ field }) => (
-                  <Datepicker
-                    label="Data do Pagamento"
-                    error={errors.paid_date}
-                    selected={field.value}
-                    onChange={(date) => field.onChange(date)}
-                  />
-              )}
-            />
-            <Input
-              name="due_date"
-              type="text"
-              label="Vencimento"
-              value={toBrDate(payable.due_date)}
-              isDisabled={true}
-            />
-
-            <Input
-              name="category"
-              type="text"
-              label="Categoria"
-              value={payable.category.name}
-              isDisabled={true}
-            />
-
-            <Input
-              name="description"
-              type="text"
-              label="Descrição"
-              value={payable.description}
-              isDisabled={true}
-            />
-
-            <Input
-              name="value"
-              type="number"
-              label="Valor"
-              step="0.01"
-              error={errors.value}
-              defaultValue={payable.value}
-              {...register('value')}
-            />
-
-            <Switch
-              size="lg"
-              id="monthly" 
-              name='monthly'
-              label="Mensal"
-              isChecked={payable.monthly}
-              isDisabled={true}
-            />
-          </Stack>
-
-          <Flex
-            mt={[10]}
-            justify="flex-end"
-            align="center"
-          >
-            <Button
-              variant="outline"
-              isDisabled={formState.isSubmitting}
-              onClick={onCancel}
-              mr={[4]}
-            >
-              Cancelar
-            </Button>
-
-            <SubmitButton
-              label="Pagar"
-              isLoading={formState.isSubmitting}
-            />
-          </Flex>
-        </Box>
+      <Loading />
     )
+  }
+
+  return (
+    <Box
+      as="form"
+      onSubmit={handleSubmit(handlePayment)}
+    >
+      <Stack spacing={[4]}>
+        <Select
+          name="type"
+          label="Conta"
+          options={accounts}
+          error={errors.account_id}
+          {...register('account_id')}
+        />
+        <Controller
+          control={control}
+            name="paid_date"
+            render={({ field }) => (
+              <Datepicker
+                label="Data do Pagamento"
+                error={errors.paid_date}
+                selected={field.value}
+                onChange={(date) => field.onChange(date)}
+              />
+          )}
+        />
+        <Input
+          name="due_date"
+          type="text"
+          label="Vencimento"
+          value={toBrDate(payable.due_date)}
+          isDisabled={true}
+        />
+
+        <Input
+          name="category"
+          type="text"
+          label="Categoria"
+          value={payable.category.name}
+          isDisabled={true}
+        />
+
+        <Input
+          name="description"
+          type="text"
+          label="Descrição"
+          value={payable.description}
+          isDisabled={true}
+        />
+
+        <Input
+          name="value"
+          type="number"
+          label="Valor"
+          step="0.01"
+          error={errors.value}
+          defaultValue={payable.value}
+          {...register('value')}
+        />
+
+        <Switch
+          size="lg"
+          id="monthly" 
+          name='monthly'
+          label="Mensal"
+          isChecked={payable.monthly}
+          isDisabled={true}
+        />
+      </Stack>
+
+      <Flex
+        mt={[10]}
+        justify="flex-end"
+        align="center"
+      >
+        <Button
+          variant="outline"
+          isDisabled={formState.isSubmitting}
+          onClick={onCancel}
+          mr={[4]}
+        >
+          Cancelar
+        </Button>
+
+        <SubmitButton
+          label="Pagar"
+          isLoading={formState.isSubmitting}
+        />
+      </Flex>
+    </Box>
+  )
 } 

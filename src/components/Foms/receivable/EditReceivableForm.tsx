@@ -13,11 +13,14 @@ import { parseISO } from 'date-fns';
 import { Switch } from "../../Inputs/Switch";
 import { Select } from "../../Inputs/Select";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
-import { getMessage, reverseBrDate, toUsDate } from '../../../utils/helpers';
+import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, reverseBrDate, toUsDate } from '../../../utils/helpers';
 import { CancelButton } from '../../Buttons/Cancel';
 import { IReceivable, IReceivableFormData, IReceivableResponseError } from '../../../types/receivable';
 import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 import { editValidation } from '../../../validations/receivables';
+import { useCategoriesForm } from '../../../hooks/useCategories';
+import { useQueryClient } from 'react-query';
+import { Loading } from '../../Loading';
 
 interface FormData extends Omit<IReceivableFormData, "due_date"> {
   due_date: Date;
@@ -25,15 +28,23 @@ interface FormData extends Omit<IReceivableFormData, "due_date"> {
 
 interface Props {
   receivable: IReceivable,
-  categories: {
-    value: string;
-    label: string
-  }[];
-  closeModal: () => void,
-  refetch: () => void
+  onClose: () => void
 }
 
-export const EditReceivableForm = ({ receivable, categories, closeModal, refetch }: Props) => {  
+export const EditReceivableForm = ({ receivable, onClose }: Props) => {
+  const queryClient = useQueryClient();
+
+  const [ monthly, setMonthly ] = useState(receivable.monthly);
+
+  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+
+  const categories = data?.income.map(category => {
+    return {
+      value: category.id,
+      label: category.label
+    }
+  });
+
   const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
       due_date: parseISO(reverseBrDate(receivable.due_date)),
@@ -44,8 +55,6 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
     },
     resolver: yupResolver(editValidation)
   });
-
-  const [ monthly, setMonthly ] = useState(receivable.monthly);
 
   const { errors } = formState;
 
@@ -64,9 +73,10 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
 
       getMessage("Sucesso", "Conta a Receber alterada com sucesso");
 
-      refetch();
-      closeModal();
+      queryClient.invalidateQueries(RECEIVABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
 
+      onClose();
     } catch (error) {
       if (error.response?.status === 422) {
         const data: IReceivableResponseError = error.response.data;
@@ -79,6 +89,12 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
         }
       }
     }
+  }
+
+  if (isLoadingCategories) {
+    return (
+      <Loading />
+    )
   }
 
   return (
@@ -145,7 +161,7 @@ export const EditReceivableForm = ({ receivable, categories, closeModal, refetch
         <CancelButton
           mr={4}
           isDisabled={formState.isSubmitting}
-          onClick={closeModal}
+          onClick={onClose}
         />
 
         <SubmitButton

@@ -15,12 +15,11 @@ import { Table } from "../../components/Table";
 import { Heading } from "../../components/Heading";
 import { DateFilter } from "../../components/DateFilter";
 import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { getMessage } from '../../utils/helpers';
+import { ACCOUNTS_ENTRIES, ACCOUNTS_REPORT, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, RECEIVABLES } from '../../utils/helpers';
 import { Pagination } from '../../components/Pagination';
 import { withSSRAuth } from '../../utils/withSSRAuth';
 import { setupApiClient } from '../../services/api';
-import { queryClient } from '../../services/queryClient';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { receivableService } from '../../services/ApiService/ReceivableService';
 import { useReceivables } from '../../hooks/useReceivable';
 import { CreateReceivableModal } from '../../components/Modals/receivables/CreateReceivableModal';
@@ -33,17 +32,15 @@ import { ReceivableItemsTable } from '../../components/ItemsTable/ReceivableItem
 import { Input } from '../../components/Inputs/Input';
 
 interface Props {
-  categories: {
-    value: string;
-    label: string
-  }[];
   accounts: {
     value: string;
     label: string
   }[];
 }
 
-export default function AccountReceivable({ categories, accounts }: Props) {
+export default function AccountReceivable({ accounts }: Props) {
+  const queryClient = useQueryClient();
+
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
   const { isOpen: receivementModalIsOpen, onOpen: receivementModalOnOpen, onClose: receivementModalOnClose } = useDisclosure();
@@ -79,7 +76,8 @@ export default function AccountReceivable({ categories, accounts }: Props) {
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('receivables')
+      queryClient.invalidateQueries(RECEIVABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
     }
   });
 
@@ -131,7 +129,11 @@ export default function AccountReceivable({ categories, accounts }: Props) {
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('receivables')
+      queryClient.invalidateQueries(RECEIVABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
+      queryClient.invalidateQueries(ACCOUNT_BALANCE);
+      queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
     }
   });
 
@@ -178,26 +180,20 @@ export default function AccountReceivable({ categories, accounts }: Props) {
   return (
     <>
       <CreateReceivableModal
-        categories={categories}
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
-        refetch={refetch}
-      />
+       />
 
       <EditReceivableModal
         receivable={selectedReceivable}
-        categories={categories}
         isOpen={editModalIsOpen} 
         onClose={editModalOnClose}
-        refetch={refetch}
       />
 
       <ReceivementModal
         receivable={selectedReceivable}
-        accounts={accounts}
         isOpen={receivementModalIsOpen} 
         onClose={receivementModalOnClose}
-        refetch={refetch}
       />
       <Head>
         <title>Contas a Receber | Meu Dinherim</title>
@@ -296,28 +292,9 @@ export default function AccountReceivable({ categories, accounts }: Props) {
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
 
-  const categoriesIncomeResponse = await apiClient.get(`/categories?type=1&per_page=1000`);
-
-  const categories = categoriesIncomeResponse.data.data.map(category => {
-    return {
-      value: category.id,
-      label: category.name
-    }
-  });
-
-  const accountsResponse = await apiClient.get(`/accounts`);
-
-  const formAccounts = accountsResponse.data.data.map(account => {
-    return {
-      value: account.id,
-      label: account.name
-    }
-  })
+  await apiClient.get('/auth/me');
 
   return {
-    props: {
-      categories,
-      accounts: formAccounts
-    }
+    props: {}
   }
 })

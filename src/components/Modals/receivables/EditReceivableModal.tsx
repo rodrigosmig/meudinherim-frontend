@@ -4,16 +4,11 @@ import { Modal } from "../Modal";
 
 interface Props {
   receivable: IReceivable;
-  categories: {
-    value: string;
-    label: string
-  }[],
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const EditReceivableModal = ({ receivable, categories, isOpen, onClose, refetch }: Props) => {
+export const EditReceivableModal = ({ receivable, isOpen, onClose }: Props) => {
   return (
     <Modal
       header="Editar Conta a Receber"
@@ -22,9 +17,7 @@ export const EditReceivableModal = ({ receivable, categories, isOpen, onClose, r
     >
       <EditReceivableForm 
         receivable={receivable}
-        categories={categories}
-        closeModal={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
     </Modal>
   )

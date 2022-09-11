@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { CreateReceivableForm } from "../../../../components/Foms/receivable/CreateReceivableForm";
+import { useCategoriesForm } from "../../../../hooks/useCategories";
 import { receivableService } from "../../../../services/ApiService/ReceivableService";
 
 Object.defineProperty(window, 'matchMedia', {
@@ -18,27 +19,33 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 const receivableServiceMocked = mocked(receivableService.create);
+const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/ReceivableService')
+jest.mock('../../../../hooks/useCategories');
 
-const categories = [
-  {
-    value: "1",
-    label: "Category Income"
-  },
-  {
-    value: "2",
-    label: "Category Test"
-  }
-]
+const categories = {
+  income: [
+    {
+      id: 1,
+      label: "Income Category"
+    }
+  ],
+  expense: [
+    {
+      id: 2,
+      label: "Expense Category"
+    }
+  ]
+}
 
 const closeModal = jest.fn;
-const refetch = jest.fn;
 
 describe('CreateReceivableForm Component', () => {
   beforeEach(() => {
-    render(<CreateReceivableForm categories={categories} onCancel={closeModal} refetch={refetch}  />)
+    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    render(<CreateReceivableForm onClose={closeModal} />)
   });
 
   afterEach(() => {
@@ -55,9 +62,7 @@ describe('CreateReceivableForm Component', () => {
     expect(screen.getByLabelText("Parcelar")).toBeDisabled();
     expect(screen.getByLabelText("Mensal")).toBeInTheDocument();
     //Categories
-    expect(screen.getByRole("option", {name: "Category Income"})).toBeInTheDocument();
-    expect(screen.getByRole("option", {name: "Category Test"})).toBeInTheDocument();
-
+    expect(screen.getByRole("option", {name: "Income Category"})).toBeInTheDocument();
   })
 
   it('validates required fields inputs', async () => {

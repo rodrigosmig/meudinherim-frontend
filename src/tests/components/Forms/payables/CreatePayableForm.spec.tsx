@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { CreatePayableForm } from "../../../../components/Foms/payable/CreatePayableForm";
+import { useCategoriesForm } from "../../../../hooks/useCategories";
 import { payableService } from "../../../../services/ApiService/PayableService";
 
 Object.defineProperty(window, 'matchMedia', {
@@ -17,31 +18,44 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+jest.mock('@chakra-ui/react', () => {
+  const toast = jest.requireActual('@chakra-ui/react');
+  return {
+    ...toast,
+    createStandaloneToast: () => jest.fn,
+  };
+});
+
 const payableServiceMocked = mocked(payableService.create);
+const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/PayableService')
+jest.mock('../../../../hooks/useCategories');
 
-const categories = [
-  {
-    value: "1",
-    label: "Category Expense"
-  },
-  {
-    value: "2",
-    label: "Category Test"
-  }
-]
+const categories = {
+  income: [
+    {
+      id: 1,
+      label: "Income Category"
+    }
+  ],
+  expense: [
+    {
+      id: 2,
+      label: "Expense Category"
+    }
+  ]
+}
 
 const closeModal = jest.fn();
-const refetch = jest.fn();
 
 describe('CreatePayableForm Component', () => {
   beforeEach(() => {
+    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+
     render(<CreatePayableForm 
-      onCancel={closeModal}
-      refetch={refetch}
-      categories={categories} />)
+      onClose={closeModal} />)
   });
 
   afterEach(() => {
@@ -58,9 +72,7 @@ describe('CreatePayableForm Component', () => {
     expect(screen.getByLabelText("Parcelar")).toBeDisabled();
     expect(screen.getByLabelText("Mensal")).toBeInTheDocument();
     //Categories
-    expect(screen.getByRole("option", {name: "Category Expense"})).toBeInTheDocument();
-    expect(screen.getByRole("option", {name: "Category Test"})).toBeInTheDocument();
-
+    expect(screen.getByRole("option", {name: "Expense Category"})).toBeInTheDocument();
   })
 
   it('validates required fields inputs', async () => {

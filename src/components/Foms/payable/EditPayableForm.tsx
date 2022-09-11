@@ -27,11 +27,6 @@ interface Props {
   onClose: () => void,
 }
 
-interface IPayableCategories {
-  value: number | string;
-  label: string;
-}
-
 interface FormData extends Omit<IPayableFormData, "due_date"> {
   due_date: Date;
 }

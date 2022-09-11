@@ -21,7 +21,6 @@ import { createValidation } from '../../../validations/payable';
 import { useQueryClient } from 'react-query';
 import { useCategoriesForm } from '../../../hooks/useCategories';
 import { Loading } from '../../Loading';
-import { SelectCategories } from '../../Inputs/SelectCategories';
 
 interface FormData extends Omit<IPayableCreateData, "due_date"> {
   due_date: Date;
@@ -34,7 +33,14 @@ interface CreatePayableFormProps {
 export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {  
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+
+  const categories = data?.expense.map(category => {
+    return {
+      value: category.id,
+      label: category.label
+    }
+  });
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
@@ -131,8 +137,8 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
            )}
         />
 
-        <SelectCategories
-          name="category"
+        <Select
+          name="type"
           label="Categoria"
           options={categories}
           error={errors.category_id}

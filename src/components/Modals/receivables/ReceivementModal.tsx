@@ -6,16 +6,11 @@ import { Modal } from "../Modal";
 
 interface Props {
   receivable: IReceivable;
-  accounts: {
-    value: string;
-    label: string
-  }[];
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-const ReceivementModalComponent = ({ receivable, accounts, isOpen, onClose, refetch }: Props) => {
+const ReceivementModalComponent = ({ receivable, isOpen, onClose }: Props) => {
   return (
     <Modal
       header="Recebimento de Conta"
@@ -24,9 +19,7 @@ const ReceivementModalComponent = ({ receivable, accounts, isOpen, onClose, refe
     >
       <ReceivementForm
         receivable={receivable}
-        accounts={accounts}
-        onCancel={onClose}
-        refetch={refetch}
+        onClose={onClose}
       />
     </Modal>
   )

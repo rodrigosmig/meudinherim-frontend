@@ -50,7 +50,7 @@ export const EditInvoiceEntryForm = ({ entry, onClose }: Props) => {
     }
 
     try {
-      const response = await invoiceEntriesService.update(data)
+      await invoiceEntriesService.update(data)
 
       getMessage("Sucesso", `Lançamento ${values.description} alterado com sucesso`);
 

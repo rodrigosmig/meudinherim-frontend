@@ -17,6 +17,7 @@ export const ACCOUNT_TOTAL_BY_CATEGORY = "account_total_by_category";
 export const CREDIT_TOTAL_BY_CATEGORY = "credit_total_by_category";
 export const ACCOUNTS_REPORT = "accounts_report";
 export const PAYABLES = "payables";
+export const RECEIVABLES = "receivables";
 
 export const toCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -44,7 +45,7 @@ export const getMessage = (
   duration: number = 3000
 ) => {
   const toast = createStandaloneToast({theme: theme})
-
+  
   toast({
     title: title,
     description: description,

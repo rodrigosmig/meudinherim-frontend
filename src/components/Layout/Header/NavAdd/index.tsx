@@ -26,6 +26,7 @@ import { CreateCategoryModal } from "../../../Modals/categories/CreateCategoryMo
 import { CreateInvoiceEntryModal } from "../../../Modals/invoice_entries/CreateInvoiceEntryModal";
 import { CreateAccountEntryModal } from "../../../Modals/account_entries/CreateAccountEntryModal";
 import { CreatePaymentModal } from "../../../Modals/payables/CreatePaymentModal";
+import { CreateReceivableModal } from "../../../Modals/receivables/CreateReceivableModal";
 
 export const NavAdd = () => {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
@@ -33,6 +34,7 @@ export const NavAdd = () => {
   const { isOpen: isOpenInvoiceEntry, onOpen: onOpenInvoiceEntry, onClose: onCloseInvoiceEntry } = useDisclosure();
   const { isOpen: isOpenAccountEntry, onOpen: onOpenAccountEntry, onClose: onCloseAccountEntry } = useDisclosure();
   const { isOpen: isOpenPayable, onOpen: onOpenPayable, onClose: onClosePayable } = useDisclosure();
+  const { isOpen: isOpenReceivable, onOpen: onOpenReceivable, onClose: onCloseReceivable } = useDisclosure();
 
   return (
     <Box>
@@ -49,6 +51,11 @@ export const NavAdd = () => {
       <CreateCategoryModal
         isOpen={createModalIsOpen} 
         onClose={createModalOnClose}
+      />
+
+      <CreateReceivableModal
+        isOpen={isOpenReceivable} 
+        onClose={onCloseReceivable}
       />
 
       <CreatePaymentModal
@@ -108,6 +115,7 @@ export const NavAdd = () => {
             <NavAddItem
               label="Contas a receber"
               icon={<Icon as={GiReceiveMoney} fontSize={20} />}
+              onClick={onOpenReceivable}
               />
 
             <NavAddItem
