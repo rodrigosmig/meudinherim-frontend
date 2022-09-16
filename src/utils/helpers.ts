@@ -55,3 +55,7 @@ export const getMessage = (
     isClosable: true,
   })
 }
+
+export const isDevelopment = () => {
+  return process.env.NEXT_PUBLIC_ENVIRONMENT === 'development';
+}
