@@ -1,5 +1,6 @@
 import { AppProps } from 'next/app';
-import Router from 'next/router';
+import { useEffect } from 'react';
+import Router, { useRouter } from 'next/router';
 import NProgress from 'nprogress';
 import { theme } from '../styles/theme';
 
@@ -11,6 +12,8 @@ import { ReactQueryDevtools } from 'react-query/devtools'
 
 import 'nprogress/nprogress.css';
 import { DateFilterProvider } from '../contexts/DateFilterContext';
+import { Analytics } from '../components/Analytics';
+import * as gtag from '../utils/analytcs'
 
 Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
@@ -19,6 +22,20 @@ Router.events.on('routeChangeError', () => NProgress.done())
 const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleRouteChange = (url: URL) => {
+      gtag.pageview(url)
+    }
+    
+    router.events.on('routeChangeComplete', handleRouteChange)
+    
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.events]);
+
   return (
     <AuthProvider>
       <ChakraProvider theme={theme}>
@@ -26,6 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <QueryClientProvider client={queryClient}>
             <DateFilterProvider>
               <Component {...pageProps} />
+              <Analytics />
             </DateFilterProvider>
             <ReactQueryDevtools/>
           </QueryClientProvider>
