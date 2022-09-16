@@ -11,7 +11,7 @@ import { Input } from '../../Inputs/Input';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { SubmitButton } from '../../Buttons/Submit';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getMessage } from "../../../utils/helpers";
+import { getMessage, isDevelopment } from "../../../utils/helpers";
 import { ISignInCredentials } from "../../../types/auth";
 import { Link } from "../../Link";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -30,10 +30,16 @@ export function LoginForm() {
   });
   const { errors } = formState;
 
+  useEffect(() => {
+    if(isDevelopment()) {
+      setIsHuman(true);
+    }
+  }, [isDevelopment])
+
   const handleLogin: SubmitHandler<ISignInCredentials> = async (values) => {
     const newValues = {
       ...values,
-      reCaptchaToken: reCaptchaToken
+      reCaptchaToken: isDevelopment() ? "recaptchaDev" : reCaptchaToken
     }
 
     try {
@@ -99,15 +105,17 @@ export function LoginForm() {
         />
       </Stack>
 
-      <Box marginTop={6}>
-        <ReCAPTCHA
-          sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY}
-          theme={colorMode}
-          hl="pt-BR"
-          onChange={handleClickRecaptcha}
-          onExpired={handleExpiredToken}
-        />
-      </Box>
+      { !isDevelopment() && (
+        <Box marginTop={6}>
+          <ReCAPTCHA
+            sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY}
+            theme={colorMode}
+            hl="pt-BR"
+            onChange={handleClickRecaptcha}
+            onExpired={handleExpiredToken}
+          />
+        </Box>
+      )}
 
       <SubmitButton
         mt={[6]}
