@@ -13,7 +13,7 @@ import { ReactQueryDevtools } from 'react-query/devtools'
 import 'nprogress/nprogress.css';
 import { DateFilterProvider } from '../contexts/DateFilterContext';
 import { Analytics } from '../components/Analytics';
-import * as gtag from '../utils/analytcs'
+import * as gtag from '../utils/analytics'
 
 Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
