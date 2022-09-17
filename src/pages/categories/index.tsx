@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { 
-  Box,
   Checkbox,
   Flex, 
   HStack, 
@@ -9,8 +8,6 @@ import {
   Tbody, 
   Td, 
   Text, 
-  Th, 
-  Thead, 
   Tr,
   useBreakpointValue,
   useDisclosure
@@ -187,7 +184,6 @@ export default function Categories() {
         </Flex>
 
         <Input
-          bgColor="gray.900"
           mb={[4, 4, 6]}
           name="search"
           type="text"
@@ -202,6 +198,7 @@ export default function Categories() {
           ) : (
             <>
               <Table
+                isEmpty={filteredCategories.length === 0}
                 theadData={headList}
                 size={sizeProps}
               >

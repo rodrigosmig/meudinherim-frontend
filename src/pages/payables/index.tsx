@@ -257,7 +257,6 @@ export default function AccountPayables({ accounts }: Props) {
           ) : (
             <>
               <Input
-                bgColor="gray.900"
                 mb={[4, 4, 6]}
                 name="search"
                 type="text"
