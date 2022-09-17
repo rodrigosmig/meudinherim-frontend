@@ -1,26 +1,34 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useRouter } from 'next/router';
-import { Box, Flex, Stack, Text, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import { 
+  Box, 
+  Flex, 
+  Stack, 
+  Text, 
+  useColorModeValue 
+} from "@chakra-ui/react";
 import { Input } from '../../Inputs/Input';
 import { authService } from '../../../services/ApiService/AuthService';
 import { SubmitButton } from '../../Buttons/Submit';
 import { Switch } from "../../Inputs/Switch";
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getMessage } from "../../../utils/helpers";
+import { getMessage, isDevelopment } from "../../../utils/helpers";
 import { IRegisterData } from "../../../types/auth";
 import { Link } from "../../Link";
 import { Heading } from "../../Heading";
-import ReCaptcha from "react-google-recaptcha";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { registerValidation } from "../../../validations/auth";
+import { Recaptcha } from "../../Recaptcha";
 
 export function RegisterForm() {
   const [reCaptchaToken, setReCaptchaToken] = useState('');
   const [isHuman, setIsHuman] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
-  const { colorMode } = useColorMode();
+  useEffect(() => {
+    if(isDevelopment()) {
+      setIsHuman(true);
+    }
+  }, [isDevelopment])
 
   const { register, reset, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(registerValidation)
@@ -30,7 +38,7 @@ export function RegisterForm() {
   const handleRegister: SubmitHandler<IRegisterData> = async (values) => {
     const newValues = {
       ...values,
-      reCaptchaToken: reCaptchaToken
+      reCaptchaToken: isDevelopment() ? "recaptchaDev" : reCaptchaToken
     }
 
     try {
@@ -77,6 +85,7 @@ export function RegisterForm() {
     <Flex
       as="form"      
       w={[360]}
+      mb={4}
       flexDir={["column"]}
       bg={useColorModeValue('white', 'gray.800')}
       p={8}
@@ -128,15 +137,10 @@ export function RegisterForm() {
               />
             </Stack>
 
-            <Box marginTop={6}>
-              <ReCaptcha
-                sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY}
-                theme={colorMode}
-                hl="pt-BR"
-                onChange={handleClickRecaptcha}
-                onExpired={handleExpiredToken}
-              />
-            </Box>
+            <Recaptcha
+              onCheck={handleClickRecaptcha}
+              onExpired={handleExpiredToken}
+            />
 
             <SubmitButton
               mt={[6]}
@@ -145,7 +149,7 @@ export function RegisterForm() {
               isDisabled={!isHuman}
             />
 
-            <Flex mt={8}>
+            <Flex mt={6}>
               <Link href="/">
                 Já tenho um usuário
               </Link>

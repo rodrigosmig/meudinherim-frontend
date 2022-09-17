@@ -1,9 +1,7 @@
 import { useState, useContext, useCallback, useEffect } from "react";
 import { 
-  Box,
   Flex, 
   Stack, 
-  useColorMode, 
   useColorModeValue 
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -14,15 +12,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { getMessage, isDevelopment } from "../../../utils/helpers";
 import { ISignInCredentials } from "../../../types/auth";
 import { Link } from "../../Link";
-import ReCAPTCHA from "react-google-recaptcha";
 import { loginValidation } from "../../../validations/auth";
+import { Recaptcha } from "../../Recaptcha";
 
 export function LoginForm() {
   const [isSubimited, setIsSubimited] = useState(false);
   const [reCaptchaToken, setReCaptchaToken] = useState('');
   const [isHuman, setIsHuman] = useState(false);
-
-  const { colorMode } = useColorMode();
 
   const { signIn } = useContext(AuthContext);  
   const { register, handleSubmit, formState } = useForm({
@@ -68,6 +64,7 @@ export function LoginForm() {
   }
 
   const handleClickRecaptcha = (token: string) => {
+    console.log(666,token)
     setReCaptchaToken(token);
     setIsHuman(true);
   }
@@ -105,17 +102,10 @@ export function LoginForm() {
         />
       </Stack>
 
-      { !isDevelopment() && (
-        <Box marginTop={6}>
-          <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPTCHA_KEY}
-            theme={colorMode}
-            hl="pt-BR"
-            onChange={handleClickRecaptcha}
-            onExpired={handleExpiredToken}
-          />
-        </Box>
-      )}
+      <Recaptcha 
+        onCheck={handleClickRecaptcha}
+        onExpired={handleExpiredToken}
+      />
 
       <SubmitButton
         mt={[6]}
