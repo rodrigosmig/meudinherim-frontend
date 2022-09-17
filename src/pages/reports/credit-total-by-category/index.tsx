@@ -2,6 +2,7 @@ import Head from "next/head";
 import { 
   Flex,
   Box,
+  Text,
 } from "@chakra-ui/react"
 import { Heading } from "../../../components/Heading"
 import { Layout } from "../../../components/Layout"
@@ -18,14 +19,12 @@ export default function CreditTotalByCategoryReport() {
   return (
     <>
       <Head>
-        <title>Relatório de Crédito por Categoria | Meu Dinherim</title>
+        <title>Lançamentos em cartão por categoria | Meu Dinherim</title>
       </Head>
       <Layout>
         <Flex mb={[6, 6, 8]} justify="space-between" align="center">
           <Heading>
-            <>
-              Total de Gastos no Crédito por Categoria
-            </>
+            <Text>Relatório de lançamentos em cartão por categoria</Text>
           </Heading>
         </Flex>
 

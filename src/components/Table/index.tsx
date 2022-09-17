@@ -31,33 +31,30 @@ const TableComponent = ({
 
   return (
     <Box overflowX="auto">
-      <ChakraTable         
-        colorScheme={colorScheme}
-        {...rest}
-      >
-        <Thead>
-          { isEmpty 
-            ? (
-              <Text fontWeight={"bold"} mt={[4]}>
-                Nenhum registro encontrado
-              </Text>
-            ) : (
+      { isEmpty 
+        ? (
+          <Text fontWeight={"bold"} mt={[4]}>
+            Nenhum registro encontrado
+          </Text>
+        ) : (
+          <ChakraTable         
+            colorScheme={colorScheme}
+            {...rest}
+          >
+            <Thead>
               <Tr>
                 { theadData.map(head => (
                     <Th key={head}>{ head }</Th>
                   ))
-                }
-                
+                }            
                 { showAdditionalColumn && <Th w="8"></Th> }
-                
               </Tr>
-            )
-          }
-        </Thead>
-        
-        { children }
+            </Thead>
+            
+            { children }
 
-      </ChakraTable>
+          </ChakraTable>
+        )}      
     </Box>
   )
 }

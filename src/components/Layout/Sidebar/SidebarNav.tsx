@@ -43,8 +43,8 @@ export const SidebarNav = () => {
 
         <NavSection title="Relatórios">
           <NavLink href="/reports/accounts" icon={FaMoneyBillAlt}>Contas a Pagar/Receber</NavLink>
-          <NavLink href="/reports/account-total-by-category" icon={RiPriceTag3Line}>Gastos por Categoria no Débito</NavLink>
-          <NavLink href="/reports/credit-total-by-category" icon={RiPriceTag3Line}>Gastos por Categoria no Crédito</NavLink>
+          <NavLink href="/reports/account-total-by-category" icon={RiPriceTag3Line}>Lançamentos em contas por categoria</NavLink>
+          <NavLink href="/reports/credit-total-by-category" icon={RiPriceTag3Line}>Lançamentos em cartão por categoria</NavLink>
         </NavSection>
         
       </Stack>
