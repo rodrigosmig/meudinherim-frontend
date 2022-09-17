@@ -23,7 +23,7 @@ interface Props {
   onChange: (date: Date) => void;
 }
 
-const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, Props> = ({ label, selected, error=null, onChange, ...rest }) => {
+const DatepickerBase: ForwardRefRenderFunction<HTMLInputElement, Props> = ({ label, selected, error=null, onChange, ...rest }, ref) => {
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("#B3B5C6", "#353646");
   const hoverColor = useColorModeValue('gray.50', 'gray.900');
