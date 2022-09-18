@@ -1,3 +1,4 @@
+import { CATEGORIES, CATEGORIES_FORM } from './../utils/helpers';
 import { useContext } from "react";
 import { useQuery } from "react-query";
 import { AuthContext } from "../contexts/AuthContext";
@@ -31,7 +32,7 @@ export const getCategoriesForForm = async () => {
 export const useCategories = (type: string, active: boolean, page: number, perPage: number) => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['categories', type, active, page, perPage, user?.id], () => getCategories(type, active, page, perPage), {
+  return useQuery([CATEGORIES, type, active, page, perPage, user?.id], () => getCategories(type, active, page, perPage), {
     staleTime: 1000 * 60 * 15
   })
 }
@@ -39,7 +40,7 @@ export const useCategories = (type: string, active: boolean, page: number, perPa
 export const useCategoriesForm = () => {
   const { user } = useContext(AuthContext);
 
-  return useQuery(['categories-form', user?.id], () => getCategoriesForForm(), {
+  return useQuery([CATEGORIES_FORM, user?.id], () => getCategoriesForForm(), {
     staleTime: 1000 * 60 * 15
   })
 }
