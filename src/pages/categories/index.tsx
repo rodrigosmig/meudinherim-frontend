@@ -32,6 +32,8 @@ import { CreateCategoryModal } from "../../components/Modals/categories/CreateCa
 import { getMessage } from "../../utils/helpers";
 import { ICategory } from "../../types/category";
 import { Input } from "../../components/Inputs/Input";
+import { Check } from "../../components/Icons/Check";
+import { Close } from "../../components/Icons/Close";
 
 export default function Categories() {
   const queryClient = useQueryClient();
@@ -120,7 +122,8 @@ export default function Categories() {
 
   const headList = [
     'Nome',
-    'Tipo'
+    'Tipo',
+    'Exibir na Dashboard'
   ];
 
   return (
@@ -210,6 +213,9 @@ export default function Categories() {
                       </Td>
                       <Td fontSize={["xs", "md"]}>
                         { category.type === 1 ? 'Entrada' : 'Saída' }
+                      </Td>
+                      <Td>
+                        { category.show_in_dashboard ? <Check /> : <Close /> }
                       </Td>
                       <Td fontSize={["xs", "md"]}>
                         <HStack spacing={[2]}>

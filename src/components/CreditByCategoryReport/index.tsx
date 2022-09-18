@@ -7,7 +7,7 @@ import { Loading } from "../Loading";
 import { TotalByCategoryModal } from "../Modals/reports/TotalByCategoryModal";
 import { TableReport } from "../TableReport";
 
-interface Category extends Omit<ICategory, "type" | "active"> {}
+interface Category extends Omit<ICategory, "type" | "active" | "show_in_dashboard"> {}
 
 export const CreditByCategoryReport = () => {
   const { stringDateRange } = useDateFilter();

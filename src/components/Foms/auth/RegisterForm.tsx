@@ -28,7 +28,7 @@ export function RegisterForm() {
     if(isDevelopment()) {
       setIsHuman(true);
     }
-  }, [isDevelopment])
+  }, [])
 
   const { register, reset, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(registerValidation)

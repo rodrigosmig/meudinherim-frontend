@@ -4,6 +4,7 @@ interface Category {
   type: CategoryType
   name: string;
   active: boolean;
+  show_in_dashboard: boolean
 }
 
 export interface ICategory extends Category {

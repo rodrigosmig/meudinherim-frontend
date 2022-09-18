@@ -28,7 +28,8 @@ const category: ICategory = {
   id: 1,
   type: 2,
   name: "Category Test",
-  active: true
+  active: true,
+  show_in_dashboard: true
 }
 
 const closeModal = jest.fn;
