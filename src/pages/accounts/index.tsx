@@ -29,7 +29,7 @@ import { Heading } from "../../components/Heading";
 import { EditAccountModal } from "../../components/Modals/accounts/EditAccountModal";
 import { CreateAccountModal } from "../../components/Modals/accounts/CreateAccountModal";
 import { Table } from "../../components/Table";
-import { getMessage } from "../../utils/helpers";
+import { ACCOUNTS, ACCOUNTS_FORM, ACCOUNT_BALANCE, getMessage } from "../../utils/helpers";
 import { IAccount } from "../../types/account";
 
 export default function Accounts() {
@@ -72,8 +72,9 @@ export default function Accounts() {
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('accounts')
-      queryClient.invalidateQueries('accounts-form')
+      queryClient.invalidateQueries(ACCOUNTS)
+      queryClient.invalidateQueries(ACCOUNTS_FORM)
+      queryClient.invalidateQueries(ACCOUNT_BALANCE)
     }
   });
 

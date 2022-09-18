@@ -10,7 +10,7 @@ import { Input } from "../../Inputs/Input";
 import { accountService } from '../../../services/ApiService/AccountService';
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
-import { getMessage } from "../../../utils/helpers";
+import { ACCOUNTS, ACCOUNTS_FORM, ACCOUNT_BALANCE, getMessage } from "../../../utils/helpers";
 import { IAccountFormData } from "../../../types/account";
 import { createValidation } from "../../../validations/account";
 import { useQueryClient } from "react-query";
@@ -34,8 +34,9 @@ export const CreateAccountForm = ({ onClose }: Props) => {
 
       getMessage("Sucesso", `Conta ${values.name} criada com sucesso`);
 
-      queryClient.invalidateQueries('accounts')
-      queryClient.invalidateQueries('accounts-form')
+      queryClient.invalidateQueries(ACCOUNTS)
+      queryClient.invalidateQueries(ACCOUNTS_FORM)
+      queryClient.invalidateQueries(ACCOUNT_BALANCE)
 
       onClose();
 

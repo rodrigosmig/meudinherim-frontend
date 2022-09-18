@@ -10,7 +10,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Select } from "../../Inputs/Select";
 import { accountService } from '../../../services/ApiService/AccountService';
-import { getMessage } from "../../../utils/helpers";
+import { ACCOUNTS, ACCOUNTS_FORM, ACCOUNT_BALANCE, getMessage } from "../../../utils/helpers";
 import { IAccountErrorKey, IAccount, IAccountFormData, IAccountResponseError } from "../../../types/account";
 import { editValidation } from "../../../validations/account";
 import { Switch } from "../../Inputs/Switch";
@@ -52,8 +52,9 @@ export const EditAccountForm = ({ account, onClose }: Props) => {
 
       getMessage("Sucesso", "Alteração realizada com sucesso");
 
-      queryClient.invalidateQueries('accounts')
-      queryClient.invalidateQueries('accounts-form')
+      queryClient.invalidateQueries(ACCOUNTS)
+      queryClient.invalidateQueries(ACCOUNTS_FORM)
+      queryClient.invalidateQueries(ACCOUNT_BALANCE)
 
       onClose();
 
