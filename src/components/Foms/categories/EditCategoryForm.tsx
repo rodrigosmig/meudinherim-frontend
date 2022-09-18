@@ -25,12 +25,14 @@ interface Props {
 const EditCategoryFormComponent = ({ category, onClose }: Props) => {
   const queryClient = useQueryClient();
   const [ isActive, setIsActive ] = useState(category.active);
+  const [ showInDashboard, setShowInDashboard ] = useState(category.show_in_dashboard);
 
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       type: category.type,
       name: category.name,
-      active: category.active
+      active: category.active,
+      show_in_dashboard: category.show_in_dashboard
     },
     resolver: yupResolver(editValidation)
   });
@@ -40,11 +42,7 @@ const EditCategoryFormComponent = ({ category, onClose }: Props) => {
   const handleEditCategory: SubmitHandler<ICategoryFormData> = async (values) => {
     const data = {
       categoryId: category.id,
-      data: {
-        type: values.type,
-        name: values.name,
-        active: isActive
-      }
+      data: values
     }
 
     try {
@@ -106,6 +104,16 @@ const EditCategoryFormComponent = ({ category, onClose }: Props) => {
           {...register('active')}
           isChecked={isActive}
           onChange={() => setIsActive(!isActive)}
+        />
+
+        <Switch
+          size="lg"
+          id="show_in_dashboard" 
+          name='show_in_dashboard'
+          label="Exibir na Dashboard"
+          {...register('show_in_dashboard')}
+          isChecked={showInDashboard}
+          onChange={() => setShowInDashboard(!showInDashboard)}
         />
       </Stack>
       <Flex

@@ -14,6 +14,8 @@ import { getMessage } from "../../../utils/helpers";
 import { ICategoryFormData } from "../../../types/category";
 import { createValidation } from "../../../validations/categories";
 import { useQueryClient } from "react-query";
+import { useState } from "react";
+import { Switch } from "../../Inputs/Switch";
 
 interface Props {
   onClose: () => void,
@@ -25,6 +27,8 @@ export const CreateCategoryForm = ({ onClose }: Props) => {
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(createValidation)
   });
+
+  const [ showInDashboard, setShowInDashboard ] = useState(true);
 
   const { errors } = formState;
 
@@ -76,6 +80,16 @@ export const CreateCategoryForm = ({ onClose }: Props) => {
           label="Nome da Categoria"
           error={errors.name}
           {...register('name')}
+        />
+
+        <Switch
+          size="lg"
+          id="show_in_dashboard" 
+          name='show_in_dashboard'
+          label="Exibir na Dashboard"
+          {...register('show_in_dashboard')}
+          isChecked={showInDashboard}
+          onChange={() => setShowInDashboard(!showInDashboard)}
         />
       </Stack>
       <Flex

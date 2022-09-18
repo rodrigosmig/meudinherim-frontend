@@ -30,7 +30,7 @@ export function LoginForm() {
     if(isDevelopment()) {
       setIsHuman(true);
     }
-  }, [isDevelopment])
+  }, [])
 
   const handleLogin: SubmitHandler<ISignInCredentials> = async (values) => {
     const newValues = {
