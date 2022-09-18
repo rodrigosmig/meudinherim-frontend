@@ -9,7 +9,7 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { CancelButton } from "../../Buttons/Cancel";
 import { cardService } from "../../../services/ApiService/CardService";
-import { getMessage } from "../../../utils/helpers";
+import { CARDS, CARDS_FORM, getMessage, OPEN_INVOICES } from "../../../utils/helpers";
 import { ICardFormData } from "../../../types/card";
 import { createValidation } from "../../../validations/card";
 import { useQueryClient } from "react-query";
@@ -33,8 +33,9 @@ export const CreateCardForm = ({ onClose }: CreateCardFormProps) => {
 
       getMessage("Sucesso", `Cartão de Crédito ${values.name} criado com sucesso`);
 
-      queryClient.invalidateQueries('cards')
-      queryClient.invalidateQueries('cards-form')
+      queryClient.invalidateQueries(CARDS)
+      queryClient.invalidateQueries(CARDS_FORM)
+      queryClient.invalidateQueries(OPEN_INVOICES)
 
       onClose();
 

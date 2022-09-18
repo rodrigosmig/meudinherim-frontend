@@ -23,7 +23,7 @@ import { Loading } from "../../components/Loading";
 import { EditButton } from "../../components/Buttons/Edit";
 import { DeleteButton } from "../../components/Buttons/Delete";
 import { useMutation, useQueryClient } from "react-query";
-import { getMessage, toCurrency } from "../../utils/helpers";
+import { CARDS, CARDS_FORM, getMessage, OPEN_INVOICES, toCurrency } from "../../utils/helpers";
 import { CreateCardModal } from "../../components/Modals/cards/CreateCardModal";
 import { EditCardModal } from "../../components/Modals/cards/EditCardModal";
 import { InvoicesButton } from "../../components/Buttons/Invoices";
@@ -69,8 +69,9 @@ export default function Cards() {
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('cards')
-      queryClient.invalidateQueries('cards-form')
+      queryClient.invalidateQueries(CARDS)
+      queryClient.invalidateQueries(CARDS_FORM)
+      queryClient.invalidateQueries(OPEN_INVOICES)
     }
   });
 
