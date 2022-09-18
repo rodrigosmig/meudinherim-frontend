@@ -10,7 +10,7 @@ import { Input } from "../../Inputs/Input";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
-import { getMessage } from "../../../utils/helpers";
+import { CATEGORIES, CATEGORIES_FORM, getMessage } from "../../../utils/helpers";
 import { ICategoryFormData } from "../../../types/category";
 import { createValidation } from "../../../validations/categories";
 import { useQueryClient } from "react-query";
@@ -38,8 +38,8 @@ export const CreateCategoryForm = ({ onClose }: Props) => {
 
       getMessage("Sucesso", `Categoria ${values.name} criada com sucesso`);
 
-      queryClient.invalidateQueries('categories')
-      queryClient.invalidateQueries('categories-form')
+      queryClient.invalidateQueries(CATEGORIES)
+      queryClient.invalidateQueries(CATEGORIES_FORM)
 
       onClose();
     } catch (error) {

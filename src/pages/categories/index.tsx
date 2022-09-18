@@ -29,7 +29,7 @@ import { Heading } from "../../components/Heading";
 import { Table } from "../../components/Table";
 import { EditCategoryModal } from "../../components/Modals/categories/EditCategoryModal";
 import { CreateCategoryModal } from "../../components/Modals/categories/CreateCategoryModal";
-import { getMessage } from "../../utils/helpers";
+import { CATEGORIES, CATEGORIES_FORM, getMessage } from "../../utils/helpers";
 import { ICategory } from "../../types/category";
 import { Input } from "../../components/Inputs/Input";
 import { Check } from "../../components/Icons/Check";
@@ -104,7 +104,8 @@ export default function Categories() {
       return setFilteredCategories(data.categories);
     }
 
-    const filtered = data.categories.filter(category => category.name.includes(categoryName));
+    const filtered = data.categories.filter(
+      category => category.name.toLocaleLowerCase().includes(categoryName));
 
     setFilteredCategories(oldValue => filtered)
   }
@@ -115,8 +116,8 @@ export default function Categories() {
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('categories')
-      queryClient.invalidateQueries('categories-form')
+      queryClient.invalidateQueries(CATEGORIES)
+      queryClient.invalidateQueries(CATEGORIES_FORM)
     }
   });
 

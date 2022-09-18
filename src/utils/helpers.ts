@@ -18,6 +18,8 @@ export const CREDIT_TOTAL_BY_CATEGORY = "credit_total_by_category";
 export const ACCOUNTS_REPORT = "accounts_report";
 export const PAYABLES = "payables";
 export const RECEIVABLES = "receivables";
+export const CATEGORIES = "categories";
+export const CATEGORIES_FORM = "categories-form";
 
 export const toCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {

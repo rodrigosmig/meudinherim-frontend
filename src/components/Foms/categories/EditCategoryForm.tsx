@@ -11,7 +11,7 @@ import { Input } from "../../Inputs/Input";
 import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
 import { CancelButton } from "../../Buttons/Cancel";
-import { getMessage } from "../../../utils/helpers";
+import { CATEGORIES, CATEGORIES_FORM, getMessage } from "../../../utils/helpers";
 import { ICategoryErrorKey, ICategory, ICategoryFormData, ICategoryResponseError } from "../../../types/category";
 import { editValidation } from "../../../validations/categories";
 import { Switch } from "../../Inputs/Switch";
@@ -50,8 +50,8 @@ const EditCategoryFormComponent = ({ category, onClose }: Props) => {
 
       getMessage("Sucesso", "Categoria alterada com sucesso");
 
-      queryClient.invalidateQueries('categories')
-      queryClient.invalidateQueries('categories-form')
+      queryClient.invalidateQueries(CATEGORIES)
+      queryClient.invalidateQueries(CATEGORIES_FORM)
 
       onClose();
 
