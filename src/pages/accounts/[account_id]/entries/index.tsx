@@ -19,7 +19,6 @@ import { Loading } from '../../../../components/Loading/index';
 import { Pagination } from '../../../../components/Pagination';
 import { useMutation, useQueryClient } from 'react-query';
 import { accountEntriesService } from '../../../../services/ApiService/AccountEntriesService';
-import { queryClient } from '../../../../services/queryClient';
 import { DateFilter } from '../../../../components/DateFilter';
 import { Heading } from '../../../../components/Heading';
 import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
@@ -180,8 +179,6 @@ export default function AccountEntries({ account }: Props) {
         parcelableId={parcelableId}
         isOpenModal={showPaymentIsOpen}
         onCloseModal={showPaymentOnClose}
-        refetchEntries={refetch}
-        refetchBalance={refetchBalance}
       />
 
       <ShowReceivementModal 

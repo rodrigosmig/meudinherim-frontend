@@ -10,12 +10,12 @@ import {
     Flex,
     useDisclosure,
   } from "@chakra-ui/react";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { payableService } from "../../../services/ApiService/PayableService";
 import { queryClient } from "../../../services/queryClient";
 import { Input } from "../../Inputs/Input";
 import { Loading } from "../../Loading";
-import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
+import { ACCOUNTS_ENTRIES, ACCOUNTS_REPORT, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, PAYABLES, toBrDate, toCurrency } from "../../../utils/helpers";
 import { Modal } from "../Modal";
 import { CancelButton } from "../../Buttons/Cancel";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -26,8 +26,6 @@ interface Props {
   parcelableId?: number; 
   isOpenModal: boolean;
   onCloseModal: () => void;
-  refetchEntries: () => void;
-  refetchBalance: () => void;
 }
   
 const ShowPaymentModalComponent = ({ 
@@ -35,9 +33,9 @@ const ShowPaymentModalComponent = ({
   parcelableId = null, 
   isOpenModal, 
   onCloseModal,
-  refetchEntries,
-  refetchBalance
 }: Props) => {
+  const queryClient = useQueryClient();
+
   const [payable, setPayable] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -85,8 +83,12 @@ const ShowPaymentModalComponent = ({
 
       getMessage("Sucesso", "Pagamento cancelado com sucesso");
 
-      refetchEntries();
-      refetchBalance();
+      queryClient.invalidateQueries(PAYABLES);
+      queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      queryClient.invalidateQueries(ACCOUNT_BALANCE);
+      queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
+      queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+
       handleOnClose();
 
     } catch (error) {
