@@ -198,7 +198,6 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
         entry={selectedEntry}
         isOpen={anticipateModalIsOpen} 
         onClose={anticipateModalOnClose}
-        refetch={handleRefetchData}
       />
 
       <Head>
