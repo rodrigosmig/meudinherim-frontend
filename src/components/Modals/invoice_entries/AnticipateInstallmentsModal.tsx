@@ -13,19 +13,21 @@ import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntri
 import { Table } from "../../Table";
 import { Modal } from "../Modal";
 import { Loading } from "../../Loading";
-import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toBrDate, toCurrency } from "../../../utils/helpers";
 import { CancelButton } from "../../Buttons/Cancel";
 import { AnticipateButton } from "../../Buttons/Anticipate";
 import { IInvoiceEntry } from "../../../types/invoiceEntry";
+import { useQueryClient } from "react-query";
 
 interface Props {
   entry: IInvoiceEntry;
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }
 
-export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }: Props) => {
+export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose }: Props) => {
+  const queryClient = useQueryClient();
+
   const isWideVersion = useBreakpointValue({
     base: false,
     md: false,
@@ -112,7 +114,13 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose, refetch }:
       getMessage("Sucesso", "Parcelas antecipadas com sucesso");
       
       setIsSubmitting(false);
-      refetch();
+      
+      queryClient.invalidateQueries(INVOICE)
+      queryClient.invalidateQueries(INVOICES)
+      queryClient.invalidateQueries(INVOICE_ENTRIES)
+      queryClient.invalidateQueries(OPEN_INVOICES)
+      queryClient.invalidateQueries(CARDS)
+
       onClose();
 
     } catch (error) {

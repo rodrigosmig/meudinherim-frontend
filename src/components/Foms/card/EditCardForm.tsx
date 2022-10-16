@@ -9,7 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { cardService } from "../../../services/ApiService/CardService";
-import { CARDS, CARDS_FORM, getMessage, OPEN_INVOICES } from "../../../utils/helpers";
+import { CARDS, CARDS_FORM, getMessage, INVOICE, OPEN_INVOICES } from "../../../utils/helpers";
 import { ICard, ICardErrorKey, ICardFormData, ICardResponseError } from "../../../types/card";
 import { editValidation } from "../../../validations/card";
 import { useQueryClient } from "react-query";
@@ -53,6 +53,7 @@ export const EditCardForm = ({ card, onClose }: Props) => {
 
       queryClient.invalidateQueries(CARDS)
       queryClient.invalidateQueries(CARDS_FORM)
+      queryClient.invalidateQueries(INVOICE)
       queryClient.invalidateQueries(OPEN_INVOICES)
 
       onClose();

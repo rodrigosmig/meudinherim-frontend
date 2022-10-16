@@ -64,7 +64,6 @@ export function LoginForm() {
   }
 
   const handleClickRecaptcha = (token: string) => {
-    console.log(666,token)
     setReCaptchaToken(token);
     setIsHuman(true);
   }

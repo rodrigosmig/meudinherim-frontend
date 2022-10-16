@@ -19,7 +19,7 @@ import {
   useDisclosure
 } from "@chakra-ui/react";
 import { Heading } from "../../../../components/Heading";
-import { getMessage, toBrDate, toCurrency } from "../../../../utils/helpers";
+import { getMessage, INVOICE, INVOICES, toBrDate, toCurrency } from "../../../../utils/helpers";
 import { FilterPerPage } from "../../../../components/Pagination/FilterPerPage";
 import { useInvoices } from "../../../../hooks/useInvoices";
 import { Loading } from "../../../../components/Loading";
@@ -91,8 +91,8 @@ export default function Invoices({ card }: Props) {
     return response.data;
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('invoices')
-      queryClient.invalidateQueries('invoice')
+      queryClient.invalidateQueries(INVOICE)
+      queryClient.invalidateQueries(INVOICES)
     }
   });
 
