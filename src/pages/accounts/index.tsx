@@ -1,36 +1,33 @@
-import { useState } from "react";
-import Head from "next/head";
 import {
   Checkbox,
-  Flex, 
-  HStack, 
-  Spinner, 
-  Tbody, 
+  Flex,
+  HStack,
+  Spinner,
+  Tbody,
   Td,
-  Text,
-  Th, 
-  Thead, 
-  Tr,
+  Text, Tr,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
-import { Layout } from '../../components/Layout/index';
-import { AddButton } from '../../components/Buttons/Add';
-import { useAccounts } from "../../hooks/useAccounts";
-import { EditButton } from '../../components/Buttons/Edit';
-import { DeleteButton } from '../../components/Buttons/Delete';
-import { Loading } from '../../components/Loading/index';
+import Head from "next/head";
+import { useState } from "react";
 import { useMutation, useQueryClient } from 'react-query';
-import { accountService } from "../../services/ApiService/AccountService";
+import { AddButton } from '../../components/Buttons/Add';
+import { DeleteButton } from '../../components/Buttons/Delete';
+import { EditButton } from '../../components/Buttons/Edit';
 import { ExtractButton } from '../../components/Buttons/Extract';
-import { withSSRAuth } from '../../utils/withSSRAuth';
-import { setupApiClient } from '../../services/api';
 import { Heading } from "../../components/Heading";
-import { EditAccountModal } from "../../components/Modals/accounts/EditAccountModal";
+import { Layout } from '../../components/Layout/index';
+import { Loading } from '../../components/Loading/index';
 import { CreateAccountModal } from "../../components/Modals/accounts/CreateAccountModal";
+import { EditAccountModal } from "../../components/Modals/accounts/EditAccountModal";
 import { Table } from "../../components/Table";
-import { ACCOUNTS, ACCOUNTS_FORM, ACCOUNT_BALANCE, getMessage } from "../../utils/helpers";
+import { useAccounts } from "../../hooks/useAccounts";
+import { setupApiClient } from '../../services/api';
+import { accountService } from "../../services/ApiService/AccountService";
 import { IAccount } from "../../types/account";
+import { ACCOUNTS, ACCOUNTS_FORM, ACCOUNT_BALANCE, getMessage } from "../../utils/helpers";
+import { withSSRAuth } from '../../utils/withSSRAuth';
 
 export default function Accounts() {
   const queryClient = useQueryClient();
@@ -140,43 +137,42 @@ export default function Accounts() {
             </Checkbox>
         </Flex>
 
-        { isLoading ? (
-          <Loading />
-          ) : isError ? (
-            <Flex justify="center">Falha ao obter as contas</Flex>
-          ) : (
-            <>
-              <Table
-                theadData={headList}
-                size={tableSize}
-              >
-                <Tbody>
-                  { data.map(account => (
-                    <Tr key={account.id} px={[8]}>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{account.name}</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        { account.type.desc }
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <HStack spacing={[2]}>
-                          <EditButton onClick={() => handleEditAccount(account.id)} />
-                          <DeleteButton 
-                            onDelete={() => handleDeleteAccount(account.id)} 
-                            resource="Conta"
-                            loading={deleteAccount?.isLoading}
-                          />
-                          <ExtractButton href={`/accounts/${account.id}/entries`} />
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  )) }
-                </Tbody>
-              </Table>
-            </>
-          )
-        }
+        {isLoading && <Loading />}
+
+        {isError && <Flex justify="center">Falha ao obter as contas</Flex>}
+
+        { !isLoading && !isError && (
+          <>
+            <Table
+              theadData={headList}
+              size={tableSize}
+            >
+              <Tbody>
+                { data.map(account => (
+                  <Tr key={account.id} px={[8]}>
+                    <Td fontSize={["xs", "md"]}>
+                      <Text fontWeight="bold">{account.name}</Text>
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      { account.type.desc }
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      <HStack spacing={[2]}>
+                        <EditButton onClick={() => handleEditAccount(account.id)} />
+                        <DeleteButton 
+                          onDelete={() => handleDeleteAccount(account.id)} 
+                          resource="Conta"
+                          loading={deleteAccount?.isLoading}
+                        />
+                        <ExtractButton href={`/accounts/${account.id}/entries`} />
+                      </HStack>
+                    </Td>
+                  </Tr>
+                )) }
+              </Tbody>
+            </Table>
+          </>
+        )}
       </Layout>
     </>
   )
@@ -185,7 +181,7 @@ export default function Accounts() {
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
   
-  const response = await apiClient.get('/accounts');
+  await apiClient.get('/accounts');
 
   return {
     props: {}

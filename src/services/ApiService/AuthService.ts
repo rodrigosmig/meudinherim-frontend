@@ -1,6 +1,6 @@
-import { setupApiClient } from "../api";
 import { AxiosResponse } from "axios";
-import { IForgotPasswordData, IForgotPasswordResponse, IRegisterData, IResendVerificationEmailData, IResetPasswordData, ISignInCredentials, ISignInResponse, IUser, IVerifyEmail } from "../../types/auth";
+import { IForgotPasswordData, IForgotPasswordResponse, IRegisterData, IResendVerificationEmailData, IResetPasswordData, ISignInCredentials, ISignInResponse, IUser } from "../../types/auth";
+import { setupApiClient } from "../api";
 
 const apiClient = setupApiClient();
 

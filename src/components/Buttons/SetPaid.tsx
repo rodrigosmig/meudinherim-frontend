@@ -30,7 +30,7 @@ import {
     })
   
     const handleOnSetPaid = async () => {
-      await onSetPaid();
+      onSetPaid();
       onClose()
     }
   

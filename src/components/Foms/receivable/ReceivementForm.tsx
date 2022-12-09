@@ -75,9 +75,9 @@ export const ReceivementForm = ({ receivable, onClose }: Props) => {
   
         let key: ITransactionErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       } else if (error.response.data.message) {
         getMessage("Sucesso", error.response.data.message, 'error');

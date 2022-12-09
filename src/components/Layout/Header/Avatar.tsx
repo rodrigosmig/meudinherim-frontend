@@ -1,20 +1,17 @@
-import { memo, useContext } from "react";
-import Link from 'next/link';
-import { AuthContext } from '../../../contexts/AuthContext';
-import { 
-  Avatar as ChakraAvatar, 
-  Box, 
+import {
+  Avatar as ChakraAvatar,
+  Box,
   Flex,
   Menu,
-  MenuButton, 
-  MenuDivider,
-  MenuItem,
+  MenuButton, MenuItem,
   MenuList,
   Spinner,
   Text,
   useBreakpointValue,
   useColorModeValue
 } from "@chakra-ui/react";
+import { memo, useContext } from "react";
+import { AuthContext } from '../../../contexts/AuthContext';
 
 const AvatarComponent = () => {
   const { isAuthenticated, user, signOut } = useContext(AuthContext);

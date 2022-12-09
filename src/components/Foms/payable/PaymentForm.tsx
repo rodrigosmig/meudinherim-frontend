@@ -65,13 +65,13 @@ export const PaymentForm = ({ payable, onCancel }: Props) => {
     try {
       await payableService.payment(data);
 
-      getMessage("Sucesso", "Conta paga com sucesso");
-
       queryClient.invalidateQueries(PAYABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
       queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
       queryClient.invalidateQueries(ACCOUNT_BALANCE);
       queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+      
+      getMessage("Sucesso", "Conta paga com sucesso");
 
       onCancel();  
     } catch (error) {
@@ -80,9 +80,9 @@ export const PaymentForm = ({ payable, onCancel }: Props) => {
   
         let key: Key        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       } else if (error.response?.data.message) {
         getMessage('Erro', error.response.data.message, 'error')

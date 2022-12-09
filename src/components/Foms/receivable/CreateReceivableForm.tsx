@@ -1,27 +1,26 @@
-import { useState, ChangeEvent } from 'react';
-import { useRouter } from "next/router";
-import { 
+import {
   Box,
   Flex,
-  Stack, 
+  Stack
 } from "@chakra-ui/react";
+import { ChangeEvent, useState } from 'react';
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
-import { Switch } from "../../Inputs/Switch";
-import { Installment } from '../../Inputs/Installment';
-import { Select } from "../../Inputs/Select";
-import { receivableService } from "../../../services/ApiService/ReceivableService";
-import { CancelButton } from "../../Buttons/Cancel";
-import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, toUsDate } from "../../../utils/helpers";
-import { IAccountSchedulingCreateData, IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
-import { IReceivableResponseError } from '../../../types/receivable';
-import { createValidation } from '../../../validations/receivables';
 import { useQueryClient } from 'react-query';
 import { useCategoriesForm } from '../../../hooks/useCategories';
+import { receivableService } from "../../../services/ApiService/ReceivableService";
+import { IAccountSchedulingCreateData, IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
+import { IReceivableResponseError } from '../../../types/receivable';
+import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, toUsDate } from "../../../utils/helpers";
+import { createValidation } from '../../../validations/receivables';
+import { CancelButton } from "../../Buttons/Cancel";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Input } from "../../Inputs/Input";
+import { Installment } from '../../Inputs/Installment';
+import { Select } from "../../Inputs/Select";
+import { Switch } from "../../Inputs/Switch";
 import { Loading } from '../../Loading';
 
 interface FormData extends Omit<IAccountSchedulingCreateData, "due_date"> {
@@ -86,9 +85,9 @@ export const CreateReceivableForm = ({ onClose }: Props) => {
 
         let key: IAccountSchedulingErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }

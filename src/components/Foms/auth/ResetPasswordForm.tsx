@@ -50,9 +50,9 @@ export const ResetPasswordForm = ({ token }: Props) => {
 
         let key: IResetPaaswordErrorKey
         for (key in data) {   
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
 

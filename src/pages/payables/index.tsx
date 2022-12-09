@@ -249,50 +249,49 @@ export default function AccountPayables({ accounts }: Props) {
             </Select>
           </Flex>          
         </Flex>
+
+        {isLoading && <Loading />}
+
+        {isError && <Flex justify="center">Falha ao obter as contas</Flex>}
       
-        { isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <Flex justify="center">Falha ao obter as contas</Flex>
-          ) : (
-            <>
-              <Input
-                mb={[4, 4, 6]}
-                name="search"
-                type="text"
-                placeholder="Pesquisar conta"
-                onChange={event => handleSearchPayable(event.target.value)}
-              />
+        { !isLoading && !isError && (
+          <>
+            <Input
+              mb={[4, 4, 6]}
+              name="search"
+              type="text"
+              placeholder="Pesquisar conta"
+              onChange={event => handleSearchPayable(event.target.value)}
+            />
 
-              <Table
-                isEmpty={filteredPayables.length === 0}
-                theadData={theadData}
-                size={sizeProps}
-              >
-                <Tbody>
-                  <PayableItemsTable 
-                    data={filteredPayables}
-                    isLoadingonDelete={deletePayable.isLoading}
-                    isLoadingOnCancel={cancelPayment.isLoading}
-                    onEdit={handlePayableForEdit}
-                    onDelete={handleDeletePayable}
-                    onPayment={handlePayment}
-                    cancelPayment={handleCancelPayment}
-                  />
-                </Tbody>
-              </Table>
+            <Table
+              isEmpty={filteredPayables.length === 0}
+              theadData={theadData}
+              size={sizeProps}
+            >
+              <Tbody>
+                <PayableItemsTable 
+                  data={filteredPayables}
+                  isLoadingonDelete={deletePayable.isLoading}
+                  isLoadingOnCancel={cancelPayment.isLoading}
+                  onEdit={handlePayableForEdit}
+                  onDelete={handleDeletePayable}
+                  onPayment={handlePayment}
+                  cancelPayment={handleCancelPayment}
+                />
+              </Tbody>
+            </Table>
 
-              <Pagination
-                from={data.meta.from}
-                to={data.meta.to}
-                lastPage={data.meta.last_page}
-                currentPage={page}
-                totalRegisters={data.meta.total}
-                onPageChange={setPage}
-              />
-            </>
-          )
-        }
+            <Pagination
+              from={data.meta.from}
+              to={data.meta.to}
+              lastPage={data.meta.last_page}
+              currentPage={page}
+              totalRegisters={data.meta.total}
+              onPageChange={setPage}
+            />
+          </>
+        )}
       </Layout>
     </>
   )

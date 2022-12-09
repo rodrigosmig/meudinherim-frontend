@@ -1,37 +1,37 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import Head from "next/head";
-import { 
+import {
   Box,
-  Flex, 
-  Spinner, 
-  Tbody, 
+  Flex,
+  Spinner,
+  Tbody,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
-import { Layout } from '../../../../components/Layout/index';
-import { withSSRAuth } from '../../../../utils/withSSRAuth';
-import { setupApiClient } from '../../../../services/api';
-import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage } from '../../../../utils/helpers';
-import { useAccountEntries } from '../../../../hooks/useAccountEntries';
-import { useAccountBalance } from '../../../../hooks/useAccountBalance';
-import { FilterPerPage } from '../../../../components/Pagination/FilterPerPage';
-import { Loading } from '../../../../components/Loading/index';
-import { Pagination } from '../../../../components/Pagination';
+import Head from "next/head";
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { accountEntriesService } from '../../../../services/ApiService/AccountEntriesService';
+import { AddButton } from '../../../../components/Buttons/Add';
 import { DateFilter } from '../../../../components/DateFilter';
 import { Heading } from '../../../../components/Heading';
-import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
-import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
-import { EditAccountEntryModal } from '../../../../components/Modals/account_entries/EditAccountEntryModal';
-import { AddButton } from '../../../../components/Buttons/Add';
+import { Input } from '../../../../components/Inputs/Input';
+import { AccountEntryItemsTable } from '../../../../components/ItemsTable/AccountEntryItemsTable';
+import { Layout } from '../../../../components/Layout/index';
+import { Loading } from '../../../../components/Loading/index';
 import { CreateAccountEntryModal } from '../../../../components/Modals/account_entries/CreateAccountEntryModal';
+import { EditAccountEntryModal } from '../../../../components/Modals/account_entries/EditAccountEntryModal';
+import { ShowPaymentModal } from '../../../../components/Modals/payables/ShowPaymentModal';
+import { ShowReceivementModal } from '../../../../components/Modals/receivables/ShowReceivementModal';
+import { Pagination } from '../../../../components/Pagination';
+import { FilterPerPage } from '../../../../components/Pagination/FilterPerPage';
+import { Table } from '../../../../components/Table';
 import { useDateFilter } from '../../../../contexts/DateFilterContext';
+import { useAccountBalance } from '../../../../hooks/useAccountBalance';
+import { useAccountEntries } from '../../../../hooks/useAccountEntries';
+import { setupApiClient } from '../../../../services/api';
+import { accountEntriesService } from '../../../../services/ApiService/AccountEntriesService';
 import { IAccount } from '../../../../types/account';
 import { IAccountEntry } from '../../../../types/accountEntry';
-import { Input } from '../../../../components/Inputs/Input';
-import { Table } from '../../../../components/Table';
-import { AccountEntryItemsTable } from '../../../../components/ItemsTable/AccountEntryItemsTable';
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage } from '../../../../utils/helpers';
+import { withSSRAuth } from '../../../../utils/withSSRAuth';
 
 interface Props {
   account: IAccount
@@ -229,11 +229,11 @@ export default function AccountEntries({ account }: Props) {
           <AddButton onClick={createModalOnOpen} />
         </Flex>
 
-        { isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <Flex justify="center">Falha ao obter as lançamentos</Flex>
-          ) : (
+        {isLoading && <Loading />}
+
+        {isError && <Flex justify="center">Falha ao obter as lançamentos</Flex>}
+
+        {!isLoading && !isError && (
             <>
               <Input
                 mb={[4, 4, 6]}
@@ -268,7 +268,6 @@ export default function AccountEntries({ account }: Props) {
                 totalRegisters={data.meta.total}
                 onPageChange={setPage}
               />
-
             </>
           )
         }

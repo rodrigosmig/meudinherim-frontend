@@ -1,8 +1,8 @@
-import { INVOICE, INVOICES, toBrDate, toCurrency } from './../utils/helpers';
-import { useQuery } from "react-query";
-import { cardService } from "../services/ApiService/CardService";
 import { useContext } from 'react';
+import { useQuery } from "react-query";
 import { AuthContext } from '../contexts/AuthContext';
+import { cardService } from "../services/ApiService/CardService";
+import { INVOICE, INVOICES, toBrDate } from './../utils/helpers';
 
 export const getInvoices = async (cardId: number, status: 'open' | 'paid', page: number, perPage: number) => {
   const response = await cardService.getInvoices(cardId, status, page, perPage);

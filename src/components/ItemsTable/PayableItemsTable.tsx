@@ -48,32 +48,27 @@ const PayableItemsTableComponent = ({
             { payable.category.name}
           </Td>
           <Td fontSize={["xs", "md"]}>
-            { payable.is_parcel ? (
+            {payable.is_parcel && (
               <PopoverTotal
                 description={payable.description}
                 amount={payable.total_purchase}
               />
-              ) : (
-                payable.invoice ? (
-                  <LinkBox>
-                    <NextLink href={`/cards/${payable.invoice.card_id}/invoices/${payable.invoice.invoice_id}/entries`} passHref>
-                      <LinkOverlay
-                        title='Ver Fatura'
-                        fontWeight={"bold"}
-                        _hover={{ color: "pink.500" }}
-                      >
-                        { payable.description }                                   
-                      </LinkOverlay>
-                    </NextLink>
-                  
-                  </LinkBox>
-                ) : (
-                  payable.description
-
-                )
-              )
-            }
-
+            )}
+            {!payable.is_parcel && payable.invoice && (
+              <LinkBox>
+                <NextLink href={`/cards/${payable.invoice.card_id}/invoices/${payable.invoice.invoice_id}/entries`} passHref>
+                  <LinkOverlay
+                    title='Ver Fatura'
+                    fontWeight={"bold"}
+                    _hover={{ color: "pink.500" }}
+                  >
+                    { payable.description }                                   
+                  </LinkOverlay>
+                </NextLink>
+              
+              </LinkBox>
+            )}
+            {!payable.is_parcel && !payable.invoice && payable.description}
           </Td>
           <Td>
             { payable.monthly ? <Check /> : <Close /> }
@@ -88,7 +83,6 @@ const PayableItemsTableComponent = ({
                   isDisabled={payable.is_parcel}
                   onClick={() => onEdit(payable.id, payable.parcelable_id)}
                 />
-
                 <DeleteButton
                   isDisabled={payable.is_parcel && payable.parcel_number !== 1}
                   onDelete={() => onDelete(payable.is_parcel ? payable.parcelable_id : payable.id)} 
@@ -96,7 +90,6 @@ const PayableItemsTableComponent = ({
                   loading={isLoadingonDelete}
                   isParcel={payable.is_parcel}
                 />
-
                 <PaymentButton onClick={() => onPayment(payable.id, payable.parcelable_id)} />
               </HStack>
             ) : (

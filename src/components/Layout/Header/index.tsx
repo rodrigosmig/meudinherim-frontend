@@ -1,16 +1,14 @@
-import { 
-  Box, 
-  Flex, 
-  Icon, 
-  IconButton, 
-  useBreakpointValue, 
-  useColorModeValue 
+import {
+  Flex,
+  Icon,
+  IconButton,
+  useBreakpointValue
 } from "@chakra-ui/react";
-import { MenuNav } from "./MenuNav";
-import { Avatar } from './Avatar';
-import { useSidebarDrawer } from "../../../contexts/SidebarDrawerContext";
-import { RiMenuLine } from "react-icons/ri";
 import { memo } from "react";
+import { RiMenuLine } from "react-icons/ri";
+import { useSidebarDrawer } from "../../../contexts/SidebarDrawerContext";
+import { Avatar } from './Avatar';
+import { MenuNav } from "./MenuNav";
 
 const HeaderComponent = () => {
   const { onOpen } = useSidebarDrawer();

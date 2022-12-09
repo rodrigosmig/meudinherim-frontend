@@ -1,12 +1,11 @@
-import dynamic from 'next/dynamic';
-import { 
-  Box, 
-  Flex, 
+import {
+  Box,
+  Flex,
   Text,
   useColorMode,
-  useColorModeValue,
-  useMediaQuery
+  useColorModeValue
 } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import { toCurrency } from '../../utils/helpers';
 
 const Chart = dynamic(() => import('react-apexcharts'), {

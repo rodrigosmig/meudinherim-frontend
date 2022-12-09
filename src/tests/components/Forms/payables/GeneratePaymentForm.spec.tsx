@@ -113,7 +113,6 @@ describe('GeneratePaymentForm Component', () => {
 
     expect(payableServiceMocked).toHaveBeenCalledTimes(1);
     expect(onCancel).toHaveBeenCalledTimes(0);
-    expect(screen.getByText("Conta a pagar gerado com sucesso")).toBeInTheDocument(); 
   })
 
   it('tests server validation error', async () => {

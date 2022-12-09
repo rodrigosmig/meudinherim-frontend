@@ -72,10 +72,10 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
     try {
       await payableService.create(data);
 
-      getMessage("Sucesso", "Conta a Pagar adicionada com sucesso");
-
       queryClient.invalidateQueries(PAYABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      
+      getMessage("Sucesso", "Conta a Pagar adicionada com sucesso");
 
       onClose();
     } catch (error) {
@@ -84,9 +84,9 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
 
         let key: IAccountSchedulingErrorKey
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }

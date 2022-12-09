@@ -23,7 +23,7 @@ import { partialPayment } from "../../../validations/card";
   
 interface FormData extends Omit<IPartialPaymentInvoiceData, "date"> { 
   date: Date 
-};
+}
 
 interface Props {
   cardId: number;
@@ -61,23 +61,23 @@ export const PartialPaymentForm = ({ cardId, onCancel}: Props) => {
     try {
       await cardService.partialPayment(data);
 
-      getMessage("Sucesso", "Pagamento parcial realizado com sucesso");
-
-      onCancel();
       queryClient.invalidateQueries('accountEntries');
       queryClient.invalidateQueries('account_balance');
       queryClient.invalidateQueries('invoiceEntries');
       queryClient.invalidateQueries('invoice');
 
+      getMessage("Sucesso", "Pagamento parcial realizado com sucesso");
+
+      onCancel();
     } catch (error) {
       if (error.response?.status === 422) {
         const data: IPartialPaymentInvoiceResponseError = error.response.data;
 
         let key: IPartialPaymentErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
 

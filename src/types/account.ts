@@ -52,7 +52,7 @@ export interface IBalanceData {
   positive: boolean;
   account_id: number;
   account_name: string;
-};
+}
 
 export interface ITotalData {
   value: string;

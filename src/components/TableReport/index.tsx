@@ -1,12 +1,8 @@
 import {
   Badge,
-  TableProps,
-  Th, 
-  Thead, 
-  Tr,
-  Tbody,
+  TableProps, Tbody,
   Td,
-  Text
+  Text, Tr
 } from "@chakra-ui/react";
 import { memo } from "react";
 import { ReportType, TotalByCategoryResponse } from "../../types/report";

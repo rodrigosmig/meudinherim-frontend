@@ -1,11 +1,6 @@
-import { 
-  Box, 
-  Flex, 
-  Icon,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Text,
+import {
+  Box,
+  Flex, Text,
   useColorModeValue
 } from '@chakra-ui/react';
 import { Loading } from '../Loading';

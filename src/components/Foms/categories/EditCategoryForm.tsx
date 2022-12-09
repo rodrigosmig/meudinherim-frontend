@@ -61,9 +61,9 @@ const EditCategoryFormComponent = ({ category, onClose }: Props) => {
 
         let key: ICategoryErrorKey;
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }

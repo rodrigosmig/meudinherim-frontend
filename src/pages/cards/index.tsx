@@ -1,35 +1,32 @@
-import { useState } from "react";
-import Head from "next/head";
-import { 
-  Flex, 
-  HStack, 
-  Spinner, 
-  Tbody, 
-  Td, 
-  Text, 
-  Th, 
-  Thead, 
-  Tr,
+import {
+  Flex,
+  HStack,
+  Spinner,
+  Tbody,
+  Td,
+  Text, Tr,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
-import { Layout } from "../../components/Layout";
-import { Heading } from "../../components/Heading";
-import { AddButton } from "../../components/Buttons/Add";
-import { cardService } from "../../services/ApiService/CardService";
-import { useCards } from "../../hooks/useCards";
-import { Table } from "../../components/Table";
-import { Loading } from "../../components/Loading";
-import { EditButton } from "../../components/Buttons/Edit";
-import { DeleteButton } from "../../components/Buttons/Delete";
+import Head from "next/head";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import { CARDS, CARDS_FORM, getMessage, OPEN_INVOICES, toCurrency } from "../../utils/helpers";
+import { AddButton } from "../../components/Buttons/Add";
+import { DeleteButton } from "../../components/Buttons/Delete";
+import { EditButton } from "../../components/Buttons/Edit";
+import { InvoicesButton } from "../../components/Buttons/Invoices";
+import { Heading } from "../../components/Heading";
+import { Layout } from "../../components/Layout";
+import { Loading } from "../../components/Loading";
 import { CreateCardModal } from "../../components/Modals/cards/CreateCardModal";
 import { EditCardModal } from "../../components/Modals/cards/EditCardModal";
-import { InvoicesButton } from "../../components/Buttons/Invoices";
-import { withSSRAuth } from "../../utils/withSSRAuth";
+import { Table } from "../../components/Table";
+import { useCards } from "../../hooks/useCards";
 import { setupApiClient } from "../../services/api";
+import { cardService } from "../../services/ApiService/CardService";
 import { ICard } from "../../types/card";
+import { CARDS, CARDS_FORM, getMessage, OPEN_INVOICES, toCurrency } from "../../utils/helpers";
+import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function Cards() {
   const queryClient = useQueryClient();
@@ -125,55 +122,52 @@ export default function Cards() {
           </Heading>
         </Flex>
 
-        { isLoading ? (
-          <Loading />
-          ) : isError ? (
-            <Flex justify="center">Falha ao obter as cartões de crédito</Flex>
-          ) : data.length === 0 ? (
-            <Text>Nenhum cartão cadastrado</Text>
-          ) : (
-            <>
-              <Table
-                theadData={headList}
-                size={tableSize}>
-                <Tbody>
-                  { data.map(card => (
-                    <Tr key={card.id} px={[8]}>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{card.name}</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        { toCurrency(card.credit_limit) }
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        { toCurrency(card.balance) }
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        { card.closing_day }
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        { card.pay_day }
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <HStack spacing={[2]}>
-                          <EditButton onClick={() => handleEditCard(card.id)} />
+        {isLoading && <Loading />}
 
-                          <DeleteButton
-                            onDelete={() => handleDeleteCard(card.id)} 
-                            resource="Cartão"
-                            loading={deleteCard?.isLoading}
-                          />
+        {isError && <Flex justify="center">Falha ao obter os cartões de crédito</Flex>}
 
-                          <InvoicesButton href={`/cards/${card.id}/invoices`} />
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  )) }
-                </Tbody>
-              </Table>
-            </>
-          )
-        }
+        {!isLoading && !isError && data.length === 0 && <Text>Nenhum cartão cadastrado</Text>}
+
+        {!isLoading && !isError && data.length !== 0 && (
+          <>
+            <Table
+              theadData={headList}
+              size={tableSize}>
+              <Tbody>
+                { data.map(card => (
+                  <Tr key={card.id} px={[8]}>
+                    <Td fontSize={["xs", "md"]}>
+                      <Text fontWeight="bold">{card.name}</Text>
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      { toCurrency(card.credit_limit) }
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      { toCurrency(card.balance) }
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      { card.closing_day }
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      { card.pay_day }
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      <HStack spacing={[2]}>
+                        <EditButton onClick={() => handleEditCard(card.id)} />
+                        <DeleteButton
+                          onDelete={() => handleDeleteCard(card.id)} 
+                          resource="Cartão"
+                          loading={deleteCard?.isLoading}
+                        />
+                        <InvoicesButton href={`/cards/${card.id}/invoices`} />
+                      </HStack>
+                    </Td>
+                  </Tr>
+                )) }
+              </Tbody>
+            </Table>
+          </>
+        )}
       </Layout>
     </>
   )

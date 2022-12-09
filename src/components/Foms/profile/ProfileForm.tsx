@@ -1,21 +1,21 @@
-import { ChangeEvent, useState } from 'react';
 import { Flex, Stack } from "@chakra-ui/react";
-import { profileService } from '../../../services/ApiService/ProfileService';
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Input } from '../../Inputs/Input';
-import { SubmitButton } from "../../Buttons/Submit";
-import { Switch } from "../../Inputs/Switch";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getMessage } from '../../../utils/helpers';
-import { IProfileUpdateData, IProfileUpdateDataError, IProfileUpdateDataErrorKey } from '../../../types/auth';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useUser } from '../../../hooks/useUser';
+import { profileService } from '../../../services/ApiService/ProfileService';
+import { IProfileUpdateData, IProfileUpdateDataError, IProfileUpdateDataErrorKey } from '../../../types/auth';
+import { getMessage } from '../../../utils/helpers';
 import { profileValidation } from '../../../validations/auth';
+import { SubmitButton } from "../../Buttons/Submit";
+import { Input } from '../../Inputs/Input';
+import { Switch } from "../../Inputs/Switch";
 
 export function ProfileForm() {
   const { user, setUser } = useUser();
   const [ enableNotification, setEnableNotification ] = useState(user.enable_notification);
   
-  const { register, handleSubmit, setError, setValue, getValues, formState } = useForm({
+  const { register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       name: user.name,
       email: user.email,
@@ -38,16 +38,6 @@ export function ProfileForm() {
       const response = await profileService.updateProfile(values)
       const userUpdated = response.data
 
-      /* if (!userUpdated.hasEmailVerified) {
-        getMessage("Atenção", "Uma mensagem com um link de confirmação foi enviada para seu e-mail.", 'warning');
-        
-        setTimeout(() => {
-          signOut();
-        }, 1000);
-
-        return;
-      } */
-
       setUser(userUpdated);
 
       return getMessage("Sucesso", "Alteração realizada com sucesso");
@@ -57,9 +47,9 @@ export function ProfileForm() {
 
         let key: IProfileUpdateDataErrorKey;
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }    

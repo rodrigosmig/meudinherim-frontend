@@ -1,28 +1,28 @@
-import { 
+import {
   Box,
   Button,
   Flex,
-  Stack, 
+  Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
-import { SelectCategories } from "../../Inputs/SelectCategories";
-import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
-import { Select } from "../../Inputs/Select";
-import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, getMessage, ACCOUNT_TOTAL_BY_CATEGORY, toUsDate } from "../../../utils/helpers";
-import { useCategoriesForm } from "../../../hooks/useCategories";
-import { Loading } from "../../Loading";
-import { useAccountsForm } from "../../../hooks/useAccounts";
-import { IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
-import { createValidation } from "../../../validations/accountEntry";
 import { useQueryClient } from "react-query";
+import { useAccountsForm } from "../../../hooks/useAccounts";
+import { useCategoriesForm } from "../../../hooks/useCategories";
+import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
+import { IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, toUsDate } from "../../../utils/helpers";
+import { createValidation } from "../../../validations/accountEntry";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Input } from "../../Inputs/Input";
+import { Select } from "../../Inputs/Select";
+import { SelectCategories } from "../../Inputs/SelectCategories";
+import { Loading } from "../../Loading";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
-  date: Date 
-};
+  date: Date;
+}
 
 interface Props {
   accountId?: number;
@@ -70,9 +70,9 @@ export const CreateAccountEntryForm = ({ accountId = null, onClose }: Props) => 
 
         let key: IAccountEntryErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }

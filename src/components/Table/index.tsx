@@ -1,15 +1,14 @@
-import { 
-  Box, 
-  Table as ChakraTable, 
-  TableProps as ChakraTableProps,
-  Tbody,
+import {
+  Box,
+  Table as ChakraTable,
+  TableProps as ChakraTableProps, 
   Text,
   Th,
   Thead,
   Tr,
   useColorMode
-} from "@chakra-ui/react"
-import { memo, ReactNode } from "react"
+} from "@chakra-ui/react";
+import { memo, ReactNode } from "react";
 
 interface Props extends ChakraTableProps {
   theadData: string[];

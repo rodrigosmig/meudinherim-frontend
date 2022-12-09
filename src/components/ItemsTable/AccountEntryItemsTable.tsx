@@ -28,6 +28,11 @@ const AccountEntryItemsTableComponent = ({
   showReceivement,
   showPayment
 }: Props) => {
+
+  const hasAccountScheduling = (entry: IAccountEntry) => {
+    return entry.account_scheduling != null;
+  }
+
   return (
     <>
       { data.map(entry => (
@@ -50,7 +55,7 @@ const AccountEntryItemsTableComponent = ({
           </Text>
           </Td>
           <Td fontSize={["xs", "md"]}>
-          { entry.account_scheduling == null ? (
+          { !hasAccountScheduling(entry) && (
             <HStack spacing={[2]}>                              
               <EditButton onClick={() => onEdit(entry.id)} />
               <DeleteButton 
@@ -59,21 +64,19 @@ const AccountEntryItemsTableComponent = ({
                 loading={isLoading}
               />
             </HStack>
-            ) : (
-              entry.category.type === 1 ? (
-                <ShowPaymentButton
-                  label="Ver Recebimento"
-                  onClick={() => showReceivement(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}
-                />
-                
-              ) : (
-                <ShowPaymentButton
-                  label="Ver Pagamento"
-                  onClick={() => showPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}
-                />
-              )
-            )
-          }
+          )}
+          { hasAccountScheduling(entry) && entry.category.type === 1 && (
+            <ShowPaymentButton
+              label="Ver Recebimento"
+              onClick={() => showReceivement(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}
+            />
+          )}
+          { hasAccountScheduling(entry) && entry.category.type === 2 && (
+            <ShowPaymentButton
+              label="Ver Pagamento"
+              onClick={() => showPayment(entry.account_scheduling.id, entry.account_scheduling.parcelable_id)}
+            />
+          )}
           </Td>
         </Tr>
       )) }

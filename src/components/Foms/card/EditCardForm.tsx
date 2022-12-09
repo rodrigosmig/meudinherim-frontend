@@ -64,20 +64,13 @@ export const EditCardForm = ({ card, onClose }: Props) => {
 
         let key: ICardErrorKey
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }
   }
-
-  const options = [
-    {value: "money", label: "Dinheiro"},
-    {value: "savings", label: "Poupança"},
-    {value: "checking_account", label: "Conta Corrente"},
-    {value: "investment", label: "Investimentos"}
-  ];
 
   return (
     <Box

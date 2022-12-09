@@ -21,7 +21,8 @@ import { useQueryClient } from "react-query";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
-};
+}
+
 interface Props {
   entry: IAccountEntry;
   closeModal: () => void,
@@ -57,12 +58,12 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
     
     try {
       await accountEntriesService.update(data);
-
-      getMessage("Sucesso", "Alteração realizada com sucesso");
-
+      
       queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
       queryClient.invalidateQueries(ACCOUNT_BALANCE);
       queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+
+      getMessage("Sucesso", "Alteração realizada com sucesso");
 
       closeModal();
 
@@ -72,9 +73,9 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
 
         let key: IAccountEntryErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }

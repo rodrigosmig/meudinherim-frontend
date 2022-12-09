@@ -1,30 +1,29 @@
-import { 
+import {
   Box,
   Button,
   Divider,
   Flex,
   Stack
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
-import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
-import { Select } from "../../Inputs/Select";
-import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, toUsDate } from "../../../utils/helpers";
-import { useCategoriesForm } from "../../../hooks/useCategories";
-import { Loading } from "../../Loading";
-import { useAccountsForm } from "../../../hooks/useAccounts";
-import { Heading } from "../../Heading";
 import { useQueryClient } from "react-query";
+import { useAccountsForm } from "../../../hooks/useAccounts";
+import { useCategoriesForm } from "../../../hooks/useCategories";
+import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { IAccountEntryTransferData, IAccountEntryTransferResponseError, ITransferErrorKey } from "../../../types/accountEntry";
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, toUsDate } from "../../../utils/helpers";
 import { transferValidation } from "../../../validations/accountEntry";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Heading } from "../../Heading";
+import { Input } from "../../Inputs/Input";
+import { Select } from "../../Inputs/Select";
+import { Loading } from "../../Loading";
 
 interface FormData extends Omit<IAccountEntryTransferData, "date"> { 
   date: Date 
-};
+}
 
 interface Props {
   onCancel: () => void;
@@ -73,9 +72,9 @@ export const TransferBetweenAccountsForm = ({ onCancel}: Props) => {
 
         let key: ITransferErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
 

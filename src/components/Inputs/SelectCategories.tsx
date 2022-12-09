@@ -1,12 +1,9 @@
-import { 
-  FormControl, 
-  FormErrorMessage, 
-  FormLabel, 
-  Select as ChakraSelect, 
-  SelectProps as 
-  ChakraSelectProps, 
-  Text,
-  useColorModeValue
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Select as ChakraSelect,
+  SelectProps as ChakraSelectProps, useColorModeValue
 } from "@chakra-ui/react";
 import { forwardRef, ForwardRefRenderFunction } from "react";
 import { FieldError } from "react-hook-form";

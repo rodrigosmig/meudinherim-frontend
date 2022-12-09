@@ -64,9 +64,9 @@ export const EditAccountForm = ({ account, onClose }: Props) => {
 
         let key: IAccountErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }
