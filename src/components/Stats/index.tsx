@@ -1,14 +1,13 @@
-import { 
-  Box, 
-  Flex, 
+import {
+  Flex,
   Icon,
   Stat,
   StatLabel,
   StatNumber,
   useColorModeValue
 } from '@chakra-ui/react';
-import { toCurrency } from '../../utils/helpers';
 import { IconType } from 'react-icons';
+import { toCurrency } from '../../utils/helpers';
 
 interface Props {
   label: string;

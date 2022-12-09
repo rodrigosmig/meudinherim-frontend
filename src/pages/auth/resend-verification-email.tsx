@@ -1,7 +1,6 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
-import { bool } from "yup";
 import { AuthLayout } from "../../components/AuthLayout";
 import { ResendVerificationEmailForm } from "../../components/Foms/auth/ResendVerificationEmailForm";
 import { getMessage } from "../../utils/helpers";

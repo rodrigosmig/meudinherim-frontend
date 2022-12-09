@@ -1,32 +1,30 @@
-import Head from "next/head";
-import { setupApiClient } from '../services/api';
-import { withSSRAuth } from '../utils/withSSRAuth';
-import { Layout } from '../components/Layout';
-import { Stats } from "../components/Stats";
-import { 
-  Box, 
-  Button, 
-  Flex, 
-  IconButton, 
-  SimpleGrid, 
-  Text, 
+import {
+  Box, Flex,
+  IconButton,
+  SimpleGrid,
+  Text
 } from "@chakra-ui/react";
-import { FiArrowUp, FiArrowDown } from 'react-icons/fi'
-import { FaMoneyBillAlt, FaCreditCard } from 'react-icons/fa'
-import { Card } from "../components/Card";
-import { Heading } from "../components/Heading";
-import { DonutChart } from "../components/Charts/Donut";
-import { BarChart } from "../components/Charts/Bar";
-import { useDashboard } from "../hooks/useDashboard";
-import { LoadingStats } from "../components/LoadingStats";
-import { LoadingDonutChart } from "../components/LoadingDonutChart";
-import { LineChart } from "../components/Charts/Line";
-import { LoadingBarChart } from "../components/LoadingBarChart";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { addMonths, format, getYear, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { toUsDate } from "../utils/helpers";
+import Head from "next/head";
 import { useState } from "react";
+import { FaCreditCard, FaMoneyBillAlt } from 'react-icons/fa';
+import { FiArrowDown, FiArrowUp } from 'react-icons/fi';
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { Card } from "../components/Card";
+import { BarChart } from "../components/Charts/Bar";
+import { DonutChart } from "../components/Charts/Donut";
+import { LineChart } from "../components/Charts/Line";
+import { Heading } from "../components/Heading";
+import { Layout } from '../components/Layout';
+import { LoadingBarChart } from "../components/LoadingBarChart";
+import { LoadingDonutChart } from "../components/LoadingDonutChart";
+import { LoadingStats } from "../components/LoadingStats";
+import { Stats } from "../components/Stats";
+import { useDashboard } from "../hooks/useDashboard";
+import { setupApiClient } from '../services/api';
+import { toUsDate } from "../utils/helpers";
+import { withSSRAuth } from '../utils/withSSRAuth';
 
 export default function Dashboard() {
   const incomeColor = "blue.500";
@@ -192,7 +190,7 @@ export default function Dashboard() {
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
 
-  const response = await apiClient.get('/auth/me');
+  await apiClient.get('/auth/me');
 
   return {
     props: {}

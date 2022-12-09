@@ -20,7 +20,6 @@ export default function VerifyEmail({ url }: Props) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [alreadyVerified, setAlreadyVerified] = useState(false);
 
   const bgColor = useColorModeValue('white', 'gray.800')
 

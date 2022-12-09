@@ -1,7 +1,6 @@
-import { memo } from "react";
 import { Button, Icon, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import Link from "next/link";
-import { FaMoneyBillAlt } from "react-icons/fa";
+import { memo } from "react";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 
 interface Props {

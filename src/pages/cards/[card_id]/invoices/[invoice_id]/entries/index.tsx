@@ -1,42 +1,38 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import {
+  Box, Button, Flex,
+  Icon,
+  Spinner, Stack, Tbody,
+  useBreakpointValue,
+  useDisclosure
+} from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
-import {
-  Button,
-  Box,
-  Flex,
-  Icon,
-  Spinner,
-  Tbody, 
-  useBreakpointValue,
-  useDisclosure,
-  Stack
-} from "@chakra-ui/react";
-import { Heading } from "../../../../../../components/Heading";
-import { FilterPerPage } from "../../../../../../components/Pagination/FilterPerPage";
-import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toBrDate, toCurrency } from "../../../../../../utils/helpers";
-import { Layout } from "../../../../../../components/Layout";
-import { withSSRAuth } from "../../../../../../utils/withSSRAuth";
-import { setupApiClient } from "../../../../../../services/api";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { BiCalendar } from "react-icons/bi";
-import { useInvoiceEntries } from "../../../../../../hooks/useInvoiceEntries";
-import { Pagination } from "../../../../../../components/Pagination";
-import { Table } from "../../../../../../components/Table";
-import { Loading } from "../../../../../../components/Loading";
-import { AddButton } from "../../../../../../components/Buttons/Add";
-import { EditInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/EditInvoiceEntryModal";
 import { useMutation, useQueryClient } from "react-query";
-import { invoiceEntriesService } from "../../../../../../services/ApiService/InvoiceEntriesService";
-import { useInvoice } from "../../../../../../hooks/useInvoices";
-import { CreateInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/CreateInvoiceEntryModal";
-import { AnticipateInstallmentsModal } from "../../../../../../components/Modals/invoice_entries/AnticipateInstallmentsModal";
+import { AddButton } from "../../../../../../components/Buttons/Add";
 import { GeneratePayment } from "../../../../../../components/Buttons/GeneratePayment";
-import { GeneratePaymentModal } from "../../../../../../components/Modals/invoices/GeneratePaymentModal";
-import { IInvoiceEntry } from "../../../../../../types/invoiceEntry";
+import { ParcialPayment } from "../../../../../../components/Buttons/PartialPayment";
+import { Heading } from "../../../../../../components/Heading";
 import { Input } from "../../../../../../components/Inputs/Input";
 import { InvoiceEntryItemsTable } from "../../../../../../components/ItemsTable/InvoiceEntryItemsTable";
-import { ParcialPayment } from "../../../../../../components/Buttons/PartialPayment";
+import { Layout } from "../../../../../../components/Layout";
+import { Loading } from "../../../../../../components/Loading";
+import { GeneratePaymentModal } from "../../../../../../components/Modals/invoices/GeneratePaymentModal";
 import { PartialPaymentModal } from "../../../../../../components/Modals/invoices/PartialPaymentModal";
+import { AnticipateInstallmentsModal } from "../../../../../../components/Modals/invoice_entries/AnticipateInstallmentsModal";
+import { CreateInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/CreateInvoiceEntryModal";
+import { EditInvoiceEntryModal } from "../../../../../../components/Modals/invoice_entries/EditInvoiceEntryModal";
+import { Pagination } from "../../../../../../components/Pagination";
+import { FilterPerPage } from "../../../../../../components/Pagination/FilterPerPage";
+import { Table } from "../../../../../../components/Table";
+import { useInvoiceEntries } from "../../../../../../hooks/useInvoiceEntries";
+import { useInvoice } from "../../../../../../hooks/useInvoices";
+import { setupApiClient } from "../../../../../../services/api";
+import { invoiceEntriesService } from "../../../../../../services/ApiService/InvoiceEntriesService";
+import { IInvoiceEntry } from "../../../../../../types/invoiceEntry";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toBrDate, toCurrency } from "../../../../../../utils/helpers";
+import { withSSRAuth } from "../../../../../../utils/withSSRAuth";
 
 interface Props {
   cardId: number;
@@ -65,7 +61,7 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
 
   const [ selectedEntry, setSelectedEntry ] = useState({} as IInvoiceEntry)
 
-  const { data, isLoading, isFetching, isError, refetch } = useInvoiceEntries(cardId, invoiceId, page, perPage);
+  const { data, isLoading, isFetching, isError } = useInvoiceEntries(cardId, invoiceId, page, perPage);
 
   const [filteredEntries, setFilteredEntries] = useState([] as IInvoiceEntry[]);
 
@@ -110,11 +106,6 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
   
     return response.data;
   });
-
-  const handleRefetchData = () => {
-    refetch();
-    refetchInvoice();
-  }
 
   const handleCloseGeneratePayment = () => {
     refetchInvoice();
@@ -251,47 +242,46 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
           </Flex>
         </Flex>
 
-        { isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <Flex justify="center">Falha ao obter as lançamentos</Flex>
-          ) : (
-            <>
-              <Input
-                mb={[4, 4, 6]}
-                name="search"
-                type="text"
-                placeholder="Pesquisar lançamento"
-                onChange={event => handleSearchEntry(event.target.value)}
-              />
+        {isLoading && <Loading />}
 
-              <Table
-                isEmpty={filteredEntries.length === 0}
-                theadData={theadData}
-                size={sizeProps}
-              >
-                <Tbody>
-                  <InvoiceEntryItemsTable
-                    data={filteredEntries}
-                    isLoading={deleteEntry.isLoading}
-                    onEdit={handleEditEntry}
-                    onDelete={handleDeleteEntry}
-                    onAnticipateInstallments={handleAnticipateInstallments}
-                  />
-                </Tbody>
-              </Table>
+        {isError && <Flex justify="center">Falha ao obter as lançamentos</Flex>}
 
-              <Pagination
-                from={data.meta.from}
-                to={data.meta.to}
-                lastPage={data.meta.last_page}
-                currentPage={page}
-                totalRegisters={data.meta.total}
-                onPageChange={setPage}
-              />
-            </>
-          )
-        }
+        {!isLoading && !isError && (
+          <>
+            <Input
+              mb={[4, 4, 6]}
+              name="search"
+              type="text"
+              placeholder="Pesquisar lançamento"
+              onChange={event => handleSearchEntry(event.target.value)}
+            />
+
+            <Table
+              isEmpty={filteredEntries.length === 0}
+              theadData={theadData}
+              size={sizeProps}
+            >
+              <Tbody>
+                <InvoiceEntryItemsTable
+                  data={filteredEntries}
+                  isLoading={deleteEntry.isLoading}
+                  onEdit={handleEditEntry}
+                  onDelete={handleDeleteEntry}
+                  onAnticipateInstallments={handleAnticipateInstallments}
+                />
+              </Tbody>
+            </Table>
+
+            <Pagination
+              from={data.meta.from}
+              to={data.meta.to}
+              lastPage={data.meta.last_page}
+              currentPage={page}
+              totalRegisters={data.meta.total}
+              onPageChange={setPage}
+            />
+          </>
+        )}
 
         <Flex 
           justify={["center", "left"]}
@@ -324,7 +314,7 @@ export const getServerSideProps = withSSRAuth(async (context) => {
 
   const {card_id, invoice_id} = context.params
   
-  const response = await apiClient.get(`/cards/${card_id}/invoices/${invoice_id}`);
+  await apiClient.get(`/cards/${card_id}/invoices/${invoice_id}`);
 
   return {
     props: {

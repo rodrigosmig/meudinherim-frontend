@@ -44,7 +44,8 @@ const entry: IAccountEntry = {
     id: 1,
     type: 2,
     name: 'Category test',
-    active: true
+    active: true,
+    show_in_dashboard: true
   },
   description: 'Account entry test',
   value: 50,
@@ -129,7 +130,6 @@ describe('EditAccountEntryForm Component', () => {
     })
 
     expect(accountEntriesServiceMocked).toHaveBeenCalledTimes(1);
-    expect(screen.getByText("Alteração realizada com sucesso")).toBeInTheDocument();
   });
 
   it('error when validates form by server', async () => {

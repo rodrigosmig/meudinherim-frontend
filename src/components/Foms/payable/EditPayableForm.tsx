@@ -1,25 +1,25 @@
-import { useEffect, useState } from "react";
-import { 
+import {
   Box,
   Flex,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
 import { parseISO } from 'date-fns';
-import { payableService } from "../../../services/ApiService/PayableService";
-import { Select } from "../../Inputs/Select";
-import { Switch } from "../../Inputs/Switch";
-import { ACCOUNTS_REPORT, getMessage, PAYABLES, reverseBrDate, toUsDate } from "../../../utils/helpers";
-import { CancelButton } from "../../Buttons/Cancel";
-import { IPayable, IPayableFormData, IPayableResponseError } from "../../../types/payable";
-import { IAccountSchedulingErrorKey } from "../../../types/accountScheduling";
-import { editValidation } from "../../../validations/payable";
+import { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useCategoriesForm } from "../../../hooks/useCategories";
+import { payableService } from "../../../services/ApiService/PayableService";
+import { IAccountSchedulingErrorKey } from "../../../types/accountScheduling";
+import { IPayable, IPayableFormData, IPayableResponseError } from "../../../types/payable";
+import { ACCOUNTS_REPORT, getMessage, PAYABLES, reverseBrDate, toUsDate } from "../../../utils/helpers";
+import { editValidation } from "../../../validations/payable";
+import { CancelButton } from "../../Buttons/Cancel";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Input } from "../../Inputs/Input";
+import { Select } from "../../Inputs/Select";
+import { Switch } from "../../Inputs/Switch";
 import { Loading } from "../../Loading";
 
 interface Props {
@@ -70,23 +70,22 @@ export const EditPayableForm = ({ payable, onClose }: Props) => {
 
     try {
       await payableService.update(data);
-
-      getMessage("Sucesso", "Conta a Pagar alterada com sucesso");
-
+      
       queryClient.invalidateQueries(PAYABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
-
+      
+      getMessage("Sucesso", "Conta a Pagar alterada com sucesso");
+      
       onClose();
-
     } catch (error) {
       if (error.response?.status === 422) {
         const data: IPayableResponseError = error.response.data;
 
         let key: IAccountSchedulingErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }

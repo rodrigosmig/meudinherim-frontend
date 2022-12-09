@@ -239,50 +239,49 @@ export default function AccountReceivable({ accounts }: Props) {
             </Select>
           </Flex>          
         </Flex>
+
+        {isLoading && <Loading />}
+
+        {isError && <Flex justify="center">Falha ao obter as contas</Flex>}
       
-        { isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <Flex justify="center">Falha ao obter as contas</Flex>
-          ) : (
-            <>
-              <Input
-                mb={[4, 4, 6]}
-                name="search"
-                type="text"
-                placeholder="Pesquisar conta"
-                onChange={event => handleSearchReceivable(event.target.value)}
-              />
+        { !isLoading && !isError && (
+          <>
+            <Input
+              mb={[4, 4, 6]}
+              name="search"
+              type="text"
+              placeholder="Pesquisar conta"
+              onChange={event => handleSearchReceivable(event.target.value)}
+            />
 
-              <Table
-                isEmpty={filteredReceivables.length === 0}
-                theadData={theadData}
-                size={sizeProps}
-              >
-                <Tbody>
-                  <ReceivableItemsTable 
-                    data={filteredReceivables}
-                    isLoadingonDelete={deleteReceivable.isLoading}
-                    isLoadingOnCancel={cancelPayment.isLoading}
-                    onEdit={handleReceivableForEdit}
-                    onDelete={handleDeleteReceivable}
-                    onReceivement={handleReceivement}
-                    cancelReceivement={handleCancelReceivement}
-                  />
-                </Tbody>
-              </Table>
+            <Table
+              isEmpty={filteredReceivables.length === 0}
+              theadData={theadData}
+              size={sizeProps}
+            >
+              <Tbody>
+                <ReceivableItemsTable 
+                  data={filteredReceivables}
+                  isLoadingonDelete={deleteReceivable.isLoading}
+                  isLoadingOnCancel={cancelPayment.isLoading}
+                  onEdit={handleReceivableForEdit}
+                  onDelete={handleDeleteReceivable}
+                  onReceivement={handleReceivement}
+                  cancelReceivement={handleCancelReceivement}
+                />
+              </Tbody>
+            </Table>
 
-              <Pagination
-                from={data.meta.from}
-                to={data.meta.to}
-                lastPage={data.meta.last_page}
-                currentPage={page}
-                totalRegisters={data.meta.total}
-                onPageChange={setPage}
-              />
-            </>
-          )
-        }
+            <Pagination
+              from={data.meta.from}
+              to={data.meta.to}
+              lastPage={data.meta.last_page}
+              currentPage={page}
+              totalRegisters={data.meta.total}
+              onPageChange={setPage}
+            />
+          </>
+        )}
       </Layout>
     </>
   )

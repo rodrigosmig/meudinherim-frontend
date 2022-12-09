@@ -1,6 +1,5 @@
 import { useState, ChangeEvent } from "react";
-import { useRouter } from "next/router";
-import { 
+import {
   Box,
   Button,
   Flex,
@@ -65,7 +64,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
     }
 
     try {
-      const response = await invoiceEntriesService.create(data);
+      await invoiceEntriesService.create(data);
 
       getMessage("Sucesso", `Lançamento ${values.description} criado com sucesso`);
 
@@ -81,10 +80,10 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
         const data: IInvoiceEntryResponseError = error.response.data;
 
         let key: IInvoiceEntryErrorKey        
-        for (key in data) {          
-          data[key].map(error => {
+        for (key in data) { 
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       } else if (error.response?.status === 400) {
         getMessage("Erro", error.response.data.message, 'error');

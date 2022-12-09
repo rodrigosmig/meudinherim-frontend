@@ -22,7 +22,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "sonar-project.js"
   ],
   "exclude": [
     "node_modules"

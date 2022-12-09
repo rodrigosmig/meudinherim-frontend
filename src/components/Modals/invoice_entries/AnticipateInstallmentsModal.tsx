@@ -67,7 +67,7 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose }: Props) =
   }, [isOpen, onClose, entry.parcelable_id, entry.parcel_number]);
 
   const handleCheckAnticipate = (instalmment_id: number) => {
-    installments.map(installment  => {
+    installments.forEach(installment  => {
       if ( installment.id === instalmment_id) {
         installment.anticipated = !installment.anticipated;
 
@@ -110,8 +110,6 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose }: Props) =
 
     try {
       await invoiceEntriesService.anticipateInstallments(data);
-
-      getMessage("Sucesso", "Parcelas antecipadas com sucesso");
       
       setIsSubmitting(false);
       
@@ -121,8 +119,9 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose }: Props) =
       queryClient.invalidateQueries(OPEN_INVOICES)
       queryClient.invalidateQueries(CARDS)
 
-      onClose();
+      getMessage("Sucesso", "Parcelas antecipadas com sucesso");
 
+      onClose();
     } catch (error) {
       const data = error.response.data;
 
@@ -146,13 +145,13 @@ export const AnticipateInstallmentsModal = ({ entry, isOpen, onClose }: Props) =
       isOpen={isOpen}
       onClose={onClose}
     >
-      { isLoading ? (
-        <Loading />
-      ) : installments.length === 0 
-        ? (
-          <Text>Nenhuma parcela para antecipar</Text>
-        ) 
-        : (
+      {isLoading && <Loading />}
+      
+      {!isLoading && installments.length === 0 && (
+        <Text>Nenhuma parcela para antecipar</Text>
+      )}
+      
+      { !isLoading && installments.length !== 0 && (
         <>
           <Table 
             size={tableSize}

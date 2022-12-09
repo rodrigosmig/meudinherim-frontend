@@ -195,56 +195,55 @@ export default function Categories() {
           onChange={event => handleFilterCategories(event.target.value)}
         />
 
-        { isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <Flex justify="center">Falha ao obter as categorias</Flex>
-          ) : (
-            <>
-              <Table
-                isEmpty={filteredCategories.length === 0}
-                theadData={headList}
-                size={sizeProps}
-              >
-                <Tbody>
-                  { filteredCategories.map(category => (
-                    <Tr key={category.id}>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{category.name}</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        { category.type === 1 ? 'Entrada' : 'Saída' }
-                      </Td>
-                      <Td>
-                        { category.show_in_dashboard ? <Check /> : <Close /> }
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <HStack spacing={[2]}>
-                          <EditButton onClick={() => handleEditCategory(category.id)} />
-                          <DeleteButton 
-                            onDelete={() => handleDeleteCategory(category.id)} 
-                            resource="Categoria"
-                            loading={deleteCategory?.isLoading}
-                          />
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  )) }
-                </Tbody>
-              </Table>
+        {isLoading && <Loading />}
 
-              <Pagination
-                from={data.meta.from}
-                to={data.meta.to}
-                lastPage={data.meta.last_page}
-                currentPage={page}
-                totalRegisters={data.meta.total}
-                onPageChange={setPage}
-              />
+        {isError && <Flex justify="center">Falha ao obter as categorias</Flex>}
 
-            </>
-          )
-        }
+        { !isLoading && !isError && (
+          <>
+            <Table
+              isEmpty={filteredCategories.length === 0}
+              theadData={headList}
+              size={sizeProps}
+            >
+              <Tbody>
+                { filteredCategories.map(category => (
+                  <Tr key={category.id}>
+                    <Td fontSize={["xs", "md"]}>
+                      <Text fontWeight="bold">{category.name}</Text>
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      { category.type === 1 ? 'Entrada' : 'Saída' }
+                    </Td>
+                    <Td>
+                      { category.show_in_dashboard ? <Check /> : <Close /> }
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      <HStack spacing={[2]}>
+                        <EditButton onClick={() => handleEditCategory(category.id)} />
+                        <DeleteButton 
+                          onDelete={() => handleDeleteCategory(category.id)} 
+                          resource="Categoria"
+                          loading={deleteCategory?.isLoading}
+                        />
+                      </HStack>
+                    </Td>
+                  </Tr>
+                )) }
+              </Tbody>
+            </Table>
+
+            <Pagination
+              from={data.meta.from}
+              to={data.meta.to}
+              lastPage={data.meta.last_page}
+              currentPage={page}
+              totalRegisters={data.meta.total}
+              onPageChange={setPage}
+            />
+
+          </>
+        )}
       </Layout>
     </>
   )
@@ -253,7 +252,7 @@ export default function Categories() {
 export const getServerSideProps = withSSRAuth(async (context) => {
   const apiClient = setupApiClient(context);
   
-  const response = await apiClient.get('/categories');
+  await apiClient.get('/categories');
 
   return {
     props: {}

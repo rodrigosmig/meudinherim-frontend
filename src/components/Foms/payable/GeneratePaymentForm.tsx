@@ -1,24 +1,23 @@
-import { 
+import {
   Box,
   Button,
   Flex,
   Stack
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
+import { useCategoriesForm } from "../../../hooks/useCategories";
+import { payableService } from "../../../services/ApiService/PayableService";
+import { IGenerateKeyError } from "../../../types/accountScheduling";
+import { IInvoice } from "../../../types/card";
+import { IGeneratePaymentResponseError, IPayableCreateData } from "../../../types/payable";
+import { ACCOUNTS_REPORT, getMessage, INVOICE, OPEN_INVOICES, PAYABLES, toBrDate, toCurrency } from "../../../utils/helpers";
+import { generatePaymentValidation } from "../../../validations/payable";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { Select } from "../../Inputs/Select";
-import { ACCOUNTS_REPORT, getMessage, INVOICE, OPEN_INVOICES, PAYABLES, toBrDate, toCurrency } from "../../../utils/helpers";
-import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
-import { useQueryClient } from "react-query";
-import { payableService } from "../../../services/ApiService/PayableService";
-import { IInvoice } from "../../../types/card";
-import { IGeneratePaymentResponseError, IPayableCreateData } from "../../../types/payable";
-import { IGenerateKeyError } from "../../../types/accountScheduling";
-import { generatePaymentValidation } from "../../../validations/payable";
 
 interface Props {
   invoice: IInvoice;
@@ -52,17 +51,17 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: Props) => {
 
     try {
       await payableService.create(data);
-
-      getMessage("Sucesso", "Conta a pagar gerado com sucesso");
-
+     
       queryClient.invalidateQueries('open_invoices');
       queryClient.invalidateQueries('invoice');
-
+      
       queryClient.invalidateQueries(OPEN_INVOICES);
       queryClient.invalidateQueries(INVOICE);
       queryClient.invalidateQueries(PAYABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
       
+      getMessage("Sucesso", "Conta a pagar gerado com sucesso");
+
       onCancel();
     } catch (error) {
       if (error.response?.status === 422) {
@@ -70,9 +69,9 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: Props) => {
 
         let key: IGenerateKeyError        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
 

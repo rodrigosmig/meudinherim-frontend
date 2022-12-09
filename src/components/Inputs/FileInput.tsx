@@ -1,39 +1,25 @@
 import {
-  useState,
-  SetStateAction,
-  Dispatch,
-  ForwardRefRenderFunction,
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-} from 'react';
-import {
-  Box,
-  FormLabel,
-  CircularProgress,
-  CircularProgressLabel,
-  Icon,
-  Image,
-  Text,
-  FormControl,
-  FormErrorMessage,
-  Flex,
-  Tooltip,
-  Avatar,
+  Avatar, Box, CircularProgress,
+  CircularProgressLabel, Flex, FormControl,
+  FormErrorMessage, FormLabel, Icon, Text, Tooltip
 } from '@chakra-ui/react';
 import axios, { AxiosRequestConfig, CancelTokenSource } from 'axios';
+import {
+  Dispatch, forwardRef, ForwardRefRenderFunction, SetStateAction, useCallback,
+  useContext,
+  useEffect, useState
+} from 'react';
 import {
   FieldError,
   FieldValues,
   UseFormSetError,
-  UseFormTrigger,
+  UseFormTrigger
 } from 'react-hook-form';
 import { FiAlertCircle, FiPlus } from 'react-icons/fi';
-import { profileService } from '../../services/ApiService/ProfileService';
 import { AuthContext } from '../../contexts/AuthContext';
-import { getMessage } from '../../utils/helpers';
 import { useUser } from '../../hooks/useUser';
+import { profileService } from '../../services/ApiService/ProfileService';
+import { getMessage } from '../../utils/helpers';
 
 export interface FileInputProps {
   name: string;

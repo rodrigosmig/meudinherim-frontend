@@ -71,10 +71,10 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
     try {
       await receivableService.update(data);
 
-      getMessage("Sucesso", "Conta a Receber alterada com sucesso");
-
       queryClient.invalidateQueries(RECEIVABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      
+      getMessage("Sucesso", "Conta a Receber alterada com sucesso");
 
       onClose();
     } catch (error) {
@@ -83,9 +83,9 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
 
         let key: IAccountSchedulingErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       }
     }

@@ -1,19 +1,18 @@
-import { useSidebarDrawer } from "../../../contexts/SidebarDrawerContext";
-import { SidebarNav } from './SidebarNav';
-import { 
+import {
   Box,
-  Drawer, 
-  DrawerBody, 
-  DrawerCloseButton, 
-  DrawerContent, 
-  DrawerHeader, 
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
   DrawerOverlay,
   Flex,
-  useBreakpointValue,
-  useColorModeValue
+  useBreakpointValue
 } from "@chakra-ui/react";
 import { memo } from "react";
+import { useSidebarDrawer } from "../../../contexts/SidebarDrawerContext";
 import { Logo } from "../Logo";
+import { SidebarNav } from './SidebarNav';
 
 const SidebarComponent = () => {
   const { isOpen, onClose } = useSidebarDrawer();

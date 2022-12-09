@@ -1,8 +1,5 @@
-import { 
-  Box, 
-  Flex, 
-  Icon,
-  Stat,
+import {
+  Flex, Stat,
   StatLabel,
   StatNumber,
   useColorModeValue

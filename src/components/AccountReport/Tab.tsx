@@ -1,13 +1,15 @@
-import { TabProps } from "@chakra-ui/react";
-import { 
-  Tbody, 
+import {
+  Tab, 
+  TabList, 
+  TabPanel, 
+  TabPanels, 
+  TabProps, 
+  Tabs, 
+  Tbody,
   Td,
-  Text,
-  Th, 
-  Thead, 
-  Tr,
-  Tabs, TabList, TabPanels, Tab, TabPanel
-} from "@chakra-ui/react"
+  Text, 
+  Tr
+} from "@chakra-ui/react";
 import { IPayable } from "../../types/payable";
 import { IReceivable } from "../../types/receivable";
 import { toBrDate, toCurrency } from "../../utils/helpers";

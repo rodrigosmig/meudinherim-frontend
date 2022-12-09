@@ -1,9 +1,9 @@
 
+import { Box, BoxProps, useColorModeValue } from '@chakra-ui/react';
 import { memo, ReactNode } from 'react';
-import { Box, BoxProps, Text, useColorModeValue } from '@chakra-ui/react';
-import { Sidebar } from './Sidebar';
-import { Header } from './Header';
 import { Card } from '../Card';
+import { Header } from './Header';
+import { Sidebar } from './Sidebar';
 
 interface Props extends BoxProps {
   isDashboard?: boolean

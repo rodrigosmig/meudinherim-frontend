@@ -1,6 +1,6 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import Router, { useRouter } from 'next/router';
-import { setCookie, parseCookies, destroyCookie } from 'nookies';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { authService } from '../services/ApiService/AuthService';
 import { IAuthContextData, ISignInCredentials, IUser } from "../types/auth";
 
@@ -41,12 +41,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     authChannel = new BroadcastChannel('auth');
 
     authChannel.onmessage = (message) => {
-      switch (message.data) {
-        case 'signOut':
-          logout();
-          break;
-        default:
-          break;
+      if (message.data === "signOut") {
+        logout();
       }
     }
     return authChannel.close

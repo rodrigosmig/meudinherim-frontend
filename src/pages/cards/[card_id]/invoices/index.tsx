@@ -1,38 +1,35 @@
-import { ChangeEvent, useState } from "react";
-import Head from "next/head";
-import { Layout } from "../../../../components/Layout";
-import { setupApiClient } from "../../../../services/api";
-import { withSSRAuth } from "../../../../utils/withSSRAuth";
 import {
   Box,
   Flex,
   HStack,
   Select,
   Spinner,
-  Tbody, 
-  Td, 
-  Text, 
-  Th, 
-  Thead, 
-  Tr,
+  Tbody,
+  Td,
+  Text, Tr,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
-import { Heading } from "../../../../components/Heading";
-import { getMessage, INVOICE, INVOICES, toBrDate, toCurrency } from "../../../../utils/helpers";
-import { FilterPerPage } from "../../../../components/Pagination/FilterPerPage";
-import { useInvoices } from "../../../../hooks/useInvoices";
-import { Loading } from "../../../../components/Loading";
-import { Table } from "../../../../components/Table";
-import { Pagination } from "../../../../components/Pagination";
-import { ShowEntriesButton } from "../../../../components/Buttons/ShowEntries";
+import Head from "next/head";
 import { useRouter } from "next/router";
-import { GeneratePayment } from "../../../../components/Buttons/GeneratePayment";
-import { GeneratePaymentModal } from "../../../../components/Modals/invoices/GeneratePaymentModal";
-import { ICard, IInvoice } from "../../../../types/card";
-import { SetPaidButton } from "../../../../components/Buttons/SetPaid";
+import { ChangeEvent, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import { GeneratePayment } from "../../../../components/Buttons/GeneratePayment";
+import { SetPaidButton } from "../../../../components/Buttons/SetPaid";
+import { ShowEntriesButton } from "../../../../components/Buttons/ShowEntries";
+import { Heading } from "../../../../components/Heading";
+import { Layout } from "../../../../components/Layout";
+import { Loading } from "../../../../components/Loading";
+import { GeneratePaymentModal } from "../../../../components/Modals/invoices/GeneratePaymentModal";
+import { Pagination } from "../../../../components/Pagination";
+import { FilterPerPage } from "../../../../components/Pagination/FilterPerPage";
+import { Table } from "../../../../components/Table";
+import { useInvoices } from "../../../../hooks/useInvoices";
+import { setupApiClient } from "../../../../services/api";
 import { cardService } from "../../../../services/ApiService/CardService";
+import { ICard, IInvoice } from "../../../../types/card";
+import { getMessage, INVOICE, INVOICES, toBrDate, toCurrency } from "../../../../utils/helpers";
+import { withSSRAuth } from "../../../../utils/withSSRAuth";
 
 interface Props {
   card: ICard
@@ -158,62 +155,61 @@ export default function Invoices({ card }: Props) {
           </Flex>            
         </Flex>
 
-        { isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <Flex justify="center">Falha ao obter as faturas</Flex>
-          ) : (
-            <>
-              <Table
-                theadData={headList}
-                size={sizeProps}
-              >
-                <Tbody>
-                  { data.invoices.map(invoice => (
-                    <Tr key={invoice.id}>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{ toBrDate(invoice.due_date) }</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold">{ invoice.closing_date }</Text>
-                      </Td>
-                      <Td fontSize={["xs", "md"]}>
-                        <Text fontWeight="bold" color={"red.600"}>{ toCurrency(invoice.amount) }</Text>
-                      </Td>
-                      <Td>
-                        <HStack spacing={[2]}>                              
-                          <ShowEntriesButton onClick={() => handleShowEntries(card.id, invoice.id)} />7
-                          
-                          { (!isEmpty(invoice) && invoice.isClosed && !invoice.hasPayable) && (
-                            <GeneratePayment onClick={() => handleGeneratePayment(invoice)} />
-                          )}
+        {isLoading && <Loading />}
 
-                          { (isEmpty(invoice) && invoice.isClosed && !invoice.hasPayable && !invoice.paid) && (
-                            <SetPaidButton
-                              onSetPaid={() => handleSetAsPaid(invoice.id)}
-                              loading={setPaid.isLoading}
-                            />
-                          )}
+        {isError && <Flex justify="center">Falha ao obter as faturas</Flex>}
 
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  )) }
-                </Tbody>
-              </Table>
+        { !isLoading && !isError && (
+          <>
+            <Table
+              theadData={headList}
+              size={sizeProps}
+            >
+              <Tbody>
+                { data.invoices.map(invoice => (
+                  <Tr key={invoice.id}>
+                    <Td fontSize={["xs", "md"]}>
+                      <Text fontWeight="bold">{ toBrDate(invoice.due_date) }</Text>
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      <Text fontWeight="bold">{ invoice.closing_date }</Text>
+                    </Td>
+                    <Td fontSize={["xs", "md"]}>
+                      <Text fontWeight="bold" color={"red.600"}>{ toCurrency(invoice.amount) }</Text>
+                    </Td>
+                    <Td>
+                      <HStack spacing={[2]}>                              
+                        <ShowEntriesButton onClick={() => handleShowEntries(card.id, invoice.id)} />7
+                        
+                        { (!isEmpty(invoice) && invoice.isClosed && !invoice.hasPayable) && (
+                          <GeneratePayment onClick={() => handleGeneratePayment(invoice)} />
+                        )}
 
-              <Pagination
-                from={data.meta.from}
-                to={data.meta.to}
-                lastPage={data.meta.last_page}
-                currentPage={page}
-                totalRegisters={data.meta.total}
-                onPageChange={setPage}
-              />
+                        { (isEmpty(invoice) && invoice.isClosed && !invoice.hasPayable && !invoice.paid) && (
+                          <SetPaidButton
+                            onSetPaid={() => handleSetAsPaid(invoice.id)}
+                            loading={setPaid.isLoading}
+                          />
+                        )}
 
-            </>
-          )
-        }
+                      </HStack>
+                    </Td>
+                  </Tr>
+                )) }
+              </Tbody>
+            </Table>
+
+            <Pagination
+              from={data.meta.from}
+              to={data.meta.to}
+              lastPage={data.meta.last_page}
+              currentPage={page}
+              totalRegisters={data.meta.total}
+              onPageChange={setPage}
+            />
+
+          </>
+        )}
       </Layout>
     </>
   )

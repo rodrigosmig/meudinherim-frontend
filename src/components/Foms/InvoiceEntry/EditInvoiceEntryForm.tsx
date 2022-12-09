@@ -4,7 +4,6 @@ import {
   Flex,
   Stack
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -68,9 +67,9 @@ export const EditInvoiceEntryForm = ({ entry, onClose }: Props) => {
 
         let key: IInvoiceEntryErrorKey        
         for (key in data) {          
-          data[key].map(error => {
+          data[key].forEach(error => {
             setError(key, {message: error})
-          })
+          });
         }
       } else if (error.response?.status === 400) {
         getMessage("Erro", error.response.data.message, 'error');

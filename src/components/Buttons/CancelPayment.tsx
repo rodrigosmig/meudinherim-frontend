@@ -34,7 +34,7 @@ const CancelPaymentButtonComponent = ({ label, loading, isPayment = true, onCanc
   })
 
   const handleOnCancel = async () => {
-    await onCancel();
+    onCancel();
     onClose();
   }
 

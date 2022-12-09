@@ -1,11 +1,10 @@
-import {  
+import {
   Flex,
   LinkBox,
   LinkOverlay,
   Stack,
   useColorModeValue
 } from "@chakra-ui/react";
-import NextLink from 'next/link';
 import { ReactElement } from "react";
 
 interface Props {

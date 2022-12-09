@@ -33,7 +33,7 @@ const DeleteButtonComponent = ({ loading, resource, onDelete, isDisabled = false
   })
 
   const handleOnDelete = async () => {
-    await onDelete();
+    onDelete();
     onClose()
   }
 

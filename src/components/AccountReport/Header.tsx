@@ -1,5 +1,4 @@
-import { 
-  Box,
+import {
   Text
 } from "@chakra-ui/react";
 
