@@ -84,8 +84,7 @@ export const NavAdd = () => {
         <PopoverContent
           border={0}
           boxShadow={'xl'}
-          rounded={'xl'}
-          minW={['xs']}
+          width={['full']}
         >
           <PopoverArrow />
           <PopoverHeader>
@@ -129,9 +128,6 @@ export const NavAdd = () => {
               icon={<Icon as={BiTransfer} fontSize={20} />}
               onClick={onOpenTransfer}
             />
-
-            <Divider mt={2} mb={2} />
-
             </PopoverBody>
         </PopoverContent>
       </Popover>    

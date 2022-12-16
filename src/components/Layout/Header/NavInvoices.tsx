@@ -61,8 +61,7 @@ export const NavInvoices = () => {
         <PopoverContent
           border={0}
           boxShadow={'xl'}
-          rounded={'xl'}
-          minW={['xs', 'sm']}
+          width={['full', 'xs']}
         >
           <PopoverArrow />
           <PopoverHeader 

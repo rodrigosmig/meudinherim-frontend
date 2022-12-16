@@ -114,8 +114,8 @@ export const NavNotifications = () => {
         <PopoverContent
           border={0}
           boxShadow={'xl'}
-          rounded={'xl'}
-          minW={['md']}
+          height={[hasNotifications() ? 'sm' : 'full', hasNotifications() ? 'md' : 'full']}
+          overflowY="auto"
         >
           <PopoverArrow />
           <PopoverHeader
@@ -185,15 +185,14 @@ export const NavNotifications = () => {
           { hasNotifications() && (
             <PopoverFooter
               border='0'
-              d='flex'
-              alignItems='center'
+              display='flex'
               justifyContent='center'
-              pb={4}
             > 
               <Button fontWeight="bold" 
                 variant="ghost"
                 isLoading={flag}
                 onClick={markAllNotificationAsRead}
+                fontSize={['sm', "md", "md"]}
               >
                 Marcar todas como lidas
               </Button>

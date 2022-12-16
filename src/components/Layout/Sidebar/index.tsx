@@ -19,8 +19,11 @@ const SidebarComponent = () => {
 
   const isDrawerSidebar = useBreakpointValue({
     base: true,
+    md: false,
     lg: false
   });
+
+  console.log(isDrawerSidebar)
 
   if (isDrawerSidebar) {
     return (
