@@ -99,7 +99,6 @@ export default function Dashboard() {
               icon={FiArrowDown}
               color={expenseColor}
             />
-
             <Stats 
               label={'Saldo'}
               amount={data.total.income - data.total.expense}

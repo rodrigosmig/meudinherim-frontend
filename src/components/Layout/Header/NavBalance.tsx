@@ -57,7 +57,9 @@ export const NavBalance = () => {
         <PopoverContent
           border={0}
           boxShadow={'xl'}
-          rounded={'xl'}
+          width={['50']}
+          height={["sm", "md"]}
+          overflowY="auto"
         >
           <PopoverArrow />
           <PopoverHeader 

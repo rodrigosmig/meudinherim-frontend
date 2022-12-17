@@ -15,6 +15,7 @@ const HeaderComponent = () => {
 
   const isWideVersion = useBreakpointValue({
     base: false,
+    md: true,
     lg: true 
   })
 

@@ -9,6 +9,7 @@ import {
 export const Logo = () => {
   const isWideVersion = useBreakpointValue({
     base: false,
+    md: true,
     lg: true 
   })
 
