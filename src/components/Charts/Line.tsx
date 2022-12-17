@@ -95,7 +95,7 @@ export const LineChart = ({ label, months, series }: Props) => {
     >
       <Box w="100%">
         <Text
-          w="full"
+          width="full"
           p={3}
           fontWeight={'bold'}
           fontSize={'lg'}
@@ -105,20 +105,25 @@ export const LineChart = ({ label, months, series }: Props) => {
         </Text>
       </Box> 
       <Flex
-        w={['full']}
-        h={['12.5rem', 'xs']}
+        width={['full']}
+        height={['12.5rem', 'xs']}
         justifyContent={'center'}
         alignItems={'center'}
         mb={4}
-        p={4}
+        px={4}
       >
-        <Chart 
-          options={options.options} 
-          series={options.series} 
-          type="line"
-          width="100%"
-          height="100%"
-        />
+        <Box
+          width={['full']}
+          height={["full"]}
+        >
+          <Chart 
+            options={options.options} 
+            series={options.series} 
+            type="line"
+            width="100%"
+            height="100%"
+          />
+        </Box>
       </Flex>
     </Flex>
   )

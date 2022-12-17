@@ -1967,9 +1967,9 @@ anymatch@^3.0.3:
     picomatch "^2.0.4"
 
 apexcharts@^3.32.0:
-  version "3.32.0"
-  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-3.32.0.tgz#97e3f916af1c3c0109bc8c88f95b68dfe99c294a"
-  integrity sha512-9VUyiTR2RgD4NIJOOdKxxi8tjzrKCBMr7HjWxsw+5lDPu/tZJLVudpgFhlNTIy3CbhxQ4edaiTttmbo6eDDgiA==
+  version "3.36.3"
+  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-3.36.3.tgz#debd58ded07163d51e00aeb15827d594e0cc8129"
+  integrity sha512-8/FXEs0ohXMff07Gv28XjhPwEJphIUdq2/wii/pcvi54Tw6z1mjrV8ydN8rlWi/ve8BAPBefJkLmRWv7UOBsLw==
   dependencies:
     svg.draggable.js "^2.2.2"
     svg.easing.js "^2.0.0"
@@ -4589,7 +4589,7 @@ nwsapi@^2.2.0:
 object-assign@^4.0.1, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
-  integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
+  integrity sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==
 
 object-inspect@^1.10.3, object-inspect@^1.9.0:
   version "1.11.0"
@@ -4938,7 +4938,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.5.0:
+prop-types@^15.5.0, prop-types@^15.5.7:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -4946,15 +4946,6 @@ prop-types@^15.5.0:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
     react-is "^16.13.1"
-
-prop-types@^15.5.7:
-  version "15.7.2"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
-  integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
-  dependencies:
-    loose-envify "^1.4.0"
-    object-assign "^4.1.1"
-    react-is "^16.8.1"
 
 prop-types@^15.5.8, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.8.0"
@@ -4994,9 +4985,9 @@ react-animate-height@2.0.21:
     prop-types "^15.6.1"
 
 react-apexcharts@^1.3.9:
-  version "1.3.9"
-  resolved "https://registry.yarnpkg.com/react-apexcharts/-/react-apexcharts-1.3.9.tgz#d97e53fd513dc6ff73b90c2364c3bdd88d8dad01"
-  integrity sha512-KPonT5uQPHOHSVgTNEzpB0HhCkZtoicQYGjR9P+3DRDSgTsC+DM2vDUfo/B2Fn1m+wdgVeDXWL0VJYDc6JD/tw==
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-apexcharts/-/react-apexcharts-1.4.0.tgz#e3619104b34750da67a2ca80289dc87085c2aa27"
+  integrity sha512-DrcMV4aAMrUG+n6412yzyATWEyCDWlpPBBhVbpzBC4PDeuYU6iF84SmExbck+jx5MUm4U5PM3/T307Mc3kzc9Q==
   dependencies:
     prop-types "^15.5.7"
 
@@ -5083,7 +5074,7 @@ react-icons@^4.2.0:
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.2.0.tgz#6dda80c8a8f338ff96a1851424d63083282630d0"
   integrity sha512-rmzEDFt+AVXRzD7zDE21gcxyBizD/3NqjbX6cmViAgdqfJ2UiLer8927/QhhrXQV7dEj/1EGuOTPp7JnLYVJKQ==
 
-react-is@^16.13.1, react-is@^16.7.0, react-is@^16.8.1:
+react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
@@ -5668,14 +5659,14 @@ svg.draggable.js@^2.2.2:
 svg.easing.js@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/svg.easing.js/-/svg.easing.js-2.0.0.tgz#8aa9946b0a8e27857a5c40a10eba4091e5691f12"
-  integrity sha1-iqmUawqOJ4V6XEChDrpAkeVpHxI=
+  integrity sha512-//ctPdJMGy22YoYGV+3HEfHbm6/69LJUTAqI2/5qBvaNHZ9uUFVC82B0Pl299HzgH13rKrBgi4+XyXXyVWWthA==
   dependencies:
     svg.js ">=2.3.x"
 
 svg.filter.js@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/svg.filter.js/-/svg.filter.js-2.0.2.tgz#91008e151389dd9230779fcbe6e2c9a362d1c203"
-  integrity sha1-kQCOFROJ3ZIwd5/L5uLJo2LRwgM=
+  integrity sha512-xkGBwU+dKBzqg5PtilaTb0EYPqPfJ9Q6saVldX+5vCRy31P6TlRCP3U9NxH3HEufkKkpNgdTLBJnmhDHeTqAkw==
   dependencies:
     svg.js "^2.2.5"
 

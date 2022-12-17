@@ -2,6 +2,7 @@ import {
   Box,
   Flex,
   Text,
+  useBreakpointValue,
   useColorMode,
   useColorModeValue
 } from '@chakra-ui/react';
@@ -105,7 +106,7 @@ export const BarChart = ({ label, months, data }: Props) => {
     >
       <Box w="100%">
         <Text
-          w="full"
+          width="full"
           p={3}
           fontWeight={'bold'}
           fontSize={['md', 'lg']}
@@ -115,20 +116,25 @@ export const BarChart = ({ label, months, data }: Props) => {
         </Text>
       </Box> 
       <Flex
-        w={['full']}
-        h={['12.5rem', 'xs']}
+        width={['full']}
+        height={['12.5rem', 'xs']}
         justifyContent={'center'}
         alignItems={'center'}
         mb={4}
         px={4}
       >
+        <Box
+          width={['full']}
+          height={["full"]}
+        >
         <Chart 
           options={options.options} 
           series={options.series} 
           type="bar"
           width='100%'
           height="100%"
-        />        
+        />
+        </Box>
       </Flex>
     </Flex>
   )
