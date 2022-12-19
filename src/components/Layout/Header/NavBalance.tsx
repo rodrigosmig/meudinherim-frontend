@@ -39,12 +39,15 @@ export const NavBalance = () => {
     }
   }, [data])
 
+  const hasManyBalances = () => {
+    return balances?.length > 4;
+  }
+
   return (
     <Box>
       <Popover 
         isLazy 
         trigger={'hover'}
-        //onOpen={refetch}
       >
         <PopoverTrigger>
           <IconButton
@@ -57,8 +60,8 @@ export const NavBalance = () => {
         <PopoverContent
           border={0}
           boxShadow={'xl'}
-          width={['50']}
-          height={["sm", "md"]}
+          width={['56', '60']}
+          height={[hasManyBalances() ? 'sm' : 'full']}
           overflowY="auto"
         >
           <PopoverArrow />
