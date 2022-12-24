@@ -1,6 +1,7 @@
 import { Flex, Stack } from "@chakra-ui/react";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useState } from 'react';
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useUser } from '../../../hooks/useUser';
 import { profileService } from '../../../services/ApiService/ProfileService';
@@ -12,10 +13,10 @@ import { Input } from '../../Inputs/Input';
 import { Switch } from "../../Inputs/Switch";
 
 export function ProfileForm() {
+  const router = useRouter();
   const { user, setUser } = useUser();
-  const [ enableNotification, setEnableNotification ] = useState(user.enable_notification);
   
-  const { register, handleSubmit, setError, formState } = useForm({
+  const { register, watch, handleSubmit, setError, reset, formState } = useForm({
     defaultValues: {
       name: user.name,
       email: user.email,
@@ -23,22 +24,23 @@ export function ProfileForm() {
     },
     resolver: yupResolver(profileValidation)
   });
+
+  const enableNotification = watch('enable_notification')
   
   const { errors } = formState;
 
   const handleUpdateProfile: SubmitHandler<IProfileUpdateData> = async (values) => {
-    if (values.name && user.name 
-      && values.email === user.email 
-      && values.enable_notification === user.enable_notification
-    ) {
-      return getMessage("Sem alteração", "Nenhuma alteração foi realizada", "warning", 2000);
-    }
-
     try {
       const response = await profileService.updateProfile(values)
       const userUpdated = response.data
 
       setUser(userUpdated);
+
+      if (formState.touchedFields.email) {
+        getMessage("Validação de e-mail", "O novo e-mail precisa ser verificado.", "warning");
+        router.push("/auth/resend-verification-email")
+        return;
+      }
 
       return getMessage("Sucesso", "Alteração realizada com sucesso");
     } catch (error) {
@@ -54,6 +56,14 @@ export function ProfileForm() {
       }
     }    
   }
+
+  useEffect(() => {
+    reset({
+      email: user.email,
+      name: user.name,
+      enable_notification: user.enable_notification
+    })
+  }, [reset, formState.isSubmitSuccessful, user.name, user.email, user.enable_notification])
 
   return (
     <Flex 
@@ -85,7 +95,6 @@ export function ProfileForm() {
           label="Receber notificações"
           {...register('enable_notification')}
           isChecked={enableNotification}
-          onChange={e => setEnableNotification(!enableNotification)}
         />
 
       </Stack>
@@ -94,6 +103,7 @@ export function ProfileForm() {
         mt={[6]}
         label="Alterar"
         isLoading={formState.isSubmitting}
+        isDisabled={!formState.isDirty}
       />
     </Flex>
   )

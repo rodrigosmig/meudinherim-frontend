@@ -23,8 +23,6 @@ const SidebarComponent = () => {
     lg: false
   });
 
-  console.log(isDrawerSidebar)
-
   if (isDrawerSidebar) {
     return (
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>

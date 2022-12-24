@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../../Inputs/Input"
 import { Switch } from "../../Inputs/Switch"
-import { ACCOUNTS_ENTRIES, ACCOUNTS_REPORT, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, PAYABLES, toBrDate, toUsDate } from "../../../utils/helpers"
+import { ACCOUNTS_ENTRIES, ACCOUNTS_REPORT, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, PAYABLES, toBrDate, toUsDate } from "../../../utils/helpers"
 import { payableService } from "../../../services/ApiService/PayableService";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
@@ -70,6 +70,15 @@ export const PaymentForm = ({ payable, onCancel }: Props) => {
       queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
       queryClient.invalidateQueries(ACCOUNT_BALANCE);
       queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+
+      if (payable.invoice) {
+        queryClient.invalidateQueries(INVOICE)
+        queryClient.invalidateQueries(INVOICES)
+        queryClient.invalidateQueries(INVOICE_ENTRIES)
+        queryClient.invalidateQueries(OPEN_INVOICES)
+        queryClient.invalidateQueries(CARDS)
+        console.log("entrou")
+      }
       
       getMessage("Sucesso", "Conta paga com sucesso");
 

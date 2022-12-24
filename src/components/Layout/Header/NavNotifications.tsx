@@ -1,26 +1,24 @@
-import {  
-  Box,
-  Center,
+import {
+  Box, Button, Center,
   Flex,
   Icon,
-  IconButton,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverArrow,
-  PopoverFooter,
-  Stack,
-  Text,
-  useColorModeValue,
-  Spinner,
-  Button,
-  useBoolean,
+  IconButton, 
   LinkBox,
-  LinkOverlay
+  LinkOverlay, 
+  Popover, 
+  PopoverArrow, 
+  PopoverBody, 
+  PopoverContent, 
+  PopoverFooter, 
+  PopoverHeader, 
+  PopoverTrigger, 
+  Spinner, 
+  Stack,
+  Text, 
+  useBoolean, 
+  useColorModeValue
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { RiNotificationLine } from "react-icons/ri";
 import { useNotifications } from "../../../hooks/useNotifications";
 import { notificationService } from "../../../services/ApiService/NotificationService";
@@ -38,33 +36,29 @@ export const NavNotifications = () => {
     return type === 'payables' ? "Contas a Pagar" : "Contas a Receber";
   }
 
-  const markAllNotificationAsRead = async () => {
+  const markAllNotificationAsRead = useCallback(async () => {
     setFlag.on();
 
     try {
       await notificationService.markAllAsRead();
+      refetch();
+      setFlag.off();
     } catch (error) {
       getMessage("Erro", error.response.data.message, 'error');
-    }   
+    }
+  }, [refetch, setFlag])
 
-    setFlag.off();
-
-    refetch();
-  }
-
-  const markAsRead = async (id: string) => {
+  const markAsRead = useCallback(async (id: string) => {
     setIsLoadingRead(true)
 
     try {
       await notificationService.markAsRead(id);
+      setIsLoadingRead(false)
+      refetch();
     } catch (error) {
       getMessage("Erro", error.response.data.message, 'error');
     }
-
-    setIsLoadingRead(false)
-
-    refetch();
-  }
+  }, [refetch])
 
   const hasNotifications = () => {
     return data?.length !== 0;
@@ -74,12 +68,15 @@ export const NavNotifications = () => {
     return data?.length;
   }
 
+  const hasManyNotification = () => {
+    return data?.length > 4;
+  }
+
   return (
     <Box>
       <Popover
         isLazy 
         trigger={'hover'}
-        onOpen={refetch}
       >
         <PopoverTrigger>
 
@@ -114,7 +111,7 @@ export const NavNotifications = () => {
         <PopoverContent
           border={0}
           boxShadow={'xl'}
-          height={[hasNotifications() ? 'sm' : 'full', hasNotifications() ? 'md' : 'full']}
+          height={[hasManyNotification() ? 'sm' : 'full']}
           overflowY="auto"
         >
           <PopoverArrow />
@@ -190,7 +187,7 @@ export const NavNotifications = () => {
             > 
               <Button fontWeight="bold" 
                 variant="ghost"
-                isLoading={flag}
+                isLoading={flag || isLoadingRead}
                 onClick={markAllNotificationAsRead}
                 fontSize={['sm', "md", "md"]}
               >

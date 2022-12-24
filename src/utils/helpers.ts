@@ -51,7 +51,7 @@ export const getMessage = (
   toast({
     title: title,
     description: description,
-    position: "top-right",
+    position: "top",
     status: status,
     duration: duration,
     isClosable: true,
