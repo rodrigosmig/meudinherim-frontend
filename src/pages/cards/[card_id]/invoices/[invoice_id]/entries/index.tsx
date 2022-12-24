@@ -2,6 +2,7 @@ import {
   Box, Button, Flex,
   Icon,
   Spinner, Stack, Tbody,
+  Text,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
@@ -199,14 +200,21 @@ export default function InvoiceEntries({ cardId, invoiceId }: Props) {
         <Flex mb={[6, 6, 8]} justify="space-between" align="center">
           <Heading>
             <>
-            <Icon as={BiCalendar} mr="4px" />
-              { isLoadingInvoice ? (
-                  <Spinner size="sm" color="gray.500" ml="4" />
-                ) : (
-                  toBrDate(invoice.due_date)
-                )
-              }
-              { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+            {isLoadingInvoice && <Spinner size="sm" color="gray.500" ml="4" />}
+
+            {!isLoadingInvoice && (
+              <Flex align="center">                
+                <Box>
+                  <Icon as={BiCalendar} fontSize={"28px"} mr={1}/>
+                </Box>
+
+                <Box>{toBrDate(invoice.due_date)}</Box>
+
+                &nbsp; - &nbsp;<Text fontWeight={"extrabold"}>{invoice?.card.name}</Text>
+
+                { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml={1} />}
+              </Flex>
+            )}
             </>
           </Heading>
           
