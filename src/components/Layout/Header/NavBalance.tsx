@@ -60,7 +60,7 @@ export const NavBalance = () => {
         <PopoverContent
           border={0}
           boxShadow={'xl'}
-          width={['56', '60']}
+          width={['56', '72']}
           height={[hasManyBalances() ? 'sm' : 'full']}
           overflowY="auto"
         >

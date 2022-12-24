@@ -1,4 +1,4 @@
-interface INotification {
+export interface INotification {
   id: string;
   type: string;
   data: {
