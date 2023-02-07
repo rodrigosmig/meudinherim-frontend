@@ -1,3 +1,17 @@
+import { GetServerSidePropsContext, NextPageContext } from "next";
+
+export interface AuthState {
+  isLoading: boolean;
+  token: string;
+  user: IUser;
+  isAuthenticated: boolean;
+  isError: boolean,
+  error: {
+    statusCode: number,
+    message: string
+  }
+}
+
 interface UserFormData {
   email: string;
   password: string;
@@ -92,3 +106,5 @@ export interface IVerifyEmail {
 export interface IResendVerificationEmailData {
   email: string
 }
+
+export type ITokenContext = GetServerSidePropsContext | null | undefined;

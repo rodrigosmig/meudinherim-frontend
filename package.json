@@ -16,6 +16,7 @@
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@hookform/resolvers": "^2.7.1",
+    "@reduxjs/toolkit": "^1.9.2",
     "@types/react-datepicker": "^4.1.6",
     "apexcharts": "^3.32.0",
     "axios": "^0.21.1",
@@ -31,6 +32,7 @@
     "react-hook-form": "^7.31.3",
     "react-icons": "^4.2.0",
     "react-query": "^3.19.1",
+    "react-redux": "^8.0.5",
     "yup": "^0.32.9"
   },
   "devDependencies": {

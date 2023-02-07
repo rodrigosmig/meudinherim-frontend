@@ -4,9 +4,11 @@ import {
   useColorModeValue
 } from "@chakra-ui/react";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { AuthContext } from '../../../contexts/AuthContext';
+import { useDispatch } from "../../../hooks/useDispatch";
+import { signIn } from "../../../store/thunks/authThunk";
 import { ISignInCredentials } from "../../../types/auth";
 import { getMessage, isDevelopment } from "../../../utils/helpers";
 import { loginValidation } from "../../../validations/auth";
@@ -16,11 +18,13 @@ import { Link } from "../../Link";
 import { Recaptcha } from "../../Recaptcha";
 
 export function LoginForm() {
+  const dispatch = useDispatch();
+  const router = useRouter()
+
   const [isSubimited, setIsSubimited] = useState(false);
   const [reCaptchaToken, setReCaptchaToken] = useState('');
   const [isHuman, setIsHuman] = useState(false);
 
-  const { signIn } = useContext(AuthContext);  
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(loginValidation)
   });
@@ -39,8 +43,9 @@ export function LoginForm() {
     }
 
     try {
-      await signIn(newValues);
+      await dispatch(signIn(newValues));
       setIsSubimited(true);
+      router.push("/dashboard")
     } catch (error) {
       if (error?.code === 'ECONNABORTED') {
         return getMessage("Falha ao Entrar", "Servidor indisponível", 'error');
