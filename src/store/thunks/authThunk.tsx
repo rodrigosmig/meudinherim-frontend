@@ -3,7 +3,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 import { authService } from "../../services/ApiService/AuthService";
 import { tokenService } from "../../services/tokenService";
-import { ISignInCredentials, ISignInResponse } from "../../types/auth";
+import { IProfileUpdateData, ISignInCredentials, ISignInResponse } from "../../types/auth";
+import { profileService } from '../../services/ApiService/ProfileService';
 
 
 export const signIn = createAsyncThunk(
@@ -30,11 +31,8 @@ export const signIn = createAsyncThunk(
       return thunkAPI.rejectWithValue(error);
     }
     
-    thunkAPI.dispatch(getUser());
     logoutAllTabs();
-    /* thunkAPI.dispatch(getUser());
-    thunkAPI.dispatch(getTeam());
-    thunkAPI.dispatch(getAppData()); */
+    thunkAPI.dispatch(getUser());
 
     return response;
   }
@@ -47,6 +45,19 @@ export const getUser = createAsyncThunk(
       const response = await authService.me();
       return response.data;
     } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+)
+
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  async (data: IProfileUpdateData, thunkAPI) => {
+    try {
+      const response = await profileService.updateProfile(data)
+      return response.data;
+    } catch (error) {
+      console.log("erro")
       return thunkAPI.rejectWithValue(error);
     }
   }

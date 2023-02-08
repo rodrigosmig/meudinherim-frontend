@@ -17,8 +17,11 @@ import {
 } from 'react-hook-form';
 import { FiAlertCircle, FiPlus } from 'react-icons/fi';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useDispatch } from '../../hooks/useDispatch';
+import { useSelector } from '../../hooks/useSelector';
 import { useUser } from '../../hooks/useUser';
 import { profileService } from '../../services/ApiService/ProfileService';
+import { changeAvatar } from '../../store/slices/authSlice';
 import { getMessage } from '../../utils/helpers';
 
 export interface FileInputProps {
@@ -49,13 +52,14 @@ const FileInputBase: ForwardRefRenderFunction<
   },
   ref
 ) => {
-  const { user } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const { user } = useSelector(({auth}) => auth)
+
   const [progress, setProgress] = useState(0);
   const [isSending, setIsSending] = useState(false);
   const [cancelToken, setCancelToken] = useState<CancelTokenSource>(
     {} as CancelTokenSource
   );
-  const { setUser}  = useUser();
 
   const handleImageUpload = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -87,13 +91,11 @@ const FileInputBase: ForwardRefRenderFunction<
 
       try {
         const response = await profileService.updateAvatar(formData, config);
-
+        
         setLocalImageUrl(URL.createObjectURL(event.target.files[0]));
-
-        const userUpdated = {...user, avatar: response.data.avatar}
-
-        setUser(userUpdated);
-
+        
+        dispatch(changeAvatar(response.data.avatar))
+        
         getMessage("Sucesso", 'Imagem alterada com sucesso');
       } catch (err) {
         if (err?.message === 'Cancelled image upload.') return;
@@ -104,7 +106,7 @@ const FileInputBase: ForwardRefRenderFunction<
         setProgress(0);
       }
     },
-    [onChange, setError, setLocalImageUrl, setUser, trigger, user]
+    [onChange, setError, setLocalImageUrl, dispatch, trigger]
   );
 
   useEffect(() => {
