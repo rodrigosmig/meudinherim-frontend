@@ -1,5 +1,20 @@
 import { Pagination } from "./pagination";
 
+export interface CategoryState {
+  isLoading: boolean;
+  isFetching: boolean;
+  isDeleting: boolean;
+  isError: boolean;
+  categories: ICategory[];
+  config: {
+    page: number;
+    perPage: number;
+    categoryType: CategoryType;
+    active: boolean;
+  }
+  pagination: Pagination;
+}
+
 interface Category {
   type: CategoryType
   name: string;
@@ -34,7 +49,14 @@ export interface ICategoryUpdateData {
   data: ICategoryFormData;
 }
 
-export type CategoryType = 1 | 2;
+export type CategoryType = 0 | 1 | 2;
+
+export interface CategoryListType {
+  categoryType: CategoryType;
+  active: boolean;
+  page: number;
+  perPage: number;
+}
 
 export type ICategoryResponseError = {
   type: string[];

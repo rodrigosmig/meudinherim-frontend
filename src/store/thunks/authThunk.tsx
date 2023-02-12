@@ -30,8 +30,7 @@ export const signIn = createAsyncThunk(
       const error = err as AxiosError
       return thunkAPI.rejectWithValue(error);
     }
-    
-    logoutAllTabs();
+
     thunkAPI.dispatch(getUser());
 
     return response;
@@ -43,6 +42,9 @@ export const getUser = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await authService.me();
+
+      logoutAllTabs();
+      
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -57,7 +59,17 @@ export const updateUser = createAsyncThunk(
       const response = await profileService.updateProfile(data)
       return response.data;
     } catch (error) {
-      console.log("erro")
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+)
+
+export const updateData = createAsyncThunk(
+  'auth/updateData',
+  async (_, thunkAPI) => {
+    try {
+      thunkAPI.dispatch(getUser());
+    } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }

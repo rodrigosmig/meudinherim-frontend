@@ -1,42 +1,44 @@
-import Head from "next/head";
-import { 
+import {
   Checkbox,
-  Flex, 
-  HStack, 
-  Select, 
-  Spinner, 
-  Tbody, 
-  Td, 
-  Text, 
+  Flex,
+  HStack,
+  Select, Tbody,
+  Td,
+  Text,
   Tr,
   useBreakpointValue,
   useDisclosure
 } from "@chakra-ui/react";
-import { ChangeEvent, useEffect, useState } from "react";
-import { Layout } from '../../components/Layout';
-import { withSSRAuth } from '../../utils/withSSRAuth';
-import { Loading } from "../../components/Loading";
-import { setupApiClient } from '../../services/api';
-import { categoryService } from "../../services/ApiService/CategoryService";
-import { AddButton } from "../../components/Buttons/Add";
-import { useCategories } from "../../hooks/useCategories";
-import { EditButton } from "../../components/Buttons/Edit";
-import { DeleteButton } from "../../components/Buttons/Delete";
+import Head from "next/head";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import { Pagination } from "../../components/Pagination";
-import { FilterPerPage } from '../../components/Pagination/FilterPerPage';
+import { AddButton } from "../../components/Buttons/Add";
+import { DeleteButton } from "../../components/Buttons/Delete";
+import { EditButton } from "../../components/Buttons/Edit";
 import { Heading } from "../../components/Heading";
-import { Table } from "../../components/Table";
-import { EditCategoryModal } from "../../components/Modals/categories/EditCategoryModal";
-import { CreateCategoryModal } from "../../components/Modals/categories/CreateCategoryModal";
-import { CATEGORIES, CATEGORIES_FORM, getMessage } from "../../utils/helpers";
-import { ICategory } from "../../types/category";
-import { Input } from "../../components/Inputs/Input";
 import { Check } from "../../components/Icons/Check";
 import { Close } from "../../components/Icons/Close";
+import { Input } from "../../components/Inputs/Input";
+import { Layout } from '../../components/Layout';
+import { Loading } from "../../components/Loading";
+import { CreateCategoryModal } from "../../components/Modals/categories/CreateCategoryModal";
+import { EditCategoryModal } from "../../components/Modals/categories/EditCategoryModal";
+import { Pagination } from "../../components/Pagination";
+import { FilterPerPage } from '../../components/Pagination/FilterPerPage';
+import { Table } from "../../components/Table";
+import { useDispatch } from "../../hooks/useDispatch";
+import { useSelector } from "../../hooks/useSelector";
+import { setupApiClient } from '../../services/api';
+import { categoryService } from "../../services/ApiService/CategoryService";
+import { setActive, setCategoryType, setPage, setPerPage } from "../../store/slices/categoriesSlice";
+import { deleteCategory, getCategories } from "../../store/thunks/categoriesThunk";
+import { CategoryType, ICategory } from "../../types/category";
+import { CATEGORIES, CATEGORIES_FORM, getMessage } from "../../utils/helpers";
+import { withSSRAuth } from '../../utils/withSSRAuth';
 
 export default function Categories() {
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const { isLoading, isDeleting, isError, categories, pagination, config  } = useSelector(({categories}) => categories);
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -47,79 +49,71 @@ export default function Categories() {
   const { isOpen: createModalIsOpen, onOpen: createModalOnOpen, onClose: createModalOnClose } = useDisclosure();
   const { isOpen: editModalIsOpen, onOpen: editModalonOpen, onClose: editModalOnClose } = useDisclosure();
 
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [categoryType, setCategoryType] = useState("");
-  const [active, setActive] = useState(true);
-  const { data, isLoading, isFetching, isError } = useCategories(categoryType, active, page, perPage);
   const [ selectedCategory, setSelectedCategory ] = useState({} as ICategory);
   const [filteredCategories, setFilteredCategories] = useState([] as ICategory[]);
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
 
   useEffect(() => {
-    if (data) {
-      setFilteredCategories(oldValue => data.categories);
+    dispatch(getCategories())
+  }, [dispatch, config])
+
+  useEffect(() => {
+    if(categories) {
+      setFilteredCategories(oldValue => categories)
     }
-  }, [data])
+  }, [setFilteredCategories, categories])
 
   const handleChangeCategoryType = (event: ChangeEvent<HTMLSelectElement>) => {
-    setCategoryType(event.target.value)
+    const value = parseInt(event.target.value) as CategoryType
+    dispatch(setCategoryType(value))
   }
   
-  const handleDeleteCategory = async (id: number) => {
-    try {
-      await deleteCategory.mutateAsync(id);
+  const getSelectedCategory = useCallback((id: number) => {
+    const category = categories.filter(c => {
+      return c.id === id
+    })
 
-      getMessage("Sucesso", "Categoria deletada com sucesso");      
+    return category[0];
+  }, [categories]);
+
+  const handleSetPage = useCallback((page: number) => {
+    dispatch(setPage(page))
+  }, [dispatch]);
+
+  const handleChangePerPage = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(event.target.value)
+    dispatch(setPerPage(value));
+  }, [dispatch]);
+
+  const handleEditCategory = useCallback((category_id: number) => {
+    const category = getSelectedCategory(category_id);
+    setSelectedCategory(category);
+    editModalonOpen();
+  }, [editModalonOpen, getSelectedCategory]);
+
+  const handleFilterCategories = useCallback((categoryName: string) => {
+    if (categoryName.length === 0) {
+      return setFilteredCategories(categories);
+    }
+
+    const filtered = categories.filter(
+      category => category.name.toLocaleLowerCase().includes(categoryName));
+
+    setFilteredCategories(oldValue => filtered)
+  }, [categories]);
+
+  const handleDeleteCategory = useCallback(async (id: number) => {
+    try {
+      await dispatch(deleteCategory(id)).unwrap()
+
+      return getMessage("Sucesso", "Categoria deletada com sucesso");      
     } catch (error) {
       const data = error.response.data;
 
       getMessage("Erro", data.message, 'error');
     }
-  }
-
-  const handleChangePerPage = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = parseInt(event.target.value)
-    setPage(1)
-    setPerPage(value)
-  }
-
-  const handleEditCategory = (category_id: number) => {
-    const category = getSelectedCategory(category_id);
-    setSelectedCategory(category);
-    editModalonOpen();
-  }
-
-  const getSelectedCategory = (id: number) => {
-    const category = filteredCategories.filter(c => {
-      return c.id === id
-    })
-
-    return category[0];
-  }
-
-  const handleFilterCategories = (categoryName: string) => {
-    if (categoryName.length === 0) {
-      return setFilteredCategories(data.categories);
-    }
-
-    const filtered = data.categories.filter(
-      category => category.name.toLocaleLowerCase().includes(categoryName));
-
-    setFilteredCategories(oldValue => filtered)
-  }
-  
-  const deleteCategory = useMutation(async (id: number) => {
-    const response = await categoryService.delete(id);
-  
-    return response.data;
-  }, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(CATEGORIES)
-      queryClient.invalidateQueries(CATEGORIES_FORM)
-    }
-  });
+  }, [dispatch]);
 
   const headList = [
     'Nome',
@@ -139,7 +133,7 @@ export default function Categories() {
         onClose={editModalOnClose}
       />
       <Head>
-        <title>Categorias | Meu Dinherim</title>
+        <title>Categorias</title>
       </Head>
 
       <Layout>
@@ -147,7 +141,6 @@ export default function Categories() {
           <Heading>
             <>
               Categorias
-              { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
             </>
           </Heading>
           <Heading>
@@ -168,8 +161,8 @@ export default function Categories() {
           >
             <Checkbox 
               colorScheme={'pink'}
-              isChecked={active}
-              onChange={() => setActive(!active)}
+              isChecked={config.active}
+              onChange={() => dispatch(setActive(!config.active))}
             >
               Ativas
             </Checkbox>
@@ -180,7 +173,7 @@ export default function Categories() {
               maxW={[100]}
               onChange={event => handleChangeCategoryType(event)}
             >
-              <option value="">Todas</option>
+              <option value="0">Todas</option>
               <option value="1">Entrada</option>
               <option value="2">Saída</option>
             </Select>
@@ -224,7 +217,7 @@ export default function Categories() {
                         <DeleteButton 
                           onDelete={() => handleDeleteCategory(category.id)} 
                           resource="Categoria"
-                          loading={deleteCategory?.isLoading}
+                          loading={isDeleting}
                         />
                       </HStack>
                     </Td>
@@ -234,12 +227,12 @@ export default function Categories() {
             </Table>
 
             <Pagination
-              from={data.meta.from}
-              to={data.meta.to}
-              lastPage={data.meta.last_page}
-              currentPage={page}
-              totalRegisters={data.meta.total}
-              onPageChange={setPage}
+              from={pagination.from}
+              to={pagination.to}
+              lastPage={pagination.last_page}
+              currentPage={pagination.current_page}
+              totalRegisters={pagination.total}
+              onPageChange={handleSetPage}
             />
 
           </>

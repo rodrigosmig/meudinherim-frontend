@@ -16,6 +16,8 @@ import { ICategoryErrorKey, ICategory, ICategoryFormData, ICategoryResponseError
 import { editValidation } from "../../../validations/categories";
 import { Switch } from "../../Inputs/Switch";
 import { useQueryClient } from "react-query";
+import { useDispatch } from "../../../hooks/useDispatch";
+import { updateCategory } from "../../../store/thunks/categoriesThunk";
 
 interface Props {
   category: ICategory;
@@ -23,7 +25,8 @@ interface Props {
 }
 
 const EditCategoryFormComponent = ({ category, onClose }: Props) => {
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+
   const [ isActive, setIsActive ] = useState(category.active);
   const [ showInDashboard, setShowInDashboard ] = useState(category.show_in_dashboard);
 
@@ -46,12 +49,9 @@ const EditCategoryFormComponent = ({ category, onClose }: Props) => {
     }
 
     try {
-      await categoryService.update(data);
+      await dispatch(updateCategory(data)).unwrap()
 
       getMessage("Sucesso", "Categoria alterada com sucesso");
-
-      queryClient.invalidateQueries(CATEGORIES)
-      queryClient.invalidateQueries(CATEGORIES_FORM)
 
       onClose();
 
