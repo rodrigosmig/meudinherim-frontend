@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { IAnticipateInstallmentsData, IInvoiceEntry, IInvoiceEntryCreateData, IInvoiceEntryResponse, IInvoiceEntryUpdateData } from "../../types/invoiceEntry";
 import { setupApiClient } from "../api";
 
-const apiClient = setupApiClient();
+const apiClient = setupApiClient(undefined);
 
 export const invoiceEntriesService = {
   list: (

@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { IAccountEntry, IAccountEntryFormData, IAccountEntryResponse, IAccountEntryTransferData, IAccountEntryUpdateData } from "../../types/accountEntry";
 import { setupApiClient } from "../api";
 
-const apiClient = setupApiClient();
+const apiClient = setupApiClient(undefined);
 
 export const accountEntriesService = {
   list: (account_id: number, filterDate: [string, string], page: number, perPage: number): Promise<AxiosResponse<IAccountEntryResponse>> => apiClient.get(`/accounts/${account_id}/entries?page=${page}&per_page=${perPage}&from=${filterDate[0]}&to=${filterDate[1]}`),

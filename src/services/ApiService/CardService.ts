@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { ICard, ICardFormData, ICardResponse, ICardUpdateData, IInvoice, IInvoiceResponse, IOpenInvoicesResponse, IPartialPaymentInvoiceData } from "../../types/card";
 import { setupApiClient } from "../api";
 
-const apiClient = setupApiClient();
+const apiClient = setupApiClient(undefined);
 
 export const cardService = {
   list: (): Promise<AxiosResponse<ICardResponse>> => apiClient.get(`/cards`),

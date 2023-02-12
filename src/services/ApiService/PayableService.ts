@@ -2,7 +2,7 @@ import { setupApiClient } from "../api";
 import { AxiosResponse } from 'axios';
 import { IPayable, IPayableCreateData, IPayableResponse, IPayableUpdateData, IPaymentData } from "../../types/payable";
 
-const apiClient = setupApiClient();
+const apiClient = setupApiClient(undefined);
 
 export const payableService = {
   list: (filterDate: [string, string], page: number, perPage: number, status: string): Promise<AxiosResponse<IPayableResponse>> => apiClient.get(`/payables?page=${page}&per_page=${perPage}&from=${filterDate[0]}&to=${filterDate[1]}&status=${status}`),

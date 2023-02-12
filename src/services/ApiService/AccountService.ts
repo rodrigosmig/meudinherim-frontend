@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { AccountIdType, IAccount, IAccountBalanceResponse, IAccountFormData, IAccountResponse, IAccountUpdateData } from "../../types/account";
 import { setupApiClient } from "../api";
 
-const apiClient = setupApiClient();
+const apiClient = setupApiClient(undefined);
 
 export const accountService = {
   list: (active: boolean): Promise<AxiosResponse<IAccountResponse>> => apiClient.get(`/accounts?active=${active}`),
