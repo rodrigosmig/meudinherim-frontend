@@ -1,4 +1,5 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+ import { combineReducers, configureStore, PreloadedState } from "@reduxjs/toolkit";
+import { RootState } from "../hooks/useSelector";
 import authSlice from "./slices/authSlice";
 import categoriesSlice from "./slices/categoriesSlice";
 
@@ -7,10 +8,14 @@ export const reducer = combineReducers({
   categories: categoriesSlice
 });
 
-export const store = configureStore({
-  reducer,
-  middleware: getDefaultMiddleware => 
-    getDefaultMiddleware({serializableCheck: false})
-});
+export function setupStore(preloadedState?: PreloadedState<RootState>) {
+  return configureStore({
+    reducer,
+    preloadedState,
+    middleware: getDefaultMiddleware => 
+      getDefaultMiddleware({serializableCheck: false})
+  })
+}
 
-export default store;
+export type AppStore = ReturnType<typeof setupStore>
+export default setupStore();

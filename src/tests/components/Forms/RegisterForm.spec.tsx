@@ -1,9 +1,9 @@
 import { act } from "react-dom/test-utils";
-import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
 import { mocked } from 'ts-jest/utils';
 import { RegisterForm } from "../../../components/Foms/auth/RegisterForm";
 import { authService } from "../../../services/ApiService/AuthService";
 import React from "react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -93,7 +93,6 @@ describe('RegisterForm Component', () => {
     fireEvent.input(screen.getByLabelText('Nome'), {
       target: {value: 'Test'}
     })
-
     
     fireEvent.input(screen.getByLabelText('E-mail'), {
       target: {value: 'test@test.com'}
@@ -110,7 +109,7 @@ describe('RegisterForm Component', () => {
     await waitFor(() => {
       fireEvent.submit(screen.getByText('Cadastrar'));
     })
-    
+
     expect(screen.getByText("Sucesso")).toBeInTheDocument();
     expect(screen.getByText("Usuário Test cadastrado com sucesso")).toBeInTheDocument();
   });

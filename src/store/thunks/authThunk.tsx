@@ -1,14 +1,37 @@
-import Router from 'next/router';
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
+import { BroadcastChannel } from 'broadcast-channel';
+import Router from 'next/router';
 import { authService } from "../../services/ApiService/AuthService";
+import { profileService } from '../../services/ApiService/ProfileService';
 import { tokenService } from "../../services/tokenService";
 import { IProfileUpdateData, ISignInCredentials, ISignInResponse } from "../../types/auth";
-import { profileService } from '../../services/ApiService/ProfileService';
 
+let authChannel = new BroadcastChannel('auth', {
+  type: 'native'
+});
 
-export const signIn = createAsyncThunk(
-  'auth/signIn',
+const signOut = () => {
+  authChannel.postMessage("signOut");
+  logoff();
+}
+
+const logoff = () => {
+  tokenService.delete(undefined)
+  
+  Router.push('/');
+  Router.reload()
+}
+
+export const logoutAllTabs = () => {
+  console.log("alltabs")
+  authChannel.onmessage = (message) => {
+    logoff();
+    authChannel.close();
+  }
+}
+
+export const signIn = createAsyncThunk('auth/signIn',
   async (credentials: ISignInCredentials, thunkAPI) => {
     let response = {} as ISignInResponse
 
@@ -78,7 +101,6 @@ export const updateData = createAsyncThunk(
 export const logout = createAsyncThunk(
   'auth/logout',
   async (_, thunkAPI) => {
-
     try {
       await authService.signOut();
       signOut();
@@ -87,27 +109,3 @@ export const logout = createAsyncThunk(
     }
   }
 )
-
-let authChannel = new BroadcastChannel('auth');
-
-const signOut = () => {
-  authChannel.postMessage("signOut");
-  logoff();
-}
-
-const logoff = () => {
-  tokenService.delete(undefined)
-  
-  Router.push('/');
-  Router.reload()
-}
-
-export const logoutAllTabs = () => {
-  authChannel.onmessage = (message) => {
-    if (message.data === "signOut") {
-      console.log(message.data)
-      logoff();
-    }
-    authChannel.close();
-  }
-}

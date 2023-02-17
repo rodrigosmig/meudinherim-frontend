@@ -1,21 +1,7 @@
-import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
 import { mocked } from 'ts-jest/utils';
 import { authService } from "../../../services/ApiService/AuthService";
 import { ResetPasswordForm } from "../../../components/Foms/auth/ResetPasswordForm";
-
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const authServiceMocked = mocked(authService.resetPassword);
 

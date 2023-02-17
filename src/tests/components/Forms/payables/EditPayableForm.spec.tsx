@@ -119,7 +119,7 @@ describe('EditPayableForm Component', () => {
     await waitFor(() => {
       fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
     })
-    screen.debug()
+
     expect(payableServiceMocked).toHaveBeenCalledTimes(1);
     expect(screen.getByText("Conta a Pagar alterada com sucesso")).toBeInTheDocument();
   })

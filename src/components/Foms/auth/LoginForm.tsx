@@ -4,7 +4,7 @@ import {
   useColorModeValue
 } from "@chakra-ui/react";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useRouter } from "next/router";
+import router from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "../../../hooks/useDispatch";
@@ -19,7 +19,6 @@ import { Recaptcha } from "../../Recaptcha";
 
 export function LoginForm() {
   const dispatch = useDispatch();
-  const router = useRouter()
 
   const [isSubimited, setIsSubimited] = useState(false);
   const [reCaptchaToken, setReCaptchaToken] = useState('');
