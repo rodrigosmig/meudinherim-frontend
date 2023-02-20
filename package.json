@@ -20,6 +20,7 @@
     "@types/react-datepicker": "^4.1.6",
     "apexcharts": "^3.32.0",
     "axios": "^0.21.1",
+    "broadcast-channel": "^4.20.2",
     "framer-motion": "^4.1.17",
     "next": "12",
     "nookies": "^2.5.2",

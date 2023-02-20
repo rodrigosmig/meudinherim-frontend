@@ -2,8 +2,10 @@
 import { RootState } from "../hooks/useSelector";
 import authSlice from "./slices/authSlice";
 import categoriesSlice from "./slices/categoriesSlice";
+import notificationSlice from "./slices/notificationSlice";
 
 export const reducer = combineReducers({
+  notifications: notificationSlice,
   auth: authSlice,
   categories: categoriesSlice
 });

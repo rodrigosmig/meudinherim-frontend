@@ -24,7 +24,7 @@ export function LoginForm() {
   const [reCaptchaToken, setReCaptchaToken] = useState('');
   const [isHuman, setIsHuman] = useState(false);
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(loginValidation)
   });
   const { errors } = formState;
@@ -42,7 +42,7 @@ export function LoginForm() {
     }
 
     try {
-      await dispatch(signIn(newValues));
+      await dispatch(signIn(newValues)).unwrap();
       setIsSubimited(true);
       router.push("/dashboard")
     } catch (error) {
@@ -60,7 +60,7 @@ export function LoginForm() {
 
         for (const key in data) {
           data[key].map(error => {
-            getMessage("Erro", error, 'error');
+            setError(key, {message: error})
           })
         }
       }

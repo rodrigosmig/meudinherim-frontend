@@ -2,74 +2,64 @@ import {
   Box, Button, Center,
   Flex,
   Icon,
-  IconButton, 
+  IconButton,
   LinkBox,
-  LinkOverlay, 
-  Popover, 
-  PopoverArrow, 
-  PopoverBody, 
-  PopoverContent, 
-  PopoverFooter, 
-  PopoverHeader, 
-  PopoverTrigger, 
-  Spinner, 
+  LinkOverlay,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
+  Spinner,
   Stack,
-  Text, 
-  useBoolean, 
-  useColorModeValue
+  Text, useColorModeValue
 } from "@chakra-ui/react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { RiNotificationLine } from "react-icons/ri";
-import { useNotifications } from "../../../hooks/useNotifications";
-import { notificationService } from "../../../services/ApiService/NotificationService";
+import { useDispatch } from "../../../hooks/useDispatch";
+import { useSelector } from "../../../hooks/useSelector";
+import { markAllNotificationAsRead, markNotificationAsRead } from "../../../store/thunks/notificationThunk";
+import { INotification } from "../../../types/notification";
 import { getMessage, toBrDate, toCurrency } from "../../../utils/helpers";
-import { Loading } from "../../Loading";
 
 export const NavNotifications = () => {
-  const bg = useColorModeValue('gray.50', 'gray.800');
-  const [flag, setFlag] = useBoolean();
-  const [isLoadingRead, setIsLoadingRead] = useState(false)
+  const dispatch = useDispatch();
+  const { notifications, isLoading } = useSelector(({notifications}) => notifications);
 
-  const { data, isLoading, isFetching, refetch } = useNotifications();
-  
+  const bg = useColorModeValue('gray.50', 'gray.800');
+
   const getType = (type: string) => {
     return type === 'payables' ? "Contas a Pagar" : "Contas a Receber";
   }
 
-  const markAllNotificationAsRead = useCallback(async () => {
-    setFlag.on();
-
+  const markAllAsRead = useCallback(async () => {
     try {
-      await notificationService.markAllAsRead();
-      refetch();
-      setFlag.off();
+      await dispatch(markAllNotificationAsRead()).unwrap();
     } catch (error) {
       getMessage("Erro", error.response.data.message, 'error');
     }
-  }, [refetch, setFlag])
+  }, [dispatch])
 
-  const markAsRead = useCallback(async (id: string) => {
-    setIsLoadingRead(true)
-
+  const markAsRead = useCallback(async (id: INotification['id']) => {
     try {
-      await notificationService.markAsRead(id);
-      setIsLoadingRead(false)
-      refetch();
+      await dispatch(markNotificationAsRead(id)).unwrap()
     } catch (error) {
       getMessage("Erro", error.response.data.message, 'error');
     }
-  }, [refetch])
+  }, [dispatch])
 
   const hasNotifications = () => {
-    return data?.length !== 0;
+    return notifications?.length !== 0;
   }
 
   const getQuantity = () => {
-    return data?.length;
+    return notifications?.length;
   }
 
   const hasManyNotification = () => {
-    return data?.length > 4;
+    return notifications?.length > 4;
   }
 
   return (
@@ -121,21 +111,17 @@ export const NavNotifications = () => {
           >
             <Center>
               Notificações 
-              { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
-              { isLoadingRead && <Spinner size="sm" color="gray.500" ml="4" /> }
+              { isLoading && <Spinner size="sm" color="gray.500" ml="4" /> }
             </Center>
           </PopoverHeader>
 
-          { isLoading ? (
-            <Loading />
-          ) : (
-            <PopoverBody>
+          <PopoverBody>
               { !hasNotifications() ? (
                 <Center>
                   <Text fontWeight="bold">Nenhuma notificação</Text>
                 </Center>
               ) : (
-                data.map(notification => (
+                notifications.map(notification => (
                   <LinkBox
                     key={ notification.id } 
                     onClick={() => markAsRead(notification.id)}
@@ -157,11 +143,19 @@ export const NavNotifications = () => {
                           >
                             { getType(notification.type) }
                           </Text>
-                          <Text fontSize={['xs', "md", "md"]}>Descrição: { notification.data.description }</Text>
                           <Text 
+                            data-testid="notification-description" 
+                            fontSize={['xs', "md", "md"]}
+                          >
+                            Descrição: { notification.data.description }
+                          </Text>
+                          <Text
+                            data-testid="notification-date"
                             fontSize={['xs', "md", "md"]}
                             fontWeight={"bold"}
-                          >Vencimento: { toBrDate(notification.data.due_date) }</Text>
+                          >
+                            Vencimento: { toBrDate(notification.data.due_date) }
+                          </Text>
                         </Box>
                         <Flex
                           _groupHover={{ color: 'pink.400' }}
@@ -169,7 +163,9 @@ export const NavNotifications = () => {
                           align={'center'}
                           fontSize={['sm', "md", "md"]}
                         >
-                          { toCurrency(notification.data.value) }
+                          <Text>
+                            { toCurrency(notification.data.value) }                            
+                          </Text>
                         </Flex>
                       </Stack>
                     </LinkOverlay>                  
@@ -177,7 +173,6 @@ export const NavNotifications = () => {
                 ))
               )}
             </PopoverBody>
-          )}
 
           { hasNotifications() && (
             <PopoverFooter
@@ -185,10 +180,11 @@ export const NavNotifications = () => {
               display='flex'
               justifyContent='center'
             > 
-              <Button fontWeight="bold" 
+              <Button fontWeight="bold"
+                data-testid="notification-button-all"
                 variant="ghost"
-                isLoading={flag || isLoadingRead}
-                onClick={markAllNotificationAsRead}
+                isLoading={isLoading}
+                onClick={markAllAsRead}
                 fontSize={['sm', "md", "md"]}
               >
                 Marcar todas como lidas

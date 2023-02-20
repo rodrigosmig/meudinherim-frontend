@@ -6,6 +6,7 @@ import { authService } from "../../services/ApiService/AuthService";
 import { profileService } from '../../services/ApiService/ProfileService';
 import { tokenService } from "../../services/tokenService";
 import { IProfileUpdateData, ISignInCredentials, ISignInResponse } from "../../types/auth";
+import { getNotifications } from "./notificationThunk";
 
 let authChannel = new BroadcastChannel('auth', {
   type: 'native'
@@ -24,7 +25,6 @@ const logoff = () => {
 }
 
 export const logoutAllTabs = () => {
-  console.log("alltabs")
   authChannel.onmessage = (message) => {
     logoff();
     authChannel.close();
@@ -55,7 +55,7 @@ export const signIn = createAsyncThunk('auth/signIn',
     }
 
     thunkAPI.dispatch(getUser());
-
+    thunkAPI.dispatch(getNotifications());
     return response;
   }
 )
@@ -92,6 +92,7 @@ export const updateData = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       thunkAPI.dispatch(getUser());
+      thunkAPI.dispatch(getNotifications());
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }

@@ -5,8 +5,6 @@ import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "../../../hooks/useDispatch";
 import { useSelector } from "../../../hooks/useSelector";
-import { useUser } from '../../../hooks/useUser';
-import { profileService } from '../../../services/ApiService/ProfileService';
 import { updateUser } from "../../../store/thunks/authThunk";
 import { IProfileUpdateData, IProfileUpdateDataError, IProfileUpdateDataErrorKey } from '../../../types/auth';
 import { getMessage } from '../../../utils/helpers';

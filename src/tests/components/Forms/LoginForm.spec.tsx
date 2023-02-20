@@ -37,7 +37,7 @@ describe('LoginForm Component', () => {
     jest.resetModules();
   });
 
-  it('renders component corretly', async () => {
+  it('renders component correctly', async () => {
     expect(screen.getByRole('button', {name: 'Entrar'})).not.toBeDisabled
     expect(screen.getByLabelText("E-mail")).toBeInTheDocument();
     expect(screen.getByLabelText("Senha")).toBeInTheDocument();
@@ -89,6 +89,8 @@ describe('LoginForm Component', () => {
   it('login successfully', async () => {
     const enterButton = screen.getByText('Entrar') as HTMLInputElement;
 
+    dispatchMock.mockReturnValue({unwrap: () => Promise.resolve()})
+
     fireEvent.input(screen.getByLabelText('E-mail'), {
       target: {value: 'test@email.com'}
     })
@@ -121,9 +123,7 @@ describe('LoginForm Component', () => {
       }      
     }
 
-    dispatchMock.mockImplementation(() => {
-      return Promise.reject(response)
-    })
+    dispatchMock.mockReturnValue({unwrap: () => Promise.reject(response)})
 
     fireEvent.input(screen.getByLabelText('E-mail'), {
       target: {value: 'test@email.com'}
@@ -160,9 +160,7 @@ describe('LoginForm Component', () => {
       }      
     }
 
-    dispatchMock.mockImplementation(() => {
-      return Promise.reject(response)
-    })
+    dispatchMock.mockReturnValue({unwrap: () => Promise.reject(response)})
 
     fireEvent.input(screen.getByLabelText('E-mail'), {
       target: {value: 'test@email.com'}
@@ -178,7 +176,7 @@ describe('LoginForm Component', () => {
 
     expect(screen.getByText(response.response.data.email[0])).toBeInTheDocument();
     expect(screen.getByText(response.response.data.password[0])).toBeInTheDocument();
-
+screen.debug()
     expect(dispatchMock).toBeCalled()
     expect(routerMock).not.toBeCalled()
   });
