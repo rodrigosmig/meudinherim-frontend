@@ -176,7 +176,7 @@ describe('LoginForm Component', () => {
 
     expect(screen.getByText(response.response.data.email[0])).toBeInTheDocument();
     expect(screen.getByText(response.response.data.password[0])).toBeInTheDocument();
-screen.debug()
+
     expect(dispatchMock).toBeCalled()
     expect(routerMock).not.toBeCalled()
   });

@@ -1,23 +1,21 @@
-import { memo, useState } from "react";
-import { 
+import {
   Box,
   Flex,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { memo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { categoryService } from "../../../services/ApiService/CategoryService";
-import { Select } from "../../Inputs/Select";
-import { CancelButton } from "../../Buttons/Cancel";
-import { CATEGORIES, CATEGORIES_FORM, getMessage } from "../../../utils/helpers";
-import { ICategoryErrorKey, ICategory, ICategoryFormData, ICategoryResponseError } from "../../../types/category";
-import { editValidation } from "../../../validations/categories";
-import { Switch } from "../../Inputs/Switch";
-import { useQueryClient } from "react-query";
 import { useDispatch } from "../../../hooks/useDispatch";
 import { updateCategory } from "../../../store/thunks/categoriesThunk";
+import { ICategory, ICategoryErrorKey, ICategoryFormData, ICategoryResponseError } from "../../../types/category";
+import { getMessage } from "../../../utils/helpers";
+import { editValidation } from "../../../validations/categories";
+import { CancelButton } from "../../Buttons/Cancel";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Input } from "../../Inputs/Input";
+import { Select } from "../../Inputs/Select";
+import { Switch } from "../../Inputs/Switch";
 
 interface Props {
   category: ICategory;
