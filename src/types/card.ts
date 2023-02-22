@@ -1,5 +1,17 @@
 import { Pagination } from "./pagination";
 
+export interface InvoiceState {
+  isLoading: boolean;
+  openInvoicesMenu: {
+    invoices: IInvoiceState[]
+    total: string;
+  }
+}
+
+interface IInvoiceState extends Omit<IInvoice, "amount"> {
+  amount: string
+};
+
 export interface Card {
   id: number;
   name: string;

@@ -1,48 +1,27 @@
-import {  
+import {
   Box,
-  Center,
-  Flex,
-  Icon,
-  LinkBox,
+  Center, Divider, Flex,
+  Icon, IconButton, LinkBox,
   LinkOverlay,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  IconButton,
-  Stack,
+  Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Stack,
   Text,
-  useColorModeValue,
-  Divider,
-  Spinner,
+  useColorModeValue
 } from "@chakra-ui/react";
+import NextLink from 'next/link';
+import { Fragment, useState } from "react";
 import { FaCreditCard } from 'react-icons/fa';
-import { useOpenInvoices } from "../../../hooks/useOpenInvoices";
-import { Loading } from "../../Loading";
-import NextLink from 'next/link'
-import { Fragment, useEffect, useState } from "react";
+import { useSelector } from "../../../hooks/useSelector";
 import { IInvoice } from "../../../types/card";
+import { Loading } from "../../Loading";
 
 interface IInvoiceData extends Omit<IInvoice, 'amount'> {
   amount: string;
 }
 
 export const NavInvoices = () => {
-  const [invoices, setInvoices] = useState([] as IInvoiceData[]);
-  const [total, setTotal] = useState("");
+  const { isLoading, openInvoicesMenu } = useSelector(({invoices}) => invoices);
+
   const bgColor = useColorModeValue('gray.50', 'gray.800');
-
-  const { data, isLoading, isFetching } = useOpenInvoices();
-
-  useEffect(() => {
-    if (data) {
-      setInvoices(data.invoices)
-      setTotal(data.total)
-    }
-  }, [data])
 
   return (
     <Box>
@@ -69,7 +48,7 @@ export const NavInvoices = () => {
             fontSize={['sm', "lg", "lg"]}
           >
             <Center>
-              Faturas { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+              Faturas
             </Center>
           </PopoverHeader>
             { isLoading ? (
@@ -77,7 +56,7 @@ export const NavInvoices = () => {
             ) : (
               <>
                 <PopoverBody>
-                  { invoices.map(invoice => (
+                  { openInvoicesMenu.invoices.map(invoice => (
                     <Fragment key={invoice.id}>
                       <LinkBox>
                         <NextLink href={`/cards/${invoice.card.id}/invoices/${invoice.id}/entries`} passHref  key={invoice.id}>
@@ -121,7 +100,7 @@ export const NavInvoices = () => {
 
                 <PopoverFooter
                   border='0'
-                  d='flex'
+                  display='flex'
                   alignItems='center'
                   justifyContent='center'
                   pb={4}
@@ -131,7 +110,7 @@ export const NavInvoices = () => {
                       Total:
                     </Text>
                     <Text as="span" color="red.500">
-                      { total }
+                      { openInvoicesMenu.total }
                     </Text>
                   </Box>
                 </PopoverFooter>
