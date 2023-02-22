@@ -2,42 +2,21 @@ import {
   Box,
   Center,
   Divider,
-  Icon,
-  LinkBox,
+  Icon, IconButton, LinkBox,
   LinkOverlay,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  IconButton,
-  Stack,
-  Spinner,
-  Text,
-  useColorModeValue,
+  Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverFooter, PopoverHeader, PopoverTrigger, Stack, Text,
+  useColorModeValue
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
-import { useAccountBalance } from "../../../hooks/useAccountBalance";
-import { IBalanceData, ITotalData } from "../../../types/account";
+import { useSelector } from "../../../hooks/useSelector";
 import { Loading } from "../../Loading";
 
 export const NavBalance = () => {
-  const [balances, setBalances] = useState([] as IBalanceData[]);
-  const [total, setTotal] = useState({} as ITotalData);
+  const { isLoading, balances, total } = useSelector(({accountsBalance}) => accountsBalance)
+
   const bgColor = useColorModeValue('gray.50', 'gray.800');
-
-  const { data, isLoading, isFetching } = useAccountBalance('all');
-
-  useEffect(() => {
-    if (data) {
-      setBalances(data.balances)
-      setTotal(data.total)
-    }
-  }, [data])
 
   const hasManyBalances = () => {
     return balances?.length > 4;
@@ -70,7 +49,7 @@ export const NavBalance = () => {
             fontSize={['sm', "md", "md"]}
           >
             <Center>
-              Contas { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+              Contas
             </Center>
           </PopoverHeader>
             { isLoading ? (

@@ -8,7 +8,7 @@ export const initialState = {
 } as NotificationState
 
 const notificationSlice = createSlice({
-  name: 'categories',
+  name: 'notifications',
   initialState,
   reducers: {},
   extraReducers(builder) {

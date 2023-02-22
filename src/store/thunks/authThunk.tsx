@@ -6,6 +6,8 @@ import { authService } from "../../services/ApiService/AuthService";
 import { profileService } from '../../services/ApiService/ProfileService';
 import { tokenService } from "../../services/tokenService";
 import { IProfileUpdateData, ISignInCredentials, ISignInResponse } from "../../types/auth";
+import { getAccountsBalance } from "./accountsBalanceThunk";
+import { getOpenInvoices } from "./invoicesThunk";
 import { getNotifications } from "./notificationThunk";
 
 /* let authChannel = new BroadcastChannel('auth', {
@@ -54,8 +56,7 @@ export const signIn = createAsyncThunk('auth/signIn',
       return thunkAPI.rejectWithValue(error);
     }
 
-    thunkAPI.dispatch(getUser());
-    thunkAPI.dispatch(getNotifications());
+    thunkAPI.dispatch(updateData());
     return response;
   }
 )
@@ -91,6 +92,8 @@ export const updateData = createAsyncThunk(
     try {
       thunkAPI.dispatch(getUser());
       thunkAPI.dispatch(getNotifications());
+      thunkAPI.dispatch(getAccountsBalance());
+      thunkAPI.dispatch(getOpenInvoices());
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }

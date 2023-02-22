@@ -1,13 +1,17 @@
  import { combineReducers, configureStore, PreloadedState } from "@reduxjs/toolkit";
 import { RootState } from "../hooks/useSelector";
+import accountsBalanceSlice from "./slices/accountsBalanceSlice";
 import authSlice from "./slices/authSlice";
 import categoriesSlice from "./slices/categoriesSlice";
+import invoicesSlice from "./slices/invoicesSlice";
 import notificationSlice from "./slices/notificationSlice";
 
 export const reducer = combineReducers({
   notifications: notificationSlice,
   auth: authSlice,
-  categories: categoriesSlice
+  categories: categoriesSlice,
+  accountsBalance: accountsBalanceSlice,
+  invoices: invoicesSlice
 });
 
 export function setupStore(preloadedState?: PreloadedState<RootState>) {
