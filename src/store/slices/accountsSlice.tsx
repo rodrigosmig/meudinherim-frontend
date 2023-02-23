@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { AccountsBalanceState } from "../../types/account";
-import { getAccountsBalance } from "../thunks/accountsBalanceThunk";
+import { getAccountsBalance } from "../thunks/accountsThunk";
 
 export const initialState = {
   isLoading: false,
@@ -8,7 +8,7 @@ export const initialState = {
   total: {}
 } as AccountsBalanceState
 
-const accountsBalanceSlice = createSlice({
+const accountsSlice = createSlice({
   name: 'accountsBalance',
   initialState,
   reducers: {},
@@ -31,4 +31,4 @@ const accountsBalanceSlice = createSlice({
   }
 });
 
-export default accountsBalanceSlice.reducer;
+export default accountsSlice.reducer;

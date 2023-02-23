@@ -6,7 +6,7 @@ import { authService } from "../../services/ApiService/AuthService";
 import { profileService } from '../../services/ApiService/ProfileService';
 import { tokenService } from "../../services/tokenService";
 import { IProfileUpdateData, ISignInCredentials, ISignInResponse } from "../../types/auth";
-import { getAccountsBalance } from "./accountsBalanceThunk";
+import { getAccountsBalance } from "./accountsThunk";
 import { getOpenInvoices } from "./invoicesThunk";
 import { getNotifications } from "./notificationThunk";
 

@@ -1,6 +1,6 @@
  import { combineReducers, configureStore, PreloadedState } from "@reduxjs/toolkit";
 import { RootState } from "../hooks/useSelector";
-import accountsBalanceSlice from "./slices/accountsBalanceSlice";
+import accountsBalanceSlice from "./slices/accountsSlice";
 import authSlice from "./slices/authSlice";
 import categoriesSlice from "./slices/categoriesSlice";
 import invoicesSlice from "./slices/invoicesSlice";
