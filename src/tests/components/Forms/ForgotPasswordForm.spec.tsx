@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
+import { fireEvent, screen, waitFor } from '@testing-library/dom';
+import { render } from '@testing-library/react';
 import { mocked } from 'ts-jest/utils';
 import { ForgotPasswordForm } from "../../../components/Foms/auth/ForgotPasswordForm";
 import { authService } from "../../../services/ApiService/AuthService";

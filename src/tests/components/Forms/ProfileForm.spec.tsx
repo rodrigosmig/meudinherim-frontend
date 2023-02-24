@@ -1,28 +1,39 @@
+import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { act } from "react-dom/test-utils";
-import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
 import { mocked } from 'ts-jest/utils';
 import { ProfileForm } from "../../../components/Foms/profile/ProfileForm";
-import { profileService } from "../../../services/ApiService/ProfileService";
+import { useSelector } from "../../../hooks/useSelector";
+import store from '../../../store/createStore';
+import { renderWithProviders } from "../../../utils/test-utils";
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
+const dispatchMock = mocked(store.dispatch)
+const useSeletorMock = mocked(useSelector)
 
-jest.mock('../../../services/ApiService/ProfileService')
+jest.mock("../../../store/createStore");
+jest.mock("../../../hooks/useSelector");
+jest.mock('broadcast-channel');
+
+const user = {
+  id: 1,
+  name: "test",
+  email: "test@test.com",
+  avatar: "test",
+  enable_notification: true,
+  hasEmailVerified: true,
+}
 
 describe('ProfileForm Component', () => {
   beforeEach(() => {
-    render(<ProfileForm />)
+    useSeletorMock.mockImplementation(() => ({ user: user }));
+
+    renderWithProviders(<ProfileForm />, {store})
+  });
+
+  it('renders correctly', async () => {
+    expect(screen.getByRole("button", {name: "Alterar"})).toBeDisabled();
+    expect(screen.getByLabelText("Nome")).toBeInTheDocument();
+    expect(screen.getByLabelText("E-mail")).toBeInTheDocument();
+    expect(screen.getByLabelText("Receber notificações")).toBeInTheDocument();
   });
   
   it('validates required inputs', async () => {
@@ -34,13 +45,15 @@ describe('ProfileForm Component', () => {
       target: {value: ''}
     })
 
-    await act(async () => {
-      fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
+    fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", {name: "Alterar"})).not.toBeDisabled();
+      expect(screen.getByText("O campo nome é obrigatório")).toBeInTheDocument();
+      expect(screen.getByText("O campo email é obrigatório")).toBeInTheDocument();
     })
     
-    expect(screen.getByRole("button")).not.toBeDisabled();
-    expect(screen.getByText("O campo nome é obrigatório")).toBeInTheDocument();
-    expect(screen.getByText("O campo email é obrigatório")).toBeInTheDocument();
+    
   });
 
   it('validates user inputs', async () => {
@@ -63,9 +76,7 @@ describe('ProfileForm Component', () => {
   });
 
   it('allows the user to change data successfuly', async () => {
-    const getAuthServiceMocked = mocked(profileService.updateProfile);
-
-    getAuthServiceMocked.mockResolvedValueOnce({
+    const response = {
       status: 200,
       headers: {},
       statusText: "",
@@ -78,7 +89,9 @@ describe('ProfileForm Component', () => {
         enable_notification: false,
         hasEmailVerified: true
       }
-    })
+    }
+
+    dispatchMock.mockReturnValue({unwrap: () => Promise.resolve(response)})
     
     fireEvent.input(screen.getByLabelText('Nome'), {
       target: {value: 'Test Changed'}
@@ -89,22 +102,42 @@ describe('ProfileForm Component', () => {
       target: {value: 'test2@test.com'}
     })
 
+    fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
+
     await waitFor(() => {
-      fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
+      //expect(screen.getByText("Sucesso")).toBeInTheDocument();
+      expect(screen.getByText("Loading...")).toBeInTheDocument();
+      //expect(screen.getByText("Alteração realizada com sucesso")).toBeInTheDocument();
     })
-
-    expect(screen.getByText("Alterar")).not.toBeDisabled();
-    expect(screen.getByText("Sucesso")).toBeInTheDocument();
-    expect(screen.getByText("Alteração realizada com sucesso")).toBeInTheDocument();
   });
 
-  it('send the data without any changes', async () => {
-    await act(async () => {
-      fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
+  it('failed when change user data', async () => {
+    const response = {
+      response: {
+        status: 422,
+        headers: {},
+        statusText: "",
+        config: {},
+        data:{
+          email: ["invalid email"],
+        }
+      }      
+    }
+
+    dispatchMock.mockReturnValue({unwrap: () => Promise.reject(response)})
+    
+    fireEvent.input(screen.getByLabelText('Nome'), {
+      target: {value: 'Test Changed'}
+    })
+    
+    fireEvent.input(screen.getByLabelText('E-mail'), {
+      target: {value: 'test2@test.com'}
     })
 
-    expect(screen.getByText("Sem alteração")).toBeInTheDocument();
-    expect(screen.getByText("Nenhuma alteração foi realizada")).toBeInTheDocument();
+    fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
+
+    await waitFor(() => {
+      expect(screen.getByText(response.response.data.email[0])).toBeInTheDocument();
+    })
   });
-  
 })

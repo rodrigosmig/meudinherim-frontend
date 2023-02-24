@@ -4,7 +4,7 @@ import { StatusType } from "../../types/accountScheduling";
 import { IAccountReportResponse, ITotalByCategoryDetailedResponse, ITotalByCategoryResponse, ITotalCreditByCategory, ReportType } from "../../types/report";
 import { setupApiClient } from "../api";
 
-const apiClient = setupApiClient();
+const apiClient = setupApiClient(undefined);
 
 export const reportService = {
   getAccountItems: (filterDate: [string, string], status: StatusType): Promise<AxiosResponse<IAccountReportResponse>> => apiClient.get(`/reports/accounts?&from=${filterDate[0]}&to=${filterDate[1]}&status=${status}`),

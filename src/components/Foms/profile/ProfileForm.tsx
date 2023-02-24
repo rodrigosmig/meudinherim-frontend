@@ -3,8 +3,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useUser } from '../../../hooks/useUser';
-import { profileService } from '../../../services/ApiService/ProfileService';
+import { useDispatch } from "../../../hooks/useDispatch";
+import { useSelector } from "../../../hooks/useSelector";
+import { updateUser } from "../../../store/thunks/authThunk";
 import { IProfileUpdateData, IProfileUpdateDataError, IProfileUpdateDataErrorKey } from '../../../types/auth';
 import { getMessage } from '../../../utils/helpers';
 import { profileValidation } from '../../../validations/auth';
@@ -14,7 +15,8 @@ import { Switch } from "../../Inputs/Switch";
 
 export function ProfileForm() {
   const router = useRouter();
-  const { user, setUser } = useUser();
+  const { user } = useSelector(({auth}) => auth)
+  const dispatch = useDispatch();
   
   const { register, watch, handleSubmit, setError, reset, formState } = useForm({
     defaultValues: {
@@ -31,12 +33,9 @@ export function ProfileForm() {
 
   const handleUpdateProfile: SubmitHandler<IProfileUpdateData> = async (values) => {
     try {
-      const response = await profileService.updateProfile(values)
-      const userUpdated = response.data
+      await dispatch(updateUser(values)).unwrap()
 
-      setUser(userUpdated);
-
-      if (formState.touchedFields.email) {
+      if (formState.dirtyFields.email) {
         getMessage("Validação de e-mail", "O novo e-mail precisa ser verificado.", "warning");
         router.push("/auth/resend-verification-email")
         return;

@@ -1,28 +1,22 @@
-import { fireEvent, render, screen, waitFor } from "../../../utils/test-utils";
 import { mocked } from 'ts-jest/utils';
 import { authService } from "../../../services/ApiService/AuthService";
 import { ResendVerificationEmailForm } from "../../../components/Foms/auth/ResendVerificationEmailForm";
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useDispatch } from '../../../hooks/useDispatch';
+import { useSelector } from '../../../hooks/useSelector';
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
 
 const authServiceMocked = mocked(authService.resendVerificationEmail);
+const useSelectorMock = mocked(useSelector)
 
 jest.mock('../../../services/ApiService/AuthService');
+jest.mock('../../../hooks/useDispatch');
+jest.mock('../../../hooks/useSelector');
+jest.mock('broadcast-channel');
 
 describe('ResendVerificationEmailForm Component', () => {
   beforeEach(() => {
+    useSelectorMock.mockImplementation(() => ({isAuthenticated: true}))
     render(<ResendVerificationEmailForm />)
   });
 

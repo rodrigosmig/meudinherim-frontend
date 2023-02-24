@@ -4,7 +4,6 @@ import Router, { useRouter } from 'next/router';
 import NProgress from 'nprogress';
 import { theme } from '../styles/theme';
 
-import { AuthProvider } from '../contexts/AuthContext';
 import { ChakraProvider } from '@chakra-ui/react';
 import { SidebarDrawerProvider } from '../contexts/SidebarDrawerContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -14,6 +13,8 @@ import 'nprogress/nprogress.css';
 import { DateFilterProvider } from '../contexts/DateFilterContext';
 import { Analytics } from '../components/Analytics';
 import * as gtag from '../utils/analytics'
+import { Provider } from 'react-redux';
+import store from '../store/createStore';
 
 Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
@@ -37,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [router.events]);
 
   return (
-    <AuthProvider>
+    <Provider store={store}>
       <ChakraProvider theme={theme}>
         <SidebarDrawerProvider>
           <QueryClientProvider client={queryClient}>
@@ -49,7 +50,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </QueryClientProvider>
         </SidebarDrawerProvider>
       </ChakraProvider>
-    </AuthProvider>
+    </Provider>
   )
 }
 

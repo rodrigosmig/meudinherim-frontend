@@ -1,15 +1,17 @@
 import axios from 'axios';
+import { GetServerSidePropsContext, NextPageContext } from 'next';
 import { parseCookies } from 'nookies';
+import { tokenService } from './tokenService';
 
-export const setupApiClient = (context = undefined) => {
-  const cookies = parseCookies(context);
+export type ContextType = GetServerSidePropsContext | null | undefined
 
+export const setupApiClient = (context: ContextType) => {
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   });
 
   api.interceptors.request.use(config => {
-    const { 'meudinherim.token': token } = cookies;
+    const { token } = tokenService.get(context);
 
     config.headers.Authorization =  token ? `Bearer ${token}` : '';
     return config;

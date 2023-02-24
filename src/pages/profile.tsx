@@ -22,6 +22,7 @@ import { ChangePasswordForm } from '../components/Foms/profile/ChangePasswordFor
 import { Heading } from '../components/Heading';
 import { IUser } from '../types/auth';
 import { useUser } from '../hooks/useUser';
+import { useSelector } from '../hooks/useSelector';
 
 
 interface Props {
@@ -29,8 +30,9 @@ interface Props {
 }
 
 export default function Profile({ userUpdated }: Props) {
-  const { user, isAuthenticated } = useUser();
-  const [localImageUrl, setLocalImageUrl] = useState(userUpdated.avatar);  
+  const { isAuthenticated, user } = useSelector(({auth}) => auth)
+
+  const [localImageUrl, setLocalImageUrl] = useState(user.avatar);  
 
   const {
     register,

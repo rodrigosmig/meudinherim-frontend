@@ -58,3 +58,9 @@ export interface ITotalData {
   value: string;
   positive: boolean 
 }
+
+export interface AccountsBalanceState {
+  isLoading: boolean;
+  balances: IBalanceData[];
+  total: ITotalData
+}

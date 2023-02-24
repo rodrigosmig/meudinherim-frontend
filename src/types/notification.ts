@@ -1,3 +1,8 @@
+export interface NotificationState {
+  isLoading: boolean;
+  notifications: INotification[];
+}
+
 export interface INotification {
   id: string;
   type: string;

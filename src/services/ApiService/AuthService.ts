@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { IForgotPasswordData, IForgotPasswordResponse, IRegisterData, IResendVerificationEmailData, IResetPasswordData, ISignInCredentials, ISignInResponse, IUser } from "../../types/auth";
 import { setupApiClient } from "../api";
 
-const apiClient = setupApiClient();
+const apiClient = setupApiClient(undefined);
 
 interface ResetPasswordData extends IResetPasswordData {
   token: string;

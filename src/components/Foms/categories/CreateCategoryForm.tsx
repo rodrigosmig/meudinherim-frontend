@@ -1,20 +1,21 @@
-import { 
+import {
   Box,
   Flex,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useDispatch } from "../../../hooks/useDispatch";
+import { categoryService } from "../../../services/ApiService/CategoryService";
+import { createCategory } from "../../../store/thunks/categoriesThunk";
+import { ICategoryFormData } from "../../../types/category";
+import { CATEGORIES, CATEGORIES_FORM, getMessage } from "../../../utils/helpers";
+import { createValidation } from "../../../validations/categories";
+import { CancelButton } from "../../Buttons/Cancel";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
-import { categoryService } from "../../../services/ApiService/CategoryService";
 import { Select } from "../../Inputs/Select";
-import { CancelButton } from "../../Buttons/Cancel";
-import { CATEGORIES, CATEGORIES_FORM, getMessage } from "../../../utils/helpers";
-import { ICategoryFormData } from "../../../types/category";
-import { createValidation } from "../../../validations/categories";
-import { useQueryClient } from "react-query";
-import { useState } from "react";
 import { Switch } from "../../Inputs/Switch";
 
 interface Props {
@@ -22,7 +23,7 @@ interface Props {
 }
 
 export const CreateCategoryForm = ({ onClose }: Props) => {
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   const { register, handleSubmit, setError, formState } = useForm({
     resolver: yupResolver(createValidation)
@@ -34,12 +35,9 @@ export const CreateCategoryForm = ({ onClose }: Props) => {
 
   const handleCreateCategory: SubmitHandler<ICategoryFormData> = async (values) => {
     try {
-      await categoryService.create(values);
+      await dispatch(createCategory(values)).unwrap()
 
       getMessage("Sucesso", `Categoria ${values.name} criada com sucesso`);
-
-      queryClient.invalidateQueries(CATEGORIES)
-      queryClient.invalidateQueries(CATEGORIES_FORM)
 
       onClose();
     } catch (error) {

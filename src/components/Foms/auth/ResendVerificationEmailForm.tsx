@@ -1,30 +1,38 @@
-import { 
+import {
   Flex,
-  Stack, 
-  Text, 
-  useColorModeValue 
+  Stack,
+  Text,
+  useColorModeValue
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Input } from '../../Inputs/Input';
-import { SubmitButton } from '../../Buttons/Submit';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getMessage } from "../../../utils/helpers";
+import { useEffect } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useDispatch } from "../../../hooks/useDispatch";
+import { useSelector } from "../../../hooks/useSelector";
 import { authService } from "../../../services/ApiService/AuthService";
+import { tokenService } from "../../../services/tokenService";
+import { logout } from "../../../store/thunks/authThunk";
 import { IForgotPasswordData } from "../../../types/auth";
-import { Link } from "../../Link";
-import { useRouter } from "next/router";
+import { getMessage } from "../../../utils/helpers";
 import { resendEmailVerificationValidation } from "../../../validations/auth";
-import { useUser } from "../../../hooks/useUser";
+import { SubmitButton } from '../../Buttons/Submit';
+import { Input } from '../../Inputs/Input';
+import { Link } from "../../Link";
 
 export const ResendVerificationEmailForm = () => {
-  const router = useRouter();
-
-  const { isAuthenticated, signOut } = useUser();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector(({auth}) => auth);
 
   const { register, handleSubmit, reset, formState } = useForm({
     resolver: yupResolver(resendEmailVerificationValidation)
   });
   const { errors } = formState;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      tokenService.delete(undefined);
+    }
+  }, [isAuthenticated])
 
   const handleSendEmail: SubmitHandler<IForgotPasswordData> = async (values) => {
     try {
@@ -34,16 +42,8 @@ export const ResendVerificationEmailForm = () => {
       getMessage("Sucesso", message, 'success');
 
       reset();
-
-      if (isAuthenticated) {
-        setTimeout(() => {
-          signOut();        
-        }, 2000);
-      } else {
-        setTimeout(() => {
-          router.push("/")
-        }, 2000);
-      }
+      
+      await dispatch(logout());        
     } catch (error) {
       if (error.response?.status === 422) {
         const data = error.response.data;

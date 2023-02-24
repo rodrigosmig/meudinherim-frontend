@@ -10,11 +10,17 @@ import {
   useBreakpointValue,
   useColorModeValue
 } from "@chakra-ui/react";
-import { memo, useContext } from "react";
-import { AuthContext } from '../../../contexts/AuthContext';
+import { useRouter } from "next/router";
+import { memo } from "react";
+import { useDispatch } from "../../../hooks/useDispatch";
+import { useSelector } from "../../../hooks/useSelector";
+import { logout } from "../../../store/thunks/authThunk";
 
 const AvatarComponent = () => {
-  const { isAuthenticated, user, signOut } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const { isAuthenticated, user } = useSelector(({auth}) => auth);
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -23,9 +29,11 @@ const AvatarComponent = () => {
 
   const color = useColorModeValue('gray.600', 'gray.300')
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     try {
-      signOut();
+      await dispatch(logout())
+      router.push("/");
+      router.reload();
     } catch (error) {
       console.log(error.response)
     }

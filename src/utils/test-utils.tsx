@@ -1,39 +1,28 @@
-import { FC, ReactElement } from "react";
-import {render, RenderOptions} from '@testing-library/react'
-import { AuthContext } from "../contexts/AuthContext";
-import { ThemeProvider } from "@chakra-ui/react";
-import { theme } from "../styles/theme";
+import { configureStore, PreloadedState } from "@reduxjs/toolkit"
+import { render, RenderOptions } from "@testing-library/react"
+import { PropsWithChildren } from "react"
+import { Provider } from "react-redux"
+import { RootState } from "../hooks/useSelector"
+import { AppStore, reducer } from "../store/createStore"
 
-const signIn = jest.fn();
-const signOut = jest.fn();
-const setUser = jest.fn();
-const isAuthenticated = true;
-const user = {
-  id: 1,
-  name: 'test',
-  email: 'test@test.com',
-  avatar: 'test',
-  enable_notification: false,
-  hasEmailVerified: true
+interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
+  preloadedState?: PreloadedState<RootState>
+  store?: AppStore
 }
 
-const AllTheProviders:FC = ({ children }) => {
-  return (
-    <ThemeProvider theme={theme}>
-      <AuthContext.Provider value={{ signIn, signOut, setUser, user, isAuthenticated }}>
-        {children}
-      </AuthContext.Provider>
+export function renderWithProviders(
+  ui: React.ReactElement,
+  {
+    preloadedState = {},
+    // Automatically create a store instance if no store was passed in
+    store = configureStore({ reducer, preloadedState }),
+    ...renderOptions
+  }: ExtendedRenderOptions = {}
+) {
+  function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
+    return <Provider store={store}>{children}</Provider>
+  }
 
-    </ThemeProvider>
-  );
-};
-
-const customRender = (
-  ui: ReactElement, 
-  options?: Omit<RenderOptions, 'wrapper'>,
-) => {
-  render(ui, { wrapper: AllTheProviders, ...options });
-};
-
-export * from "@testing-library/react";
-export { customRender as render };
+  // Return an object with the store and all of RTL's query functions
+  return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) }
+}

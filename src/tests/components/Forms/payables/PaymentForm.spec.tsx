@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "../../../../utils/test-utils";
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { mocked } from 'ts-jest/utils';
 import { PaymentForm } from "../../../../components/Foms/payable/PaymentForm";
 import { useAccountsForm } from "../../../../hooks/useAccounts";

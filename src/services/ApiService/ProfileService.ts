@@ -2,7 +2,7 @@ import { setupApiClient } from "../api";
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { IAvatarUpdateResponse, IPasswordUpdateData, IProfileUpdateData, IUser } from "../../types/auth";
 
-const apiClient = setupApiClient();
+const apiClient = setupApiClient(undefined);
 
 export const profileService = {
   updateProfile: (data: IProfileUpdateData): Promise<AxiosResponse<IUser>> => apiClient.put("/users", data),

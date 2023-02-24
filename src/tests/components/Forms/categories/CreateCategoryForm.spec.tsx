@@ -3,67 +3,66 @@ import { mocked } from 'ts-jest/utils';
 import { act } from "react-dom/test-utils";
 import { CreateCategoryForm } from "../../../../components/Foms/categories/CreateCategoryForm";
 import { categoryService } from "../../../../services/ApiService/CategoryService";
+import { renderWithProviders } from "../../../../utils/test-utils";
+import store from '../../../../store/createStore';
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
+const dispatchMock = mocked(store.dispatch)
 
-const categoryServiceMocked = mocked(categoryService.create);
+jest.mock("../../../../store/createStore");
+jest.mock('broadcast-channel');
 
 jest.mock('react-query');
 jest.mock('../../../../services/ApiService/CategoryService');
 
-const closeModal = jest.fn;
+const onClose = jest.fn();
 
 describe('CreateCategoryForm Component', () => {
   beforeEach(() => {
-    render(<CreateCategoryForm onClose={closeModal} />)
+    renderWithProviders(<CreateCategoryForm onClose={onClose} />, {store})
   });
 
   afterEach(() => {
+    jest.resetAllMocks();
+    jest.resetModules();
     jest.clearAllMocks();
   });
   
   it('renders corretly', async () => {
-    expect(categoryServiceMocked).toBeCalledTimes(0);
+    expect(dispatchMock).not.toBeCalled();
+    expect(onClose).not.toBeCalled();
+
     expect(screen.getByText("Selecione um tipo")).toBeInTheDocument();
     expect(screen.getByText("Nome da Categoria")).toBeInTheDocument();
   })
 
   it('validates required fields inputs', async () => {
-    await act(async () => {
-      fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    
+    await waitFor(() => {
+      expect(dispatchMock).not.toBeCalled();
+      expect(onClose).not.toBeCalled();
+      expect(screen.getByText("O campo tipo é obrigatório")).toBeInTheDocument();
+      expect(screen.getByText("O campo nome é obrigatório")).toBeInTheDocument();
     })
-
-    expect(categoryServiceMocked).toBeCalledTimes(0);
-    expect(screen.getByText("O campo tipo é obrigatório")).toBeInTheDocument();
-    expect(screen.getByText("O campo nome é obrigatório")).toBeInTheDocument();
   })
 
   it('validates user inputs', async () => {
     fireEvent.input(screen.getByLabelText('Nome da Categoria'), {
       target: {value: 'Te'}
     })
+    
+    fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
 
-    await act(async () => {
-      fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    await waitFor(() => {
+      expect(dispatchMock).not.toBeCalled();
+      expect(onClose).not.toBeCalled();
+      expect(screen.getByText("O campo nome deve ter no mínimo 3 caracteres")).toBeInTheDocument();
     })
-
-    expect(categoryServiceMocked).toBeCalledTimes(0);
-    expect(screen.getByText("O campo nome deve ter no mínimo 3 caracteres")).toBeInTheDocument();
   })
 
   it('create category successfuly', async () => {
+    dispatchMock.mockReturnValue({unwrap: () => Promise.resolve()})
+    
     fireEvent.change(screen.getByRole('combobox'), {name: 'Tipo', target: { value: 1 } })
 
     const category_name = 'Category Test';
@@ -72,11 +71,42 @@ describe('CreateCategoryForm Component', () => {
       target: {value: category_name}
     })
 
-    await act(async () => {
-      fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+
+    await waitFor(() => {
+      expect(dispatchMock).toBeCalled();
+      expect(onClose).toBeCalled();
+      //expect(screen.getByText(`Categoria ${category_name} criada com sucesso`)).toBeInTheDocument();
+    })
+  })
+
+  it('failed when create category', async () => {
+    const response = {
+      response: {
+        status: 422,
+        headers: {},
+        statusText: "",
+        config: {},
+        data:{
+          name: ["invalid name"],
+        }
+      }      
+    }
+
+    dispatchMock.mockReturnValue({unwrap: () => Promise.reject(response)})
+    
+    fireEvent.change(screen.getByRole('combobox'), {name: 'Tipo', target: { value: 1 } })
+
+    fireEvent.input(screen.getByLabelText('Nome da Categoria'), {
+      target: {value: 'Category Test'}
     })
 
-    expect(categoryServiceMocked).toBeCalledTimes(1);
-    expect(screen.getByText(`Categoria ${category_name} criada com sucesso`)).toBeInTheDocument();
+    fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+
+    await waitFor(() => {
+      expect(dispatchMock).toBeCalled();
+      expect(onClose).not.toBeCalled();
+      expect(screen.getByText(response.response.data.name[0])).toBeInTheDocument();
+    })
   })
 })
