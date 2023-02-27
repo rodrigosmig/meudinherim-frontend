@@ -1,15 +1,12 @@
 import { fireEvent, screen, waitFor } from "@testing-library/dom";
-import { mocked } from "ts-jest/utils";
+import { render } from "@testing-library/react";
 import { NavBalance } from "../../../../components/Layout/Header/NavBalance";
-import { useSelector } from "../../../../hooks/useSelector";
-import store from '../../../../store/createStore';
-import { renderWithProviders } from "../../../../utils/test-utils";
+import { useAccountBalance } from "../../../../hooks/useAccountBalance";
 
-const useSeletorMock = mocked(useSelector)
+const useAccountBalanceMock = useAccountBalance as jest.Mock<any>;
 
-jest.mock("../../../../store/createStore");
-jest.mock("../../../../hooks/useSelector");
-jest.mock('broadcast-channel');
+jest.mock('react-query')
+jest.mock('../../../../hooks/useAccountBalance');
 
 const balance = {
   balance: "R$ 100,00",
@@ -23,7 +20,14 @@ const total = {
   positive: true
 }
 
+
+const data = {
+  balances: [balance],
+  total
+}
+
 describe('NavBalance Component', () => {
+
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -31,10 +35,9 @@ describe('NavBalance Component', () => {
   });
 
   it('renders component correctly', async () => {
-    useSeletorMock.mockImplementation(() => ({ isLoading: false, balances: [balance], total }));
+    useAccountBalanceMock.mockImplementation(() => ({ isLoading: false, data, isFetching: false }));
 
-    renderWithProviders(<NavBalance />, {store})
-
+    render(<NavBalance />)
     const notificationIcon = screen.getByRole('button')
 
     fireEvent.mouseOver(notificationIcon)
@@ -50,15 +53,32 @@ describe('NavBalance Component', () => {
   });
 
   it('renders when component is loading', async () => {
-    useSeletorMock.mockImplementation(() => ({ isLoading: true, balances: [balance], total }));
-    renderWithProviders(<NavBalance />, {store})
+    useAccountBalanceMock.mockImplementation(() => ({ isLoading: true, data, isFetching: false }));
+
+    render(<NavBalance />)
 
     const notificationIcon = screen.getByRole('button')
 
     fireEvent.mouseOver(notificationIcon)
-    
+
     await waitFor(() => {
       expect(screen.getByLabelText("Contas")).toBeInTheDocument();
+      expect(screen.getByText("Loading...")).toBeInTheDocument();
+    })
+
+  });
+
+  it('renders when component is fetching', async () => {
+    useAccountBalanceMock.mockImplementation(() => ({ isLoading: false, data, isFetching: true }));
+
+    render(<NavBalance />)
+
+    const notificationIcon = screen.getByRole('button')
+
+    fireEvent.mouseOver(notificationIcon)
+
+    await waitFor(() => {
+      expect(screen.getByText("Contas")).toBeInTheDocument();
       expect(screen.getByText("Loading...")).toBeInTheDocument();
     })
 
