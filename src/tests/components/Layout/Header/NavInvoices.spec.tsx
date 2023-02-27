@@ -1,16 +1,14 @@
 import { fireEvent, screen, waitFor } from "@testing-library/dom";
-import { mocked } from "ts-jest/utils";
-import { NavBalance } from "../../../../components/Layout/Header/NavBalance";
+import { render } from "@testing-library/react";
 import { NavInvoices } from "../../../../components/Layout/Header/NavInvoices";
-import { useSelector } from "../../../../hooks/useSelector";
+import { useOpenInvoices } from "../../../../hooks/useOpenInvoices";
 import store from '../../../../store/createStore';
 import { renderWithProviders } from "../../../../utils/test-utils";
 
-const useSeletorMock = mocked(useSelector)
+const useOpenInvoicesMock = useOpenInvoices as jest.Mock<any>;
 
-jest.mock("../../../../store/createStore");
-jest.mock("../../../../hooks/useSelector");
-jest.mock('broadcast-channel');
+jest.mock('react-query')
+jest.mock("../../../../hooks/useOpenInvoices");
 
 const openInvoicesMenu = {
   invoices: [{
@@ -37,9 +35,9 @@ describe('NavInvoices Component', () => {
   });
 
   it('renders component correctly', async () => {
-    useSeletorMock.mockImplementation(() => ({ isLoading: false, openInvoicesMenu }));
+    useOpenInvoicesMock.mockImplementation(() => ({ isLoading: false, data: openInvoicesMenu, isFetching: false }));
 
-    renderWithProviders(<NavInvoices />, {store})
+    render(<NavInvoices />)
 
     const notificationIcon = screen.getByRole('button')
 
@@ -55,9 +53,9 @@ describe('NavInvoices Component', () => {
   });
 
   it('renders when component is loading', async () => {
-    useSeletorMock.mockImplementation(() => ({ isLoading: true, openInvoicesMenu }));
+    useOpenInvoicesMock.mockImplementation(() => ({ isLoading: true, data: openInvoicesMenu, isFetching: false }));
 
-    renderWithProviders(<NavInvoices />, {store})
+    render(<NavInvoices />)
 
     const notificationIcon = screen.getByRole('button')
 
@@ -65,6 +63,22 @@ describe('NavInvoices Component', () => {
     
     await waitFor(() => {
       expect(screen.getByLabelText("Faturas")).toBeInTheDocument();
+      expect(screen.getByText("Loading...")).toBeInTheDocument();
+    })
+
+  });
+
+  it('renders when component is fetching', async () => {
+    useOpenInvoicesMock.mockImplementation(() => ({ isLoading: false, data: openInvoicesMenu, isFetching: true }));
+
+    render(<NavInvoices />)
+
+    const notificationIcon = screen.getByRole('button')
+
+    fireEvent.mouseOver(notificationIcon)
+
+    await waitFor(() => {
+      expect(screen.getByText("Faturas")).toBeInTheDocument();
       expect(screen.getByText("Loading...")).toBeInTheDocument();
     })
 
