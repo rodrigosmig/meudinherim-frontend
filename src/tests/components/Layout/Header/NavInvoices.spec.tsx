@@ -2,8 +2,6 @@ import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { render } from "@testing-library/react";
 import { NavInvoices } from "../../../../components/Layout/Header/NavInvoices";
 import { useOpenInvoices } from "../../../../hooks/useOpenInvoices";
-import store from '../../../../store/createStore';
-import { renderWithProviders } from "../../../../utils/test-utils";
 
 const useOpenInvoicesMock = useOpenInvoices as jest.Mock<any>;
 

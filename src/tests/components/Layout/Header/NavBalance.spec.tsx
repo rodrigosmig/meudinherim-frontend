@@ -1,6 +1,5 @@
 import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { render } from "@testing-library/react";
-import { mocked } from "ts-jest/utils";
 import { NavBalance } from "../../../../components/Layout/Header/NavBalance";
 import { useAccountBalance } from "../../../../hooks/useAccountBalance";
 
