@@ -1,34 +1,20 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
-import { accountEntriesService } from "../../../../services/ApiService/AccountEntriesService";
 import { CreateAccountEntryForm } from "../../../../components/Foms/accountEntry/CreateAccountEntryForm";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
 import { useAccountsForm } from "../../../../hooks/useAccounts";
+import { useSelector } from "../../../../hooks/useSelector";
+import { accountEntriesService } from "../../../../services/ApiService/AccountEntriesService";
 import { IAccount } from "../../../../types/account";
 import { IAccountEntry } from "../../../../types/accountEntry";
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
-
 const accountEntriesServiceMocked = mocked(accountEntriesService.create);
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
+const useSelectorMock = mocked(useSelector)
 const useAccountsFormMocked = useAccountsForm as jest.Mock<any>;
 
 jest.mock('react-query');
 jest.mock('../../../../services/ApiService/AccountEntriesService');
-jest.mock('../../../../hooks/useCategories');
 jest.mock('../../../../hooks/useAccounts');
+jest.mock('../../../../hooks/useSelector');
 
 jest.mock('@chakra-ui/react', () => {
   const toast = jest.requireActual('@chakra-ui/react');
@@ -80,7 +66,8 @@ const entry: IAccountEntry = {
     id: 1,
     type: 2,
     name: 'Category test',
-    active: true
+    active: true,
+    show_in_dashboard: true
   },
   description: 'Account entry test',
   value: 50,
@@ -89,7 +76,7 @@ const entry: IAccountEntry = {
 
 describe('CreateAccountEntryForm Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categories }));
     useAccountsFormMocked.mockImplementation(() => ({ isLoading: false, data: accounts }));
 
     render(<CreateAccountEntryForm  onClose={onCancel} />)

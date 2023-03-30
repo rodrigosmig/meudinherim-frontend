@@ -4,6 +4,7 @@ import { RootState } from "../../hooks/useSelector";
 import { categoryService } from "../../services/ApiService/CategoryService";
 import { ICategory, ICategoryFormData, ICategoryUpdateData } from "../../types/category";
 import { Pagination } from "../../types/pagination";
+import { getCategoriesForForm } from "./applicationThunk";
 
 interface GetResponse {
   categories: ICategory[];
@@ -57,6 +58,8 @@ ICategoryFormData,
 
       const response = await categoryService.list(getValues);
 
+      thunkAPI.dispatch(getCategoriesForForm())
+
       return response.data.data
     } catch (err) {
       const error = err as AxiosError
@@ -71,6 +74,8 @@ export const updateCategory = createAsyncThunk(
     try {
       const response = await categoryService.update(data);
 
+      thunkAPI.dispatch(getCategoriesForForm())
+
       return response.data
     } catch (err) {
       const error = err as AxiosError
@@ -84,6 +89,9 @@ export const deleteCategory = createAsyncThunk(
   async (id: number, thunkAPI) => {
     try {
       await categoryService.delete(id);
+
+      thunkAPI.dispatch(getCategoriesForForm())
+      
       return id;
     } catch (err) {
       const error = err as AxiosError

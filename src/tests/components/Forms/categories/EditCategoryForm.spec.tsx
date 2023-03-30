@@ -5,6 +5,14 @@ import store from '../../../../store/createStore';
 import { ICategory } from "../../../../types/category";
 import { renderWithProviders } from "../../../../utils/test-utils";
 
+jest.mock('@chakra-ui/react', () => {
+  const toast = jest.requireActual('@chakra-ui/react');
+  return {
+    ...toast,
+    createStandaloneToast: () => jest.fn,
+  };
+});
+
 const dispatchMock = mocked(store.dispatch)
 
 jest.mock("../../../../store/createStore");
@@ -76,7 +84,6 @@ describe('EditCategoryForm Component', () => {
     await waitFor(() => {
       expect(dispatchMock).toBeCalled();
       expect(onClose).toBeCalled();
-      //expect(screen.getByText("Categoria alterada com sucesso")).toBeInTheDocument();
     })
   })
 

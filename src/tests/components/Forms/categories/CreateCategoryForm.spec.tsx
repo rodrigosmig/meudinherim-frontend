@@ -1,10 +1,16 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
-import { act } from "react-dom/test-utils";
 import { CreateCategoryForm } from "../../../../components/Foms/categories/CreateCategoryForm";
-import { categoryService } from "../../../../services/ApiService/CategoryService";
-import { renderWithProviders } from "../../../../utils/test-utils";
 import store from '../../../../store/createStore';
+import { renderWithProviders } from "../../../../utils/test-utils";
+
+jest.mock('@chakra-ui/react', () => {
+  const toast = jest.requireActual('@chakra-ui/react');
+  return {
+    ...toast,
+    createStandaloneToast: () => jest.fn,
+  };
+});
 
 const dispatchMock = mocked(store.dispatch)
 
@@ -76,7 +82,6 @@ describe('CreateCategoryForm Component', () => {
     await waitFor(() => {
       expect(dispatchMock).toBeCalled();
       expect(onClose).toBeCalled();
-      //expect(screen.getByText(`Categoria ${category_name} criada com sucesso`)).toBeInTheDocument();
     })
   })
 

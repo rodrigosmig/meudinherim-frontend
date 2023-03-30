@@ -1,23 +1,23 @@
-import { 
+import {
   Box,
   Button,
   Flex,
-  Stack,
+  Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
-import { SelectCategories } from "../../Inputs/SelectCategories";
 import { parseISO } from 'date-fns';
-import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
-import { useCategoriesForm } from "../../../hooks/useCategories";
-import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
-import { Loading } from "../../Loading";
-import { IAccountEntry, IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
-import { editValidation } from "../../../validations/accountEntry";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
+import { useSelector } from "../../../hooks/useSelector";
+import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
+import { IAccountEntry, IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
+import { editValidation } from "../../../validations/accountEntry";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Input } from "../../Inputs/Input";
+import { SelectCategories } from "../../Inputs/SelectCategories";
+import { Loading } from "../../Loading";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
@@ -32,7 +32,7 @@ interface Props {
 export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: categories, isLoading: isLoadingCategories } = useSelector(({application}) => application)
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {

@@ -1,25 +1,25 @@
-import { useState, ChangeEvent } from 'react';
-import { 
+import {
   Box,
   Flex,
-  Stack, 
+  Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ChangeEvent, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
-import { Switch } from "../../Inputs/Switch";
+import { useQueryClient } from 'react-query';
+import { useSelector } from '../../../hooks/useSelector';
 import { payableService } from '../../../services/ApiService/PayableService';
+import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
+import { IPayableCreateData, IPayableResponseError } from '../../../types/payable';
+import { ACCOUNTS_REPORT, getMessage, PAYABLES, toUsDate } from '../../../utils/helpers';
+import { createValidation } from '../../../validations/payable';
+import { CancelButton } from "../../Buttons/Cancel";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Input } from "../../Inputs/Input";
 import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
-import { CancelButton } from "../../Buttons/Cancel";
-import { ACCOUNTS_REPORT, getMessage, PAYABLES, toUsDate } from '../../../utils/helpers';
-import { IPayableCreateData, IPayableResponseError } from '../../../types/payable';
-import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
-import { createValidation } from '../../../validations/payable';
-import { useQueryClient } from 'react-query';
-import { useCategoriesForm } from '../../../hooks/useCategories';
+import { Switch } from "../../Inputs/Switch";
 import { Loading } from '../../Loading';
 
 interface FormData extends Omit<IPayableCreateData, "due_date"> {
@@ -33,7 +33,7 @@ interface CreatePayableFormProps {
 export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {  
   const queryClient = useQueryClient();
 
-  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: data, isLoading: isLoadingCategories } = useSelector(({application}) => application)
 
   const categories = data?.expense.map(category => {
     return {

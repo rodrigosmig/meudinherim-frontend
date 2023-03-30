@@ -1,24 +1,9 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { notDeepEqual } from "assert";
 import { mocked } from 'ts-jest/utils';
 import { TransferBetweenAccountsForm } from "../../../../components/Foms/accountEntry/TransferBetweenAccountsForm";
 import { useAccountsForm } from "../../../../hooks/useAccounts";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useSelector } from "../../../../hooks/useSelector";
 import { accountEntriesService } from "../../../../services/ApiService/AccountEntriesService";
-
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
 
 jest.mock('@chakra-ui/react', () => {
   const toast = jest.requireActual('@chakra-ui/react');
@@ -29,12 +14,12 @@ jest.mock('@chakra-ui/react', () => {
 });
 
 const accountEntriesServiceMocked = mocked(accountEntriesService.accountTransfer);
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
+const useSelectorMock = mocked(useSelector)
 const useAccountsFormMocked = useAccountsForm as jest.Mock<any>;
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/AccountEntriesService');
-jest.mock('../../../../hooks/useCategories');
+jest.mock('../../../../hooks/useSelector');
 jest.mock('../../../../hooks/useAccounts');
 
 const categories = {
@@ -67,7 +52,7 @@ const closeModal = jest.fn();
 
 describe('TransferBetweenAccounts Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categories }));
     useAccountsFormMocked.mockImplementation(() => ({ isLoading: false, data: accounts }));
 
     render(<TransferBetweenAccountsForm
@@ -143,7 +128,6 @@ describe('TransferBetweenAccounts Component', () => {
     })
 
     expect(accountEntriesServiceMocked).toHaveBeenCalledTimes(1);
-    //expect(screen.getByText("Transferência realizada com sucesso")).toBeInTheDocument(); 
   });
 
   it('tests server validation error', async () => {

@@ -6,6 +6,13 @@ import { LoginForm } from "../../../components/Foms/auth/LoginForm";
 import store from '../../../store/createStore';
 import { renderWithProviders } from "../../../utils/test-utils";
 
+jest.mock('@chakra-ui/react', () => {
+  const toast = jest.requireActual('@chakra-ui/react');
+  return {
+    ...toast,
+    createStandaloneToast: () => jest.fn,
+  };
+});
 
 jest.mock('react-google-recaptcha', () => {
   const ReCaptchaV2 = () => {
@@ -136,9 +143,6 @@ describe('LoginForm Component', () => {
     await act(async () => {
       fireEvent.submit(enterButton)
     })
-
-    //expect(screen.getByText("Falha ao Entrar")).toBeInTheDocument();
-    //expect(screen.getByText("As credenciais informadas são inválidas")).toBeInTheDocument();
 
     expect(dispatchMock).toBeCalled()
     expect(routerMock).not.toBeCalled()

@@ -6,6 +6,14 @@ import { useSelector } from "../../../hooks/useSelector";
 import store from '../../../store/createStore';
 import { renderWithProviders } from "../../../utils/test-utils";
 
+jest.mock('@chakra-ui/react', () => {
+  const toast = jest.requireActual('@chakra-ui/react');
+  return {
+    ...toast,
+    createStandaloneToast: () => jest.fn,
+  };
+});
+
 const dispatchMock = mocked(store.dispatch)
 const useSeletorMock = mocked(useSelector)
 
@@ -105,9 +113,8 @@ describe('ProfileForm Component', () => {
     fireEvent.submit(screen.getByRole("button", { name: "Alterar" }));
 
     await waitFor(() => {
-      //expect(screen.getByText("Sucesso")).toBeInTheDocument();
       expect(screen.getByText("Loading...")).toBeInTheDocument();
-      //expect(screen.getByText("Alteração realizada com sucesso")).toBeInTheDocument();
+      expect(dispatchMock).toHaveBeenCalledTimes(1)
     })
   });
 

@@ -8,7 +8,7 @@ import { parseISO } from 'date-fns';
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useCategoriesForm } from "../../../hooks/useCategories";
+import { useSelector } from "../../../hooks/useSelector";
 import { payableService } from "../../../services/ApiService/PayableService";
 import { IAccountSchedulingErrorKey } from "../../../types/accountScheduling";
 import { IPayable, IPayableFormData, IPayableResponseError } from "../../../types/payable";
@@ -34,7 +34,7 @@ interface FormData extends Omit<IPayableFormData, "due_date"> {
 export const EditPayableForm = ({ payable, onClose }: Props) => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: data, isLoading: isLoadingCategories } = useSelector(({application}) => application)
 
   const [ monthly, setMonthly ] = useState(payable.monthly);
 

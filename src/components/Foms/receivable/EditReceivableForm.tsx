@@ -1,25 +1,25 @@
-import { useState } from 'react';
-import { 
+import {
   Box,
   Flex,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
 import { parseISO } from 'date-fns';
-import { Switch } from "../../Inputs/Switch";
-import { Select } from "../../Inputs/Select";
-import { receivableService } from "../../../services/ApiService/ReceivableService";
-import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, reverseBrDate, toUsDate } from '../../../utils/helpers';
-import { CancelButton } from '../../Buttons/Cancel';
-import { IReceivable, IReceivableFormData, IReceivableResponseError } from '../../../types/receivable';
-import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
-import { editValidation } from '../../../validations/receivables';
-import { useCategoriesForm } from '../../../hooks/useCategories';
+import { useState } from 'react';
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from 'react-query';
+import { useSelector } from '../../../hooks/useSelector';
+import { receivableService } from "../../../services/ApiService/ReceivableService";
+import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
+import { IReceivable, IReceivableFormData, IReceivableResponseError } from '../../../types/receivable';
+import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, reverseBrDate, toUsDate } from '../../../utils/helpers';
+import { editValidation } from '../../../validations/receivables';
+import { CancelButton } from '../../Buttons/Cancel';
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Input } from "../../Inputs/Input";
+import { Select } from "../../Inputs/Select";
+import { Switch } from "../../Inputs/Switch";
 import { Loading } from '../../Loading';
 
 interface FormData extends Omit<IReceivableFormData, "due_date"> {
@@ -36,7 +36,7 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
 
   const [ monthly, setMonthly ] = useState(receivable.monthly);
 
-  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: data, isLoading: isLoadingCategories } = useSelector(({application}) => application)
 
   const categories = data?.income.map(category => {
     return {

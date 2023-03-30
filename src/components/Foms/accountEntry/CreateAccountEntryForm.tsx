@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useAccountsForm } from "../../../hooks/useAccounts";
-import { useCategoriesForm } from "../../../hooks/useCategories";
+import { useSelector } from "../../../hooks/useSelector";
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
 import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, toUsDate } from "../../../utils/helpers";
@@ -32,7 +32,7 @@ interface Props {
 export const CreateAccountEntryForm = ({ accountId = null, onClose }: Props) => {  
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: categories, isLoading: isLoadingCategories } = useSelector(({application}) => application)
   const { data: formAccounts, isLoading: isLoadingAccounts } = useAccountsForm();
 
   const { control, register, handleSubmit, setError, formState } = useForm({
