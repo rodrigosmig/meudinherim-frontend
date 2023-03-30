@@ -1,30 +1,17 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from "ts-jest/utils";
-import { accountEntriesService } from "../../../../services/ApiService/AccountEntriesService";
 import { EditAccountEntryForm } from "../../../../components/Foms/accountEntry/EditAccountEntryForm";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useSelector } from "../../../../hooks/useSelector";
+import { accountEntriesService } from "../../../../services/ApiService/AccountEntriesService";
 import { IAccount } from "../../../../types/account";
 import { IAccountEntry } from "../../../../types/accountEntry";
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
+const useSelectorMock = mocked(useSelector)
 const accountEntriesServiceMocked = mocked(accountEntriesService.update);
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/AccountEntriesService');
-jest.mock('../../../../hooks/useCategories');
+jest.mock('../../../../hooks/useSelector');
 
 const account: IAccount = {
   id: 1,
@@ -71,7 +58,7 @@ const refetch = jest.fn;
 describe('EditAccountEntryForm Component', () => {
   beforeEach(() => {
     jest.resetModules();
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categories }));
 
     render(<EditAccountEntryForm entry={entry} closeModal={closeModal} refetch={refetch} />)
   });

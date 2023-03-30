@@ -2,34 +2,20 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { CreateInvoiceEntryForm } from "../../../../components/Foms/InvoiceEntry/CreateInvoiceEntryForm";
 import { useCardsForm } from "../../../../hooks/useCards";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useSelector } from "../../../../hooks/useSelector";
 import { invoiceEntriesService } from "../../../../services/ApiService/InvoiceEntriesService";
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
-
 const invoiceEntriesServiceMocked = mocked(invoiceEntriesService.create);
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
 const useCardsFormMocked = useCardsForm as jest.Mock<any>;
+const useSelectorMock = mocked(useSelector)
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/InvoiceEntriesService')
 jest.mock('../../../../hooks/useCards')
 jest.mock('../../../../hooks/useCategories')
+jest.mock('../../../../hooks/useSelector');
 
 const onCancel = jest.fn();
-const refetch = jest.fn();
 
 const categories = {
   income: [
@@ -57,10 +43,10 @@ const formCards = [
 
 describe('CreateInvoiceEntryForm Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categories }));
     useCardsFormMocked.mockImplementation(() => ({ isLoading: false, data: formCards }));
 
-    render(<CreateInvoiceEntryForm onCancel={onCancel} refetch={refetch} />)
+    render(<CreateInvoiceEntryForm onClose={onCancel} />)
   });
 
   afterEach(() => {

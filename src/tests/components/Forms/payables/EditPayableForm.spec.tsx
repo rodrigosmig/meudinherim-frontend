@@ -1,29 +1,24 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { EditPayableForm } from "../../../../components/Foms/payable/EditPayableForm";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useSelector } from "../../../../hooks/useSelector";
 import { payableService } from "../../../../services/ApiService/PayableService";
 import { IPayable } from "../../../../types/payable";
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
+jest.mock('@chakra-ui/react', () => {
+  const toast = jest.requireActual('@chakra-ui/react');
+  return {
+    ...toast,
+    createStandaloneToast: () => jest.fn,
+  };
 });
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
+
 const payableServiceMocked = mocked(payableService.update);
+const useSelectorMock = mocked(useSelector)
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/PayableService')
-jest.mock('../../../../hooks/useCategories')
+jest.mock('../../../../hooks/useSelector');
 
 const categoriesForm = {
   income: [
@@ -59,11 +54,11 @@ const payable: IPayable = {
   parcelable_id: null,
 }
 
-const closeModal = jest.fn;
+const closeModal = jest.fn();
 
 describe('EditPayableForm Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categoriesForm }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categoriesForm }));
 
     render(<EditPayableForm payable={payable} onClose={closeModal} />)
   });
@@ -111,16 +106,17 @@ describe('EditPayableForm Component', () => {
     })
 
     expect(payableServiceMocked).toHaveBeenCalledTimes(0);
+    expect(closeModal).not.toHaveBeenCalled();
     expect(screen.getByText("O campo descrição deve ter no mínimo 3 caracteres")).toBeInTheDocument();
     expect(screen.getByText("O valor deve ser maior que zero")).toBeInTheDocument();
   })
 
-  /* it('update payable successfully', async () => {
+  it('update payable successfully', async () => {
+    fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+    
     await waitFor(() => {
-      fireEvent.submit(screen.getByRole("button", {name: "Salvar"}));
+      expect(payableServiceMocked).toHaveBeenCalledTimes(1);
     })
 
-    expect(payableServiceMocked).toHaveBeenCalledTimes(1);
-    expect(screen.getByText("Conta a Pagar alterada com sucesso")).toBeInTheDocument();
-  }) */
+  })
 })

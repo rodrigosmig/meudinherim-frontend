@@ -1,29 +1,15 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { CreateReceivableForm } from "../../../../components/Foms/receivable/CreateReceivableForm";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useSelector } from "../../../../hooks/useSelector";
 import { receivableService } from "../../../../services/ApiService/ReceivableService";
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
-
 const receivableServiceMocked = mocked(receivableService.create);
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
+const useSelectorMock = mocked(useSelector)
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/ReceivableService')
-jest.mock('../../../../hooks/useCategories');
+jest.mock('../../../../hooks/useSelector');
 
 const categories = {
   income: [
@@ -40,11 +26,11 @@ const categories = {
   ]
 }
 
-const closeModal = jest.fn;
+const closeModal = jest.fn();
 
 describe('CreateReceivableForm Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categories }));
     render(<CreateReceivableForm onClose={closeModal} />)
   });
 

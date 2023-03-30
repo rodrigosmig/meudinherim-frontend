@@ -1,23 +1,9 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { EditReceivableForm } from "../../../../components/Foms/receivable/EditReceivableForm";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useSelector } from "../../../../hooks/useSelector";
 import { receivableService } from "../../../../services/ApiService/ReceivableService";
 import { IReceivable } from "../../../../types/receivable";
-
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
 
 jest.mock('@chakra-ui/react', () => {
   const toast = jest.requireActual('@chakra-ui/react');
@@ -28,11 +14,11 @@ jest.mock('@chakra-ui/react', () => {
 });
 
 const receivableServiceMocked = mocked(receivableService.update);
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
+const useSelectorMock = mocked(useSelector)
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/ReceivableService')
-jest.mock('../../../../hooks/useCategories')
+jest.mock('../../../../hooks/useSelector');
 
 const categories = {
   income: [
@@ -75,7 +61,8 @@ const refetch = jest.fn;
 
 describe('EditPayableForm Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categories }));
+
     render(<EditReceivableForm receivable={receivable} onClose={closeModal} />)
   });
 
@@ -132,6 +119,5 @@ describe('EditPayableForm Component', () => {
     })
 
     expect(receivableServiceMocked).toHaveBeenCalledTimes(1);
-    //expect(screen.getByText("Conta a Receber alterada com sucesso")).toBeInTheDocument();
   })
 })

@@ -6,6 +6,14 @@ import store from '../../../../store/createStore';
 import { toBrDate } from "../../../../utils/helpers";
 import { renderWithProviders } from "../../../../utils/test-utils";
 
+jest.mock('@chakra-ui/react', () => {
+  const toast = jest.requireActual('@chakra-ui/react');
+  return {
+    ...toast,
+    createStandaloneToast: () => jest.fn,
+  };
+});
+
 const dispatchMock = mocked(store.dispatch)
 const useSeletorMock = mocked(useSelector)
 
@@ -113,7 +121,6 @@ describe('NavNotifications Component', () => {
 
       fireEvent.click(markAllAsReadButton);
 
-      //expect(screen.getByText(response.response.data.message)).toBeInTheDocument(); 
       expect(dispatchMock).toBeCalled()
     })
   });

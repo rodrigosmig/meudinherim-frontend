@@ -2,23 +2,9 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { EditInvoiceEntryForm } from "../../../../components/Foms/InvoiceEntry/EditInvoiceEntryForm";
 import { useCardsForm } from "../../../../hooks/useCards";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useSelector } from "../../../../hooks/useSelector";
 import { invoiceEntriesService } from "../../../../services/ApiService/InvoiceEntriesService";
 import { IInvoiceEntry } from "../../../../types/invoiceEntry";
-
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
 
 jest.mock('@chakra-ui/react', () => {
   const toast = jest.requireActual('@chakra-ui/react');
@@ -29,13 +15,13 @@ jest.mock('@chakra-ui/react', () => {
 });
 
 const invoiceEntriesServiceMocked = mocked(invoiceEntriesService.update);
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
 const useCardsFormMocked = useCardsForm as jest.Mock<any>;
+const useSelectorMock = mocked(useSelector)
 
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/InvoiceEntriesService')
 jest.mock('../../../../hooks/useCards')
-jest.mock('../../../../hooks/useCategories')
+jest.mock('../../../../hooks/useSelector');
 
 
 const onClose = jest.fn();
@@ -73,7 +59,8 @@ const entry: IInvoiceEntry = {
     id: 1,
     type: 1,
     name: "Category Test",
-    active: true
+    active: true,
+    show_in_dashboard: true
   },
   card_id: 1,
   invoice_id: 1,
@@ -87,7 +74,7 @@ const entry: IInvoiceEntry = {
 
 describe('EditInvoiceEntryForm Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categories }));
     useCardsFormMocked.mockImplementation(() => ({ isLoading: false, data: formCards }));
 
     render(<EditInvoiceEntryForm entry={entry} onClose={onClose} />)

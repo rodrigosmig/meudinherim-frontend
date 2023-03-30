@@ -1,29 +1,15 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { mocked } from 'ts-jest/utils';
 import { GeneratePaymentForm } from "../../../../components/Foms/payable/GeneratePaymentForm";
-import { useCategoriesForm } from "../../../../hooks/useCategories";
+import { useSelector } from "../../../../hooks/useSelector";
 import { payableService } from "../../../../services/ApiService/PayableService";
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
-
 const payableServiceMocked = mocked(payableService.create);
-const useCategoriesFormMocked = useCategoriesForm as jest.Mock<any>;
+const useSelectorMock = mocked(useSelector)
 
 jest.mock('react-query');
 jest.mock('../../../../services/ApiService/PayableService');
-jest.mock('../../../../hooks/useCategories');
+jest.mock('../../../../hooks/useSelector');
 
 const onCancel = jest.fn();
 
@@ -58,7 +44,7 @@ const categories = {
 
 describe('GeneratePaymentForm Component', () => {
   beforeEach(() => {
-    useCategoriesFormMocked.mockImplementation(() => ({ isLoading: false, data: categories }));
+    useSelectorMock.mockImplementation(() => ({ isLoading: false, categoriesForm: categories }));
 
     render(<GeneratePaymentForm invoice={invoice} onCancel={onCancel} />)
   });
