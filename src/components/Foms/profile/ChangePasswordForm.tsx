@@ -1,38 +1,30 @@
-import { useContext } from "react";
 import { Flex, Stack } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../../Inputs/Input";
-import { AuthContext } from "../../../contexts/AuthContext";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitButton } from "../../Buttons/Submit";
 import { profileService } from "../../../services/ApiService/ProfileService";
 import { getMessage } from "../../../utils/helpers";
 import { changePasswordValidation } from "../../../validations/auth";
-
-type PasswordFormData = {
-    current_password: string
-    password: string;
-    password_confirmation: string;
-}
+import { useDispatch } from "../../../hooks/useDispatch";
+import { IPasswordUpdateData } from "../../../types/auth";
+import { updatePassword } from "../../../store/thunks/authThunk";
 
 export function ChangePasswordForm() {
-    const { signOut } = useContext(AuthContext);
+    const dispatch = useDispatch();
 
     const { register, handleSubmit, reset, setError, formState } = useForm({
         resolver: yupResolver(changePasswordValidation)
     });
     const { errors } = formState;
 
-    const handleUpdatePassword: SubmitHandler<PasswordFormData> = async (values) => {
+    const handleUpdatePassword: SubmitHandler<IPasswordUpdateData> = async (values) => {
         try {
-            await profileService.updatePassword(values);
-
-            getMessage("Sucesso", "Senha alterada com sucesso");
-
+            await dispatch(updatePassword(values)).unwrap()
+            
             reset();
 
-            signOut();
-
+            getMessage("Sucesso", "Senha alterada com sucesso");
         } catch (error) {
 
             if (error.response.status === 422) {
