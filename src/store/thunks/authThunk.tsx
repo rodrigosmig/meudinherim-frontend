@@ -5,7 +5,7 @@ import Router from 'next/router';
 import { authService } from "../../services/ApiService/AuthService";
 import { profileService } from '../../services/ApiService/ProfileService';
 import { tokenService } from "../../services/tokenService";
-import { IProfileUpdateData, ISignInCredentials, ISignInResponse } from "../../types/auth";
+import { IPasswordUpdateData, IProfileUpdateData, ISignInCredentials, ISignInResponse } from "../../types/auth";
 import { getAccountsBalance } from "./accountsThunk";
 import { getOpenInvoices } from "./invoicesThunk";
 import { getNotifications } from "./notificationThunk";
@@ -14,14 +14,9 @@ import { getNotifications } from "./notificationThunk";
   type: 'native'
 }); */
 
-const signOut = () => {
-  //authChannel.postMessage("signOut");
-  logoff();
-}
-
 const logoff = () => {
   tokenService.delete(undefined)
-  
+  console.log("apagou")
   Router.push('/');
   Router.reload()
 }
@@ -33,7 +28,8 @@ const logoff = () => {
   }
 } */
 
-export const signIn = createAsyncThunk('auth/signIn',
+export const signIn = createAsyncThunk(
+  'auth/signIn',
   async (credentials: ISignInCredentials, thunkAPI) => {
     let response = {} as ISignInResponse
 
@@ -58,6 +54,19 @@ export const signIn = createAsyncThunk('auth/signIn',
 
     thunkAPI.dispatch(updateData());
     return response;
+  }
+)
+
+export const updatePassword = createAsyncThunk(
+  'auth/updatePassword',
+  async (data: IPasswordUpdateData, thunkAPI) => {
+    try {
+      await profileService.updatePassword(data);
+      
+      logoff();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
   }
 )
 
@@ -105,7 +114,7 @@ export const logout = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       await authService.signOut();
-      signOut();
+      logoff();
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
