@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Pagination } from '../../components/Pagination';
 
-jest.mock('../../hooks/useCategories')
 jest.mock('react-query')
 
 const onPageChange = jest.fn();

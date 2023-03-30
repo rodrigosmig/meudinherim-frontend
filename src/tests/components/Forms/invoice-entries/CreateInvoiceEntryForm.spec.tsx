@@ -12,7 +12,6 @@ const useSelectorMock = mocked(useSelector)
 jest.mock('react-query')
 jest.mock('../../../../services/ApiService/InvoiceEntriesService')
 jest.mock('../../../../hooks/useCards')
-jest.mock('../../../../hooks/useCategories')
 jest.mock('../../../../hooks/useSelector');
 
 const onCancel = jest.fn();
