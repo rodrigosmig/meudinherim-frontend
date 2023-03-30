@@ -1,9 +1,9 @@
-import { CategoryType } from './../types/category';
-import { CATEGORIES, CATEGORIES_FORM } from './../utils/helpers';
 import { useContext } from "react";
 import { useQuery } from "react-query";
 import { AuthContext } from "../contexts/AuthContext";
 import { categoryService } from "../services/ApiService/CategoryService";
+import { CategoryType } from './../types/category';
+import { CATEGORIES_FORM } from './../utils/helpers';
 
 export const getCategories = async (categoryType: CategoryType, active: boolean, page: number, perPage: number) => {
   const response = await categoryService.list({categoryType, active, page, perPage});
@@ -28,14 +28,6 @@ export const getCategoriesForForm = async () => {
   const data = response.data
 
   return data;
-}
-
-export const useCategories = (categoryType: CategoryType, active: boolean, page: number, perPage: number) => {
-  const { user } = useContext(AuthContext);
-
-  return useQuery([CATEGORIES, categoryType, active, page, perPage, user?.id], () => getCategories(categoryType, active, page, perPage), {
-    staleTime: 1000 * 60 * 15
-  })
 }
 
 export const useCategoriesForm = () => {

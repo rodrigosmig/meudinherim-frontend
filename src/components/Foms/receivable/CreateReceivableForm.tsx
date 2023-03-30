@@ -8,7 +8,7 @@ import { ChangeEvent, useState } from 'react';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from 'react-query';
-import { useCategoriesForm } from '../../../hooks/useCategories';
+import { useSelector } from "../../../hooks/useSelector";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { IAccountSchedulingCreateData, IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 import { IReceivableResponseError } from '../../../types/receivable';
@@ -34,7 +34,7 @@ interface Props {
 export const CreateReceivableForm = ({ onClose }: Props) => {  
   const queryClient = useQueryClient();
 
-  const { data, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: data, isLoading: isLoadingCategories } = useSelector(({application}) => application)
 
   const categories = data?.income.map(category => {
     return {

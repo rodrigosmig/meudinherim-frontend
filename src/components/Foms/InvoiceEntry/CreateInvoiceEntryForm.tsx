@@ -1,4 +1,3 @@
-import { useState, ChangeEvent } from "react";
 import {
   Box,
   Button,
@@ -6,22 +5,23 @@ import {
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ChangeEvent, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
-import { SelectCategories } from "../../Inputs/SelectCategories";
-import { Select } from "../../Inputs/Select";
-import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
-import { useCategoriesForm } from "../../../hooks/useCategories";
-import { Loading } from "../../Loading";
-import { useCardsForm } from "../../../hooks/useCards";
-import { Installment } from "../../Inputs/Installment";
-import { Switch } from "../../Inputs/Switch";
-import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toUsDate } from "../../../utils/helpers";
-import { IInvoiceEntryCreateData, IInvoiceEntryErrorKey, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
-import { createValidation } from "../../../validations/invoiceEntry";
 import { useQueryClient } from "react-query";
+import { useCardsForm } from "../../../hooks/useCards";
+import { useSelector } from "../../../hooks/useSelector";
+import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
+import { IInvoiceEntryCreateData, IInvoiceEntryErrorKey, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toUsDate } from "../../../utils/helpers";
+import { createValidation } from "../../../validations/invoiceEntry";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Input } from "../../Inputs/Input";
+import { Installment } from "../../Inputs/Installment";
+import { Select } from "../../Inputs/Select";
+import { SelectCategories } from "../../Inputs/SelectCategories";
+import { Switch } from "../../Inputs/Switch";
+import { Loading } from "../../Loading";
 
 interface FormData extends Omit<IInvoiceEntryCreateData, "date"> {
   date: Date;
@@ -35,7 +35,7 @@ interface CreateInvoiceEntryFormProps {
 export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoiceEntryFormProps) => {  
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: categories, isLoading: isLoadingCategories } = useSelector(({application}) => application)
   const { data: formCards, isLoading: isLoadingCardsForm } = useCardsForm();
 
   const [ hasInstallment, setHasInstallment ] = useState(false);

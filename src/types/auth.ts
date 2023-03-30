@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, NextPageContext } from "next";
+import { GetServerSidePropsContext } from "next";
 
 export interface AuthState {
   isLoading: boolean;

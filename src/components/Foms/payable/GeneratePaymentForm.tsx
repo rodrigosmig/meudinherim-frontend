@@ -7,7 +7,7 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useCategoriesForm } from "../../../hooks/useCategories";
+import { useSelector } from "../../../hooks/useSelector";
 import { payableService } from "../../../services/ApiService/PayableService";
 import { IGenerateKeyError } from "../../../types/accountScheduling";
 import { IInvoice } from "../../../types/card";
@@ -27,7 +27,7 @@ interface Props {
 export const GeneratePaymentForm = ({ invoice, onCancel }: Props) => {
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: categories, isLoading: isLoadingCategories } = useSelector(({application}) => application)
 
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues:{

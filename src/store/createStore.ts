@@ -1,12 +1,14 @@
  import { combineReducers, configureStore, PreloadedState } from "@reduxjs/toolkit";
 import { RootState } from "../hooks/useSelector";
 import accountsBalanceSlice from "./slices/accountsSlice";
+import applicationSlice from "./slices/applicationSlice";
 import authSlice from "./slices/authSlice";
 import categoriesSlice from "./slices/categoriesSlice";
 import invoicesSlice from "./slices/invoicesSlice";
 import notificationSlice from "./slices/notificationSlice";
 
 export const reducer = combineReducers({
+  application: applicationSlice,
   notifications: notificationSlice,
   auth: authSlice,
   categories: categoriesSlice,

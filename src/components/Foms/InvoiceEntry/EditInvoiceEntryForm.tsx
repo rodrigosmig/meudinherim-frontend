@@ -1,4 +1,4 @@
-import { 
+import {
   Box,
   Button,
   Flex,
@@ -6,16 +6,16 @@ import {
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
+import { useSelector } from "../../../hooks/useSelector";
+import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
+import { IInvoiceEntry, IInvoiceEntryErrorKey, IInvoiceEntryFormData, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES } from "../../../utils/helpers";
+import { editValidation } from "../../../validations/invoiceEntry";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { SelectCategories } from "../../Inputs/SelectCategories";
-import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
-import { useCategoriesForm } from "../../../hooks/useCategories";
 import { Loading } from "../../Loading";
-import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES } from "../../../utils/helpers";
-import { IInvoiceEntry, IInvoiceEntryErrorKey, IInvoiceEntryFormData, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
-import { editValidation } from "../../../validations/invoiceEntry";
-import { useQueryClient } from "react-query";
 
 interface Props {
   entry: IInvoiceEntry;
@@ -25,7 +25,7 @@ interface Props {
 export const EditInvoiceEntryForm = ({ entry, onClose }: Props) => {  
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading } = useCategoriesForm();
+  const { categoriesForm: categories, isLoading } = useSelector(({application}) => application)
 
   const { register, handleSubmit, setError, formState } = useForm({
     defaultValues:{

@@ -1,25 +1,25 @@
-import { 
-    Box,
-    Button,
-    Divider,
-    Flex,
-    Stack
-  } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Stack
+} from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { SubmitButton } from "../../Buttons/Submit";
-import { Input } from "../../Inputs/Input";
-import { Datepicker } from "../../DatePicker";
-import { Select } from "../../Inputs/Select";
-import { getMessage, toUsDate } from "../../../utils/helpers";
-import { useCategoriesForm } from "../../../hooks/useCategories";
-import { Loading } from "../../Loading";
-import { useAccountsForm } from "../../../hooks/useAccounts";
 import { useQueryClient } from "react-query";
+import { useAccountsForm } from "../../../hooks/useAccounts";
 import { useCardsForm } from "../../../hooks/useCards";
-import { IPartialPaymentErrorKey, IPartialPaymentInvoiceData, IPartialPaymentInvoiceResponseError } from "../../../types/card";
+import { useSelector } from "../../../hooks/useSelector";
 import { cardService } from "../../../services/ApiService/CardService";
+import { IPartialPaymentErrorKey, IPartialPaymentInvoiceData, IPartialPaymentInvoiceResponseError } from "../../../types/card";
+import { getMessage, toUsDate } from "../../../utils/helpers";
 import { partialPayment } from "../../../validations/card";
+import { SubmitButton } from "../../Buttons/Submit";
+import { Datepicker } from "../../DatePicker";
+import { Input } from "../../Inputs/Input";
+import { Select } from "../../Inputs/Select";
+import { Loading } from "../../Loading";
   
 interface FormData extends Omit<IPartialPaymentInvoiceData, "date"> { 
   date: Date 
@@ -33,7 +33,7 @@ interface Props {
 export const PartialPaymentForm = ({ cardId, onCancel}: Props) => {  
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading: isLoadingCategories } = useCategoriesForm();
+  const { categoriesForm: categories, isLoading: isLoadingCategories } = useSelector(({application}) => application)
   const { data: formCards, isLoading: isLoadingCardsForm } = useCardsForm();
   const { data: formAccounts, isLoading: isLoadingAccounts } = useAccountsForm();
 
