@@ -1,0 +1,5 @@
+.react-datepicker__header__dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}

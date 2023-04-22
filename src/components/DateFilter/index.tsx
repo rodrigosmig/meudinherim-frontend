@@ -61,6 +61,8 @@ const DateFilterComponent = ({ startDate, endDate, label = 'Filtrar por período
           onChange={onChange}
           isClearable={true}
           placeholderText={label}
+          showYearDropdown
+          showMonthDropdown
         />
       </Flex>
 
