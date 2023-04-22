@@ -16,6 +16,8 @@ import * as gtag from '../utils/analytics'
 import { Provider } from 'react-redux';
 import store from '../store/createStore';
 
+import '../components/DateFilter/custom.css';
+
 Router.events.on('routeChangeStart', () => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
