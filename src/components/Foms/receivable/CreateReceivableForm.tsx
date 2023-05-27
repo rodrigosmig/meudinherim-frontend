@@ -155,7 +155,6 @@ export const CreateReceivableForm = ({ onClose }: Props) => {
         />
 
         <Input
-          value={receivableValue}
           name="value"
           type="number"
           label="Valor"
