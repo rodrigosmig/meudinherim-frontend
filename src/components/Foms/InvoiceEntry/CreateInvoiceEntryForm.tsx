@@ -150,7 +150,6 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
         />
 
         <Input
-          value={entryValue}
           name="value"
           type="number"
           label="Valor"

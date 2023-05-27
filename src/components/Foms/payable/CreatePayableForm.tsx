@@ -154,7 +154,6 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
         />
 
         <Input
-          value={payableValue}
           name="value"
           type="number"
           label="Valor"
