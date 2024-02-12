@@ -31,7 +31,7 @@ const InstallmentBase: ForwardRefRenderFunction<HTMLSelectElement, Props> = ({ a
   
   const quantity_installments = [];
 
-  for (let index = 2; index < 31; index++) {
+  for (let index = 2; index < 49; index++) {
     quantity_installments.push(index);    
   }
 
