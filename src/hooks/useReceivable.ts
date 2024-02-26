@@ -27,6 +27,7 @@ export const getReceivables = async (filterDate: [string, string], page: number,
       total_purchase: receivable.total_purchase,
       parcel_number: receivable.parcel_number,
       parcelable_id: receivable.parcelable_id,
+      tags: receivable.tags
     }
   })
 

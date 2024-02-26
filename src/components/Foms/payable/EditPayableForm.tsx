@@ -48,7 +48,9 @@ export const EditPayableForm = ({ payable, onClose }: Props) => {
     }
   });
 
-  const selectedTags = tags?.filter(tag => payable.tags.includes(tag.value))
+  const selectedTags = payable.tags.map(tag => {
+    return {value: tag, label: tag}
+  })
 
   const [ monthly, setMonthly ] = useState(payable.monthly);
 
@@ -108,7 +110,7 @@ export const EditPayableForm = ({ payable, onClose }: Props) => {
     }
   }
 
-  if (isLoadingCategories || isLoadingTags) {
+  if (isLoadingTags || isLoadingCategories) {
     return (
       <Loading />
     )
