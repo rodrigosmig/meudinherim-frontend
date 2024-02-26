@@ -24,7 +24,7 @@ import { Select as ChakraSelect } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
 import { Loading } from '../../Loading';
 import { useTags } from "../../../hooks/useTags";
-import { CreatableSelect as MultiSelect, GroupBase, OptionBase, SelectInstance } from "chakra-react-select";
+import { CreatableSelect as MultiSelect } from "chakra-react-select";
 
 
 interface FormData extends Omit<IPayableCreateData, "due_date"> {

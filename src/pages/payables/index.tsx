@@ -69,7 +69,6 @@ export default function AccountPayables({ accounts }: Props) {
   const [filteredPayables, setFilteredPayables] = useState([] as IPayable[]);
 
   const sizeProps = isWideVersion ? 'md' : 'sm';
-
   useEffect(() => {
     if (data) {
       setFilteredPayables(oldValue => data.payables);

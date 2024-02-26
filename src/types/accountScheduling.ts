@@ -1,5 +1,6 @@
 import { ICategory } from './category';
 import { Pagination } from './pagination';
+import { TagOptions } from './tag';
 
 interface AccountScheduling {
   due_date: string;
@@ -15,10 +16,11 @@ export interface IAccountScheduling extends AccountScheduling {
   paid: boolean;
   monthly: boolean;
   has_parcels: boolean;
-  is_parcel: boolean,
-  total_purchase: number,
-  parcel_number: number,
-  parcelable_id: number,
+  is_parcel: boolean;
+  total_purchase: number;
+  parcel_number: number;
+  parcelable_id: number;
+  tags: string[];
 }
 
 export interface IAccountSchedulingCreateData extends AccountScheduling {
@@ -27,7 +29,7 @@ export interface IAccountSchedulingCreateData extends AccountScheduling {
   installment?: boolean;
   installments_number?: number;
   invoice_id?: number
-  tags: string[]
+  tags: TagOptions[]
 }
 
 export interface IAccountSchedulingFormData {
@@ -35,12 +37,12 @@ export interface IAccountSchedulingFormData {
   category_id: number;
   description: string;
   value: number;
-  monthly: boolean
+  monthly: boolean;
+  tags: TagOptions[];
 }
 
-export interface IAccountSchedulingUpdateData {
+export interface IAccountSchedulingUpdateData extends IAccountSchedulingFormData {
   id: number;
-  data: IAccountSchedulingFormData;
 }
 
 export interface ITransactionFormData {

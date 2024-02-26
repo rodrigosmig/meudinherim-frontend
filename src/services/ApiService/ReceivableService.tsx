@@ -11,7 +11,7 @@ export const receivableService = {
     return apiClient.get(`/receivables/${id}?parcelable_id=${receivableId}`)
   },
   create: (data: IReceivableCreateData): Promise<AxiosResponse<IReceivable>> => apiClient.post(`/receivables`, data),
-  update: (values: IReceivableUpdateData): Promise<AxiosResponse<IReceivable>> => apiClient.put(`/receivables/${values.id}`, values.data),
+  update: (values: IReceivableUpdateData): Promise<AxiosResponse<IReceivable>> => apiClient.put(`/receivables/${values.id}`, values),
   delete: (id: number): Promise<AxiosResponse> => apiClient.delete(`/receivables/${id}`),
   receivement: (values: IReceivementData): Promise<AxiosResponse> => apiClient.post(`/receivables/${values.id}/receivement`, values.data),
   cancelReceivement: (id: number, receivable_id?: number): Promise<AxiosResponse> => {
