@@ -2,10 +2,12 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useSelector } from "../../../hooks/useSelector";
 import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
@@ -16,6 +18,8 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Input } from "../../Inputs/Input";
 import { SelectCategories } from "../../Inputs/SelectCategories";
 import { Loading } from "../../Loading";
+import { CreatableSelect as MultiSelect } from "chakra-react-select";
+import { useTags } from "../../../hooks/useTags";
 
 interface Props {
   entry: IInvoiceEntry;
@@ -26,26 +30,41 @@ export const EditInvoiceEntryForm = ({ entry, onClose }: Props) => {
   const queryClient = useQueryClient();
 
   const { categoriesForm: categories, isLoading } = useSelector(({application}) => application)
+  const { data: dataTags, isLoading: isLoadingTags } = useTags();
 
-  const { register, handleSubmit, setError, formState } = useForm({
+  const tags = dataTags?.map(tag => {
+    return {
+      value: tag.name,
+      label: tag.name
+    }
+  });
+
+  const selectedTags = entry?.tags.map(tag => {
+    return {value: tag, label: tag}
+  })
+
+  const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues:{
       category_id: entry.category.id,
       description: entry.description,
       value: entry.value,
+      tags: selectedTags
     },
     resolver: yupResolver(editValidation)
   });
 
   const { errors } = formState;
 
-  const handleCreateInvoiceEntry: SubmitHandler<IInvoiceEntryFormData> = async (values) => {
+  const onSelectTagsChange = (inputValue: string) => `Nova tag: ${inputValue}`;
+
+  const handleEditInvoiceEntry: SubmitHandler<IInvoiceEntryFormData> = async (values) => {
+    const tags = values.tags.map(tag => tag.value)
     const data = {
       id: entry.id,
-      data: {
-        category_id: values.category_id,
-        description: values.description,
-        value: values.value
-      }
+      category_id: values.category_id,
+      description: values.description,
+      value: values.value,
+      tags: tags
     }
 
     try {
@@ -86,7 +105,7 @@ export const EditInvoiceEntryForm = ({ entry, onClose }: Props) => {
   return (
     <Box
       as="form"
-      onSubmit={handleSubmit(handleCreateInvoiceEntry)}
+      onSubmit={handleSubmit(handleEditInvoiceEntry)}
       >
       <Stack spacing={[4]}>
         <SelectCategories
@@ -111,6 +130,45 @@ export const EditInvoiceEntryForm = ({ entry, onClose }: Props) => {
           error={errors.value}
           step="0.01"
           {...register('value')}
+        />
+
+        <Controller
+          control={control}
+          name="tags"
+          render={({
+            field: { onChange, onBlur, value, name, ref },
+            fieldState: { error }
+          }) => (
+            <FormControl isInvalid={!!error}>
+              <FormLabel htmlFor={name}>Tags</FormLabel>
+              <MultiSelect
+                isMulti
+                name={name}
+                colorScheme="pink"
+                options={tags}
+                focusBorderColor="pink.500"
+                placeholder="..."
+                chakraStyles={{
+                  dropdownIndicator: (provided) => ({
+                    ...provided,
+                    bg: "transparent",
+                    px: 2,
+                    cursor: "inherit",
+                  }),
+                  indicatorSeparator: (provided) => ({
+                    ...provided,
+                    display: "none",
+                  }),
+                }}
+                closeMenuOnSelect={false}
+                formatCreateLabel={onSelectTagsChange}
+                onChange={onChange}
+                onBlur={onBlur}
+                value={value}
+                ref={ref}
+              />
+              </FormControl>
+          )}
         />
       </Stack>
       <Flex
