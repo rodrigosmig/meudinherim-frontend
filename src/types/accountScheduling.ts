@@ -27,6 +27,7 @@ export interface IAccountSchedulingCreateData extends AccountScheduling {
   installment?: boolean;
   installments_number?: number;
   invoice_id?: number
+  tags: string[]
 }
 
 export interface IAccountSchedulingFormData {

@@ -20,6 +20,7 @@ export const PAYABLES = "payables";
 export const RECEIVABLES = "receivables";
 export const CATEGORIES = "categories";
 export const CATEGORIES_FORM = "categories-form";
+export const TAGS = "tags";
 
 export const toCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
