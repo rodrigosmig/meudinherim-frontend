@@ -14,7 +14,7 @@ import { useSelector } from "../../../hooks/useSelector";
 import { payableService } from "../../../services/ApiService/PayableService";
 import { IAccountSchedulingErrorKey } from "../../../types/accountScheduling";
 import { IPayable, IPayableFormData, IPayableResponseError } from "../../../types/payable";
-import { ACCOUNTS_REPORT, getMessage, PAYABLES, reverseBrDate, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_REPORT, getMessage, PAYABLES, reverseBrDate, TAGS, toUsDate } from "../../../utils/helpers";
 import { editValidation } from "../../../validations/payable";
 import { CancelButton } from "../../Buttons/Cancel";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -92,6 +92,7 @@ export const EditPayableForm = ({ payable, onClose }: Props) => {
       
       queryClient.invalidateQueries(PAYABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      queryClient.invalidateQueries(TAGS);
       
       getMessage("Sucesso", "Conta a Pagar alterada com sucesso");
       

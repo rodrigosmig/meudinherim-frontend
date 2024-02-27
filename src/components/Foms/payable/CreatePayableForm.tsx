@@ -13,7 +13,7 @@ import { useSelector } from '../../../hooks/useSelector';
 import { payableService } from '../../../services/ApiService/PayableService';
 import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 import { IPayableCreateData, IPayableResponseError } from '../../../types/payable';
-import { ACCOUNTS_REPORT, getMessage, PAYABLES, toUsDate } from '../../../utils/helpers';
+import { ACCOUNTS_REPORT, getMessage, PAYABLES, TAGS, toUsDate } from '../../../utils/helpers';
 import { createValidation } from '../../../validations/payable';
 import { CancelButton } from "../../Buttons/Cancel";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -92,6 +92,7 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
 
       queryClient.invalidateQueries(PAYABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      queryClient.invalidateQueries(TAGS);
       
       getMessage("Sucesso", "Conta a Pagar adicionada com sucesso");
 
@@ -181,6 +182,45 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
           onChange={v => handleChangePayableValue(v)}
         />
 
+        <Controller
+          control={control}
+          name="tags"
+          render={({
+            field: { onChange, onBlur, value, name, ref },
+            fieldState: { error }
+          }) => (
+            <FormControl isInvalid={!!error}>
+              <FormLabel htmlFor={name}>Tags</FormLabel>
+              <MultiSelect
+                isMulti
+                name={name}
+                colorScheme="pink"
+                options={tags}
+                focusBorderColor="pink.500"
+                placeholder="..."
+                chakraStyles={{
+                  dropdownIndicator: (provided) => ({
+                    ...provided,
+                    bg: "transparent",
+                    px: 2,
+                    cursor: "inherit",
+                  }),
+                  indicatorSeparator: (provided) => ({
+                    ...provided,
+                    display: "none",
+                  }),
+                }}
+                closeMenuOnSelect={false}
+                formatCreateLabel={onSelectTagsChange}
+                onChange={onChange}
+                onBlur={onBlur}
+                value={value}
+                ref={ref}
+              />
+              </FormControl>
+          )}
+        />
+
         <Switch
           size="lg"
           id="monthly" 
@@ -201,45 +241,6 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
           {...register('installment')}
           onChange={handleHasInstallment}
         />
-
-      <Controller
-        control={control}
-        name="tags"
-        render={({
-          field: { onChange, onBlur, value, name, ref },
-          fieldState: { error }
-        }) => (
-          <FormControl isInvalid={!!error}>
-            <FormLabel htmlFor={name}>Tags</FormLabel>
-            <MultiSelect
-              isMulti
-              name={name}
-              colorScheme="pink"
-              options={tags}
-              focusBorderColor="pink.500"
-              placeholder="..."
-              chakraStyles={{
-                dropdownIndicator: (provided) => ({
-                  ...provided,
-                  bg: "transparent",
-                  px: 2,
-                  cursor: "inherit",
-                }),
-                indicatorSeparator: (provided) => ({
-                  ...provided,
-                  display: "none",
-                }),
-              }}
-              closeMenuOnSelect={false}
-              formatCreateLabel={onSelectTagsChange}
-              onChange={onChange}
-              onBlur={onBlur}
-              value={value}
-              ref={ref}
-            />
-            </FormControl>
-        )}
-      />
         
       </Stack>
 

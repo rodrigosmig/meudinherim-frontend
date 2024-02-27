@@ -15,7 +15,7 @@ import { useTags } from "../../../hooks/useTags";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 import { IReceivable, IReceivableFormData, IReceivableResponseError } from '../../../types/receivable';
-import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, reverseBrDate, toUsDate } from '../../../utils/helpers';
+import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, reverseBrDate, TAGS, toUsDate } from '../../../utils/helpers';
 import { editValidation } from '../../../validations/receivables';
 import { CancelButton } from '../../Buttons/Cancel';
 import { SubmitButton } from "../../Buttons/Submit";
@@ -92,6 +92,7 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
 
       queryClient.invalidateQueries(RECEIVABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      queryClient.invalidateQueries(TAGS);
       
       getMessage("Sucesso", "Conta a Receber alterada com sucesso");
 
