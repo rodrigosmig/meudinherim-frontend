@@ -13,7 +13,7 @@ import { useQueryClient } from "react-query";
 import { useSelector } from "../../../hooks/useSelector";
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { IAccountEntry, IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
-import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, reverseBrDate, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, reverseBrDate, TAGS, toUsDate } from "../../../utils/helpers";
 import { editValidation } from "../../../validations/accountEntry";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
@@ -81,6 +81,7 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
       queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
       queryClient.invalidateQueries(ACCOUNT_BALANCE);
       queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+      queryClient.invalidateQueries(TAGS);
 
       getMessage("Sucesso", "Alteração realizada com sucesso");
 

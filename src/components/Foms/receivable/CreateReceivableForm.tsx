@@ -14,7 +14,7 @@ import { useSelector } from "../../../hooks/useSelector";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { IAccountSchedulingCreateData, IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 import { IReceivableResponseError } from '../../../types/receivable';
-import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_REPORT, getMessage, RECEIVABLES, TAGS, toUsDate } from "../../../utils/helpers";
 import { createValidation } from '../../../validations/receivables';
 import { CancelButton } from "../../Buttons/Cancel";
 import { SubmitButton } from "../../Buttons/Submit";
@@ -94,6 +94,7 @@ export const CreateReceivableForm = ({ onClose }: Props) => {
 
       queryClient.invalidateQueries(RECEIVABLES);
       queryClient.invalidateQueries(ACCOUNTS_REPORT);
+      queryClient.invalidateQueries(TAGS);
 
       onClose();
     } catch (error) {

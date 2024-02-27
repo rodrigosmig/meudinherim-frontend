@@ -14,7 +14,7 @@ import { useCardsForm } from "../../../hooks/useCards";
 import { useSelector } from "../../../hooks/useSelector";
 import { invoiceEntriesService } from "../../../services/ApiService/InvoiceEntriesService";
 import { IInvoiceEntryCreateData, IInvoiceEntryErrorKey, IInvoiceEntryResponseError } from "../../../types/invoiceEntry";
-import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, toUsDate } from "../../../utils/helpers";
+import { CARDS, getMessage, INVOICE, INVOICES, INVOICE_ENTRIES, OPEN_INVOICES, TAGS, toUsDate } from "../../../utils/helpers";
 import { createValidation } from "../../../validations/invoiceEntry";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
@@ -90,6 +90,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
       queryClient.invalidateQueries(INVOICE_ENTRIES)
       queryClient.invalidateQueries(OPEN_INVOICES)
       queryClient.invalidateQueries(CARDS)
+      queryClient.invalidateQueries(TAGS);
 
       onClose();
     } catch (error) {
@@ -176,18 +177,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
           onChange={v => handleChangeEntryValue(v)}
         />
 
-        <Switch
-          isDisabled={!hasEntryValue()}
-          size="lg"
-          id="installment" 
-          name='installment'
-          label="Parcelar"
-          isChecked={hasInstallment}
-          {...register('installment')}
-          onChange={() => setHasInstallment(!hasInstallment)}
-        />
-
-<Controller
+        <Controller
           control={control}
           name="tags"
           render={({
@@ -224,6 +214,17 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
               />
               </FormControl>
           )}
+        />
+
+        <Switch
+          isDisabled={!hasEntryValue()}
+          size="lg"
+          id="installment" 
+          name='installment'
+          label="Parcelar"
+          isChecked={hasInstallment}
+          {...register('installment')}
+          onChange={() => setHasInstallment(!hasInstallment)}
         />
       </Stack>
 

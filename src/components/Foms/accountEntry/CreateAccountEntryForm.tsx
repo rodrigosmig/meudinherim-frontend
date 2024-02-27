@@ -13,7 +13,7 @@ import { useAccountsForm } from "../../../hooks/useAccounts";
 import { useSelector } from "../../../hooks/useSelector";
 import { accountEntriesService } from '../../../services/ApiService/AccountEntriesService';
 import { IAccountEntryErrorKey, IAccountEntryFormData, IAccountEntryResponseError } from "../../../types/accountEntry";
-import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, toUsDate } from "../../../utils/helpers";
+import { ACCOUNTS_ENTRIES, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, TAGS, toUsDate } from "../../../utils/helpers";
 import { createValidation } from "../../../validations/accountEntry";
 import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
@@ -79,6 +79,7 @@ export const CreateAccountEntryForm = ({ accountId = null, onClose }: Props) => 
       queryClient.invalidateQueries(ACCOUNTS_ENTRIES);
       queryClient.invalidateQueries(ACCOUNT_BALANCE);
       queryClient.invalidateQueries(ACCOUNT_TOTAL_BY_CATEGORY);
+      queryClient.invalidateQueries(TAGS);
 
       onClose();
     } catch (error) {
