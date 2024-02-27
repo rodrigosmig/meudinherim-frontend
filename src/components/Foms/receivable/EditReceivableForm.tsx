@@ -160,44 +160,44 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
           {...register('value')}
         />
 
-      <Controller
-        control={control}
-        name="tags"
-        render={({
-          field: { onChange, onBlur, value, name, ref },
-          fieldState: { error }
-        }) => (
-          <FormControl isInvalid={!!error}>
-            <FormLabel htmlFor={name}>Tags</FormLabel>
-            <MultiSelect
-              isMulti
-              name={name}
-              colorScheme="pink"
-              options={tags}
-              focusBorderColor="pink.500"
-              placeholder="..."
-              chakraStyles={{
-                dropdownIndicator: (provided) => ({
-                  ...provided,
-                  bg: "transparent",
-                  px: 2,
-                  cursor: "inherit",
-                }),
-                indicatorSeparator: (provided) => ({
-                  ...provided,
-                  display: "none",
-                }),
-              }}
-              closeMenuOnSelect={false}
-              formatCreateLabel={onSelectTagsChange}
-              onChange={onChange}
-              onBlur={onBlur}
-              value={value}
-              ref={ref}
-            />
-            </FormControl>
-        )}
-      />
+        <Controller
+          control={control}
+          name="tags"
+          render={({
+            field: { onChange, onBlur, value, name, ref },
+            fieldState: { error }
+          }) => (
+            <FormControl isInvalid={!!error}>
+              <FormLabel htmlFor={name}>Tags</FormLabel>
+              <MultiSelect
+                isMulti
+                name={name}
+                colorScheme="pink"
+                options={tags}
+                focusBorderColor="pink.500"
+                placeholder="..."
+                chakraStyles={{
+                  dropdownIndicator: (provided) => ({
+                    ...provided,
+                    bg: "transparent",
+                    px: 2,
+                    cursor: "inherit",
+                  }),
+                  indicatorSeparator: (provided) => ({
+                    ...provided,
+                    display: "none",
+                  }),
+                }}
+                closeMenuOnSelect={false}
+                formatCreateLabel={onSelectTagsChange}
+                onChange={onChange}
+                onBlur={onBlur}
+                value={value}
+                ref={ref}
+              />
+              </FormControl>
+          )}
+        />
 
         <Switch
           size="lg"

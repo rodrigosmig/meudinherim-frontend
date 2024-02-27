@@ -1,3 +1,4 @@
+import { TagOptions } from './tag';
 import { IAccount } from "./account";
 import { ICategory } from "./category";
 import { Pagination } from "./pagination";
@@ -6,6 +7,7 @@ interface AccountEntry {
   date: string;
   description: string;
   value: number;
+  tags: string[]
 }
 
 export interface IAccountEntry extends AccountEntry {
@@ -26,19 +28,15 @@ export interface IAccountEntryResponse {
   meta: Pagination
 }
 
-export interface IAccountEntryUpdateData {
+export interface IAccountEntryUpdateData extends AccountEntry {
   id: number;
-  data: {
-    date: string;
-    category_id: number;
-    description: string;
-    value: number;
-  }
+  category_id: number;
 }
 
-export interface IAccountEntryFormData extends AccountEntry {
+export interface IAccountEntryFormData extends Omit<AccountEntry, "tags"> {
     account_id: number;
     category_id: number;
+    tags: TagOptions[];
 }
 
 export interface IAccountEntryTransferData extends AccountEntry {

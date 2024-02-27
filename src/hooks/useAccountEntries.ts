@@ -27,7 +27,8 @@ export const getAccountEntries = async (account_id: number, filterDate: [string,
       account_scheduling: account_scheduling,
       value: entry.value,
       category: entry.category,
-      account: entry.account
+      account: entry.account,
+      tags: entry.tags
     }
   })
 
