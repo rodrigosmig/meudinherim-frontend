@@ -5,6 +5,7 @@ import {
   Td, 
   Text, 
   Tr,
+  Flex,
 } from "@chakra-ui/react";
 import { memo } from "react";
 import { BsClock } from "react-icons/bs";
@@ -12,6 +13,7 @@ import { IInvoiceEntry } from "../../types/invoiceEntry";
 import { toCurrency } from "../../utils/helpers";
 import { DeleteButton } from "../Buttons/Delete";
 import { EditButton } from "../Buttons/Edit";
+import { PopoverTag } from "../PopoverTag/PopoverTag";
 import { PopoverTotal } from "../PopoverTotal";
 
 interface Props {
@@ -40,15 +42,21 @@ const InvoiceEntryItemsTableComponent = ({
             <Text fontWeight="bold">{entry.category.name}</Text>
           </Td>
           <Td fontSize={["xs", "md"]}>
-            { entry.is_parcel ? (
-              <PopoverTotal
-                description={entry.description}
-                amount={entry.total_purchase}
-              />
-              ) : (
-                entry.description
-              )
-            }
+            <Flex gap={2}>
+              { entry.is_parcel ? (
+                <PopoverTotal
+                  description={entry.description}
+                  amount={entry.total_purchase}
+                />
+                ) : (
+                  entry.description
+                )
+              }
+              {entry.tags.length !== 0 && (
+                <PopoverTag tags={entry.tags} />
+              )}
+            </Flex>
+            
           </Td>
           <Td fontSize={["xs", "md"]}>
             <Text 

@@ -25,7 +25,7 @@ export const PopoverTotal = ({ description, amount }:Props) => {
           {description}
         </Text>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent w={"full"}>
         <PopoverArrow />
         <PopoverBody>Total da compra: {toCurrency(amount)}</PopoverBody>
       </PopoverContent>

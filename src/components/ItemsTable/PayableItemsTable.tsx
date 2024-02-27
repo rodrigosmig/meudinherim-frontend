@@ -1,6 +1,7 @@
 import { memo } from "react";
 import NextLink from "next/link";
 import {
+  Flex,
   HStack,
   LinkBox,
   LinkOverlay,
@@ -17,6 +18,7 @@ import { PaymentButton } from "../Buttons/Payment";
 import { CancelPaymentButton } from "../Buttons/CancelPayment";
 import { Check } from "../Icons/Check";
 import { Close } from "../Icons/Close";
+import { PopoverTag } from "../PopoverTag/PopoverTag";
 
 interface Props {
   data: IPayable[];
@@ -47,13 +49,15 @@ const PayableItemsTableComponent = ({
           <Td fontSize={["xs", "md"]}>
             { payable.category.name}
           </Td>
-          <Td fontSize={["xs", "md"]}>
-            {payable.is_parcel && (
-              <PopoverTotal
-                description={payable.description}
-                amount={payable.total_purchase}
-              />
-            )}
+          <Td fontSize={["xs", "md"]}>            
+            <Flex gap={2}>
+              {payable.is_parcel && (
+                <PopoverTotal
+                  description={payable.description}
+                  amount={payable.total_purchase}
+                />
+              )}
+              
             {!payable.is_parcel && payable.invoice && (
               <LinkBox>
                 <NextLink href={`/cards/${payable.invoice.card_id}/invoices/${payable.invoice.invoice_id}/entries`} passHref>
@@ -69,6 +73,10 @@ const PayableItemsTableComponent = ({
               </LinkBox>
             )}
             {!payable.is_parcel && !payable.invoice && payable.description}
+            {payable.tags.length !== 0 && (
+                <PopoverTag tags={payable.tags} />
+              )}                
+            </Flex> 
           </Td>
           <Td>
             { payable.monthly ? <Check /> : <Close /> }
