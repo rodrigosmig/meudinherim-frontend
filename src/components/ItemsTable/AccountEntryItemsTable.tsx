@@ -1,6 +1,13 @@
 import { memo } from "react";
 import { 
+  Flex,
   HStack, 
+  Popover, 
+  PopoverArrow, 
+  PopoverBody, 
+  PopoverContent, 
+  PopoverTrigger, 
+  Tag, 
   Td, 
   Text, 
   Tr
@@ -10,6 +17,7 @@ import { toCurrency } from "../../utils/helpers";
 import { EditButton } from "../Buttons/Edit";
 import { DeleteButton } from "../Buttons/Delete";
 import { ShowPaymentButton } from "../Buttons/ShowPayment";
+import { PopoverTag } from "../PopoverTag/PopoverTag";
 
 interface Props {
   data: IAccountEntry[];
@@ -44,7 +52,14 @@ const AccountEntryItemsTableComponent = ({
             <Text fontWeight="bold">{entry.category.name}</Text>
           </Td>
           <Td fontSize={["xs", "md"]}>
-            <Text fontWeight="bold">{entry.description}</Text>
+            <Text fontWeight="bold">
+              <Flex gap={2}>
+                {entry.description}
+                {entry.tags.length !== 0 && (
+                  <PopoverTag tags={entry.tags} />
+                )}                
+              </Flex>            
+            </Text>
           </Td>
           <Td fontSize={["xs", "md"]}>
             <Text 

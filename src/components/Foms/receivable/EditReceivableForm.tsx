@@ -1,6 +1,8 @@
 import {
   Box,
   Flex,
+  FormControl,
+  FormLabel,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,6 +11,7 @@ import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useQueryClient } from 'react-query';
 import { useSelector } from '../../../hooks/useSelector';
+import { useTags } from "../../../hooks/useTags";
 import { receivableService } from "../../../services/ApiService/ReceivableService";
 import { IAccountSchedulingErrorKey } from '../../../types/accountScheduling';
 import { IReceivable, IReceivableFormData, IReceivableResponseError } from '../../../types/receivable';
@@ -21,6 +24,7 @@ import { Input } from "../../Inputs/Input";
 import { Select } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
 import { Loading } from '../../Loading';
+import { CreatableSelect as MultiSelect } from "chakra-react-select";
 
 interface FormData extends Omit<IReceivableFormData, "due_date"> {
   due_date: Date;
@@ -37,6 +41,18 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
   const [ monthly, setMonthly ] = useState(receivable.monthly);
 
   const { categoriesForm: data, isLoading: isLoadingCategories } = useSelector(({application}) => application)
+  const { data: dataTags, isLoading: isLoadingTags } = useTags();
+
+  const tags = dataTags?.map(tag => {
+    return {
+      value: tag.name,
+      label: tag.name
+    }
+  });
+
+  const selectedTags = receivable?.tags.map(tag => {
+    return {value: tag, label: tag}
+  })
 
   const categories = data?.income.map(category => {
     return {
@@ -52,20 +68,23 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
       description: receivable.description,
       value: receivable.value,
       monthly: receivable.monthly,
+      tags: selectedTags
     },
     resolver: yupResolver(editValidation)
   });
 
   const { errors } = formState;
 
+  const onSelectTagsChange = (inputValue: string) => `Nova tag: ${inputValue}`;
+
   const handleEditReceivable: SubmitHandler<FormData> = async (values) => {
+    const tags = values.tags.map(tag => tag.value)
     const data = {
       id: receivable.id,
-      data: {
-        ...values,
-        monthly: monthly,
-        due_date: values?.due_date ? toUsDate(values.due_date) : ''
-      }
+      ...values,
+      monthly: monthly,
+      due_date: values?.due_date ? toUsDate(values.due_date) : '',
+      tags: tags
     }
 
     try {
@@ -91,7 +110,7 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
     }
   }
 
-  if (isLoadingCategories) {
+  if (isLoadingTags || isLoadingCategories) {
     return (
       <Loading />
     )
@@ -139,6 +158,45 @@ export const EditReceivableForm = ({ receivable, onClose }: Props) => {
           error={errors.value}
           step="0.01"
           {...register('value')}
+        />
+
+        <Controller
+          control={control}
+          name="tags"
+          render={({
+            field: { onChange, onBlur, value, name, ref },
+            fieldState: { error }
+          }) => (
+            <FormControl isInvalid={!!error}>
+              <FormLabel htmlFor={name}>Tags</FormLabel>
+              <MultiSelect
+                isMulti
+                name={name}
+                colorScheme="pink"
+                options={tags}
+                focusBorderColor="pink.500"
+                placeholder="..."
+                chakraStyles={{
+                  dropdownIndicator: (provided) => ({
+                    ...provided,
+                    bg: "transparent",
+                    px: 2,
+                    cursor: "inherit",
+                  }),
+                  indicatorSeparator: (provided) => ({
+                    ...provided,
+                    display: "none",
+                  }),
+                }}
+                closeMenuOnSelect={false}
+                formatCreateLabel={onSelectTagsChange}
+                onChange={onChange}
+                onBlur={onBlur}
+                value={value}
+                ref={ref}
+              />
+              </FormControl>
+          )}
         />
 
         <Switch

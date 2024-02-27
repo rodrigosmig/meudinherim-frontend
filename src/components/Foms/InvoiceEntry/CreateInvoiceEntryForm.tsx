@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -22,6 +24,8 @@ import { Select } from "../../Inputs/Select";
 import { SelectCategories } from "../../Inputs/SelectCategories";
 import { Switch } from "../../Inputs/Switch";
 import { Loading } from "../../Loading";
+import { CreatableSelect as MultiSelect } from "chakra-react-select";
+import { useTags } from "../../../hooks/useTags";
 
 interface FormData extends Omit<IInvoiceEntryCreateData, "date"> {
   date: Date;
@@ -37,6 +41,14 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
 
   const { categoriesForm: categories, isLoading: isLoadingCategories } = useSelector(({application}) => application)
   const { data: formCards, isLoading: isLoadingCardsForm } = useCardsForm();
+  const { data: dataTags, isLoading: isLoadingTags } = useTags();
+
+  const tags = dataTags?.map(tag => {
+    return {
+      value: tag.name,
+      label: tag.name
+    }
+  });
 
   const [ hasInstallment, setHasInstallment ] = useState(false);
   const [ entryValue, setEntryValue ] = useState(0);
@@ -49,18 +61,23 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
       description: "",
       value: 0,
       installment: false,
-      installments_number: 2
+      installments_number: 2,
+      tags: []
     },
     resolver: yupResolver(createValidation)
   });
 
   const { errors } = formState;
 
+  const onSelectTagsChange = (inputValue: string) => `Nova tag: ${inputValue}`;
+
   const handleCreateInvoiceEntry: SubmitHandler<FormData> = async (values) => {
+    const tags = values.tags.map(tag => tag.value)
     const data = {
       ...values,
       installment: hasInstallment,
-      date: values?.date ? toUsDate(values.date) : ''
+      date: values?.date ? toUsDate(values.date) : '',
+      tags: tags
     }
 
     try {
@@ -101,7 +118,7 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
     setEntryValue(amount);
   }
 
-  if (isLoadingCategories || isLoadingCardsForm) {
+  if (isLoadingCategories || isLoadingCardsForm || isLoadingTags) {
     return (
       <Loading />
     )
@@ -168,6 +185,45 @@ export const CreateInvoiceEntryForm = ({ card_id = null, onClose }: CreateInvoic
           isChecked={hasInstallment}
           {...register('installment')}
           onChange={() => setHasInstallment(!hasInstallment)}
+        />
+
+<Controller
+          control={control}
+          name="tags"
+          render={({
+            field: { onChange, onBlur, value, name, ref },
+            fieldState: { error }
+          }) => (
+            <FormControl isInvalid={!!error}>
+              <FormLabel htmlFor={name}>Tags</FormLabel>
+              <MultiSelect
+                isMulti
+                name={name}
+                colorScheme="pink"
+                options={tags}
+                focusBorderColor="pink.500"
+                placeholder="..."
+                chakraStyles={{
+                  dropdownIndicator: (provided) => ({
+                    ...provided,
+                    bg: "transparent",
+                    px: 2,
+                    cursor: "inherit",
+                  }),
+                  indicatorSeparator: (provided) => ({
+                    ...provided,
+                    display: "none",
+                  }),
+                }}
+                closeMenuOnSelect={false}
+                formatCreateLabel={onSelectTagsChange}
+                onChange={onChange}
+                onBlur={onBlur}
+                value={value}
+                ref={ref}
+              />
+              </FormControl>
+          )}
         />
       </Stack>
 

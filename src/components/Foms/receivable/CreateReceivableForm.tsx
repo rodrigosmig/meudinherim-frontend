@@ -1,6 +1,8 @@
 import {
   Box,
   Flex,
+  FormControl,
+  FormLabel,
   Stack
 } from "@chakra-ui/react";
 import { ChangeEvent, useState } from 'react';
@@ -22,6 +24,8 @@ import { Installment } from '../../Inputs/Installment';
 import { Select } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
 import { Loading } from '../../Loading';
+import { CreatableSelect as MultiSelect } from "chakra-react-select";
+import { useTags } from "../../../hooks/useTags";
 
 interface FormData extends Omit<IAccountSchedulingCreateData, "due_date"> {
   due_date: Date;
@@ -35,6 +39,14 @@ export const CreateReceivableForm = ({ onClose }: Props) => {
   const queryClient = useQueryClient();
 
   const { categoriesForm: data, isLoading: isLoadingCategories } = useSelector(({application}) => application)
+  const { data: dataTags, isLoading: isLoadingTags } = useTags();
+
+  const tags = dataTags?.map(tag => {
+    return {
+      value: tag.name,
+      label: tag.name
+    }
+  });
 
   const categories = data?.income.map(category => {
     return {
@@ -42,6 +54,8 @@ export const CreateReceivableForm = ({ onClose }: Props) => {
       label: category.label
     }
   });
+
+  const onSelectTagsChange = (inputValue: string) => `Nova tag: ${inputValue}`;
 
   const { control, formState, register, handleSubmit, setError  } = useForm({
     defaultValues:{
@@ -51,7 +65,8 @@ export const CreateReceivableForm = ({ onClose }: Props) => {
       value: 0,
       monthly: false,
       installment: false,
-      installments_number: 2
+      installments_number: 2,
+      tags: []
     },
     resolver: yupResolver(createValidation)
   });
@@ -63,11 +78,13 @@ export const CreateReceivableForm = ({ onClose }: Props) => {
   const { errors } = formState;
 
   const handleCreateReceivable: SubmitHandler<FormData> = async (values) => {
+    const tags = values.tags.map(tag => tag.value)
     const data = {
       ...values,
       monthly: monthly,
       installment: hasInstallment,
-      due_date: values?.due_date ? toUsDate(values.due_date) : ''
+      due_date: values?.due_date ? toUsDate(values.due_date) : '',
+      tags: tags
     }
 
     try {
@@ -163,6 +180,45 @@ export const CreateReceivableForm = ({ onClose }: Props) => {
           {...register('value')}
           onChange={v => handleChangeReceivableValue(v)}
         />
+
+      <Controller
+        control={control}
+        name="tags"
+        render={({
+          field: { onChange, onBlur, value, name, ref },
+          fieldState: { error }
+        }) => (
+          <FormControl isInvalid={!!error}>
+            <FormLabel htmlFor={name}>Tags</FormLabel>
+            <MultiSelect
+              isMulti
+              name={name}
+              colorScheme="pink"
+              options={tags}
+              focusBorderColor="pink.500"
+              placeholder="..."
+              chakraStyles={{
+                dropdownIndicator: (provided) => ({
+                  ...provided,
+                  bg: "transparent",
+                  px: 2,
+                  cursor: "inherit",
+                }),
+                indicatorSeparator: (provided) => ({
+                  ...provided,
+                  display: "none",
+                }),
+              }}
+              closeMenuOnSelect={false}
+              formatCreateLabel={onSelectTagsChange}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value}
+              ref={ref}
+            />
+            </FormControl>
+        )}
+      />
 
         <Switch
           size="lg"

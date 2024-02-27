@@ -1,5 +1,6 @@
 import { memo } from "react";
 import {
+  Flex,
   HStack,
   Td,
   Text,
@@ -14,6 +15,7 @@ import { PaymentButton } from "../Buttons/Payment";
 import { CancelPaymentButton } from "../Buttons/CancelPayment";
 import { Check } from "../Icons/Check";
 import { Close } from "../Icons/Close";
+import { PopoverTag } from "../PopoverTag/PopoverTag";
 
 interface Props {
   data: IReceivable[];
@@ -45,16 +47,20 @@ const ReceivableItemsTableComponent = ({
               { receivable.category.name}
             </Td>
             <Td fontSize={["xs", "md"]}>
-              { receivable.is_parcel ? (
-                <PopoverTotal
-                  description={receivable.description}
-                  amount={receivable.total_purchase}
-                />
-                ) : (
-                  receivable.description
-                )
-              }
-
+              <Flex gap={2}>
+                { receivable.is_parcel ? (
+                  <PopoverTotal
+                    description={receivable.description}
+                    amount={receivable.total_purchase}
+                  />
+                  ) : (
+                    receivable.description
+                  )
+                }
+                {receivable.tags.length !== 0 && (
+                  <PopoverTag tags={receivable.tags} />
+                )} 
+              </Flex> 
             </Td>
             <Td>
               { receivable.monthly ? <Check /> : <Close /> }

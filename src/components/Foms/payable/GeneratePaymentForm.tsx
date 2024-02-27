@@ -46,7 +46,8 @@ export const GeneratePaymentForm = ({ invoice, onCancel }: Props) => {
       due_date: invoice.due_date,
       description: payableDescription,
       value: invoice.amount,
-      invoice_id: invoice.id
+      invoice_id: invoice.id,
+      tags: []
     }
 
     try {

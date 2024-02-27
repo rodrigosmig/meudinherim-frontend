@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,6 +20,8 @@ import { Datepicker } from "../../DatePicker";
 import { Input } from "../../Inputs/Input";
 import { SelectCategories } from "../../Inputs/SelectCategories";
 import { Loading } from "../../Loading";
+import { CreatableSelect as MultiSelect } from "chakra-react-select";
+import { useTags } from "../../../hooks/useTags";
 
 interface FormData extends Omit<IAccountEntryFormData, "date"> { 
   date: Date 
@@ -33,27 +37,42 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
   const queryClient = useQueryClient();
 
   const { categoriesForm: categories, isLoading: isLoadingCategories } = useSelector(({application}) => application)
+  const { data: dataTags, isLoading: isLoadingTags } = useTags();
+
+  const tags = dataTags?.map(tag => {
+    return {
+      value: tag.name,
+      label: tag.name
+    }
+  });
+
+  const selectedTags = entry.tags.map(tag => {
+    return {value: tag, label: tag}
+  })
 
   const { control, register, handleSubmit, setError, formState } = useForm({
     defaultValues: {
       date: parseISO(reverseBrDate(entry.date)),
       category_id: entry.category.id,
       description: entry.description,
-      value: entry.value
+      value: entry.value,
+      tags: selectedTags
     },
     resolver: yupResolver(editValidation)
   });
 
   const { errors } = formState;
 
+  const onSelectTagsChange = (inputValue: string) => `Nova tag: ${inputValue}`;
+
   const handleEditAccountEntry: SubmitHandler<FormData> = async (values) => {
+    const tags = values.tags.map(tag => tag.value)
     const data = {
       id: entry.id,
-      data: {
-        ...values,
-        account_id: entry.account.id,
-        date: values?.date ? toUsDate(values.date) : ''
-      }
+      ...values,
+      account_id: entry.account.id,
+      date: values?.date ? toUsDate(values.date) : '',
+      tags: tags
     }
     
     try {
@@ -128,6 +147,45 @@ export const EditAccountEntryForm = ({ entry, closeModal, refetch }: Props) => {
           error={errors.value}
           step="0.01"
           {...register('value')}
+        />
+
+        <Controller
+          control={control}
+          name="tags"
+          render={({
+            field: { onChange, onBlur, value, name, ref },
+            fieldState: { error }
+          }) => (
+            <FormControl isInvalid={!!error}>
+              <FormLabel htmlFor={name}>Tags</FormLabel>
+              <MultiSelect
+                isMulti
+                name={name}
+                colorScheme="pink"
+                options={tags}
+                focusBorderColor="pink.500"
+                placeholder="..."
+                chakraStyles={{
+                  dropdownIndicator: (provided) => ({
+                    ...provided,
+                    bg: "transparent",
+                    px: 2,
+                    cursor: "inherit",
+                  }),
+                  indicatorSeparator: (provided) => ({
+                    ...provided,
+                    display: "none",
+                  }),
+                }}
+                closeMenuOnSelect={false}
+                formatCreateLabel={onSelectTagsChange}
+                onChange={onChange}
+                onBlur={onBlur}
+                value={value}
+                ref={ref}
+              />
+              </FormControl>
+          )}
         />
       </Stack>
       <Flex

@@ -1,6 +1,8 @@
 import {
   Box,
   Flex,
+  FormControl,
+  FormLabel,
   Stack
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,9 +20,12 @@ import { SubmitButton } from "../../Buttons/Submit";
 import { Datepicker } from "../../DatePicker";
 import { Input } from "../../Inputs/Input";
 import { Installment } from '../../Inputs/Installment';
-import { Select } from "../../Inputs/Select";
+import { Select as ChakraSelect } from "../../Inputs/Select";
 import { Switch } from "../../Inputs/Switch";
 import { Loading } from '../../Loading';
+import { useTags } from "../../../hooks/useTags";
+import { CreatableSelect as MultiSelect } from "chakra-react-select";
+
 
 interface FormData extends Omit<IPayableCreateData, "due_date"> {
   due_date: Date;
@@ -34,6 +39,14 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
   const queryClient = useQueryClient();
 
   const { categoriesForm: data, isLoading: isLoadingCategories } = useSelector(({application}) => application)
+  const { data: dataTags, isLoading: isLoadingTags } = useTags();
+
+  const tags = dataTags?.map(tag => {
+    return {
+      value: tag.name,
+      label: tag.name
+    }
+  });
 
   const categories = data?.expense.map(category => {
     return {
@@ -50,7 +63,8 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
       value: 0,
       monthly: false,
       installment: false,
-      installments_number: 2
+      installments_number: 2,
+      tags: []
     },
     resolver: yupResolver(createValidation)
   });
@@ -61,12 +75,16 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
 
   const { errors } = formState;
 
+  const onSelectTagsChange = (inputValue: string) => `Nova tag: ${inputValue}`;
+
   const handleCreatePayable: SubmitHandler<FormData> = async (values) => {
+    const tags = values.tags.map(tag => tag.value)
     const data = {
       ...values,
       monthly: monthly,
       installment: hasInstallment,
-      due_date: values?.due_date ? toUsDate(values.due_date) : ''
+      due_date: values?.due_date ? toUsDate(values.due_date) : '',
+      tags: tags
     }
 
     try {
@@ -112,7 +130,7 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
     setPayableValue(amount);
   }
 
-  if (isLoadingCategories) {
+  if (isLoadingCategories || isLoadingTags) {
     return (
       <Loading />
     )
@@ -137,7 +155,7 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
            )}
         />
 
-        <Select
+        <ChakraSelect
           name="type"
           label="Categoria"
           options={categories}
@@ -183,6 +201,46 @@ export const CreatePayableForm = ({ onClose }: CreatePayableFormProps) => {
           {...register('installment')}
           onChange={handleHasInstallment}
         />
+
+      <Controller
+        control={control}
+        name="tags"
+        render={({
+          field: { onChange, onBlur, value, name, ref },
+          fieldState: { error }
+        }) => (
+          <FormControl isInvalid={!!error}>
+            <FormLabel htmlFor={name}>Tags</FormLabel>
+            <MultiSelect
+              isMulti
+              name={name}
+              colorScheme="pink"
+              options={tags}
+              focusBorderColor="pink.500"
+              placeholder="..."
+              chakraStyles={{
+                dropdownIndicator: (provided) => ({
+                  ...provided,
+                  bg: "transparent",
+                  px: 2,
+                  cursor: "inherit",
+                }),
+                indicatorSeparator: (provided) => ({
+                  ...provided,
+                  display: "none",
+                }),
+              }}
+              closeMenuOnSelect={false}
+              formatCreateLabel={onSelectTagsChange}
+              onChange={onChange}
+              onBlur={onBlur}
+              value={value}
+              ref={ref}
+            />
+            </FormControl>
+        )}
+      />
+        
       </Stack>
 
         <Installment

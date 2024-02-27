@@ -1,3 +1,4 @@
+import { TagOptions } from './tag';
 import { ICategory } from "./category";
 import { Pagination } from "./pagination";
 
@@ -15,13 +16,14 @@ export interface IInvoiceEntry {
   total_purchase: number;
   parcelable_id: number;
   anticipated: boolean;
+  tags: string[]
 }
 
 export interface IInvoiceEntryFormData {
   category_id: number;
   description: string;
   value: number;
-  
+  tags: TagOptions[];
 }
 
 export interface IInvoiceEntryCreateData extends IInvoiceEntryFormData {
@@ -31,9 +33,8 @@ export interface IInvoiceEntryCreateData extends IInvoiceEntryFormData {
   installments_number?: number
 }
 
-export interface IInvoiceEntryUpdateData {
+export interface IInvoiceEntryUpdateData extends IInvoiceEntryFormData {
   id: number;
-  data: IInvoiceEntryFormData;
 }
 
 export interface IInvoiceEntryResponse extends Pagination {
