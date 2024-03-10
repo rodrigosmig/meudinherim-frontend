@@ -15,18 +15,33 @@ import { Select } from "../../../components/Inputs/Select";
 import { ChangeEvent, useCallback, useState } from "react";
 import { useAccountsForm } from "../../../hooks/useAccounts";
 import { Loading } from "../../../components/Loading";
-
+import { ActionMeta, CreatableSelect as MultiSelect, MultiValue } from "chakra-react-select";
+import { useTags } from "../../../hooks/useTags";
 
 export default function AccountTotalByCategoryReport() {
   const { startDate, endDate, setDateRange, handleDateFilter } = useDateFilter();
   const [accountId, setAccountId] = useState(0);
+  const [selectedTags, setSelectedTags] = useState([] as string[]);
 
-  const { data: accounts, isLoading: isLoadingAccounts, isFetching: isFetchingAccounts } = useAccountsForm(true); 
+  const { data: accounts, isLoading: isLoadingAccounts, isFetching: isFetchingAccounts } = useAccountsForm(true);
+  const { data: dataTags, isLoading: isLoadingTags } = useTags();
+
+  const tags = dataTags?.map(tag => {
+    return {
+      value: tag.name,
+      label: tag.name
+    }
+  });
 
   const handleChangeAccount = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
     const id = event.target.value;
     setAccountId(Number(id))
   }, [])
+
+  const handleChangeTags = (data: MultiValue<{ value: string; label: string; }>, action: ActionMeta<{value: string, label: string}>) => {
+    const nameTags = data.map(tag => tag.value)
+    setSelectedTags(oldValue => nameTags)
+  }
 
   return (
     <>
@@ -72,9 +87,35 @@ export default function AccountTotalByCategoryReport() {
             }
           </Box>          
         </Flex>
+        <Box mb={[10, 0]}>
+          <MultiSelect
+            instanceId="select-tags"
+            isLoading={isLoadingTags}
+            isMulti
+            colorScheme="pink"
+            options={tags}          
+            focusBorderColor="pink.500"
+            placeholder="Tags..."
+            chakraStyles={{
+              dropdownIndicator: (provided) => ({
+                ...provided,
+                bg: "transparent",
+                px: 2,
+                cursor: "inherit",
+              }),
+              indicatorSeparator: (provided) => ({
+                ...provided,
+                display: "none",
+              }),
+            }}
+            closeMenuOnSelect={false}
+            hasStickyGroupHeaders
+            onChange={handleChangeTags}
+          />
+        </Box>
             
-        <Box>
-          <AccountByCategoryReport accountId={accountId} />
+        <Box mt={8}>
+          <AccountByCategoryReport accountId={accountId} tags={selectedTags} />
         </Box>
         
       </Layout>
