@@ -8,8 +8,8 @@ const apiClient = setupApiClient(undefined);
 
 export const reportService = {
   getAccountItems: (filterDate: [string, string], status: StatusType): Promise<AxiosResponse<IAccountReportResponse>> => apiClient.get(`/reports/accounts?&from=${filterDate[0]}&to=${filterDate[1]}&status=${status}`),
-  getTotalAccountByCategory: (filterDate: [string, string], accountId: AccountIdType): Promise<AxiosResponse<ITotalByCategoryResponse>> => apiClient.get(`/reports/total-account-by-category?&from=${filterDate[0]}&to=${filterDate[1]}&account_id=${accountId}`),
-  getTotalCreditByCategory: (filterDate: [string, string]): Promise<AxiosResponse<ITotalCreditByCategory>> => apiClient.get(`/reports/total-credit-by-category?&from=${filterDate[0]}&to=${filterDate[1]}`),
+  getTotalAccountByCategory: (filterDate: [string, string], accountId: AccountIdType, tags: string[]): Promise<AxiosResponse<ITotalByCategoryResponse>> => apiClient.get(`/reports/total-account-by-category?&from=${filterDate[0]}&to=${filterDate[1]}&account_id=${accountId}&tags=${tags}`),
+  getTotalCreditByCategory: (filterDate: [string, string], tags: string[]): Promise<AxiosResponse<ITotalCreditByCategory>> => apiClient.get(`/reports/total-credit-by-category?&from=${filterDate[0]}&to=${filterDate[1]}&tags=${tags}`),
   getTotalByCategoryDetailed: (
     filterDate: [string, string], 
     categoryId: number, 

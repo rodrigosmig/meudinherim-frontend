@@ -19,9 +19,10 @@ interface Category extends Omit<ICategory, "type" | "active" | "show_in_dashboar
 
 interface Props {
   accountId: number;
+  tags: string[]
 }
 
-export const AccountByCategoryReport = ({ accountId }: Props) => {
+export const AccountByCategoryReport = ({ accountId, tags }: Props) => {
   const { stringDateRange } = useDateFilter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
@@ -30,7 +31,7 @@ export const AccountByCategoryReport = ({ accountId }: Props) => {
   
   const colorScheme = colorMode === 'light' ? 'blackAlpha' : 'gray';
 
-  const { data, isLoading, isFetching } = useAccountByCategoryReport(stringDateRange, accountId);
+  const { data, isLoading, isFetching } = useAccountByCategoryReport(stringDateRange, accountId, tags);
    
 
   const headList = ['Categoria', 'Quantidade', 'Total'];

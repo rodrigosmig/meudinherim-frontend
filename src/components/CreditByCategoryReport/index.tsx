@@ -8,8 +8,11 @@ import { TotalByCategoryModal } from "../Modals/reports/TotalByCategoryModal";
 import { TableReport } from "../TableReport";
 
 interface Category extends Omit<ICategory, "type" | "active" | "show_in_dashboard"> {}
+interface Props {
+  tags: string[]
+}
 
-export const CreditByCategoryReport = () => {
+export const CreditByCategoryReport = ({ tags }: Props) => {
   const { stringDateRange } = useDateFilter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
@@ -17,7 +20,7 @@ export const CreditByCategoryReport = () => {
   
   const colorScheme = colorMode === 'light' ? 'blackAlpha' : 'gray';
 
-  const { data, isLoading, isFetching } = useCreditByCategoryReport(stringDateRange);  
+  const { data, isLoading, isFetching } = useCreditByCategoryReport(stringDateRange, tags);  
 
   const headList = ['Categoria', 'Quantidade', 'Total'];
 
