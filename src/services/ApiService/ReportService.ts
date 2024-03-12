@@ -14,8 +14,9 @@ export const reportService = {
     filterDate: [string, string], 
     categoryId: number, 
     reportType: ReportType,
-    accountId: number
+    accountId: number,
+    tags: string[]
   ): Promise<AxiosResponse<ITotalByCategoryDetailedResponse>> => {
-    return apiClient.get(`/reports/total-by-category/details?from=${filterDate[0]}&to=${filterDate[1]}&category_id=${categoryId}&type=${reportType}&account_id=${accountId}`)
+    return apiClient.get(`/reports/total-by-category/details?from=${filterDate[0]}&to=${filterDate[1]}&category_id=${categoryId}&type=${reportType}&account_id=${accountId}&tags=${tags}`)
   }
 };

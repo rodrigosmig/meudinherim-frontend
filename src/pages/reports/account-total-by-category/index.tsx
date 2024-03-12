@@ -108,7 +108,6 @@ export default function AccountTotalByCategoryReport() {
                 display: "none",
               }),
             }}
-            closeMenuOnSelect={false}
             hasStickyGroupHeaders
             onChange={handleChangeTags}
           />

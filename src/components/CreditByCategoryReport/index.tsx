@@ -40,6 +40,7 @@ export const CreditByCategoryReport = ({ tags }: Props) => {
         onClose={onClose}
         category={category}
         reportType="card"
+        tags={tags}
       />
 
       { !Array.isArray(data) && 
