@@ -76,7 +76,6 @@ export default function CreditTotalByCategoryReport() {
                 display: "none",
               }),
             }}
-            closeMenuOnSelect={false}
             hasStickyGroupHeaders
             onChange={handleChangeTags}
           />

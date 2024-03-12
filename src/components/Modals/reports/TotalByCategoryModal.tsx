@@ -27,9 +27,10 @@ interface Props {
     name: string
   };
   accountId?: number;
+  tags: string[];
 }
 
-export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, accountId }: Props) => {
+export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, accountId, tags }: Props) => {
   const { stringDateRange } = useDateFilter();
   const [isLoading, setIsLoading] = useState(true);
   const [entries, setEntries] = useState<IEntries[]>();
@@ -42,7 +43,7 @@ export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, ac
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const receivableResponse = await reportService.getTotalByCategoryDetailed(stringDateRange, category.id, reportType, selectedAccountId);
+        const receivableResponse = await reportService.getTotalByCategoryDetailed(stringDateRange, category.id, reportType, selectedAccountId, tags);
         const newEntries = receivableResponse.data.data;
 
         setEntries(newEntries)
@@ -88,7 +89,7 @@ export const TotalByCategoryModal = ({ isOpen, onClose, category, reportType, ac
         >
           <Tbody>
             { entries.map(entry => (
-              <Tr key={entry.id}>
+              <Tr key={entry.id + entry.description}>
                 <Td fontSize={["xs", "md"]}>
                   <Text>{ toBrDate(entry.date) }</Text>
                 </Td>

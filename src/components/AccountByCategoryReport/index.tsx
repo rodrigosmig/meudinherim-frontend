@@ -32,7 +32,6 @@ export const AccountByCategoryReport = ({ accountId, tags }: Props) => {
   const colorScheme = colorMode === 'light' ? 'blackAlpha' : 'gray';
 
   const { data, isLoading, isFetching } = useAccountByCategoryReport(stringDateRange, accountId, tags);
-   
 
   const headList = ['Categoria', 'Quantidade', 'Total'];
 
@@ -53,6 +52,7 @@ export const AccountByCategoryReport = ({ accountId, tags }: Props) => {
         category={category}
         reportType="account"
         accountId={accountId}
+        tags={tags}
       />
       { !Array.isArray(data) && (
         <Tabs isFitted variant='enclosed'>
