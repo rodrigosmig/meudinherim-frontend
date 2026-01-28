@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "lucide-react": "^0.563.0",
     "next": "16.1.5",
     "react": "19.2.3",
     "react-dom": "19.2.3"
@@ -20,6 +21,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.5",
+    "tailwind-merge": "^3.4.0",
+    "tailwind-variants": "^3.2.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
