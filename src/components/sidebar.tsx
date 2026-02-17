@@ -5,6 +5,7 @@ import { ArrowLeftToLine, ArrowRightToLine, BanknoteArrowDown, BanknoteArrowUp, 
 import { ElementType, ReactNode, useState } from 'react';
 
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import Logo from './logo';
 import { Button } from "./primitives/button";
 
@@ -55,24 +56,24 @@ function SidebarRoot() {
           <Collapsible.Content forceMount className="flex flex-col h-full">
             <nav className={cn("flex-1 overflow-y-auto p-4 space-y-1", collapsed && "px-2")}>
               <NavSection title="Geral" collapsed={collapsed}>
-                <NavItem title="Dashboard" icon={LayoutDashboard} collapsed={collapsed} />
-                <NavItem title="Categorias" icon={Bookmark} collapsed={collapsed} />
-                <NavItem title="Perfil" icon={User} collapsed={collapsed} />
-                <NavItem title="Tags" icon={Tags} collapsed={collapsed} />
+                <NavItem link="/" title="Dashboard" icon={LayoutDashboard} collapsed={collapsed} />
+                <NavItem link="/categorias" title="Categorias" icon={Bookmark} collapsed={collapsed} />
+                <NavItem link="#" title="Perfil" icon={User} collapsed={collapsed} />
+                <NavItem link="#" title="Tags" icon={Tags} collapsed={collapsed} />
               </NavSection>
               <NavSection title="Contas" collapsed={collapsed}>
-                <NavItem title="Contas Bancárias" icon={Landmark} collapsed={collapsed} />
+                <NavItem link="#" title="Contas Bancárias" icon={Landmark} collapsed={collapsed} />
               </NavSection>
               <NavSection title="Cartão de Crédito" collapsed={collapsed}>
-                <NavItem title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} />
+                <NavItem link="#" title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} />
               </NavSection>
               <NavSection title="Agendamento" collapsed={collapsed}>
-                <NavItem title="Contas a Pagar" icon={BanknoteArrowDown} collapsed={collapsed} />
-                <NavItem title="Contas a Receber" icon={BanknoteArrowUp} collapsed={collapsed} />
+                <NavItem link="#" title="Contas a Pagar" icon={BanknoteArrowDown} collapsed={collapsed} />
+                <NavItem link="#" title="Contas a Receber" icon={BanknoteArrowUp} collapsed={collapsed} />
               </NavSection>
               <NavSection title="Relatórios" collapsed={collapsed}>
-                <NavItem title="Contas a Pagar/Receber" icon={ChartNoAxesColumnIncreasing} collapsed={collapsed} />
-                <NavItem title="Lançamentos por categoria" icon={ChartNoAxesCombined} collapsed={collapsed} />
+                <NavItem link="#" title="Contas a Pagar/Receber" icon={ChartNoAxesColumnIncreasing} collapsed={collapsed} />
+                <NavItem link="#" title="Lançamentos por categoria" icon={ChartNoAxesCombined} collapsed={collapsed} />
               </NavSection>
             </nav>
           </Collapsible.Content>
@@ -109,14 +110,15 @@ function NavSection({ title, collapsed = false, children }: NavSectionProps) {
 
 interface NavItemProps {
   title: string;
+  link: string;
   icon: ElementType;
   collapsed?: boolean;
 }
 
-function NavItem({ title, icon: Icon, collapsed = false }: NavItemProps) {
+function NavItem({ title, link, icon: Icon, collapsed = false }: NavItemProps) {
   return (
-    <a
-      href="#"
+    <Link
+      href={link}
       title={collapsed ? title : undefined}
       aria-label={collapsed ? title : undefined}
       className={cn(
@@ -126,7 +128,7 @@ function NavItem({ title, icon: Icon, collapsed = false }: NavItemProps) {
     >
       <Icon className="w-5 h-5" />
       {!collapsed && <span className="font-medium">{title}</span>}
-    </a>
+    </Link>
   )
 }
 

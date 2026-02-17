@@ -6,7 +6,7 @@ import Tooltip from "./tooltip";
 
 const buttonVariants = tv({
   base: [
-    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-bold hover:text-white transition-colors cursor-pointer transition-colors rounded-md transition-all"
+    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-bold hover:text-white transition-colors transition-colors rounded-md transition-all"
   ],
   variants: {
     variant: {
@@ -38,9 +38,14 @@ const buttonVariants = tv({
         "bg-gray-800 hover:bg-gray-700 w-6 h-6 text-gray-400 hidden md:flex absolute top-4 -right-3 z-50 rounded-lg border border-gray-700",
       ]
     },
+    disabled: {
+      false: "cursor-pointer",
+      true: "opacity-50 cursor-not-allowed bg-gray-800 text-gray-500 border-gray-700 hover:bg-gray-800 hover:text-gray-500",
+    }
   },
   defaultVariants: {
     variant: 'primary',
+    disabled: false,
   },
 });
 
@@ -62,7 +67,7 @@ export function Button({
   ...props }: ButtonProps) {
   return (
     <Tooltip label={tooltip}>
-      <button className={buttonVariants({ variant, className })}
+      <button className={buttonVariants({ variant, className, disabled: props.disabled })}
         {...props}
       >
         {Icon && <Icon className={cn("w-4 h-4 md:w-5 md:h-5", iconClassName)} />}

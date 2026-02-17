@@ -1,12 +1,12 @@
-import { Card } from "@/components/card";
-import { Input } from "@/components/input/input";
+import { FilePenLine, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { SelectItem } from "@/components/primitives/select-item";
 import Pagination from "@/components/pagination/pagination";
 import { Button } from "@/components/primitives/button";
-import Select from "@/components/primitives/select";
-import { SelectItem } from "@/components/primitives/select-item";
 import { Table } from "@/components/primitives/table";
+import Select from "@/components/primitives/select";
+import { Input } from "@/components/input/input";
 import Text from "@/components/primitives/text";
-import { FilePenLine, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Card } from "@/components/card";
 
 export default function Home() {
   const thData = ["Nome", "Tipo", "Exibir na Dashboard", "Ações"];
@@ -153,7 +153,13 @@ export default function Home() {
 
 
       <Card.Footer>
-        <Pagination />
+        <Pagination
+          from={1}
+          to={10}
+          lastPage={1}
+          totalRegisters={10}
+          onPageChange={() => { }}
+        />
       </Card.Footer>
     </Card.Root >
   );

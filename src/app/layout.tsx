@@ -1,8 +1,7 @@
 import "./globals.css";
 
-import { Sidebar } from "@/components/sidebar";
-import { Header } from "@/components/header";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,15 +16,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={inter.variable}>
       <body className={`${inter.className} antialiased text-sm md:text-base text-white`}>
-        <div className="h-screen flex overflow-hidden">
-          <Sidebar />
-          <div className="flex flex-col flex-1 overflow-hidden">
-            <Header title="Categoria" />
-            <main className="flex-1 overflow-y-auto p-6">
-              {children}
-            </main>
-          </div>
-        </div>
+        <Toaster richColors closeButton position="top-right" />
+        {children}
       </body>
     </html>
   );

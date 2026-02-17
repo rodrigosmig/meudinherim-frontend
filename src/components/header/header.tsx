@@ -1,5 +1,4 @@
-import { Bell, Landmark, Plus, User, WalletCards } from 'lucide-react';
-import React from 'react';
+import { Bell, Landmark, Plus, WalletCards } from 'lucide-react';
 
 import UserProfile from './user-profile';
 

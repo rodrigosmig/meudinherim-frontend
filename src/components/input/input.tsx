@@ -36,7 +36,7 @@ export function Input({
         />
       </div>
       {!!isError && (
-        <Text className="pt-1 pb-3 text-sm text-red-500">
+        <Text className="pt-1 text-sm text-red-500">
           {error.message?.toString()}
         </Text>
       )}
