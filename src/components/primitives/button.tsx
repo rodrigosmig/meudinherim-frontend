@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
 import { ComponentProps, ElementType, ReactNode } from "react";
 import { tv } from "tailwind-variants";
+import { cn } from "@/lib/utils";
 
 import Tooltip from "./tooltip";
 
@@ -33,6 +33,9 @@ const buttonVariants = tv({
       ],
       close: [
         "absolute top-0 right-0 md:hidden text-gray-400 hover:text-white font-bold"
+      ],
+      collapse: [
+        "bg-gray-800 hover:bg-gray-700 w-6 h-6 text-gray-400 hidden md:flex absolute top-4 -right-3 z-50 rounded-lg border border-gray-700",
       ]
     },
   },
@@ -42,7 +45,7 @@ const buttonVariants = tv({
 });
 
 interface ButtonProps extends ComponentProps<'button'> {
-  variant?: "primary" | "edit" | "remove" | "info" | "cancel" | "pagination" | "menu" | "close";
+  variant?: "primary" | "edit" | "remove" | "info" | "cancel" | "pagination" | "menu" | "close" | "collapse";
   icon?: ElementType;
   iconClassName?: string;
   children?: ReactNode;
