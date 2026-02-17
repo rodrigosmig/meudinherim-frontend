@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={inter.variable}>
-      <body className={`${inter.className} antialiased text-white`}>
+      <body className={`${inter.className} antialiased text-sm md:text-base text-white`}>
         <div className="h-screen flex overflow-hidden">
           <Sidebar />
           <div className="flex flex-col flex-1 overflow-hidden">

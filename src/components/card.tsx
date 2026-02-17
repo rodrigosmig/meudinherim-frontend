@@ -1,12 +1,44 @@
+import { cn } from "@/lib/utils";
+import { ComponentProps } from "react";
 
-interface CardProps {
+interface CardProps extends ComponentProps<'div'> {
   children: React.ReactNode;
 }
 
-export function Card({ children }: CardProps) {
+function CardRoot({ children, className, ...props }: CardProps) {
   return (
-    <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+    <div className={cn("bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden", className)} {...props}>
       {children}
     </div>
   );
+}
+
+interface CardHeaderProps extends ComponentProps<'div'> {
+  children: React.ReactNode;
+}
+
+function CardHeader({ children, className, ...props }: CardHeaderProps) {
+  return (
+    <div className={cn("flex flex-col gap-6 px-6 py-5 border-b border-gray-800", className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+interface CardFooterProps extends ComponentProps<'div'> {
+  children: React.ReactNode;
+}
+
+function CardFooter({ children, className, ...props }: CardFooterProps) {
+  return (
+    <div className={cn("border-t border-gray-800 px-6 py-4", className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+export const Card = {
+  Root: CardRoot,
+  Header: CardHeader,
+  Footer: CardFooter,
 }
