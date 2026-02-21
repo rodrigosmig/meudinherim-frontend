@@ -1,0 +1,42 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Chrome (Client)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true
+    },
+    {
+      "name": "Attach Chrome (Client)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true
+    },
+    {
+      "name": "Attach to Next.js (Server)",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": false,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/.next/**/*.js"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Dev: Client + Server (Launch Chrome)",
+      "configurations": ["Launch Chrome (Client)", "Attach to Next.js (Server)"]
+    },
+    {
+      "name": "Dev: Client + Server (Attach Chrome)",
+      "configurations": ["Attach Chrome (Client)", "Attach to Next.js (Server)"]
+    }
+  ]
+}

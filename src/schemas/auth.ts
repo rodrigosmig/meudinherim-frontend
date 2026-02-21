@@ -6,3 +6,25 @@ export const loginSchema = z.object({
 });
 
 export type LoginFormValue = z.infer<typeof loginSchema>;
+
+export const cadastrarUsuarioSchema = z
+  .object({
+    nome: z.string().min(3, "O campo nome deve ter no mínimo 3 caracteres"),
+    email: z.email("E-mail inválido"),
+    password: z
+      .string()
+      .min(8, "O campo senha deve ter no mínimo 8 caracteres"),
+    passwordConfirmation: z.string(),
+  })
+  .refine((data) => data.password === data.passwordConfirmation, {
+    message: "A confirmação de senha não corresponde à senha",
+    path: ["passwordConfirmation"],
+  });
+
+export type CadastrarUsuarioFormValue = z.infer<typeof cadastrarUsuarioSchema>;
+
+export const recuperarSenhaSchema = z.object({
+  email: z.email("E-mail inválido"),
+});
+
+export type RecuperarSenhaFormValue = z.infer<typeof recuperarSenhaSchema>;

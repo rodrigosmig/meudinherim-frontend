@@ -1,11 +1,9 @@
-import { setSessionToken } from "@/lib/auth/session";
-import { getApiBaseUrl } from "@/lib/auth/constants";
+import { setSessionToken } from "@/helpers/session";
+import { getApiBaseUrl } from "@/helpers/constants";
 import { NextResponse } from "next/server";
+import { LoginBody } from "@/types/auth";
 
-interface LoginBody {
-  email: string;
-  password: string;
-}
+export const runtime = "nodejs";
 
 function extractToken(payload: unknown) {
   if (!payload || typeof payload !== "object") return "";
@@ -43,7 +41,6 @@ export async function POST(request: Request) {
     });
 
     const payload = await response.json().catch(() => ({}));
-    console.log("Login response payload:", payload);
     if (!response.ok) {
       return NextResponse.json(payload, { status: response.status });
     }

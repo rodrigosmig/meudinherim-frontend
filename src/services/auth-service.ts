@@ -1,4 +1,4 @@
-import { ApiMessage } from "@/lib/api-client";
+import { normalizeMessage } from "@/lib/api";
 
 export type LoginFieldError = {
   field: string;
@@ -29,31 +29,6 @@ function extractFieldErrors(payload: unknown): LoginFieldError[] {
     .filter((fieldError) => !!fieldError.field);
 }
 
-function normalizeMessage(
-  message: unknown,
-  fallbackCodigo: number,
-  fallbackDescricao: string,
-): ApiMessage {
-  if (message && typeof message === "object") {
-    const messageObj = message as Record<string, unknown>;
-
-    if (
-      typeof messageObj.codigo === "number" &&
-      typeof messageObj.descricao === "string"
-    ) {
-      return {
-        codigo: messageObj.codigo,
-        descricao: messageObj.descricao,
-      };
-    }
-  }
-
-  return {
-    codigo: fallbackCodigo,
-    descricao: fallbackDescricao,
-  };
-}
-
 export async function login(email: string, password: string) {
   const response = await fetch("/api/auth/login", {
     method: "POST",
@@ -82,4 +57,28 @@ export async function logout() {
   await fetch("/api/auth/logout", {
     method: "POST",
   });
+}
+
+export async function recuperarSenha(email: string) {
+  const response = await fetch("/api/auth/recuperar-senha", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  const payload = await response.json().catch(() => null);
+  const message = normalizeMessage(
+    payload && typeof payload === "object"
+      ? (payload as Record<string, unknown>).message
+      : null,
+    response.status,
+    response.ok ? "Sucesso" : "Falha ao recuperar senha.",
+  );
+
+  return {
+    ok: response.ok,
+    status: response.status,
+    message,
+    fields: extractFieldErrors(payload),
+  };
 }

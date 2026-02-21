@@ -1,16 +1,31 @@
+import { Card } from "@/components/primitives/card";
 import Text from "@/components/primitives/text";
-import { Card } from "@/components/card";
+import Link from "next/link";
 
-import LoginForm from "./login-form";
+import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col gap-4 items-center justify-center">
-      <Text variant="heading-large">MEU DINHEIRIM</Text>
-      <Card.Root className="w-full max-w-md">
-        <LoginForm />
-      </Card.Root>
+    <div className="flex flex-col w-screen h-screen">
+      <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
+        <Text variant="heading-large">MEU DINHEIRIM</Text>
+        <Card.Root className="w-96 max-w-md">
+          <LoginForm />
+
+          <Card.Footer>
+            <div className="flex flex-col gap-1">
+              <Link className="hover:text-violet-500" href="/recuperar-senha">
+                <Text className="hover:text-violet-500">Esqueci minha senha</Text>
+              </Link>
+
+              <Text>
+                Não tem uma conta? <Link href="/cadastro" className="hover:text-violet-500">Cadastre-se</Link>
+              </Text>
+            </div>
+          </Card.Footer>
+        </Card.Root>
+      </div>
     </div>
   );
 }

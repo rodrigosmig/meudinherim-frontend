@@ -1,5 +1,5 @@
-import { getSessionToken } from "@/lib/auth/session";
-import { getApiBaseUrl } from "@/lib/auth/constants";
+import { getSessionToken } from "@/helpers/session";
+import { getApiBaseUrl } from "@/helpers/constants";
 import { NextResponse } from "next/server";
 
 async function proxy(request: Request, path: string[]) {

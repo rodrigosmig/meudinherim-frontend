@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={inter.variable}>
       <body className={`${inter.className} antialiased text-sm md:text-base text-white`}>
-        <Toaster richColors closeButton position="top-right" />
+        <Toaster richColors closeButton position="top-right" duration={8000} />
         {children}
       </body>
     </html>

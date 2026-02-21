@@ -1,6 +1,6 @@
 export const AUTH_COOKIE_NAME = "meudinherim.token";
 
-export const AUTH_PUBLIC_ROUTES = ["/login"];
+export const AUTH_PUBLIC_ROUTES = ["/login", "/cadastro", "/recuperar-senha"];
 
 export const AUTH_REDIRECT_WHEN_AUTHENTICATED = "/";
 export const AUTH_REDIRECT_WHEN_UNAUTHENTICATED = "/login";

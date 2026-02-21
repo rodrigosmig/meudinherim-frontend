@@ -1,6 +1,6 @@
 'use client';
 
-import { listAccounts } from "@/lib/services/accounts-service";
+import { listAccounts } from "@/services/accounts-service";
 import { useEffect, useState } from "react";
 
 type Account = {

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import { ComponentProps } from "react";
+import { cn } from "@/helpers/utils";
 
 interface CardProps extends ComponentProps<'div'> {
   children: React.ReactNode;

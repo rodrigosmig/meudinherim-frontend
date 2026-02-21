@@ -1,18 +1,22 @@
 'use client';
 
-import { Input } from "@/components/input/input";
 import { Button } from "@/components/primitives/button";
-import { login } from "@/lib/services/auth-service";
-import { LoginFormValue } from "@/schemas/auth";
+import Form from "@/components/primitives/form";
+import { Input } from "@/components/primitives/input";
+import { capitalize } from "@/helpers/utils";
+import { LoginFormValue, loginSchema } from "@/schemas/auth";
+import { login } from "@/services/auth-service";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LockKeyhole, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export default function LoginForm() {
+export function LoginForm() {
   const router = useRouter();
 
   const form = useForm<LoginFormValue>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -27,21 +31,22 @@ export default function LoginForm() {
           if (fieldError.field === "email" || fieldError.field === "password") {
             form.setError(fieldError.field, {
               type: "server",
-              message: fieldError.message,
+              message: capitalize(fieldError.message),
             });
           }
         });
       }
 
-      toast.error(response.message.descricao);
+      toast.error(capitalize(response.message.descricao));
       return;
     }
 
     router.push("/");
     router.refresh();
   };
+
   return (
-    <form className="space-y-4 p-8" onSubmit={form.handleSubmit(onSubmit)}>
+    <Form onSubmit={form.handleSubmit(onSubmit)}>
       <Input
         label="E-mail"
         placeholder="Digite seu e-mail"
@@ -68,6 +73,6 @@ export default function LoginForm() {
           {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
         </Button>
       </div>
-    </form>
+    </Form>
   )
 }

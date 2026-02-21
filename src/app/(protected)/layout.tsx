@@ -1,6 +1,6 @@
+import { getSessionToken } from "@/helpers/session";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
-import { getSessionToken } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({

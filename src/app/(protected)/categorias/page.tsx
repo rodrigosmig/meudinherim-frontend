@@ -4,9 +4,9 @@ import Pagination from "@/components/pagination/pagination";
 import { Button } from "@/components/primitives/button";
 import { Table } from "@/components/primitives/table";
 import Select from "@/components/primitives/select";
-import { Input } from "@/components/input/input";
+import { Card } from "@/components/primitives/card";
 import Text from "@/components/primitives/text";
-import { Card } from "@/components/card";
+import { Input } from "@/components/input";
 
 export default function Home() {
   const thData = ["Nome", "Tipo", "Exibir na Dashboard", "Ações"];

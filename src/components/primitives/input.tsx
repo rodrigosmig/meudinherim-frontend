@@ -1,8 +1,8 @@
 import { ComponentProps, ElementType } from "react";
 import { FieldError } from "react-hook-form";
-import { cn } from "@/lib/utils";
+import { cn } from "@/helpers/utils";
 
-import Text from "../primitives/text";
+import Text from "./text";
 
 interface InputProps extends ComponentProps<"input"> {
   icon?: ElementType;
@@ -20,7 +20,7 @@ export function Input({
 
   return (
     <div className="flex flex-col gap-1">
-      {label && <label htmlFor={label} className="text-gray-200">{label}</label>}
+      {label && <label htmlFor={label} className="text-gray-200 mb-1">{label}</label>}
       <div
         className={cn(
           "flex w-full text-xs md:text-base bg-gray-800 border border-gray-700 items-center gap-2 rounded-lg px-3 py-2 shadow-sm focus-within:ring-2 focus:border-transparent",

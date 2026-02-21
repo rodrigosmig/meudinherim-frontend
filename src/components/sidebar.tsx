@@ -4,7 +4,7 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import { ArrowLeftToLine, ArrowRightToLine, BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasing, ChartNoAxesCombined, CreditCard, Landmark, LayoutDashboard, Menu, Tags, User, X } from 'lucide-react';
 import { ElementType, ReactNode, useState } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/helpers/utils";
 import Link from "next/link";
 import Logo from './logo';
 import { Button } from "./primitives/button";
@@ -45,10 +45,12 @@ function SidebarRoot() {
             <Logo collapsed={collapsed} />
 
             <Button
+              className={`top-0 ${collapsed ? '-right-1' : '-right-5'}`}
               type="button"
               variant="collapse"
               onClick={() => setCollapsed((prev) => !prev)}
               aria-label={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
+              tooltip={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
             >
               {collapsed ? <ArrowRightToLine className="w-4 h-4" /> : <ArrowLeftToLine className="w-4 h-4" />}
             </Button>

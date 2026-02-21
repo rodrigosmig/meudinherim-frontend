@@ -1,6 +1,6 @@
 "use client";
 
-import { logout } from "@/lib/services/auth-service";
+import { logout } from "@/services/auth-service";
 import { LogOut, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
