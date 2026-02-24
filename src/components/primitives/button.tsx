@@ -6,7 +6,7 @@ import Tooltip from "./tooltip";
 
 const buttonVariants = tv({
   base: [
-    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-bold hover:text-white transition-colors transition-colors rounded-md transition-all"
+    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-bold hover:text-white transition-colors rounded-md"
   ],
   variants: {
     variant: {
@@ -28,15 +28,9 @@ const buttonVariants = tv({
       pagination: [
         "bg-gray-800 hover:bg-gray-700 w-8 h-8 text-gray-400",
       ],
-      menu: [
-        "md:hidden fixed top-4 left-4 z-50 bg-gray-900 p-2 rounded-lg border border-gray-800 text-gray-300 shadow-lg"
+      icon: [
+        "p-2 hover:bg-gray-800 rounded-lg transition-colors relative",
       ],
-      close: [
-        "absolute top-0 right-0 md:hidden text-gray-400 hover:text-white font-bold"
-      ],
-      collapse: [
-        "bg-gray-900 border-0 w-6 h-6 text-gray-400 hidden md:flex absolute z-50 rounded-md",
-      ]
     },
     disabled: {
       false: "cursor-pointer",
@@ -50,7 +44,7 @@ const buttonVariants = tv({
 });
 
 interface ButtonProps extends ComponentProps<'button'> {
-  variant?: "primary" | "edit" | "remove" | "info" | "cancel" | "pagination" | "menu" | "close" | "collapse";
+  variant?: "primary" | "edit" | "remove" | "info" | "cancel" | "pagination" | "icon";
   icon?: ElementType;
   iconClassName?: string;
   children?: ReactNode;

@@ -1,12 +1,12 @@
 import { FilePenLine, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { SelectItem } from "@/components/primitives/select-item";
-import Pagination from "@/components/pagination/pagination";
 import { Button } from "@/components/primitives/button";
 import { Table } from "@/components/primitives/table";
+import { Input } from "@/components/primitives/input";
 import Select from "@/components/primitives/select";
 import { Card } from "@/components/primitives/card";
+import Pagination from "@/components/pagination";
 import Text from "@/components/primitives/text";
-import { Input } from "@/components/input";
 
 export default function Home() {
   const thData = ["Nome", "Tipo", "Exibir na Dashboard", "Ações"];

@@ -1,8 +1,8 @@
 'use client';
 
-import { Input } from '@/components/input';
 import { Button } from '@/components/primitives/button';
 import Form from '@/components/primitives/form';
+import { Input } from '@/components/primitives/input';
 import { CadastrarUsuarioFormValue, cadastrarUsuarioSchema } from '@/schemas/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LockKeyhole, Mail, User2 } from 'lucide-react';

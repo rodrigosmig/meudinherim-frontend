@@ -1,13 +1,13 @@
 'use client';
 
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { ArrowLeftToLine, ArrowRightToLine, BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasing, ChartNoAxesCombined, CreditCard, Landmark, LayoutDashboard, Menu, Tags, User, X } from 'lucide-react';
+import { ArrowLeftFromLine, ArrowRightFromLine, BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasing, ChartNoAxesCombined, CreditCard, Landmark, LayoutDashboard, Menu, Tags, X } from 'lucide-react';
 import { ElementType, ReactNode, useState } from 'react';
 
 import { cn } from "@/helpers/utils";
 import Link from "next/link";
-import Logo from './logo';
 import { Button } from "./primitives/button";
+import Logo from "./primitives/logo";
 
 function SidebarRoot() {
   const [open, setOpen] = useState(false);
@@ -16,7 +16,7 @@ function SidebarRoot() {
   return (
     <>
       <Button
-        variant="menu"
+        className="md:hidden fixed top-4 left-4 z-50 bg-gray-900 p-2 rounded-lg border border-gray-800 text-gray-300 shadow-lg"
         onClick={() => setOpen(true)}
         aria-label="Abrir menu"
         icon={Menu}
@@ -44,51 +44,54 @@ function SidebarRoot() {
           <div className="shrink-0 relative">
             <Logo collapsed={collapsed} />
 
-            <Button
-              className={`top-0 ${collapsed ? '-right-1' : '-right-5'}`}
-              type="button"
-              variant="collapse"
-              onClick={() => setCollapsed((prev) => !prev)}
-              aria-label={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
-              tooltip={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
-            >
-              {collapsed ? <ArrowRightToLine className="w-4 h-4" /> : <ArrowLeftToLine className="w-4 h-4" />}
-            </Button>
+            {!open && (
+              <Button
+                className={`hover:bg-transparent text-gray-400 hover:text-white absolute z-50 rounded-md top-0 ${collapsed ? '-right-6' : '-right-2.5'}`}
+                type="button"
+                variant="icon"
+                onClick={() => setCollapsed((prev) => !prev)}
+                aria-label={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
+                tooltip={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
+              >
+                {collapsed ? <ArrowRightFromLine className="w-4 h-4" /> : <ArrowLeftFromLine className="w-4 h-4" />}
+              </Button>
+            )}
           </div>
           <Collapsible.Content forceMount className="flex flex-col h-full">
             <nav className={cn("flex-1 overflow-y-auto p-4 space-y-1", collapsed && "px-2")}>
               <NavSection title="Geral" collapsed={collapsed}>
                 <NavItem link="/" title="Dashboard" icon={LayoutDashboard} collapsed={collapsed} />
                 <NavItem link="/categorias" title="Categorias" icon={Bookmark} collapsed={collapsed} />
-                <NavItem link="#" title="Perfil" icon={User} collapsed={collapsed} />
-                <NavItem link="#" title="Tags" icon={Tags} collapsed={collapsed} />
+                <NavItem link="/tags" title="Tags" icon={Tags} collapsed={collapsed} />
               </NavSection>
               <NavSection title="Contas" collapsed={collapsed}>
-                <NavItem link="#" title="Contas Bancárias" icon={Landmark} collapsed={collapsed} />
+                <NavItem link="/contas-bancarias" title="Contas Bancárias" icon={Landmark} collapsed={collapsed} />
               </NavSection>
               <NavSection title="Cartão de Crédito" collapsed={collapsed}>
-                <NavItem link="#" title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} />
+                <NavItem link="/cartoes-de-credito" title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} />
               </NavSection>
               <NavSection title="Agendamento" collapsed={collapsed}>
-                <NavItem link="#" title="Contas a Pagar" icon={BanknoteArrowDown} collapsed={collapsed} />
-                <NavItem link="#" title="Contas a Receber" icon={BanknoteArrowUp} collapsed={collapsed} />
+                <NavItem link="/contas-a-pagar" title="Contas a Pagar" icon={BanknoteArrowDown} collapsed={collapsed} />
+                <NavItem link="/contas-a-receber" title="Contas a Receber" icon={BanknoteArrowUp} collapsed={collapsed} />
               </NavSection>
               <NavSection title="Relatórios" collapsed={collapsed}>
-                <NavItem link="#" title="Contas a Pagar/Receber" icon={ChartNoAxesColumnIncreasing} collapsed={collapsed} />
-                <NavItem link="#" title="Lançamentos por categoria" icon={ChartNoAxesCombined} collapsed={collapsed} />
+                <NavItem link="/relatorios/contas-a-pagar-receber" title="Contas a Pagar/Receber" icon={ChartNoAxesColumnIncreasing} collapsed={collapsed} />
+                <NavItem link="/relatorios/lancamentos-por-categoria" title="Lançamentos por categoria" icon={ChartNoAxesCombined} collapsed={collapsed} />
               </NavSection>
             </nav>
           </Collapsible.Content>
 
           {/* Botão fechar mobile */}
-          <Button
-            variant="close"
-            onClick={() => setOpen(false)}
-            aria-label="Fechar menu"
-            style={{ zIndex: 60 }}
-          >
-            <X className="w-5 h-5" />
-          </Button>
+          {open && (
+            <Button
+              className="absolute top-0 right-0 md:hidden text-gray-400 bg-transparent border-0 hover:text-white font-bold"
+              onClick={() => setOpen(false)}
+              aria-label="Fechar menu"
+              style={{ zIndex: 60 }}
+            >
+              <X className="w-5 h-5 hover:text-white" />
+            </Button>
+          )}
         </aside>
       </Collapsible.Root>
     </>

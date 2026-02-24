@@ -14,9 +14,8 @@ export default function Cadastro() {
           <Card.Header className="relative">
             <Link href="/login">
               <Button
-                className="absolute top-2 left-2 bg-gray-900 border-0"
+                className="bg-gray-900 border-0 w-6 h-6 text-gray-400 hidden md:flex absolute z-50 hover:text-white hover:bg-transparent rounded-md transition-all"
                 tooltip="Voltar"
-                variant="collapse"
                 aria-label="Voltar"
               >
                 <ChevronLeft className="w-5 h-5" />

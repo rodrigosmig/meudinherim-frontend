@@ -27,6 +27,7 @@ export default {
     "!src/app/api/proxy/**", // ignora middlewares
     "!src/proxy.ts", // ignora middlewares
     "!src/app/**/route.ts", // ignora arquivos de rota
+    "!src/app/**/layout.tsx", // ignora arquivos de layout
   ],
   transform: {
     "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "tsconfig.json" }],

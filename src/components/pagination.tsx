@@ -1,4 +1,4 @@
-import { Button } from "../primitives/button";
+import { Button } from "./primitives/button";
 
 type PaginationProps = {
   from: number,
@@ -11,11 +11,11 @@ type PaginationProps = {
 
 export default function Pagination({ }: PaginationProps) {
   return (
-    <div className="flex items-center justify-between">
-      <p className="text-sm text-gray-400">
+    <div className="flex flex-col md:flex-row items-center gap-3 justify-between">
+      <div className="text-sm text-gray-400">
         <span className="font-medium text-white">1 - 10</span> de <span
           className="font-medium text-white">45</span>
-      </p>
+      </div>
       <div className="flex items-center gap-2">
         <Button variant="pagination">
           &lt;

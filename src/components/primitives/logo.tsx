@@ -1,6 +1,6 @@
 import { cn } from "@/helpers/utils";
 
-import Text from "./primitives/text";
+import Text from "./text";
 
 interface LogoProps {
   collapsed?: boolean;
