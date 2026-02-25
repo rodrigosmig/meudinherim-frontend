@@ -3,11 +3,13 @@
 import { Button } from "@/components/primitives/button";
 import Form from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
+import { getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from "@/helpers/api-type-guards";
 import { RecuperarSenhaFormValue, recuperarSenhaSchema } from "@/schemas/auth";
-//import { recuperarSenha } from "@/services/auth-service";
+import { recuperarSenha } from "@/services/auth-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export function RecuperarSenhaForm() {
   const router = useRouter();
@@ -20,25 +22,28 @@ export function RecuperarSenhaForm() {
   });
 
   const onSubmit = async (data: RecuperarSenhaFormValue) => {
-    // const response = await recuperarSenha(data.email);
-    // if (!response.ok) {
-    //   if (response.fields.length > 0) {
-    //     response.fields.forEach((fieldError) => {
-    //       if (fieldError.field === "email") {
-    //         form.setError(fieldError.field, {
-    //           type: "server",
-    //           message: capitalize(fieldError.message),
-    //         });
-    //       }
-    //     });
-    //   }
+    const response = await recuperarSenha(data);
 
-    //   toast.error(response.message.descricao);
-    //   return;
-    // }
+    if (isApiFormErrorResponse(response)) {
+      response.data.fields.forEach((fieldError) => {
+        if (["email",].includes(fieldError.field)) {
+          form.setError(fieldError.field as keyof RecuperarSenhaFormValue, {
+            type: "server",
+            message: fieldError.message,
+          });
+        }
+      });
+      toast.error(response.message.descricao);
+      return;
+    }
 
-    // toast.success("Email de recuperação enviado com sucesso!");
-    // router.push("/login");
+    if (isApiSuccessResponse(response)) {
+      toast.success("Email de recuperação enviado com sucesso!");
+      router.push("/login");
+      return;
+    }
+
+    toast.error(getApiErrorMessage(response, "Erro ao recuperar senha do usuário"));
   };
 
   return (

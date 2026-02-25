@@ -3,12 +3,15 @@
 import { Button } from "@/components/primitives/button";
 import Form from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
+import { getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from "@/helpers/api-type-guards";
 import { LoginFormValue, loginSchema } from "@/schemas/auth";
+import { login } from "@/services/auth-service";
 //import { login } from "@/services/auth-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LockKeyhole, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const router = useRouter();
@@ -22,25 +25,30 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormValue) => {
-    // const response = await login(data.email, data.password);
-    // if (!response.ok) {
-    //   if (response.fields.length > 0) {
-    //     response.fields.forEach((fieldError) => {
-    //       if (fieldError.field === "email" || fieldError.field === "password") {
-    //         form.setError(fieldError.field, {
-    //           type: "server",
-    //           message: capitalize(fieldError.message),
-    //         });
-    //       }
-    //     });
-    //   }
+    const response = await login(data);
 
-    //   toast.error(capitalize(response.message.descricao));
-    //   return;
-    // }
+    if (isApiFormErrorResponse(response)) {
+      response.data.fields.forEach((fieldError) => {
+        if (["email", "password"].includes(fieldError.field)) {
+          form.setError(fieldError.field as keyof LoginFormValue, {
+            type: "server",
+            message: fieldError.message,
+          });
+        }
+      });
 
-    // router.push("/");
-    // router.refresh();
+      toast.error(response.message.descricao);
+      return;
+    }
+
+    if (isApiSuccessResponse(response)) {
+      router.push("/");
+      router.refresh();
+      return;
+    }
+
+    toast.error(getApiErrorMessage(response, "Erro ao fazer o login do usuário"));
+    return;
   };
 
   return (

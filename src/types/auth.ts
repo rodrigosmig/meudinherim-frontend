@@ -5,9 +5,11 @@ export interface LoginBody {
   password: string;
 }
 
-export interface RecuperarSenhaBody {
-  email: string;
+export interface LoginData {
+  token: string;
 }
+
+export type LoginResponse = ApiResponse<LoginData> | ApiFormErrorResponse;
 
 export interface CadastrarUsuarioBody {
   nome: string;
@@ -16,7 +18,16 @@ export interface CadastrarUsuarioBody {
   passwordConfirmation: string;
 }
 
-export type CadastroUsuarioData = { idUsuario: string };
-export type CadastroUsuarioResponse =
-  | ApiResponse<CadastroUsuarioData>
+export interface CadastrarUsuarioData {
+  idUsuario: string;
+}
+
+export type CadastrarUsuarioResponse =
+  | ApiResponse<CadastrarUsuarioData>
   | ApiFormErrorResponse;
+
+export interface RecuperarSenhaBody {
+  email: string;
+}
+
+export type RecuperarSenhaResponse = ApiResponse<void> | ApiFormErrorResponse;

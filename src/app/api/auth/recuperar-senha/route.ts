@@ -1,41 +1,29 @@
 import { NextResponse } from "next/dist/server/web/spec-extension/response";
-import { getApiBaseUrl } from "@/helpers/constants";
+import { ApiFormErrorResponse, ApiResponse } from "@/types/api";
 import { RecuperarSenhaBody } from "@/types/auth";
+import { api } from "@/lib/axios-client";
+import { AxiosError } from "axios";
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as RecuperarSenhaBody;
-
-    const response = await fetch(`${getApiBaseUrl()}/v1/auth/recuperar-senha`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept-Language": "pt-BR",
-      },
-      body: JSON.stringify({
-        email: body.email,
-      }),
-      cache: "no-store",
-    });
-
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      return NextResponse.json(payload, { status: response.status });
-    }
-
-    return NextResponse.json(payload, { status: response.status });
-  } catch {
-    return NextResponse.json(
-      {
-        message: {
-          codigo: 500,
-          descricao: "Erro inesperado ao recuperar a senha.",
-        },
-        data: {
-          fields: [],
-        },
-      },
-      { status: 500 },
+    const response = await api.post<ApiResponse<void>>(
+      "/v1/auth/recuperar-senha",
+      body,
     );
+    return NextResponse.json(response.data, { status: response.status });
+  } catch (error) {
+    const axiosError = error as AxiosError<
+      ApiFormErrorResponse | ApiResponse<void>
+    >;
+    const status = axiosError.response?.status || 500;
+    const data = axiosError.response?.data || {
+      message: {
+        codigo: 500,
+        descricao: "Erro inesperado ao recuperar senha do usuário.",
+      },
+      data: { fields: [] },
+    };
+    return NextResponse.json(data, { status });
   }
 }

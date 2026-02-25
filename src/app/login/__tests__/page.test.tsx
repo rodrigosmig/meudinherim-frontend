@@ -22,6 +22,6 @@ describe("Componente LoginPage", () => {
 
     // Verifica se os links têm os href corretos
     expect(screen.getByRole("link", { name: "Esqueci minha senha" })).toHaveAttribute("href", "/recuperar-senha");
-    expect(screen.getByRole("link", { name: "Cadastre-se" })).toHaveAttribute("href", "/cadastro");
+    expect(screen.getByRole("link", { name: "Cadastre-se" })).toHaveAttribute("href", "/cadastrar-usuario");
   });
 });

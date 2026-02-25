@@ -1,6 +1,6 @@
-import * as authService from "@/services/auth-service";
+import { render, screen, waitFor } from "@/lib/test-utils";
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@/lib/test-utils";
+import { login } from '@/services/auth-service';
 
 import { LoginForm } from "../login-form";
 
@@ -17,6 +17,10 @@ jest.mock("sonner", () => ({
     error: jest.fn(),
   },
 }));
+
+jest.mock('@/services/auth-service');
+
+const mockLogin = login as jest.Mock;
 
 describe("Componente LoginForm", () => {
   beforeEach(() => {
@@ -36,13 +40,10 @@ describe("Componente LoginForm", () => {
     const email = "test@test.com";
     const senha = "senhaValida";
 
-    jest.spyOn(authService, "login").mockResolvedValue({
-      ok: true,
-      status: 200,
-      message: { descricao: mensagemSucesso },
-      data: null,
-      fields: [],
-    } as any);
+    mockLogin.mockResolvedValueOnce({
+      message: { codigo: 0, descricao: 'Sucesso' },
+      data: { idUsuario: '123' }
+    });
 
     render(<LoginForm />);
 
@@ -52,7 +53,7 @@ describe("Componente LoginForm", () => {
     await user.type(screen.getByLabelText("Senha"), senha);
     await user.click(screen.getByRole("button", { name: "Entrar" }));
 
-    expect(authService.login).toHaveBeenCalledWith(email, senha);
+    expect(mockLogin).toHaveBeenCalledWith({ email, password: senha });
 
     expect(mockedPush).toHaveBeenCalledWith("/");
     expect(mockedRefresh).toHaveBeenCalled();
@@ -68,20 +69,17 @@ describe("Componente LoginForm", () => {
     expect(screen.getByText("Digite um e-mail válido")).toBeInTheDocument();
     expect(screen.getByText("A senha é obrigatória")).toBeInTheDocument();
 
-    expect(authService.login).not.toHaveBeenCalled();
+    expect(mockLogin).not.toHaveBeenCalled();
   });
 
-  it("deve exibir erro de validação retornado pelo servidor", async () => {
+  it("deve exibir erro de validação retornado pela API", async () => {
     const mensagemErro = "Credenciais inválidas";
     const emailInvalido = "emailinvalido@teste.com";
 
-    jest.spyOn(authService, "login").mockResolvedValue({
-      ok: false,
-      status: 422,
-      message: { descricao: mensagemErro },
-      data: null,
-      fields: [{ field: "email", message: "E-mail inválido" }],
-    } as any);
+    mockLogin.mockResolvedValueOnce({
+      message: { codigo: -91, descricao: mensagemErro },
+      data: { fields: [{ field: 'email', message: 'E-mail inválido' }] }
+    });
 
     render(<LoginForm />);
 
@@ -91,8 +89,30 @@ describe("Componente LoginForm", () => {
     await user.click(screen.getByRole("button", { name: "Entrar" }));
 
     const { toast } = require("sonner");
+
     expect(toast.error).toHaveBeenCalledWith(mensagemErro);
+
     expect(screen.getByText("E-mail inválido")).toBeInTheDocument();
-    expect(authService.login).toHaveBeenCalledWith(emailInvalido, "senhaInvalida");
+    expect(mockLogin).toHaveBeenCalledWith({ email: emailInvalido, password: "senhaInvalida" });
+  });
+
+  it('deve exibir erro genérico retornado pela API', async () => {
+    const messageError = 'Erro ao efetuar login';
+
+    mockLogin.mockResolvedValueOnce({
+      message: { codigo: -999, descricao: messageError }
+    });
+    render(<LoginForm />);
+
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText("E-mail"), "teste@teste.com");
+    await user.type(screen.getByLabelText("Senha"), "senhaValida");
+    await user.click(screen.getByRole("button", { name: "Entrar" }));
+
+    const { toast } = require("sonner");
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(messageError);
+    });
   });
 });

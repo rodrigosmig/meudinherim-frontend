@@ -1,3 +1,4 @@
+import { recuperarSenha } from "@/services/auth-service";
 import * as authService from "@/services/auth-service";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "@/lib/test-utils";
@@ -17,6 +18,9 @@ jest.mock("sonner", () => ({
   },
 }));
 
+jest.mock('@/services/auth-service');
+const mockRecuperarSenha = recuperarSenha as jest.Mock;
+
 describe("Componente RecuperarSenhaForm", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -30,16 +34,12 @@ describe("Componente RecuperarSenhaForm", () => {
   });
 
   it("deve enviar com sucesso e redirecionar", async () => {
+    mockRecuperarSenha.mockResolvedValueOnce({
+      message: { codigo: 0, descricao: 'Sucesso' }
+    });
+
     const mensagemSucesso = "Email de recuperação enviado com sucesso!";
     const email = "test@test.com";
-
-    jest.spyOn(authService, "recuperarSenha").mockResolvedValue({
-      ok: true,
-      status: 200,
-      message: { descricao: mensagemSucesso },
-      data: null,
-      fields: [],
-    } as any);
 
     render(<RecuperarSenhaForm />);
 
@@ -48,10 +48,11 @@ describe("Componente RecuperarSenhaForm", () => {
     await user.type(screen.getByLabelText("E-mail"), email);
     await user.click(screen.getByRole("button", { name: "Enviar e-mail de recuperação" }));
 
-    expect(authService.recuperarSenha).toHaveBeenCalledWith(email);
+    expect(authService.recuperarSenha).toHaveBeenCalledWith({ email });
 
     const { toast } = require("sonner");
-    expect(toast.success).toHaveBeenCalledWith("Email de recuperação enviado com sucesso!");
+
+    expect(toast.success).toHaveBeenCalledWith(mensagemSucesso);
     expect(mockedPush).toHaveBeenCalledWith("/login");
   });
 
@@ -72,16 +73,13 @@ describe("Componente RecuperarSenhaForm", () => {
   });
 
   it("deve exibir erro de validação retornado pelo servidor", async () => {
-    const mensagemErro = "E-mail inválido";
+    const mensagemErro = "E-mail já cadastrado";
     const emailInvalido = "emailinvalido@teste.com";
 
-    jest.spyOn(authService, "recuperarSenha").mockResolvedValue({
-      ok: false,
-      status: 422,
-      message: { descricao: "Erro servidor" },
-      data: null,
-      fields: [{ field: "email", message: mensagemErro }],
-    } as any);
+    mockRecuperarSenha.mockResolvedValueOnce({
+      message: { codigo: -30, descricao: mensagemErro },
+      data: { fields: [{ field: 'email', message: mensagemErro }] }
+    });
 
     render(<RecuperarSenhaForm />);
 
@@ -90,8 +88,8 @@ describe("Componente RecuperarSenhaForm", () => {
     await user.click(screen.getByRole("button", { name: "Enviar e-mail de recuperação" }));
 
     const { toast } = require("sonner");
-    expect(authService.recuperarSenha).toHaveBeenCalledWith(emailInvalido);
-    expect(toast.error).toHaveBeenCalledWith("Erro servidor");
+    expect(authService.recuperarSenha).toHaveBeenCalledWith({ email: emailInvalido });
+    expect(toast.error).toHaveBeenCalledWith(mensagemErro);
 
     expect(screen.getByText(mensagemErro)).toBeInTheDocument();
   });

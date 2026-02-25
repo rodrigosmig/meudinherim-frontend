@@ -43,6 +43,7 @@ export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
           });
         }
       });
+
       toast.error(response.message.descricao);
       return;
     }

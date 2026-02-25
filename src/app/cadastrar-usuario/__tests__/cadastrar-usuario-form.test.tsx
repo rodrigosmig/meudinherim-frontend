@@ -4,6 +4,7 @@ import { cadastrarUsuario } from '@/services/auth-service';
 import CadastrarUsuarioForm from '../cadastrar-usuario-form';
 
 jest.mock('@/services/auth-service');
+
 jest.mock("sonner", () => ({
   toast: {
     success: jest.fn(),
@@ -82,6 +83,7 @@ describe('CadastrarUsuarioForm', () => {
       message: { codigo: 0, descricao: 'Sucesso' },
       data: { idUsuario: '123' }
     });
+
     render(<CadastrarUsuarioForm />);
 
     const [senhaInput, confirmaSenhaInput] = screen.getAllByLabelText(/Senha/i);
