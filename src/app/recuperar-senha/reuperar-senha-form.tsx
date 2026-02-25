@@ -3,13 +3,13 @@
 import { Button } from "@/components/primitives/button";
 import Form from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
+import { toast } from "@/components/toast";
 import { getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from "@/helpers/api-type-guards";
 import { RecuperarSenhaFormValue, recuperarSenhaSchema } from "@/schemas/auth";
 import { recuperarSenha } from "@/services/auth-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 export function RecuperarSenhaForm() {
   const router = useRouter();

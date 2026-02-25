@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@/lib/test-utils";
 import userEvent from "@testing-library/user-event";
 import { login } from '@/services/auth-service';
+import { toast } from "@/components/toast";
 
 import { LoginForm } from "../login-form";
 
@@ -11,7 +12,7 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockedPush, refresh: mockedRefresh }),
 }));
 
-jest.mock("sonner", () => ({
+jest.mock("@/components/toast", () => ({
   toast: {
     success: jest.fn(),
     error: jest.fn(),
@@ -36,7 +37,6 @@ describe("Componente LoginForm", () => {
   });
 
   it("deve fazer login com sucesso", async () => {
-    const mensagemSucesso = "Login realizado com sucesso!";
     const email = "test@test.com";
     const senha = "senhaValida";
 
@@ -88,8 +88,6 @@ describe("Componente LoginForm", () => {
     await user.type(screen.getByLabelText("Senha"), "senhaInvalida");
     await user.click(screen.getByRole("button", { name: "Entrar" }));
 
-    const { toast } = require("sonner");
-
     expect(toast.error).toHaveBeenCalledWith(mensagemErro);
 
     expect(screen.getByText("E-mail inválido")).toBeInTheDocument();
@@ -108,8 +106,6 @@ describe("Componente LoginForm", () => {
     await user.type(screen.getByLabelText("E-mail"), "teste@teste.com");
     await user.type(screen.getByLabelText("Senha"), "senhaValida");
     await user.click(screen.getByRole("button", { name: "Entrar" }));
-
-    const { toast } = require("sonner");
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(messageError);

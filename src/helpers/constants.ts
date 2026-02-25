@@ -4,6 +4,7 @@ export const AUTH_PUBLIC_ROUTES = [
   "/login",
   "/cadastrar-usuario",
   "/recuperar-senha",
+  "/verificar-conta",
 ];
 
 export const AUTH_REDIRECT_WHEN_AUTHENTICATED = "/";

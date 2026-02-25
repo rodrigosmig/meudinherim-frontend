@@ -4,6 +4,7 @@ import { Button } from '@/components/primitives/button';
 import Form from '@/components/primitives/form';
 import { Input } from '@/components/primitives/input';
 import Text from '@/components/primitives/text';
+import { toast } from '@/components/toast';
 import { getApiErrorCode, getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from '@/helpers/api-type-guards';
 import { catalogoErros } from '@/helpers/erros';
 import { capitalize } from '@/helpers/utils';
@@ -14,7 +15,6 @@ import { LockKeyhole, Mail, User2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 type CadastrarUsuarioFormProps = {}
 
@@ -62,6 +62,7 @@ export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
         type: "server",
         message: capitalize(getApiErrorMessage(response, "Este e-mail já está em uso. Tente outro.")),
       });
+      form.setFocus("email");
     }
 
     toast.error(getApiErrorMessage(response, "Erro ao cadastrar usuário"));

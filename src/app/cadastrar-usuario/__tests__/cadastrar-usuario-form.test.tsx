@@ -1,11 +1,12 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { cadastrarUsuario } from '@/services/auth-service';
+import { toast } from "@/components/toast";
 
 import CadastrarUsuarioForm from '../cadastrar-usuario-form';
 
 jest.mock('@/services/auth-service');
 
-jest.mock("sonner", () => ({
+jest.mock("@/components/toast", () => ({
   toast: {
     success: jest.fn(),
     error: jest.fn(),
@@ -13,7 +14,6 @@ jest.mock("sonner", () => ({
 }));
 
 const mockCadastrarUsuario = cadastrarUsuario as jest.Mock;
-
 
 describe('CadastrarUsuarioForm', () => {
   beforeEach(() => {
@@ -47,8 +47,6 @@ describe('CadastrarUsuarioForm', () => {
     fireEvent.change(confirmaSenhaInput, { target: { value: '12345678' } });
     fireEvent.click(screen.getByRole('button', { name: /Cadastrar/i }));
 
-    const { toast } = require("sonner");
-
     await waitFor(() => {
       expect(screen.getByText('E-mail já cadastrado')).toBeInTheDocument();
       expect(toast.error).toHaveBeenCalledWith('Campo inválido');
@@ -69,8 +67,6 @@ describe('CadastrarUsuarioForm', () => {
     fireEvent.change(senhaInput, { target: { value: '12345678' } });
     fireEvent.change(confirmaSenhaInput, { target: { value: '12345678' } });
     fireEvent.click(screen.getByRole('button', { name: /Cadastrar/i }));
-
-    const { toast } = require("sonner");
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(messageError);
@@ -93,8 +89,6 @@ describe('CadastrarUsuarioForm', () => {
     fireEvent.change(senhaInput, { target: { value: '12345678' } });
     fireEvent.change(confirmaSenhaInput, { target: { value: '12345678' } });
     fireEvent.click(screen.getByRole('button', { name: /Cadastrar/i }));
-
-    const { toast } = require("sonner");
 
     await waitFor(() => {
       expect(toast.success).toHaveBeenCalledWith('Usuário cadastrado com sucesso!');

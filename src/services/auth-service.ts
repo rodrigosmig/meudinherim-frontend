@@ -36,3 +36,9 @@ export async function recuperarSenha(
 
   return data as RecuperarSenhaResponse;
 }
+
+export async function logout() {
+  await fetch("/api/auth/logout", {
+    method: "POST",
+  });
+}

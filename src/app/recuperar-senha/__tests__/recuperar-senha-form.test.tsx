@@ -2,6 +2,7 @@ import { recuperarSenha } from "@/services/auth-service";
 import * as authService from "@/services/auth-service";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "@/lib/test-utils";
+import { toast } from "@/components/toast";
 
 import { RecuperarSenhaForm } from "../reuperar-senha-form";
 
@@ -11,7 +12,7 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockedPush }),
 }));
 
-jest.mock("sonner", () => ({
+jest.mock("@/components/toast", () => ({
   toast: {
     success: jest.fn(),
     error: jest.fn(),
@@ -50,8 +51,6 @@ describe("Componente RecuperarSenhaForm", () => {
 
     expect(authService.recuperarSenha).toHaveBeenCalledWith({ email });
 
-    const { toast } = require("sonner");
-
     expect(toast.success).toHaveBeenCalledWith(mensagemSucesso);
     expect(mockedPush).toHaveBeenCalledWith("/login");
   });
@@ -87,7 +86,6 @@ describe("Componente RecuperarSenhaForm", () => {
     await user.type(screen.getByLabelText("E-mail"), emailInvalido);
     await user.click(screen.getByRole("button", { name: "Enviar e-mail de recuperação" }));
 
-    const { toast } = require("sonner");
     expect(authService.recuperarSenha).toHaveBeenCalledWith({ email: emailInvalido });
     expect(toast.error).toHaveBeenCalledWith(mensagemErro);
 
