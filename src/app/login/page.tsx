@@ -20,7 +20,7 @@ export default function LoginPage() {
               </Link>
 
               <Text>
-                Não tem uma conta? <Link href="/cadastro" className="hover:text-violet-500">Cadastre-se</Link>
+                Não tem uma conta? <Link href="/cadastrar-usuario" className="hover:text-violet-500">Cadastre-se</Link>
               </Text>
             </div>
           </Card.Footer>

@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       {
         message: {
           codigo: 500,
-          descricao: "Erro inesperado ao autenticar usuário.",
+          descricao: "Erro inesperado ao recuperar a senha.",
         },
         data: {
           fields: [],

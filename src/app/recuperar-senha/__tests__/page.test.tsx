@@ -9,6 +9,7 @@ jest.mock('next/navigation', () => ({
 describe("Página RecuperarSenha", () => {
   it("renderiza corretamente o título e o formulário", () => {
     render(<RecuperarSenha />);
+    expect(screen.getByText("MEU DINHEIRIM")).toBeVisible();
     expect(screen.getByText("Recuperar senha")).toBeVisible();
     expect(screen.getByLabelText("E-mail")).toBeVisible();
     expect(screen.getByLabelText("Voltar")).toBeVisible();

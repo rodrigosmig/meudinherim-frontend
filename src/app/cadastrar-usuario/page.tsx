@@ -6,10 +6,11 @@ import Link from "next/link";
 
 import CadastrarUsuarioForm from "./cadastrar-usuario-form";
 
-export default function Cadastro() {
+export default function CadastrarUsuario() {
   return (
     <div className="flex flex-col w-screen h-screen">
       <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
+        <Text variant="heading-large">MEU DINHEIRIM</Text>
         <Card.Root className="w-96 max-w-md">
           <Card.Header className="relative">
             <Link href="/login">

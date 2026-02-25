@@ -10,13 +10,13 @@ export default function RecuperarSenha() {
   return (
     <div className="flex flex-col w-screen h-screen">
       <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
+        <Text variant="heading-large">MEU DINHEIRIM</Text>
         <Card.Root className="w-96 max-w-md">
           <Card.Header className="relative">
             <Link href="/login">
               <Button
-                className="absolute top-2 left-2 bg-gray-900 border-0"
+                className="bg-gray-900 border-0 w-6 h-6 text-gray-400 hidden md:flex absolute z-50 hover:text-white hover:bg-transparent rounded-md transition-all"
                 tooltip="Voltar"
-                variant="collapse"
                 aria-label="Voltar"
               >
                 <ChevronLeft className="w-5 h-5" />
