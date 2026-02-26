@@ -84,6 +84,7 @@ export function ResetarSenhaForm({ token }: ResetarSenhaFormProps) {
       <Button
         type="submit"
         className="w-full mt-8"
+        isLoading={form.formState.isSubmitting}
         disabled={form.formState.isSubmitting}
       >
         Resetar Senha

@@ -72,6 +72,7 @@ export function LoginForm() {
       <div>
         <Button
           type="submit"
+          isLoading={form.formState.isSubmitting}
           disabled={form.formState.isSubmitting}
           className="w-full mt-8"
         >

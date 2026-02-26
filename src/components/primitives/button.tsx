@@ -1,4 +1,5 @@
 import { ComponentProps, ElementType, ReactNode } from "react";
+import { LoaderCircle } from "lucide-react";
 import { tv } from "tailwind-variants";
 import { cn } from "@/helpers/utils";
 
@@ -49,6 +50,7 @@ interface ButtonProps extends ComponentProps<'button'> {
   iconClassName?: string;
   children?: ReactNode;
   tooltip?: string;
+  isLoading?: boolean;
 }
 
 export function Button({
@@ -58,6 +60,7 @@ export function Button({
   variant,
   className,
   tooltip,
+  isLoading,
   ...props }: ButtonProps) {
   return (
     <Tooltip label={tooltip}>
@@ -65,7 +68,11 @@ export function Button({
         {...props}
       >
         {Icon && <Icon className={cn("w-4 h-4 md:w-5 md:h-5", iconClassName)} />}
-        {children && <span>{children}</span>}
+        {isLoading
+          ? <LoaderCircle className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
+          : children && <span>{children}</span>
+        }
+
       </button>
     </Tooltip>
   )

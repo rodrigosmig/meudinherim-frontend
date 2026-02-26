@@ -58,6 +58,7 @@ export function RecuperarSenhaForm() {
       <Button
         type="submit"
         className="w-full mt-8"
+        isLoading={form.formState.isSubmitting}
         disabled={form.formState.isSubmitting}
       >
         Enviar e-mail de recuperação
