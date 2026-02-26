@@ -31,3 +31,21 @@ export interface RecuperarSenhaBody {
 }
 
 export type RecuperarSenhaResponse = ApiResponse<void> | ApiFormErrorResponse;
+
+export interface ConfirmarUsuarioParam {
+  token: string;
+}
+
+export interface ReenviarEmailConfirmacaoBody {
+  email: string;
+}
+
+export type ReenviarEmailConfirmacaoResponse =
+  | ApiResponse<void>
+  | ApiFormErrorResponse;
+
+export interface ResetarSenhaBody {
+  token: string;
+  password: string;
+  passwordConfirmation: string;
+}

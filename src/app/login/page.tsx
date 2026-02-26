@@ -5,7 +5,6 @@ import Link from "next/link";
 import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
-
   return (
     <div className="flex flex-col w-screen h-screen">
       <div className="flex flex-col gap-3 w-full h-full items-center justify-center">

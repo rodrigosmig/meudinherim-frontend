@@ -4,9 +4,9 @@ import Text from "@/components/primitives/text";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
-import { RecuperarSenhaForm } from "./recuperar-senha-form";
+import ReenviarEmailConfirmacaoForm from "./reenviar-email-confirmacao-form";
 
-export default function RecuperarSenha() {
+export default function ReenviarEmailConfirmacao() {
   return (
     <div className="flex flex-col w-screen h-screen">
       <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
@@ -22,10 +22,10 @@ export default function RecuperarSenha() {
                 <ChevronLeft className="w-5 h-5" />
               </Button>
             </Link>
-            <Text className="text-center" variant="heading-medium">Recuperar senha</Text>
+            <Text className="text-center" variant="heading-medium">Reenviar e-mail</Text>
           </Card.Header>
 
-          <RecuperarSenhaForm />
+          <ReenviarEmailConfirmacaoForm />
         </Card.Root>
       </div>
     </div>

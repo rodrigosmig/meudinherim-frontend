@@ -28,6 +28,7 @@ export default {
     "!src/proxy.ts", // ignora middlewares
     "!src/app/**/route.ts", // ignora arquivos de rota
     "!src/app/**/layout.tsx", // ignora arquivos de layout
+    "!src/components/toast.tsx", // ignora componentes de toast
   ],
   transform: {
     "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "tsconfig.json" }],

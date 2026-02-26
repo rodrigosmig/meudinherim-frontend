@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "@/lib/test-utils";
 import { toast } from "@/components/toast";
 
-import { RecuperarSenhaForm } from "../reuperar-senha-form";
+import { RecuperarSenhaForm } from "../recuperar-senha-form";
 
 const mockedPush = jest.fn();
 
@@ -90,5 +90,24 @@ describe("Componente RecuperarSenhaForm", () => {
     expect(toast.error).toHaveBeenCalledWith(mensagemErro);
 
     expect(screen.getByText(mensagemErro)).toBeInTheDocument();
+  });
+
+  it("deve exibir erro genérico retornado pelo servidor", async () => {
+    const mensagemErro = "Erro desconhecido";
+    const emailInvalido = "emailinvalido@teste.com";
+
+    mockRecuperarSenha.mockResolvedValueOnce({
+      message: { codigo: -999, descricao: mensagemErro },
+      data: {}
+    });
+
+    render(<RecuperarSenhaForm />);
+
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText("E-mail"), emailInvalido);
+    await user.click(screen.getByRole("button", { name: "Enviar e-mail de recuperação" }));
+
+    expect(authService.recuperarSenha).toHaveBeenCalledWith({ email: emailInvalido });
+    expect(toast.error).toHaveBeenCalledWith(mensagemErro);
   });
 });

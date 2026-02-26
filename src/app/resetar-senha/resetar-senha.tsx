@@ -1,12 +1,28 @@
+"use client";
+
 import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import Text from "@/components/primitives/text";
+import { toast } from "@/components/toast";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from 'react';
+import { ResetarSenhaForm } from "./resetar-senha-form";
 
-import { RecuperarSenhaForm } from "./recuperar-senha-form";
+export function ResetarSenha() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token') ?? "";
 
-export default function RecuperarSenha() {
+  useEffect(() => {
+    if (!token) {
+      toast.error("Token inválido. Não é possível resetar a senha");
+      router.push('/');
+      return;
+    }
+  }, [token, router]);
+
   return (
     <div className="flex flex-col w-screen h-screen">
       <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
@@ -22,10 +38,10 @@ export default function RecuperarSenha() {
                 <ChevronLeft className="w-5 h-5" />
               </Button>
             </Link>
-            <Text className="text-center" variant="heading-medium">Recuperar senha</Text>
+            <Text className="text-center" variant="heading-medium">Resetar Senha</Text>
           </Card.Header>
 
-          <RecuperarSenhaForm />
+          <ResetarSenhaForm token={token} />
         </Card.Root>
       </div>
     </div>

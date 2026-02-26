@@ -28,3 +28,25 @@ export const recuperarSenhaSchema = z.object({
 });
 
 export type RecuperarSenhaFormValue = z.infer<typeof recuperarSenhaSchema>;
+
+export const reenviarEmailConfirmacaoSchema = z.object({
+  email: z.email("E-mail inválido"),
+});
+
+export type ReenviarEmailConfirmacaoFormValue = z.infer<
+  typeof reenviarEmailConfirmacaoSchema
+>;
+
+export const resetarSenhaSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "O campo senha deve ter no mínimo 8 caracteres"),
+    passwordConfirmation: z.string(),
+  })
+  .refine((data) => data.password === data.passwordConfirmation, {
+    message: "A confirmação de senha não corresponde à senha",
+    path: ["passwordConfirmation"],
+  });
+
+export type ResetarSenhaFormValue = z.infer<typeof resetarSenhaSchema>;
