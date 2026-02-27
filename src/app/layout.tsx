@@ -3,7 +3,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 
-import BProgressProvider from "./providers/b-progress-provider";
+import BProgressProvider from "../providers/b-progress-provider";
 
 const inter = Inter({
   subsets: ["latin"],
