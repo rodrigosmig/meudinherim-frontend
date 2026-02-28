@@ -1,5 +1,6 @@
 'use client'
 
+import { autenticar } from '@/services/auth-service'
 import { LoginBody } from '@/types/auth'
 import { createContext, useContext, useEffect, useState } from 'react'
 
@@ -14,7 +15,7 @@ interface AuthContextData {
   user: User | null
   token: string | null // Adicionamos o token aqui
   isLoading: boolean
-  login: (email: string, password: string) => Promise<void>
+  //login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -27,20 +28,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Função de login
   const login = async (loginBody: LoginBody) => {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(loginBody),
-    })
+    const response = await autenticar(loginBody)
 
-    if (!response.ok) {
-      throw new Error('Erro no login')
-    }
+    //const data = await response.json()
 
-    const data = await response.json()
-
-    setUser(data.user)
-    setToken(data.token) // Salva o token no estado
+    //setUser(data.user)
   }
 
   // Função para buscar dados do usuário (agora usando o cookie)
@@ -77,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, logout }}>
       {children}
     </AuthContext.Provider>
   )

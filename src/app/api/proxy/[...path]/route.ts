@@ -2,6 +2,21 @@ import { getSessionToken } from "@/helpers/session";
 import { getApiBaseUrl } from "@/helpers/constants";
 import { NextResponse } from "next/server";
 
+// Allowlist of top-level resources allowed to be proxied. Keep this list
+// conservative — add only the upstream resources your app needs.
+const ALLOWED_RESOURCES = new Set([
+  "auth",
+  "contas",
+  "faturas",
+  "cartoes",
+  "contas-a-pagar",
+  "contas-a-receber",
+  "tags",
+  "relatorios",
+  "categorias",
+  "usuarios",
+]);
+
 async function proxy(request: Request, path: string[]) {
   const token = await getSessionToken();
 
@@ -10,6 +25,17 @@ async function proxy(request: Request, path: string[]) {
   }
 
   const url = new URL(request.url);
+  // validate requested path against allowlist
+  const normalized = path.map((p) => String(p).toLowerCase());
+  const base =
+    normalized[0] === "v1" ? (normalized[1] ?? "") : (normalized[0] ?? "");
+
+  if (!base || !ALLOWED_RESOURCES.has(base)) {
+    return NextResponse.json(
+      { message: "Recurso não permitido." },
+      { status: 403 },
+    );
+  }
   const upstreamUrl = `${getApiBaseUrl()}/${path.join("/")}${url.search}`;
 
   const headers = new Headers(request.headers);

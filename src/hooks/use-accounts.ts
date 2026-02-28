@@ -8,7 +8,7 @@ export function useAccounts() {
   return useQuery({
     queryKey: CONTAS_QUERY_KEY,
     queryFn: async () => {
-      const response = await contaService.list({
+      const response = await contaService.listar({
         comPaginacao: false,
         ativas: true,
         pagina: 0,

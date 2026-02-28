@@ -7,7 +7,7 @@ import { toast } from "@/components/toast";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/constants";
 import { catalogoErros } from "@/helpers/erros";
 import { LoginFormValue, loginSchema } from "@/schema-validation/auth";
-import { login } from "@/services/auth-service";
+import { autenticar } from "@/services/auth-service";
 import { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +28,7 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormValue) => {
     try {
-      await login(data);
+      await autenticar(data);
 
       router.push("/");
 

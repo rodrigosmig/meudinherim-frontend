@@ -1,7 +1,6 @@
 'use client';
 
 import { useAccounts } from '@/hooks/use-accounts';
-import { useInvoices } from '@/hooks/use-invoices';
 import type { ReactNode } from 'react';
 
 type DataProviderProps = {
@@ -20,13 +19,13 @@ export function DataProvider({
     isError: accountsError,
   } = useAccounts();
 
-  const {
-    isLoading: invoicesLoading,
-    isError: invoicesError,
-  } = useInvoices();
+  // const {
+  //   isLoading: invoicesLoading,
+  //   isError: invoicesError,
+  // } = useInvoices();
 
-  const isLoading = accountsLoading || invoicesLoading;
-  const isError = accountsError || invoicesError;
+  const isLoading = accountsLoading; // || invoicesLoading;
+  const isError = accountsError; // || invoicesError;
 
   if (isLoading) {
     return loadingFallback ?? <DefaultLoadingScreen />;

@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@/utils/test-utils";
 import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
+import { autenticar } from '@/services/auth-service';
 import userEvent from "@testing-library/user-event";
 import ApiError from '@/types/application-error';
-import { login } from '@/services/auth-service';
 import { catalogoErros } from '@/helpers/erros';
 import { toast } from "@/components/toast";
 
@@ -24,7 +24,7 @@ jest.mock("@/components/toast", () => ({
 
 jest.mock('@/services/auth-service');
 
-const mockLogin = login as jest.Mock;
+const mockLogin = autenticar as jest.Mock;
 
 describe("Componente LoginForm", () => {
   beforeEach(() => {

@@ -1,3 +1,24 @@
+'use client';
+
+import { useAccounts } from "@/hooks/use-accounts";
+
 export default function Home() {
-  return <h1>Principal</h1>;
+  const { data: accounts, isLoading, error } = useAccounts();
+
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (error) {
+    return <div>Erro ao carregar contas</div>;
+  }
+
+  return (
+    <div>
+      {accounts?.contas.map((account) => (
+        <div key={account.uuid}>{account.nome} - Saldo: {account.saldo}</div>
+
+      ))}
+    </div>
+  )
 }

@@ -16,7 +16,7 @@ export async function cadastrarUsuario(
   return data;
 }
 
-export async function login(loginBody: LoginBody): Promise<LoginResponse> {
+export async function autenticar(loginBody: LoginBody): Promise<LoginResponse> {
   const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
