@@ -1,7 +1,10 @@
+import { LoginBody, VerificationResult } from "@/types/auth";
+import { TokenPayload } from "@/schema-validation/auth";
 import { setSessionToken } from "@/helpers/session";
 import { getApiBaseUrl } from "@/helpers/constants";
+import { catalogoErros } from "@/helpers/erros";
 import { NextResponse } from "next/server";
-import { LoginBody } from "@/types/auth";
+import jwt from "jsonwebtoken";
 
 export const runtime = "nodejs";
 
@@ -17,10 +20,21 @@ function extractToken(payload: unknown) {
   if (data && typeof data.token === "string") return data.token;
 
   if (typeof root.token === "string") return root.token;
-  if (typeof root.accessToken === "string") return root.accessToken;
-  if (typeof root.access_token === "string") return root.access_token;
 
   return "";
+}
+
+function verificarAssinatura(token: string): VerificationResult<TokenPayload> {
+  const secretKey = process.env.JWT_SECRET_KEY || "";
+  try {
+    const decoded = jwt.verify(token, Buffer.from(secretKey, "base64"), {
+      algorithms: ["HS256"],
+    });
+    return { valido: true, payload: decoded as TokenPayload };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { valido: false, erro: message };
+  }
 }
 
 export async function POST(request: Request) {
@@ -40,7 +54,8 @@ export async function POST(request: Request) {
       cache: "no-store",
     });
 
-    const payload = await response.json().catch(() => ({}));
+    const payload = await response.json();
+
     if (!response.ok) {
       return NextResponse.json(payload, { status: response.status });
     }
@@ -51,23 +66,40 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           message: {
-            codigo: 502,
-            descricao: "Token não retornado pela API de autenticação.",
+            codigo: catalogoErros.ERRO_AO_AUTENTICAR_USUARIO,
+            descricao: "Erro ao autenticar usuário.",
           },
           data: null,
         },
-        { status: 502 },
+        { status: 401 },
+      );
+    }
+
+    const validacaoToken = verificarAssinatura(token);
+
+    if (!validacaoToken.valido) {
+      return NextResponse.json(
+        {
+          message: {
+            codigo: catalogoErros.ERRO_AO_AUTENTICAR_USUARIO,
+            descricao: "Erro ao autenticar usuário.",
+          },
+        },
+        { status: 401 },
       );
     }
 
     await setSessionToken(token);
 
-    return NextResponse.json(payload, { status: response.status });
+    return NextResponse.json(
+      { token, user: validacaoToken.payload.user },
+      { status: response.status },
+    );
   } catch {
     return NextResponse.json(
       {
         message: {
-          codigo: 500,
+          codigo: -999,
           descricao: "Erro inesperado ao autenticar usuário.",
         },
         data: {

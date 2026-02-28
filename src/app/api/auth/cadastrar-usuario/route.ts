@@ -1,13 +1,13 @@
 import { CadastrarUsuarioBody, CadastrarUsuarioData } from "@/types/auth";
 import { ApiFormErrorResponse, ApiResponse } from "@/types/api";
-import { apiClient } from "@/lib/axios-client";
+import { httpClient } from "@/services/api/axios-client";
 import { NextResponse } from "next/server";
 import { AxiosError } from "axios";
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as CadastrarUsuarioBody;
-    const response = await apiClient.post<ApiResponse<CadastrarUsuarioData>>(
+    const response = await httpClient.post<ApiResponse<CadastrarUsuarioData>>(
       "/v1/auth/register",
       body,
     );

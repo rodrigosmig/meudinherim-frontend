@@ -1,6 +1,9 @@
-import { render, screen, waitFor } from "@/lib/test-utils";
+import { render, screen, waitFor } from "@/utils/test-utils";
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
 import userEvent from "@testing-library/user-event";
+import ApiError from '@/types/application-error';
 import { login } from '@/services/auth-service';
+import { catalogoErros } from '@/helpers/erros';
 import { toast } from "@/components/toast";
 
 import { LoginForm } from "../login-form";
@@ -42,7 +45,7 @@ describe("Componente LoginForm", () => {
 
     mockLogin.mockResolvedValueOnce({
       message: { codigo: 0, descricao: 'Sucesso' },
-      data: { idUsuario: '123' }
+      data: { token: 'abc', user: { id: 'u1', nome: 'User' } }
     });
 
     render(<LoginForm />);
@@ -56,7 +59,7 @@ describe("Componente LoginForm", () => {
     expect(mockLogin).toHaveBeenCalledWith({ email, password: senha });
 
     expect(mockedPush).toHaveBeenCalledWith("/");
-    expect(mockedRefresh).toHaveBeenCalled();
+    expect(mockedRefresh).not.toHaveBeenCalled();
   });
 
   it("deve exibir erro de validação do formulário", async () => {
@@ -76,10 +79,13 @@ describe("Componente LoginForm", () => {
     const mensagemErro = "Credenciais inválidas";
     const emailInvalido = "emailinvalido@teste.com";
 
-    mockLogin.mockResolvedValueOnce({
-      message: { codigo: -91, descricao: mensagemErro },
-      data: { fields: [{ field: 'email', message: 'E-mail inválido' }] }
-    });
+    mockLogin.mockRejectedValueOnce(
+      new ApiError(
+        { codigo: catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO, descricao: mensagemErro },
+        422,
+        { fields: [{ field: 'email', message: 'E-mail inválido' }] },
+      ),
+    );
 
     render(<LoginForm />);
 
@@ -97,9 +103,7 @@ describe("Componente LoginForm", () => {
   it('deve exibir erro genérico retornado pela API', async () => {
     const messageError = 'Erro ao efetuar login';
 
-    mockLogin.mockResolvedValueOnce({
-      message: { codigo: -999, descricao: messageError }
-    });
+    mockLogin.mockRejectedValueOnce(new ApiError({ codigo: -999, descricao: messageError }, 500));
     render(<LoginForm />);
 
     const user = userEvent.setup();
@@ -109,6 +113,21 @@ describe("Componente LoginForm", () => {
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(messageError);
+    });
+  });
+
+  it('deve exibir mensagem default quando ocorrer erro inesperado', async () => {
+    mockLogin.mockRejectedValueOnce(new Error('boom'));
+
+    render(<LoginForm />);
+
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText("E-mail"), "teste@teste.com");
+    await user.type(screen.getByLabelText("Senha"), "senhaValida");
+    await user.click(screen.getByRole("button", { name: "Entrar" }));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
     });
   });
 });

@@ -49,3 +49,7 @@ export interface ResetarSenhaBody {
   password: string;
   passwordConfirmation: string;
 }
+
+export type VerificationResult<T = unknown> =
+  | { valido: true; payload: T }
+  | { valido: false; erro: string };

@@ -1,6 +1,6 @@
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@/helpers/utils";
+import { cn } from "@/utils/helpers";
 
 interface SelectProps extends SelectPrimitive.SelectProps {
   placeholder?: string;

@@ -1,5 +1,7 @@
-export const AUTH_COOKIE_NAME = "meudinherim.token";
+export const DEFAULT_ERROR_MESSAGE =
+  "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
 
+export const AUTH_COOKIE_NAME = "meudinherim.token";
 export const AUTH_PUBLIC_ROUTES = [
   "/login",
   "/cadastrar-usuario",

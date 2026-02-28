@@ -2,9 +2,14 @@ import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import Text from "@/components/primitives/text";
 import { ChevronLeft } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
 
 import { RecuperarSenhaForm } from "./recuperar-senha-form";
+
+export const metadata: Metadata = {
+  title: "Recuperar Senha",
+}
 
 export default function RecuperarSenha() {
   return (

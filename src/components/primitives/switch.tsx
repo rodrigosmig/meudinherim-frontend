@@ -1,6 +1,6 @@
 import * as RadixSwitch from "@radix-ui/react-switch";
 import { FieldError } from "react-hook-form";
-import { cn } from "@/helpers/utils";
+import { cn } from "@/utils/helpers";
 
 interface SwitchProps extends React.ComponentPropsWithoutRef<typeof RadixSwitch.Root> {
   label?: string;

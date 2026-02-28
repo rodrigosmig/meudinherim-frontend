@@ -1,5 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
 import { cadastrarUsuario } from '@/services/auth-service';
+import ApiError from '@/types/application-error';
+import { catalogoErros } from '@/helpers/erros';
 import { toast } from "@/components/toast";
 
 import CadastrarUsuarioForm from '../cadastrar-usuario-form';
@@ -33,10 +36,13 @@ describe('CadastrarUsuarioForm', () => {
   });
 
   it('deve exibir erro de campo retornado pela API', async () => {
-    mockCadastrarUsuario.mockResolvedValueOnce({
-      message: { codigo: -90, descricao: 'Campo inválido' },
-      data: { fields: [{ field: 'email', message: 'E-mail já cadastrado' }] }
-    });
+    mockCadastrarUsuario.mockRejectedValueOnce(
+      new ApiError(
+        { codigo: catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO, descricao: 'Campo inválido' },
+        422,
+        { fields: [{ field: 'email', message: 'E-mail já cadastrado' }] },
+      ),
+    );
     render(<CadastrarUsuarioForm />);
 
     const [senhaInput, confirmaSenhaInput] = screen.getAllByLabelText(/Senha/i);
@@ -55,9 +61,9 @@ describe('CadastrarUsuarioForm', () => {
 
   it('deve exibir erro genérico retornado pela API', async () => {
     const messageError = 'O email informado já está sendo utilizado';
-    mockCadastrarUsuario.mockResolvedValueOnce({
-      message: { codigo: -30, descricao: messageError }
-    });
+    mockCadastrarUsuario.mockRejectedValueOnce(
+      new ApiError({ codigo: catalogoErros.EMAIL_JA_CADASTRADO, descricao: messageError }, 409),
+    );
     render(<CadastrarUsuarioForm />);
 
     const [senhaInput, confirmaSenhaInput] = screen.getAllByLabelText(/Senha/i);
@@ -92,6 +98,24 @@ describe('CadastrarUsuarioForm', () => {
 
     await waitFor(() => {
       expect(toast.success).toHaveBeenCalledWith('Usuário cadastrado com sucesso!');
+    });
+  });
+
+  it('deve exibir toast genérico em erro inesperado', async () => {
+    mockCadastrarUsuario.mockRejectedValueOnce(new Error('unexpected'));
+
+    render(<CadastrarUsuarioForm />);
+
+    const [senhaInput, confirmaSenhaInput] = screen.getAllByLabelText(/Senha/i);
+
+    fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: 'Teste' } });
+    fireEvent.change(screen.getByLabelText(/E-mail/i), { target: { value: 'teste@exemplo.com' } });
+    fireEvent.change(senhaInput, { target: { value: '12345678' } });
+    fireEvent.change(confirmaSenhaInput, { target: { value: '12345678' } });
+    fireEvent.click(screen.getByRole('button', { name: /Cadastrar/i }));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
     });
   });
 });

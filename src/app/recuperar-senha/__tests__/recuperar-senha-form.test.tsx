@@ -1,7 +1,10 @@
 import { recuperarSenha } from "@/services/auth-service";
 import * as authService from "@/services/auth-service";
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@/lib/test-utils";
+import { render, screen } from "@/utils/test-utils";
+import ApiError from '@/types/application-error';
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
+import { catalogoErros } from '@/helpers/erros';
 import { toast } from "@/components/toast";
 
 import { RecuperarSenhaForm } from "../recuperar-senha-form";
@@ -36,7 +39,8 @@ describe("Componente RecuperarSenhaForm", () => {
 
   it("deve enviar com sucesso e redirecionar", async () => {
     mockRecuperarSenha.mockResolvedValueOnce({
-      message: { codigo: 0, descricao: 'Sucesso' }
+      message: { codigo: 0, descricao: 'Sucesso' },
+      data: {}
     });
 
     const mensagemSucesso = "Email de recuperação enviado com sucesso!";
@@ -74,11 +78,13 @@ describe("Componente RecuperarSenhaForm", () => {
   it("deve exibir erro de validação retornado pelo servidor", async () => {
     const mensagemErro = "E-mail já cadastrado";
     const emailInvalido = "emailinvalido@teste.com";
-
-    mockRecuperarSenha.mockResolvedValueOnce({
-      message: { codigo: -30, descricao: mensagemErro },
-      data: { fields: [{ field: 'email', message: mensagemErro }] }
-    });
+    mockRecuperarSenha.mockRejectedValueOnce(
+      new ApiError(
+        { codigo: catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO, descricao: mensagemErro },
+        422,
+        { fields: [{ field: 'email', message: mensagemErro }] },
+      ),
+    );
 
     render(<RecuperarSenhaForm />);
 
@@ -96,10 +102,7 @@ describe("Componente RecuperarSenhaForm", () => {
     const mensagemErro = "Erro desconhecido";
     const emailInvalido = "emailinvalido@teste.com";
 
-    mockRecuperarSenha.mockResolvedValueOnce({
-      message: { codigo: -999, descricao: mensagemErro },
-      data: {}
-    });
+    mockRecuperarSenha.mockRejectedValueOnce(new ApiError({ codigo: -999, descricao: mensagemErro }, 500));
 
     render(<RecuperarSenhaForm />);
 
@@ -109,5 +112,17 @@ describe("Componente RecuperarSenhaForm", () => {
 
     expect(authService.recuperarSenha).toHaveBeenCalledWith({ email: emailInvalido });
     expect(toast.error).toHaveBeenCalledWith(mensagemErro);
+  });
+
+  it('deve exibir mensagem default quando ocorrer erro inesperado', async () => {
+    mockRecuperarSenha.mockRejectedValueOnce(new Error('boom'));
+
+    render(<RecuperarSenhaForm />);
+
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText("E-mail"), "teste@teste.com");
+    await user.click(screen.getByRole("button", { name: "Enviar e-mail de recuperação" }));
+
+    expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
   });
 });

@@ -1,8 +1,13 @@
 import { Card } from "@/components/primitives/card";
 import Text from "@/components/primitives/text";
+import { Metadata } from "next";
 import Link from "next/link";
 
 import { LoginForm } from "./login-form";
+
+export const metadata: Metadata = {
+  title: "Login",
+}
 
 export default function LoginPage() {
   return (

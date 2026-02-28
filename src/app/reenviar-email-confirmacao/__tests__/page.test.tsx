@@ -1,4 +1,4 @@
-import { render, screen } from "@/lib/test-utils";
+import { render, screen } from "@/utils/test-utils";
 
 import ReenviarEmailConfirmacao from "../page";
 

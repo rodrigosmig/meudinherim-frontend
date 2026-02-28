@@ -1,7 +1,8 @@
 import { reenviarEmailConfirmacao } from "@/services/auth-service";
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
 import * as authService from "@/services/auth-service";
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@/lib/test-utils";
+import { render, screen } from "@/utils/test-utils";
 import { toast } from "@/components/toast";
 
 import ReenviarEmailConfirmacaoForm from "../reenviar-email-confirmacao-form";
@@ -109,5 +110,18 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
     await user.click(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" }));
 
     expect(toast.error).toHaveBeenCalled();
+  });
+
+  it('deve exibir mensagem default quando ocorrer erro inesperado', async () => {
+    mockReenviarEmailConfirmacao.mockRejectedValueOnce(new Error('boom'));
+
+    render(<ReenviarEmailConfirmacaoForm />);
+
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText("E-mail"), "teste@teste.com");
+    await user.click(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" }));
+
+    expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
   });
 });

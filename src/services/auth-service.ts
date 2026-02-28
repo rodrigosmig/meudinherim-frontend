@@ -1,4 +1,5 @@
 import { CadastrarUsuarioBody, CadastrarUsuarioResponse, ConfirmarUsuarioParam, LoginBody, LoginResponse, RecuperarSenhaBody, RecuperarSenhaResponse, ReenviarEmailConfirmacaoBody, ResetarSenhaBody, } from "@/types/auth";
+import { handleApiResponse } from "@/helpers/erros";
 import { ApiResponse } from "@/types/api";
 
 export async function cadastrarUsuario(
@@ -9,9 +10,10 @@ export async function cadastrarUsuario(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(cadastrarUsuarioBody),
   });
-  const data = await response.json();
 
-  return data as CadastrarUsuarioResponse;
+  const data = await handleApiResponse<CadastrarUsuarioResponse>(response);
+
+  return data;
 }
 
 export async function login(loginBody: LoginBody): Promise<LoginResponse> {
@@ -20,9 +22,10 @@ export async function login(loginBody: LoginBody): Promise<LoginResponse> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(loginBody),
   });
-  const data = await response.json();
 
-  return data as LoginResponse;
+  const data = await handleApiResponse<LoginResponse>(response);
+
+  return data;
 }
 
 export async function recuperarSenha(
@@ -33,9 +36,10 @@ export async function recuperarSenha(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(recuperarSenhaBody),
   });
-  const data = await response.json();
 
-  return data as RecuperarSenhaResponse;
+  const data = await handleApiResponse<RecuperarSenhaResponse>(response);
+
+  return data;
 }
 
 export async function logout() {

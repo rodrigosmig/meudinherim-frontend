@@ -4,7 +4,7 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import { ArrowLeftFromLine, ArrowRightFromLine, BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasing, ChartNoAxesCombined, CreditCard, Landmark, LayoutDashboard, Menu, Tags, X } from 'lucide-react';
 import { ElementType, ReactNode, useState } from 'react';
 
-import { cn } from "@/helpers/utils";
+import { cn } from "@/utils/helpers";
 import Link from "next/link";
 import { Button } from "./primitives/button";
 import Logo from "./primitives/logo";

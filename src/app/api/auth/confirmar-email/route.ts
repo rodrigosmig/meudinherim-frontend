@@ -1,5 +1,5 @@
+import { httpClient } from "@/services/api/axios-client";
 import { ConfirmarUsuarioParam } from "@/types/auth";
-import { apiClient } from "@/lib/axios-client";
 import { NextResponse } from "next/server";
 import { ApiResponse } from "@/types/api";
 import { AxiosError } from "axios";
@@ -7,7 +7,7 @@ import { AxiosError } from "axios";
 export async function POST(request: Request) {
   try {
     const param = (await request.json()) as ConfirmarUsuarioParam;
-    const response = await apiClient.post<ApiResponse<void>>(
+    const response = await httpClient.post<ApiResponse<void>>(
       "/v1/auth/confirmar-email",
       {},
       {

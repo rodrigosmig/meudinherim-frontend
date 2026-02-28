@@ -2,9 +2,14 @@ import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import Text from "@/components/primitives/text";
 import { ChevronLeft } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
 
 import CadastrarUsuarioForm from "./cadastrar-usuario-form";
+
+export const metadata: Metadata = {
+  title: "Cadastrar Usuário",
+}
 
 export default function CadastrarUsuario() {
   return (

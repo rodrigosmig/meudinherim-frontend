@@ -1,6 +1,6 @@
 import { ComponentProps, ElementType } from "react";
 import { FieldError } from "react-hook-form";
-import { cn } from "@/helpers/utils";
+import { cn } from "@/utils/helpers";
 
 import Text from "./text";
 

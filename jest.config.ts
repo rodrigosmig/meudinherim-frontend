@@ -29,7 +29,9 @@ export default {
     "!src/app/**/route.ts", // ignora arquivos de rota
     "!src/app/**/layout.tsx", // ignora arquivos de layout
     "!src/components/toast.tsx", // ignora componentes de toast
-    "!src/app/providers/**", // ignora providers
+    "!src/providers/**", // ignora providers
+    "!src/hooks/**", // ignora hooks
+    "!src/contexts/**", // ignora context
   ],
   transform: {
     "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "tsconfig.json" }],

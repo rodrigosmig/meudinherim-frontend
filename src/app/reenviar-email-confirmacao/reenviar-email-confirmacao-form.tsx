@@ -5,7 +5,8 @@ import Form from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
 import { toast } from "@/components/toast";
 import { getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from "@/helpers/api-type-guards";
-import { ReenviarEmailConfirmacaoFormValue, reenviarEmailConfirmacaoSchema } from "@/schemas/auth";
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
+import { ReenviarEmailConfirmacaoFormValue, reenviarEmailConfirmacaoSchema } from "@/schema-validation/auth";
 import { reenviarEmailConfirmacao } from "@/services/auth-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -22,28 +23,32 @@ export default function ReenviarEmailConfirmacaoForm() {
   });
 
   const onSubmit = async (data: ReenviarEmailConfirmacaoFormValue) => {
-    const response = await reenviarEmailConfirmacao(data);
+    try {
+      const response = await reenviarEmailConfirmacao(data);
 
-    if (isApiFormErrorResponse(response)) {
-      response.data.fields.forEach((fieldError) => {
-        if (["email",].includes(fieldError.field)) {
-          form.setError(fieldError.field as keyof ReenviarEmailConfirmacaoFormValue, {
-            type: "server",
-            message: fieldError.message,
-          });
-        }
-      });
-      toast.error(response.message.descricao);
-      return;
+      if (isApiFormErrorResponse(response)) {
+        response.data.fields.forEach((fieldError) => {
+          if (["email",].includes(fieldError.field)) {
+            form.setError(fieldError.field as keyof ReenviarEmailConfirmacaoFormValue, {
+              type: "server",
+              message: fieldError.message,
+            });
+          }
+        });
+        toast.error(response.message.descricao);
+        return;
+      }
+
+      if (isApiSuccessResponse(response)) {
+        toast.success("Email de confirmação de conta enviado com sucesso!");
+        router.push("/login");
+        return;
+      }
+
+      toast.error(getApiErrorMessage(response, "Erro ao reenviar email de confirmação"));
+    } catch (error) {
+      toast.error(DEFAULT_ERROR_MESSAGE);
     }
-
-    if (isApiSuccessResponse(response)) {
-      toast.success("Email de confirmação de conta enviado com sucesso!");
-      router.push("/login");
-      return;
-    }
-
-    toast.error(getApiErrorMessage(response, "Erro ao reenviar email de confirmação"));
   };
 
   return (

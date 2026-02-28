@@ -1,13 +1,13 @@
 import { NextResponse } from "next/dist/server/web/spec-extension/response";
 import { ApiFormErrorResponse, ApiResponse } from "@/types/api";
 import { ReenviarEmailConfirmacaoBody } from "@/types/auth";
-import { apiClient } from "@/lib/axios-client";
+import { httpClient } from "@/services/api/axios-client";
 import { AxiosError } from "axios";
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as ReenviarEmailConfirmacaoBody;
-    const response = await apiClient.post<ApiResponse<void>>(
+    const response = await httpClient.post<ApiResponse<void>>(
       "/v1/auth/reenviar-email-confirmacao",
       body,
     );

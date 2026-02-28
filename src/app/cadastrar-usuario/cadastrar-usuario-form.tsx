@@ -5,11 +5,13 @@ import Form from '@/components/primitives/form';
 import { Input } from '@/components/primitives/input';
 import Text from '@/components/primitives/text';
 import { toast } from '@/components/toast';
-import { getApiErrorCode, getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from '@/helpers/api-type-guards';
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
 import { catalogoErros } from '@/helpers/erros';
-import { capitalize } from '@/helpers/utils';
-import { CadastrarUsuarioFormValue, cadastrarUsuarioSchema } from '@/schemas/auth';
+import { CadastrarUsuarioFormValue, cadastrarUsuarioSchema } from '@/schema-validation/auth';
 import { cadastrarUsuario } from '@/services/auth-service';
+import { ApiFormError } from '@/types/api';
+import ApiError from '@/types/application-error';
+import { capitalize } from '@/utils/helpers';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LockKeyhole, Mail, User2 } from 'lucide-react';
 import Link from 'next/link';
@@ -32,42 +34,47 @@ export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
   });
 
   const onSubmit = async (data: CadastrarUsuarioFormValue) => {
-    const response = await cadastrarUsuario(data);
+    try {
+      await cadastrarUsuario(data);
 
-    if (isApiFormErrorResponse(response)) {
-      response.data.fields.forEach((fieldError) => {
-        if (["nome", "email", "password", "passwordConfirmation"].includes(fieldError.field)) {
-          form.setError(fieldError.field as keyof CadastrarUsuarioFormValue, {
-            type: "server",
-            message: fieldError.message,
-          });
-        }
-      });
-
-      toast.error(response.message.descricao);
-      return;
-    }
-
-    if (isApiSuccessResponse(response)) {
       toast.success("Usuário cadastrado com sucesso!");
+
       form.reset();
+
       setIsCadastrado(true);
       return;
+
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
+          const formError = error.data as ApiFormError;
+
+          formError.fields.forEach((fieldError) => {
+            if (["nome", "email", "password", "passwordConfirmation"].includes(fieldError.field)) {
+              form.setError(fieldError.field as keyof CadastrarUsuarioFormValue, {
+                type: "server",
+                message: fieldError.message,
+              });
+            }
+          });
+        }
+
+        if (error.apiMessage?.codigo === catalogoErros.EMAIL_JA_CADASTRADO) {
+          form.setError("email", {
+            type: "server",
+            message: capitalize(error.apiMessage.descricao),
+          });
+          form.setFocus("email");
+        }
+
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+
+      toast.error(DEFAULT_ERROR_MESSAGE);
+      return;
     }
-
-    const codigoErro = getApiErrorCode(response);
-
-    if (codigoErro === catalogoErros.EMAIL_JA_CADASTRADO) {
-      form.setError("email", {
-        type: "server",
-        message: capitalize(getApiErrorMessage(response, "Este e-mail já está em uso. Tente outro.")),
-      });
-      form.setFocus("email");
-    }
-
-    toast.error(getApiErrorMessage(response, "Erro ao cadastrar usuário"));
-    return;
-  }
+  };
 
   return (
     <>

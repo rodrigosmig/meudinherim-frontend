@@ -1,4 +1,4 @@
-import { render, waitFor } from '@/lib/test-utils';
+import { render, waitFor } from '@/utils/test-utils';
 import { toast } from '@/components/toast';
 
 import { ResetarSenha } from '../resetar-senha';

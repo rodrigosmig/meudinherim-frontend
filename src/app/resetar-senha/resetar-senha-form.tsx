@@ -1,5 +1,5 @@
 import { getApiErrorCode, getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from "@/helpers/api-type-guards";
-import { ResetarSenhaFormValue, resetarSenhaSchema } from "@/schemas/auth";
+import { ResetarSenhaFormValue, resetarSenhaSchema } from "@/schema-validation/auth";
 import { Button } from "@/components/primitives/button";
 import { resetarSenha } from "@/services/auth-service";
 import { zodResolver } from "@hookform/resolvers/zod";

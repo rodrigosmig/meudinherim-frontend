@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { Metadata } from "next";
 
 import BProgressProvider from "../providers/b-progress-provider";
 
@@ -9,6 +10,14 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans"
 });
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | Meu Dinheirim",
+    default: "Meu Dinheirim",
+  },
+  description: "Sistema de controle financeiro pessoal para ajudar você a organizar suas finanças, acompanhar seus gastos e alcançar seus objetivos financeiros.",
+}
 
 export default function RootLayout({
   children,

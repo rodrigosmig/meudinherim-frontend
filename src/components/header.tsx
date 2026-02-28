@@ -1,6 +1,6 @@
 import { Bell, ChevronLeft, ChevronRight, Landmark, Plus, WalletCards } from 'lucide-react';
 import { ComponentProps } from 'react';
-import { cn } from '@/helpers/utils';
+import { cn } from '@/utils/helpers';
 
 import { Button } from './primitives/button';
 import UserProfile from './user-profile';

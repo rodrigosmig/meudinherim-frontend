@@ -50,3 +50,17 @@ export const resetarSenhaSchema = z
   });
 
 export type ResetarSenhaFormValue = z.infer<typeof resetarSenhaSchema>;
+
+const TokenPayloadSchema = z.object({
+  user: z.object({
+    id: z.string(),
+    nome: z.string(),
+    email: z.string().email(),
+    ativaNotificacao: z.boolean().optional(),
+  }),
+  sub: z.string().optional(),
+  iat: z.number().optional(),
+  exp: z.number().optional(),
+});
+
+export type TokenPayload = z.infer<typeof TokenPayloadSchema>;

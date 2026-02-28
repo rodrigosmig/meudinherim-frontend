@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/axios-client";
+import { httpClient } from "@/services/api/axios-client";
 import { ApiResponse } from "@/types/api";
 import { AxiosResponse } from "axios";
 
@@ -25,7 +25,7 @@ export const contaService = {
   list: (
     request: ContasRequest,
   ): Promise<AxiosResponse<ApiResponse<ListaDeContas>>> =>
-    apiClient.get(
+    httpClient.get(
       `/v1/contas?ativas=${request.ativas}&comPaginacao=${request.comPaginacao}&pagina=${request.pagina}&size=${request.size}`,
     ),
   // create: (values: IAccountFormData): Promise<AxiosResponse<IAccount>> =>

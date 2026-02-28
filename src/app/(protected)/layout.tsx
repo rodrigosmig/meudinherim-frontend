@@ -1,5 +1,3 @@
-import { QueryProvider } from "@/providers/query-provider";
-import { DataProvider } from "@/providers/data-provider";
 import { getSessionToken } from "@/helpers/session";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
@@ -17,16 +15,16 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <QueryProvider>
-      <DataProvider>
-        <div className="h-screen flex overflow-hidden">
-          <Sidebar />
-          <div className="flex flex-col flex-1 overflow-hidden">
-            <Header.Root title="Categoria" />
-            <main className="flex-1 overflow-y-auto p-6">{children}</main>
-          </div>
-        </div>
-      </DataProvider>
-    </QueryProvider>
+    //<QueryProvider>
+    //<DataProvider>
+    <div className="h-screen flex overflow-hidden">
+      <Sidebar />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <Header.Root title="Categoria" />
+        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+      </div>
+    </div>
+    //</DataProvider>
+    //</QueryProvider>
   );
 }
