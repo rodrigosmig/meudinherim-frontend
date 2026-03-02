@@ -1,6 +1,9 @@
 'use client';
 
-import { useAccounts } from '@/hooks/use-accounts';
+import { InlineFetchingIndicator } from '@/components/primitives/fetching-indicator';
+import { useContas } from '@/hooks/use-contas';
+import { useNotificacoes } from '@/hooks/use-notificacoes';
+import { useProximasFaturas } from '@/hooks/use-proximas-faturas';
 import type { ReactNode } from 'react';
 
 type DataProviderProps = {
@@ -17,15 +20,21 @@ export function DataProvider({
   const {
     isLoading: accountsLoading,
     isError: accountsError,
-  } = useAccounts();
+    isFetching: accountsFetching,
+  } = useContas();
 
-  // const {
-  //   isLoading: invoicesLoading,
-  //   isError: invoicesError,
-  // } = useInvoices();
+  const {
+    isLoading: notificacoesLoading,
+    isError: notificacoesError,
+  } = useNotificacoes();
 
-  const isLoading = accountsLoading; // || invoicesLoading;
-  const isError = accountsError; // || invoicesError;
+  const {
+    isLoading: proximasFaturasLoading,
+    isError: proximasFaturasError,
+  } = useProximasFaturas();
+
+  const isLoading = accountsLoading || notificacoesLoading || proximasFaturasLoading;
+  const isError = accountsError || notificacoesError || proximasFaturasError;
 
   if (isLoading) {
     return loadingFallback ?? <DefaultLoadingScreen />;
@@ -35,7 +44,12 @@ export function DataProvider({
     return errorFallback ?? <DefaultErrorScreen />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      {accountsFetching && <InlineFetchingIndicator />}
+    </>
+  );
 }
 
 function DefaultLoadingScreen() {

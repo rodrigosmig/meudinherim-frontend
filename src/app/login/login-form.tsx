@@ -4,8 +4,8 @@ import { Button } from "@/components/primitives/button";
 import Form from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
 import { toast } from "@/components/toast";
-import { DEFAULT_ERROR_MESSAGE } from "@/helpers/constants";
-import { catalogoErros } from "@/helpers/erros";
+import { catalogoErros } from "@/helpers/erros-helper";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { LoginFormValue, loginSchema } from "@/schema-validation/auth";
 import { autenticar } from "@/services/auth-service";
 import { ApiFormError } from "@/types/api";
@@ -30,7 +30,7 @@ export function LoginForm() {
     try {
       await autenticar(data);
 
-      router.push("/");
+      router.push('/');
 
       return;
     } catch (error) {

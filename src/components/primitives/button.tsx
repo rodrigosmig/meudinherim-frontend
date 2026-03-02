@@ -1,7 +1,9 @@
-import { ComponentProps, ElementType, ReactNode } from "react";
+"use client";
+
+import { cn } from "@/helpers/string-helper";
 import { LoaderCircle } from "lucide-react";
+import { ComponentProps, ElementType, ReactNode } from "react";
 import { tv } from "tailwind-variants";
-import { cn } from "@/utils/helpers";
 
 import Tooltip from "./tooltip";
 

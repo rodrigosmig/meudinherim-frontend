@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@/utils/test-utils';
+import { fireEvent, render, screen, waitFor } from '@/helpers/test/test-helper';
 import * as authService from '@/services/auth-service';
 import { toast } from '@/components/toast';
 

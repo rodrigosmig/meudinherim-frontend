@@ -1,41 +1,11 @@
-import { LoginBody, VerificationResult } from "@/types/auth";
-import { TokenPayload } from "@/schema-validation/auth";
-import { setSessionToken } from "@/helpers/session";
-import { getApiBaseUrl } from "@/helpers/constants";
-import { catalogoErros } from "@/helpers/erros";
+import { extractToken, verificarAssinatura } from "@/helpers/token-helper";
+import { setSessionToken } from "@/helpers/session-server-helper";
+import { getApiBaseUrl } from "@/helpers/route-helpers";
+import { catalogoErros } from "@/helpers/erros-helper";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { LoginBody } from "@/types/auth";
 
 export const runtime = "nodejs";
-
-function extractToken(payload: unknown) {
-  if (!payload || typeof payload !== "object") return "";
-
-  const root = payload as Record<string, unknown>;
-  const data =
-    root.data && typeof root.data === "object"
-      ? (root.data as Record<string, unknown>)
-      : null;
-
-  if (data && typeof data.token === "string") return data.token;
-
-  if (typeof root.token === "string") return root.token;
-
-  return "";
-}
-
-function verificarAssinatura(token: string): VerificationResult<TokenPayload> {
-  const secretKey = process.env.JWT_SECRET_KEY || "";
-  try {
-    const decoded = jwt.verify(token, Buffer.from(secretKey, "base64"), {
-      algorithms: ["HS256"],
-    });
-    return { valido: true, payload: decoded as TokenPayload };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return { valido: false, erro: message };
-  }
-}
 
 export async function POST(request: Request) {
   try {

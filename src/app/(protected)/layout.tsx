@@ -1,6 +1,6 @@
+import { getSessionToken } from "@/helpers/session-server-helper";
 import { QueryProvider } from "@/providers/query-provider";
 import { DataProvider } from "@/providers/data-provider";
-import { getSessionToken } from "@/helpers/session";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
 import { redirect } from "next/navigation";

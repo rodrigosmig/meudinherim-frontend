@@ -1,9 +1,9 @@
-import { render, screen, waitFor } from "@/utils/test-utils";
-import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
+import { render, screen, waitFor } from "@/helpers/test/test-helper";
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
+import { catalogoErros } from '@/helpers/erros-helper';
 import { autenticar } from '@/services/auth-service';
 import userEvent from "@testing-library/user-event";
 import ApiError from '@/types/application-error';
-import { catalogoErros } from '@/helpers/erros';
 import { toast } from "@/components/toast";
 
 import { LoginForm } from "../login-form";

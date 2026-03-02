@@ -1,4 +1,4 @@
-import { clearSessionToken } from "@/helpers/session";
+import { clearSessionToken } from "@/helpers/session-server-helper";
 import { NextResponse } from "next/server";
 
 export async function POST() {

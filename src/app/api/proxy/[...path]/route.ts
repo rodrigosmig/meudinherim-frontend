@@ -1,5 +1,6 @@
-import { getSessionToken } from "@/helpers/session";
-import { getApiBaseUrl } from "@/helpers/constants";
+import { clearSessionToken, getSessionToken, } from "@/helpers/session-server-helper";
+import { getApiBaseUrl } from "@/helpers/route-helpers";
+import { isValidToken } from "@/helpers/token-helper";
 import { NextResponse } from "next/server";
 
 // Allowlist of top-level resources allowed to be proxied. Keep this list
@@ -15,12 +16,22 @@ const ALLOWED_RESOURCES = new Set([
   "relatorios",
   "categorias",
   "usuarios",
+  "notificacoes",
 ]);
 
 async function proxy(request: Request, path: string[]) {
   const token = await getSessionToken();
+  const tokenIsValid = isValidToken(token);
 
-  if (!token) {
+  if (!token || !tokenIsValid) {
+    if (token && !tokenIsValid) {
+      try {
+        await clearSessionToken();
+      } catch (err) {
+        console.warn("Erro ao limpar a sessão:", err);
+      }
+    }
+
     return NextResponse.json({ message: "Não autenticado." }, { status: 401 });
   }
 

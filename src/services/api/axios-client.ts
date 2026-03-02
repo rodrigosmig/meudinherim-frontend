@@ -1,5 +1,5 @@
-import { getSessionToken } from "@/helpers/session";
-import { getApiBaseUrl } from "@/helpers/constants";
+import { getSessionToken } from "@/helpers/session-client-helper";
+import { getApiBaseUrl } from "@/helpers/route-helpers";
 import axios from "axios";
 
 export const httpClient = axios.create({

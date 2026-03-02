@@ -1,4 +1,4 @@
-import { AUTH_COOKIE_NAME, AUTH_PUBLIC_ROUTES, AUTH_REDIRECT_WHEN_AUTHENTICATED, AUTH_REDIRECT_WHEN_UNAUTHENTICATED, } from "@/helpers/constants";
+import { AUTH_COOKIE_NAME, AUTH_PUBLIC_ROUTES, AUTH_REDIRECT_WHEN_AUTHENTICATED, AUTH_REDIRECT_WHEN_UNAUTHENTICATED, } from "@/helpers/route-helpers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 

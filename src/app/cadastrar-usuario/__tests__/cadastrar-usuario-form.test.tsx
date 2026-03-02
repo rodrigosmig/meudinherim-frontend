@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
 import { cadastrarUsuario } from '@/services/auth-service';
+import { catalogoErros } from '@/helpers/erros-helper';
 import ApiError from '@/types/application-error';
-import { catalogoErros } from '@/helpers/erros';
 import { toast } from "@/components/toast";
 
 import CadastrarUsuarioForm from '../cadastrar-usuario-form';

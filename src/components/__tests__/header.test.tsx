@@ -1,4 +1,4 @@
-import { render, screen } from "@/utils/test-utils";
+import { render, screen } from "@/helpers/test/test-helper";
 
 import { Header } from "../header";
 

@@ -1,4 +1,4 @@
-import { getSessionToken } from "@/helpers/session";
+import { getSessionToken } from "@/helpers/session-server-helper";
 import { NextResponse } from "next/server";
 
 export async function GET() {

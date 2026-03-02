@@ -1,5 +1,5 @@
 import { CadastrarUsuarioBody, CadastrarUsuarioResponse, ConfirmarUsuarioParam, LoginBody, LoginResponse, RecuperarSenhaBody, RecuperarSenhaResponse, ReenviarEmailConfirmacaoBody, ResetarSenhaBody, } from "@/types/auth";
-import { handleApiResponse } from "@/helpers/erros";
+import { handleApiResponse } from "@/helpers/erros-helper";
 import { ApiResponse } from "@/types/api";
 
 export async function cadastrarUsuario(
@@ -17,6 +17,7 @@ export async function cadastrarUsuario(
 }
 
 export async function autenticar(loginBody: LoginBody): Promise<LoginResponse> {
+  console.log(999999999, loginBody);
   const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

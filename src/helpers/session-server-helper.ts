@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-import { AUTH_COOKIE_NAME } from "./constants";
+import { AUTH_COOKIE_NAME } from "./route-helpers";
 
 function getCookieOptions() {
   const isProduction = process.env.NODE_ENV === "production";

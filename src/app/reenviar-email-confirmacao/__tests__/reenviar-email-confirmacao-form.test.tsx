@@ -1,8 +1,8 @@
 import { reenviarEmailConfirmacao } from "@/services/auth-service";
-import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
+import { render, screen } from "@/helpers/test/test-helper";
 import * as authService from "@/services/auth-service";
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@/utils/test-utils";
 import { toast } from "@/components/toast";
 
 import ReenviarEmailConfirmacaoForm from "../reenviar-email-confirmacao-form";

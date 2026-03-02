@@ -1,10 +1,10 @@
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
+import { render, screen } from "@/helpers/test/test-helper";
 import { recuperarSenha } from "@/services/auth-service";
 import * as authService from "@/services/auth-service";
+import { catalogoErros } from '@/helpers/erros-helper';
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@/utils/test-utils";
 import ApiError from '@/types/application-error';
-import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
-import { catalogoErros } from '@/helpers/erros';
 import { toast } from "@/components/toast";
 
 import { RecuperarSenhaForm } from "../recuperar-senha-form";

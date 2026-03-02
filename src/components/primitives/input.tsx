@@ -1,6 +1,8 @@
+"use client";
+
+import { cn } from "@/helpers/string-helper";
 import { ComponentProps, ElementType } from "react";
 import { FieldError } from "react-hook-form";
-import { cn } from "@/utils/helpers";
 
 import Text from "./text";
 

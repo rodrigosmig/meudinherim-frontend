@@ -2,10 +2,10 @@ import { getApiErrorCode, getApiErrorMessage, isApiFormErrorResponse, isApiSucce
 import { ResetarSenhaFormValue, resetarSenhaSchema } from "@/schema-validation/auth";
 import { Button } from "@/components/primitives/button";
 import { resetarSenha } from "@/services/auth-service";
+import { catalogoErros } from "@/helpers/erros-helper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/primitives/input";
 import Form from "@/components/primitives/form";
-import { catalogoErros } from "@/helpers/erros";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/toast";
 import { LockKeyhole } from "lucide-react";

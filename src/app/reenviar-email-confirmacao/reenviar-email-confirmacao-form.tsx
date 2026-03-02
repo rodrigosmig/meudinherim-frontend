@@ -5,7 +5,7 @@ import Form from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
 import { toast } from "@/components/toast";
 import { getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from "@/helpers/api-type-guards";
-import { DEFAULT_ERROR_MESSAGE } from '@/helpers/constants';
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
 import { ReenviarEmailConfirmacaoFormValue, reenviarEmailConfirmacaoSchema } from "@/schema-validation/auth";
 import { reenviarEmailConfirmacao } from "@/services/auth-service";
 import { zodResolver } from "@hookform/resolvers/zod";

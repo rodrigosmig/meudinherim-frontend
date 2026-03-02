@@ -1,24 +1,32 @@
 'use client';
 
-import { useAccounts } from "@/hooks/use-accounts";
+import { useContas } from "@/hooks/use-contas";
+import { useNotificacoes } from "@/hooks/use-notificacoes";
+import { useProximasFaturas } from "@/hooks/use-proximas-faturas";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Home() {
-  const { data: accounts, isLoading, error } = useAccounts();
+  const queryClient = useQueryClient();
+  const { data: accounts, isLoading, error } = useContas();
+  const { data: notificacoes, isLoading: notificacoesLoading, error: notificacoesError } = useNotificacoes();
+  const { data: proximasFaturas, isLoading: proximasFaturasLoading, error: proximasFaturasError } = useProximasFaturas();
 
-  if (isLoading) {
+  function testeButton() {
+    queryClient.invalidateQueries({ queryKey: ['contas'] });
+  }
+
+  if (isLoading || proximasFaturasLoading) {
     return <div>Carregando...</div>;
   }
 
-  if (error) {
-    return <div>Erro ao carregar contas</div>;
+  if (error || proximasFaturasError) {
+    return <div>Erro ao carregar dados</div>;
   }
 
   return (
     <div>
-      {accounts?.contas.map((account) => (
-        <div key={account.uuid}>{account.nome} - Saldo: {account.saldo}</div>
+      Dashboard
 
-      ))}
     </div>
   )
 }
