@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "Confirmar Email",
 }
 
-export default function Page() {
+export default function ConfirmarEmailPage() {
   return (
     <Suspense fallback={<div>Carregando...</div>}>
       <ConfirmarEmail />

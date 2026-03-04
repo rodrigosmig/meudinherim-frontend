@@ -1,4 +1,5 @@
 import { ApiFormErrorResponse, ApiResponse } from "./api";
+import { Usuario } from "./usuario";
 
 export interface LoginBody {
   email: string;
@@ -6,10 +7,10 @@ export interface LoginBody {
 }
 
 export interface LoginData {
-  token: string;
+  usuario: Usuario;
 }
 
-export type LoginResponse = ApiResponse<LoginData> | ApiFormErrorResponse;
+export type LoginResponse = ApiResponse<LoginData>; // | ApiFormErrorResponse;
 
 export interface CadastrarUsuarioBody {
   nome: string;

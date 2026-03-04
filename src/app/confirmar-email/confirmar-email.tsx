@@ -2,8 +2,9 @@
 
 import Text from '@/components/primitives/text';
 import { toast } from '@/components/toast';
-import { getApiErrorMessage, isApiSuccessResponse } from '@/helpers/api-type-guards';
+import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
 import { confirmarEmail } from '@/services/auth-service';
+import ApiError from '@/types/application-error';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -28,19 +29,27 @@ export default function ConfirmarEmail() {
       setIsLoading(true);
       setIsError(false);
 
-      confirmarEmail({ token }).then(response => {
-        if (!isApiSuccessResponse(response)) {
-          setIsError(true);
-          setIsLoading(false);
-          toast.error(getApiErrorMessage(response, "Erro ao confirmar e-mail"));
-          return;
-        }
+
+      try {
+        await confirmarEmail({ token });
         setIsLoading(false);
-        setIsError(false);
 
         toast.success("Conta confirmada com sucesso!");
+
         router.push('/login');
-      });
+
+        return;
+      } catch (error) {
+        setIsError(true);
+        setIsLoading(false);
+        if (error instanceof ApiError) {
+          toast.error(error.apiMessage.descricao);
+          return;
+        }
+
+        toast.error(DEFAULT_ERROR_MESSAGE);
+        return;
+      }
     }
 
     verificarEmail();

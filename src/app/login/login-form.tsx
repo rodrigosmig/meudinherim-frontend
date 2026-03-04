@@ -4,10 +4,10 @@ import { Button } from "@/components/primitives/button";
 import Form from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
 import { toast } from "@/components/toast";
+import { useAuth } from "@/contexts/auth-context";
 import { catalogoErros } from "@/helpers/erros-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { LoginFormValue, loginSchema } from "@/schema-validation/auth";
-import { autenticar } from "@/services/auth-service";
 import { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 
 export function LoginForm() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const form = useForm<LoginFormValue>({
     resolver: zodResolver(loginSchema),
@@ -28,8 +29,7 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormValue) => {
     try {
-      await autenticar(data);
-
+      await login(data);
       router.push('/');
 
       return;
@@ -80,10 +80,9 @@ export function LoginForm() {
         <Button
           type="submit"
           isLoading={form.formState.isSubmitting}
-          disabled={form.formState.isSubmitting}
           className="w-full mt-8"
         >
-          {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
+          Entrar
         </Button>
       </div>
     </Form>

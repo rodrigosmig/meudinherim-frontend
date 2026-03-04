@@ -1,14 +1,16 @@
-import { getApiErrorCode, getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from "@/helpers/api-type-guards";
 import { ResetarSenhaFormValue, resetarSenhaSchema } from "@/schema-validation/auth";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { Button } from "@/components/primitives/button";
 import { resetarSenha } from "@/services/auth-service";
 import { catalogoErros } from "@/helpers/erros-helper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/primitives/input";
+import ApiError from "@/types/application-error";
 import Form from "@/components/primitives/form";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/toast";
 import { LockKeyhole } from "lucide-react";
+import { ApiFormError } from "@/types/api";
 import { useForm } from "react-hook-form";
 
 interface ResetarSenhaFormProps {
@@ -30,35 +32,40 @@ export function ResetarSenhaForm({ token }: ResetarSenhaFormProps) {
     const formData = {
       token,
       ...data,
-    }
-    const response = await resetarSenha(formData);
+    };
 
-    if (isApiFormErrorResponse(response)) {
-      response.data.fields.forEach((fieldError) => {
-        if (["password", "passwordConfirmation"].includes(fieldError.field)) {
-          form.setError(fieldError.field as keyof ResetarSenhaFormValue, {
-            type: "server",
-            message: fieldError.message,
+    try {
+      await resetarSenha(formData);
+
+      toast.success("Senha resetada com sucesso!");
+
+      form.reset();
+
+      router.push("/login");
+
+      return;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
+          const formError = error.data as ApiFormError;
+
+          formError.fields.forEach((fieldError) => {
+            if (["password", "passwordConfirmation"].includes(fieldError.field)) {
+              form.setError(fieldError.field as keyof ResetarSenhaFormValue, {
+                type: "server",
+                message: fieldError.message,
+              });
+            }
           });
         }
-      });
-      toast.error(response.message.descricao);
+
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+
+      toast.error(DEFAULT_ERROR_MESSAGE);
       return;
     }
-
-    if (isApiSuccessResponse(response)) {
-      toast.success("Senha resetada com sucesso!");
-      router.push("/login");
-      return;
-    }
-
-    const errorCode = getApiErrorCode(response);
-    if (errorCode === catalogoErros.TOKEN_NAO_ENCONTRADO) {
-      toast.error("Não foi possível validar o token informado");
-      return;
-    }
-
-    toast.error(getApiErrorMessage(response, "Erro ao resetar senha do usuário"));
   };
 
   return (

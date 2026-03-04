@@ -6,6 +6,13 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
 }));
 
+const nome = 'Rodrigo Miguel';
+const email = 'rodrigosmig@gmail.com';
+const mockedUseAuth = jest.fn(() => ({ usuario: { nome, email }, isLoading: false }));
+jest.mock('@/contexts/auth-context', () => ({
+  useAuth: () => mockedUseAuth(),
+}));
+
 describe("Componente Header", () => {
   it("deve renderizar o título corretamente", () => {
     render(<Header.Root title="Dashboard" />);

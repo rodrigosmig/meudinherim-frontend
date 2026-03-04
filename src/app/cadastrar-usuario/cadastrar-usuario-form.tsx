@@ -43,7 +43,6 @@ export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
 
       setIsCadastrado(true);
       return;
-
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
@@ -119,10 +118,10 @@ export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
             <div>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                isLoading={form.formState.isSubmitting}
                 className="w-full mt-8"
               >
-                {form.formState.isSubmitting ? "Cadastrando..." : "Cadastrar"}
+                Cadastrar
               </Button>
             </div>
           </Form>

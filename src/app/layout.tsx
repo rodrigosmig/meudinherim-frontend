@@ -1,5 +1,6 @@
 import "./globals.css";
 
+import { AuthProvider } from "@/contexts/auth-context";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { Metadata } from "next";
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased text-sm md:text-base text-white`}>
         <Toaster richColors closeButton position="top-right" />
         <BProgressProvider>
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </BProgressProvider>
       </body>
     </html>

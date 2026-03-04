@@ -1,7 +1,7 @@
 'use client';
 
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { ArrowLeftFromLine, ArrowRightFromLine, BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasing, ChartNoAxesCombined, CreditCard, Landmark, LayoutDashboard, Menu, Tags, X } from 'lucide-react';
+import { BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasing, ChartNoAxesCombined, ChevronLeft, ChevronRight, CreditCard, Landmark, LayoutDashboard, Menu, Tags, X } from 'lucide-react';
 import { ElementType, ReactNode, useState } from 'react';
 
 import { cn } from "@/helpers/string-helper";
@@ -46,14 +46,14 @@ function SidebarRoot() {
 
             {!open && (
               <Button
-                className={`hover:bg-transparent text-gray-400 hover:text-white absolute z-50 rounded-md top-0 ${collapsed ? '-right-6' : '-right-2.5'}`}
+                className={`bg-gray-900 hover:bg-transparent border border-gray-800 text-gray-400 hover:text-white absolute z-50 rounded-full p-1.5 top-2 ${collapsed ? '-right-4' : '-right-4'}`}
                 type="button"
                 variant="icon"
                 onClick={() => setCollapsed((prev) => !prev)}
                 aria-label={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
                 tooltip={collapsed ? "Expandir sidebar" : "Recolher sidebar"}
               >
-                {collapsed ? <ArrowRightFromLine className="w-4 h-4" /> : <ArrowLeftFromLine className="w-4 h-4" />}
+                {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
               </Button>
             )}
           </div>

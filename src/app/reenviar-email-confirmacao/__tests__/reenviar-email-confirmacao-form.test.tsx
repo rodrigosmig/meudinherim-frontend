@@ -2,7 +2,9 @@ import { reenviarEmailConfirmacao } from "@/services/auth-service";
 import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
 import { render, screen } from "@/helpers/test/test-helper";
 import * as authService from "@/services/auth-service";
+import { catalogoErros } from '@/helpers/erros-helper';
 import userEvent from "@testing-library/user-event";
+import ApiError from '@/types/application-error';
 import { toast } from "@/components/toast";
 
 import ReenviarEmailConfirmacaoForm from "../reenviar-email-confirmacao-form";
@@ -74,15 +76,17 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
     const mensagemErro = "Email inválido";
     const emailInvalido = "emailinvalido@teste.com";
 
-    mockReenviarEmailConfirmacao.mockResolvedValueOnce({
-      data: {
-        fields: [
-          { field: "email", message: mensagemErro },
-        ],
-      },
-      message: { descricao: "Erro de campo" },
-      type: "form_error",
-    });
+    mockReenviarEmailConfirmacao.mockRejectedValueOnce(
+      new ApiError(
+        { codigo: catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO, descricao: 'Erro de campo' },
+        400,
+        {
+          fields: [
+            { field: "email", message: mensagemErro },
+          ],
+        }
+      )
+    );
 
     render(<ReenviarEmailConfirmacaoForm />);
 
@@ -97,10 +101,9 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
   });
 
   it("deve exibir erro genérico se a resposta não for esperada", async () => {
-    mockReenviarEmailConfirmacao.mockResolvedValueOnce({
-      type: "error",
-      message: { descricao: "Erro desconhecido" },
-    });
+    mockReenviarEmailConfirmacao.mockRejectedValueOnce(
+      new ApiError({ codigo: -999, descricao: "Erro desconhecido" }, 500),
+    );
 
     render(<ReenviarEmailConfirmacaoForm />);
 

@@ -17,7 +17,6 @@ export async function cadastrarUsuario(
 }
 
 export async function autenticar(loginBody: LoginBody): Promise<LoginResponse> {
-  console.log(999999999, loginBody);
   const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -57,9 +56,10 @@ export async function confirmarEmail(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(confirmarEmailParam),
   });
-  const data = await response.json();
 
-  return data as ApiResponse<void>;
+  const data = await handleApiResponse<ApiResponse<void>>(response);
+
+  return data;
 }
 
 export async function reenviarEmailConfirmacao(
@@ -70,9 +70,10 @@ export async function reenviarEmailConfirmacao(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(reenviarEmailConfirmacaoBody),
   });
-  const data = await response.json();
 
-  return data as ApiResponse<void>;
+  const data = await handleApiResponse<ApiResponse<void>>(response);
+
+  return data;
 }
 
 export async function resetarSenha(
@@ -83,7 +84,8 @@ export async function resetarSenha(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(resetarSenhaBody),
   });
-  const data = await response.json();
 
-  return data as ApiResponse<void>;
+  const data = await handleApiResponse<ApiResponse<void>>(response);
+
+  return data;
 }

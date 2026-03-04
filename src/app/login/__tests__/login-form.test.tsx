@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
 import { catalogoErros } from '@/helpers/erros-helper';
-import { autenticar } from '@/services/auth-service';
 import userEvent from "@testing-library/user-event";
 import ApiError from '@/types/application-error';
 import { toast } from "@/components/toast";
@@ -22,9 +21,11 @@ jest.mock("@/components/toast", () => ({
   },
 }));
 
-jest.mock('@/services/auth-service');
+const mockedLogin = jest.fn();
 
-const mockLogin = autenticar as jest.Mock;
+jest.mock('@/contexts/auth-context', () => ({
+  useAuth: () => ({ login: mockedLogin }),
+}));
 
 describe("Componente LoginForm", () => {
   beforeEach(() => {
@@ -43,7 +44,7 @@ describe("Componente LoginForm", () => {
     const email = "test@test.com";
     const senha = "senhaValida";
 
-    mockLogin.mockResolvedValueOnce({
+    mockedLogin.mockResolvedValueOnce({
       message: { codigo: 0, descricao: 'Sucesso' },
       data: { token: 'abc', user: { id: 'u1', nome: 'User' } }
     });
@@ -56,7 +57,7 @@ describe("Componente LoginForm", () => {
     await user.type(screen.getByLabelText("Senha"), senha);
     await user.click(screen.getByRole("button", { name: "Entrar" }));
 
-    expect(mockLogin).toHaveBeenCalledWith({ email, password: senha });
+    expect(mockedLogin).toHaveBeenCalledWith({ email, password: senha });
 
     expect(mockedPush).toHaveBeenCalledWith("/");
     expect(mockedRefresh).not.toHaveBeenCalled();
@@ -72,14 +73,14 @@ describe("Componente LoginForm", () => {
     expect(screen.getByText("Digite um e-mail válido")).toBeInTheDocument();
     expect(screen.getByText("A senha é obrigatória")).toBeInTheDocument();
 
-    expect(mockLogin).not.toHaveBeenCalled();
+    expect(mockedLogin).not.toHaveBeenCalled();
   });
 
   it("deve exibir erro de validação retornado pela API", async () => {
     const mensagemErro = "Credenciais inválidas";
     const emailInvalido = "emailinvalido@teste.com";
 
-    mockLogin.mockRejectedValueOnce(
+    mockedLogin.mockRejectedValueOnce(
       new ApiError(
         { codigo: catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO, descricao: mensagemErro },
         422,
@@ -97,13 +98,13 @@ describe("Componente LoginForm", () => {
     expect(toast.error).toHaveBeenCalledWith(mensagemErro);
 
     expect(screen.getByText("E-mail inválido")).toBeInTheDocument();
-    expect(mockLogin).toHaveBeenCalledWith({ email: emailInvalido, password: "senhaInvalida" });
+    expect(mockedLogin).toHaveBeenCalledWith({ email: emailInvalido, password: "senhaInvalida" });
   });
 
   it('deve exibir erro genérico retornado pela API', async () => {
     const messageError = 'Erro ao efetuar login';
 
-    mockLogin.mockRejectedValueOnce(new ApiError({ codigo: -999, descricao: messageError }, 500));
+    mockedLogin.mockRejectedValueOnce(new ApiError({ codigo: -999, descricao: messageError }, 500));
     render(<LoginForm />);
 
     const user = userEvent.setup();
@@ -117,7 +118,7 @@ describe("Componente LoginForm", () => {
   });
 
   it('deve exibir mensagem default quando ocorrer erro inesperado', async () => {
-    mockLogin.mockRejectedValueOnce(new Error('boom'));
+    mockedLogin.mockRejectedValueOnce(new Error('boom'));
 
     render(<LoginForm />);
 

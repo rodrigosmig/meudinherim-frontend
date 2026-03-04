@@ -1,16 +1,14 @@
 "use client";
 
+import { useAuth } from "@/contexts/auth-context";
 import { logout } from "@/services/auth-service";
 import { LogOut, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-interface UserProfileProps {
-  nome: string;
-  email: string;
-}
+export default function UserProfile() {
+  const { usuario, isLoading } = useAuth();
 
-export default function UserProfile({ nome, email }: UserProfileProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -48,11 +46,23 @@ export default function UserProfile({ nome, email }: UserProfileProps) {
     router.push("/configuracoes");
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-800">
+        <div className="text-right">
+          <p className="hidden md:block text-sm font-medium text-white">Carregando...</p>
+          <p className="hidden md:block text-xs text-gray-400">Carregando...</p>
+        </div>
+        <div className="w-10 h-10 rounded-full bg-gray-700 animate-pulse" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-800">
       <div className="text-right">
-        <p className="hidden md:block text-sm font-medium text-white">{nome}</p>
-        <p className="hidden md:block text-xs text-gray-400">{email}</p>
+        <p className="hidden md:block text-sm font-medium text-white">{usuario?.nome}</p>
+        <p className="hidden md:block text-xs text-gray-400">{usuario?.email}</p>
       </div>
       <div className="relative" ref={dropdownRef}>
         <button
@@ -62,8 +72,8 @@ export default function UserProfile({ nome, email }: UserProfileProps) {
           className="rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500"
         >
           <img
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=8b5cf6&color=fff`}
-            alt={nome}
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(usuario?.nome ?? "")}&background=8b5cf6&color=fff`}
+            alt={usuario?.nome}
             className="w-10 h-10 rounded-full ring-2 ring-violet-500"
           />
         </button>

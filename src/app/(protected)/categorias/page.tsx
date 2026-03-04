@@ -1,12 +1,14 @@
-import { FilePenLine, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { SelectItem } from "@/components/primitives/select-item";
+"use client"; //TODO tentar remover isso
+
+import Pagination from "@/components/pagination";
 import { Button } from "@/components/primitives/button";
-import { Table } from "@/components/primitives/table";
+import { Card } from "@/components/primitives/card";
 import { Input } from "@/components/primitives/input";
 import Select from "@/components/primitives/select";
-import { Card } from "@/components/primitives/card";
-import Pagination from "@/components/pagination";
+import { SelectItem } from "@/components/primitives/select-item";
+import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
+import { FilePenLine, Pencil, Plus, Search, Trash2 } from "lucide-react";
 
 export default function Home() {
   const thData = ["Nome", "Tipo", "Exibir na Dashboard", "Ações"];

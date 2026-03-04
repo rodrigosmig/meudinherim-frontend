@@ -2,66 +2,52 @@
 
 import { autenticar } from '@/services/auth-service'
 import { LoginBody } from '@/types/auth'
+import { Usuario } from '@/types/usuario'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-interface User {
-  id: string
-  name: string
-  email: string
-  // outros campos
-}
-
 interface AuthContextData {
-  user: User | null
-  token: string | null // Adicionamos o token aqui
+  usuario: Usuario | null
   isLoading: boolean
-  //login: (email: string, password: string) => Promise<void>
+  login: (payload: LoginBody) => Promise<void>
   logout: () => Promise<void>
 }
 
 const AuthContext = createContext({} as AuthContextData)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null) // Estado para o token
+  const [usuario, setUsuario] = useState<Usuario | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Função de login
   const login = async (loginBody: LoginBody) => {
-    const response = await autenticar(loginBody)
+    setIsLoading(true)
+    await autenticar(loginBody);
 
-    //const data = await response.json()
+    await fetchUserData();
 
-    //setUser(data.user)
-  }
-
-  // Função para buscar dados do usuário (agora usando o cookie)
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch('/api/auth/me')
-
-      if (response.ok) {
-        const data = await response.json()
-        setUser(data.user)
-        setToken(data.token) // Token vem do cookie via API route
-      } else {
-        setUser(null)
-        setToken(null)
-      }
-    } catch (error) {
-      console.error('Erro ao buscar usuário:', error)
-      setUser(null)
-      setToken(null)
-    } finally {
-      setIsLoading(false)
-    }
+    setIsLoading(false)
   }
 
   // Função de logout
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
-    setUser(null)
-    setToken(null)
+    setUsuario(null)
+  }
+
+  async function fetchUserData() {
+    setIsLoading(true)
+    try {
+      const res = await fetch('/api/auth/session')
+      if (!res.ok) {
+        setUsuario(null)
+        return
+      }
+      const payload = await res.json()
+      setUsuario(payload.user ?? null)
+    } catch (err) {
+      setUsuario(null)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -69,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, logout }}>
+    <AuthContext.Provider value={{ usuario, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

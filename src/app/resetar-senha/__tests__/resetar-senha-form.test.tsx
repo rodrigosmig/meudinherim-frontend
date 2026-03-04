@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@/helpers/test/test-helper';
 import * as authService from '@/services/auth-service';
+import { catalogoErros } from '@/helpers/erros-helper';
+import ApiError from '@/types/application-error';
 import { toast } from '@/components/toast';
 
 import { ResetarSenhaForm } from '../resetar-senha-form';
@@ -50,7 +52,12 @@ describe('ResetarSenhaForm', () => {
   });
 
   it('deve exibir toast de erro para token inválido', async () => {
-    mockResetarSenha.mockResolvedValue({ message: { codigo: -7, descricao: 'Token inválido' } });
+    mockResetarSenha.mockRejectedValueOnce(
+      new ApiError(
+        { codigo: catalogoErros.TOKEN_NAO_ENCONTRADO, descricao: 'Não foi possível validar o token informado' },
+        400,
+      )
+    );
 
     render(<ResetarSenhaForm token="invalid-token" />);
 
@@ -64,7 +71,7 @@ describe('ResetarSenhaForm', () => {
   });
 
   it('deve exibir toast de sucesso e redireciona para login', async () => {
-    mockResetarSenha.mockResolvedValue({ message: { codigo: 0, descricao: 'Sucesso' } });
+    mockResetarSenha.mockResolvedValueOnce({});
 
     render(<ResetarSenhaForm token="valid-token" />);
 
@@ -79,7 +86,7 @@ describe('ResetarSenhaForm', () => {
   });
 
   it('deve exibir toast de erro genérico', async () => {
-    mockResetarSenha.mockResolvedValue({ message: { codigo: -999, descricao: 'Erro desconhecido' } });
+    mockResetarSenha.mockRejectedValueOnce(new ApiError({ codigo: -999, descricao: 'Erro desconhecido' }, 500));
 
     render(<ResetarSenhaForm token="valid-token" />);
 
@@ -95,10 +102,13 @@ describe('ResetarSenhaForm', () => {
   it('deve exibir erro de validação de campo vindo da API', async () => {
     const messageErro = "Confirmação de senha inválida";
 
-    mockResetarSenha.mockResolvedValue({
-      message: { codigo: -1, descricao: 'Erro de campo' },
-      data: { fields: [{ field: 'passwordConfirmation', message: messageErro }] },
-    });
+    mockResetarSenha.mockRejectedValueOnce(
+      new ApiError(
+        { codigo: catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO, descricao: 'Erro de campo' },
+        422,
+        { fields: [{ field: 'passwordConfirmation', message: messageErro }] },
+      )
+    );
 
     render(<ResetarSenhaForm token="valid-token" />);
 

@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
+import { act } from 'react';
 
 import UserProfile from "../user-profile";
 
@@ -13,17 +14,22 @@ jest.mock("@/services/auth-service", () => ({
   logout: jest.fn()
 }));
 
-describe("Componente UserProfile", () => {
-  const nome = "João Silva";
-  const email = "joao@teste.com";
+const nome = "João Silva";
+const email = "joao@teste.com";
 
+const mockedUseAuth = jest.fn(() => ({ usuario: { nome, email }, isLoading: false }));
+jest.mock('@/contexts/auth-context', () => ({
+  useAuth: () => mockedUseAuth(),
+}));
+
+describe("Componente UserProfile", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("deve abrir e fechar o menu do usuário", async () => {
     const user = userEvent.setup();
-    render(<UserProfile nome={nome} email={email} />);
+    render(<UserProfile />);
     const btnAvatar = screen.getByRole("button", { name: /abrir menu do usuário/i });
 
     await user.click(btnAvatar);
@@ -33,8 +39,9 @@ describe("Componente UserProfile", () => {
     expect(screen.getByText("Sair")).toBeVisible();
 
 
-    document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-
+    act(() => {
+      document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    });
 
     await waitFor(() => {
       expect(screen.queryByText("Perfil")).not.toBeInTheDocument();
@@ -43,7 +50,7 @@ describe("Componente UserProfile", () => {
 
   it("deve navegar para perfil ao clicar em Perfil", async () => {
     const user = userEvent.setup();
-    render(<UserProfile nome={nome} email={email} />);
+    render(<UserProfile />);
     await user.click(screen.getByRole("button", { name: /abrir menu do usuário/i }));
     await user.click(screen.getByText("Perfil"));
     expect(mockedPush).toHaveBeenCalledWith("/perfil");
@@ -51,7 +58,7 @@ describe("Componente UserProfile", () => {
 
   it("deve navegar para configurações ao clicar em Configurações", async () => {
     const user = userEvent.setup();
-    render(<UserProfile nome={nome} email={email} />);
+    render(<UserProfile />);
     await user.click(screen.getByRole("button", { name: /abrir menu do usuário/i }));
     await user.click(screen.getByText("Configurações"));
     expect(mockedPush).toHaveBeenCalledWith("/configuracoes");
@@ -59,7 +66,7 @@ describe("Componente UserProfile", () => {
 
   it("deve fazer logout e redirecionar ao clicar em Sair", async () => {
     const user = userEvent.setup();
-    render(<UserProfile nome={nome} email={email} />);
+    render(<UserProfile />);
     await user.click(screen.getByRole("button", { name: /abrir menu do usuário/i }));
     await user.click(screen.getByText("Sair"));
 

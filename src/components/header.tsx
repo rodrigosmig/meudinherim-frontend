@@ -68,7 +68,7 @@ function HeaderContent({ className, ...props }: HeaderContentProps) {
         <WalletCards className="w-5 h-5 text-gray-400" />
       </Button>
 
-      <UserProfile nome='Rodrigo Miguel' email='rodrigosmig@gmail.com' />
+      <UserProfile />
     </div>
   );
 }

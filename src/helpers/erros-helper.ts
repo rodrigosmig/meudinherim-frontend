@@ -1,6 +1,7 @@
 import ApiError from "@/types/application-error";
 
 export const catalogoErros = {
+  USUARIO_NAO_ENCONTRADO: -1,
   TOKEN_NAO_ENCONTRADO: -7,
   EMAIL_JA_CADASTRADO: -30,
   CAMPO_INVALIDO_OU_OBRIGATORIO: -90,

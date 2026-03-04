@@ -62,7 +62,13 @@ export async function POST(request: Request) {
     await setSessionToken(token);
 
     return NextResponse.json(
-      { token, user: validacaoToken.payload.user },
+      {
+        message: {
+          codigo: 0,
+          descricao: "Sucesso.",
+        },
+        data: { user: validacaoToken.payload.user },
+      },
       { status: response.status },
     );
   } catch {

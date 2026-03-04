@@ -4,10 +4,13 @@ import { Button } from "@/components/primitives/button";
 import Form from "@/components/primitives/form";
 import { Input } from "@/components/primitives/input";
 import { toast } from "@/components/toast";
-import { getApiErrorMessage, isApiFormErrorResponse, isApiSuccessResponse } from "@/helpers/api-type-guards";
+import { catalogoErros } from "@/helpers/erros-helper";
 import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
+import { capitalize } from "@/helpers/string-helper";
 import { ReenviarEmailConfirmacaoFormValue, reenviarEmailConfirmacaoSchema } from "@/schema-validation/auth";
 import { reenviarEmailConfirmacao } from "@/services/auth-service";
+import { ApiFormError } from "@/types/api";
+import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -23,31 +26,46 @@ export default function ReenviarEmailConfirmacaoForm() {
   });
 
   const onSubmit = async (data: ReenviarEmailConfirmacaoFormValue) => {
+
     try {
-      const response = await reenviarEmailConfirmacao(data);
+      await reenviarEmailConfirmacao(data);
 
-      if (isApiFormErrorResponse(response)) {
-        response.data.fields.forEach((fieldError) => {
-          if (["email",].includes(fieldError.field)) {
-            form.setError(fieldError.field as keyof ReenviarEmailConfirmacaoFormValue, {
-              type: "server",
-              message: fieldError.message,
-            });
-          }
-        });
-        toast.error(response.message.descricao);
-        return;
-      }
+      form.reset()
 
-      if (isApiSuccessResponse(response)) {
-        toast.success("Email de confirmação de conta enviado com sucesso!");
-        router.push("/login");
-        return;
-      }
+      toast.success("Email de confirmação de conta enviado com sucesso!");
 
-      toast.error(getApiErrorMessage(response, "Erro ao reenviar email de confirmação"));
+      router.push("/login");
+
+      return;
     } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
+          const formError = error.data as ApiFormError;
+
+          formError.fields.forEach((fieldError) => {
+            if (["email"].includes(fieldError.field)) {
+              form.setError(fieldError.field as keyof ReenviarEmailConfirmacaoFormValue, {
+                type: "server",
+                message: fieldError.message,
+              });
+            }
+          });
+        }
+
+        if (error.apiMessage?.codigo === catalogoErros.USUARIO_NAO_ENCONTRADO) {
+          form.setError("email", {
+            type: "server",
+            message: capitalize(error.apiMessage.descricao),
+          });
+          form.setFocus("email");
+        }
+
+        toast.error(capitalize(error.apiMessage.descricao));
+        return;
+      }
+
       toast.error(DEFAULT_ERROR_MESSAGE);
+      return;
     }
   };
 
