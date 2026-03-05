@@ -1,6 +1,6 @@
 import { render, screen } from "@/helpers/test/test-helper";
 
-import { Header } from "../header";
+import { Header } from "../header/header";
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),

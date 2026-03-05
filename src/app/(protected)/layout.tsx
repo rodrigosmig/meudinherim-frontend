@@ -1,8 +1,9 @@
 import { getSessionToken } from "@/helpers/session-server-helper";
 import { QueryProvider } from "@/providers/query-provider";
+import { HeaderProvider } from "@/contexts/header-context";
+import { DefaultHeader } from "@/components/header/header";
 import { DataProvider } from "@/providers/data-provider";
 import { Sidebar } from "@/components/sidebar";
-import { Header } from "@/components/header";
 import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({
@@ -19,13 +20,15 @@ export default async function ProtectedLayout({
   return (
     <QueryProvider>
       <DataProvider>
-        <div className="h-screen flex overflow-hidden">
-          <Sidebar />
-          <div className="flex flex-col flex-1 overflow-hidden">
-            <Header.Root title="Categoria" />
-            <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <HeaderProvider>
+          <div className="h-screen flex overflow-hidden">
+            <Sidebar />
+            <div className="flex flex-col flex-1 overflow-hidden">
+              <DefaultHeader />
+              <main className="flex-1 overflow-y-auto p-6">{children}</main>
+            </div>
           </div>
-        </div>
+        </HeaderProvider>
       </DataProvider>
     </QueryProvider>
   );

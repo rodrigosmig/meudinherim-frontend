@@ -1,5 +1,5 @@
 import { CadastrarUsuarioBody, CadastrarUsuarioResponse, ConfirmarUsuarioParam, LoginBody, LoginResponse, RecuperarSenhaBody, RecuperarSenhaResponse, ReenviarEmailConfirmacaoBody, ResetarSenhaBody, } from "@/types/auth";
-import { handleApiResponse } from "@/helpers/erros-helper";
+import { handleApiResponse } from "@/helpers/response-helper";
 import { ApiResponse } from "@/types/api";
 
 export async function cadastrarUsuario(
