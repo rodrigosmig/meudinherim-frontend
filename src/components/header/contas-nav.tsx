@@ -10,13 +10,8 @@ import { useEffect, useState } from "react";
 import { Avatar } from "../avatar";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
+import Icon from "../primitives/icon";
 import Text from "../primitives/text";
-
-type Account = {
-  id: string;
-  name: string;
-  balance: number;
-};
 
 export function ContasNav() {
   const [contas, setContas] = useState<Conta[]>([]);
@@ -38,13 +33,13 @@ export function ContasNav() {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
         <Button variant="icon" aria-label="Contas">
-          <Landmark className="w-4 md:w-5 h-4 md:h-5 text-gray-400" />
+          <Icon icon={Landmark} />
         </Button>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content align={align}>
         <div className="px-2 text-center">
-          <Text variant="heading-small">Contas</Text>
+          <Text className="text-sm md:text-base font-bold">Contas</Text>
         </div>
 
         <div className="mt-2 space-x-3 divide-y divide-gray-800 max-h-76 overflow-y-auto overflow-x-hidden">

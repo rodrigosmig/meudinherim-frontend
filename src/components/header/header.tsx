@@ -1,13 +1,14 @@
 "use client";
 
 import { cn } from '@/helpers/string-helper';
-import { Bell, Plus, WalletCards } from 'lucide-react';
+import { Plus, WalletCards } from 'lucide-react';
 import { ComponentProps } from 'react';
 
 import { HeaderSlot, useHeader } from '@/contexts/header-context';
 import { Button } from '../primitives/button';
 import UserProfile from '../user-profile';
 import { ContasNav } from './contas-nav';
+import NotificacoesNav from './notificacoes-nav';
 
 interface HeaderProps {
   title?: string;
@@ -48,10 +49,7 @@ interface HeaderContentProps extends ComponentProps<'div'> { }
 function HeaderContent({ className, ...props }: HeaderContentProps) {
   return (
     <div className={cn("flex items-center gap-2", className)} {...props}>
-      <Button variant="icon" tooltip="Notificações" aria-label="Notificações">
-        <Bell className="w-4 md:w-5 h-4 md:h-5 text-gray-400" />
-        <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-      </Button>
+      <NotificacoesNav />
 
       <Button variant="icon" tooltip="Adicionar" aria-label="Adicionar">
         <Plus className="w-4 md:w-5 h-4 md:h-5 text-gray-400" />
