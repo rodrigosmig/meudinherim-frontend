@@ -26,6 +26,15 @@ export default function Home() {
 
   return (
     <div>
+      <Header.Title>
+        <PageTitle
+          mes={mesAtual}
+          ano={anoAtual}
+          onPreviousMonth={handlePreviousMonth}
+          onNextMonth={handleNextMonth}
+        />
+      </Header.Title>
+
       <div className="mb-2 flex justify-between md:hidden">
         <PageTitle
           mes={mesAtual}
@@ -34,16 +43,6 @@ export default function Home() {
           onNextMonth={handleNextMonth}
         />
       </div>
-
-      <Header.Title>
-        <PageTitle
-          mes={mesAtual}
-          ano={anoAtual}
-          onPreviousMonth={handlePreviousMonth}
-          onNextMonth={handleNextMonth}
-        />
-
-      </Header.Title>
 
       <Card.Root>
         <Card.Header>
@@ -72,7 +71,7 @@ function PageTitle({ mes, ano, onPreviousMonth, onNextMonth }: PageTitleProps) {
     <>
       <Text variant="heading-large" className="first-letter:capitalize">{mes}, {ano}</Text>
 
-      <div className="flex items-center gap-2 md:pl-2">
+      <div className="flex gap-2 md:pl-2">
         <Button
           variant="icon"
           aria-label="Voltar"

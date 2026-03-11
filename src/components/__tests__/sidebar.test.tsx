@@ -50,12 +50,12 @@ describe("Componente Sidebar", () => {
     const user = userEvent.setup();
     render(<Sidebar />);
 
-    const btnCollapse = screen.getByRole("button", { name: "Recolher sidebar" });
+    const btnCollapse = screen.getByRole("button", { name: "Recolher" });
     await user.click(btnCollapse);
 
-    expect(screen.getByRole("button", { name: "Expandir sidebar" })).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Expandir sidebar" }));
-    expect(screen.getByRole("button", { name: "Recolher sidebar" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Expandir" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Expandir" }));
+    expect(screen.getByRole("button", { name: "Recolher" })).toBeVisible();
   });
 
   it("deve abrir e fechar o menu no mobile", async () => {

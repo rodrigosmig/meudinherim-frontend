@@ -1,11 +1,12 @@
 "use client";
 
-import Avatar from "@/components/avatar";
+
 import { useAuth } from "@/contexts/auth-context";
 import { logout } from "@/services/auth-service";
 import { LogOut, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { Avatar } from "./avatar";
 
 export default function UserProfile() {
   const { usuario, isLoading } = useAuth();
@@ -64,13 +65,13 @@ export default function UserProfile() {
           aria-label="Abrir menu do usuário"
           className="rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500"
         >
-          <Avatar name={usuario?.nome ?? ""} size={40} bg="#8b5cf6" color="#fff" ring />
+          <Avatar name={usuario?.nome ?? ""} size={40} />
         </button>
 
         {isOpen && (
           <div className="absolute right-0 mt-2 w-64 rounded-lg border border-gray-800 bg-gray-900 shadow-lg z-50 p-3">
             <div className="flex items-center gap-3 px-2 pb-2 border-b border-gray-800">
-              <Avatar name={usuario?.nome ?? ""} size={64} bg="#8b5cf6" color="#fff" ring />
+              <Avatar name={usuario?.nome ?? ""} size={52} />
               <div className="text-left">
                 <p className="text-sm font-medium text-white">{usuario?.nome}</p>
                 <p className="text-xs text-gray-400">{usuario?.email}</p>

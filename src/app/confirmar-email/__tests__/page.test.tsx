@@ -1,8 +1,7 @@
-import { render, waitFor } from '@testing-library/react';
-import * as authService from '@/services/auth-service';
 import { toast } from '@/components/toast';
+import * as authService from '@/services/auth-service';
 import ApiError from '@/types/application-error';
-import { catalogoErros } from '@/helpers/erros-helper';
+import { render, waitFor } from '@testing-library/react';
 
 import ConfirmarEmail from '../page';
 

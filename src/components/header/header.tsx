@@ -36,7 +36,7 @@ function HeaderTitle({ title, className, ...props }: HeaderTitleProps) {
 
   if (headerTitleContent) {
     return (
-      <div className={cn("hidden md:flex md:items-center md:justify-between", className)} {...props}>
+      <div className={cn("hidden flex-1 md:flex md:items-center md:justify-between", className)} {...props}>
         {headerTitleContent}
       </div>
     );

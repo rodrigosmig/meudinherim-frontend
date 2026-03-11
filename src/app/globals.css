@@ -1,9 +1,26 @@
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
 /* Configuração de fonte padrão para todos os elementos */
 @layer base {
   * {
     font-family: var(--font-sans);
+  }
+
+  /* Estilo global de foco */
+  *:focus-visible {
+    outline: 2px solid #a855f7; /* purple-500 */
+    outline-offset: 2px;
+  }
+
+  /* Para elementos que não devem ter outline (opcional) */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid #a855f7; /* purple-500 */
+    outline-offset: 2px;
   }
 }
 
