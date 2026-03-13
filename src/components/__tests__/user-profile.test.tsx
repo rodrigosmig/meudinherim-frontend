@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
-import { act } from 'react';
 
 import UserProfile from "../user-profile";
 
@@ -38,10 +37,7 @@ describe("Componente UserProfile", () => {
     expect(screen.getByText("Configurações")).toBeVisible();
     expect(screen.getByText("Sair")).toBeVisible();
 
-
-    act(() => {
-      document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-    });
+    await user.keyboard("{Escape}");
 
     await waitFor(() => {
       expect(screen.queryByText("Perfil")).not.toBeInTheDocument();
