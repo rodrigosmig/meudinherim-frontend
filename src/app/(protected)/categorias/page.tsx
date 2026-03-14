@@ -9,7 +9,7 @@ import Select from "@/components/primitives/select";
 import { SelectItem } from "@/components/primitives/select-item";
 import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
-import { FilePenLine, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
 
 export default function Home() {
   const thData = ["Nome", "Tipo", "Exibir na Dashboard", "Ações"];
@@ -96,13 +96,8 @@ export default function Home() {
             </Table.Td>
             <Table.Td>
               <div className="flex items-center justify-end gap-2">
-                <Button variant="edit" icon={FilePenLine}>
-
-                </Button>
-                <Button variant="remove"
-                  icon={Trash2}>
-
-                </Button>
+                <Button icon={Pencil} tooltip="Editar" />
+                <Button icon={Trash2} tooltip="Remover" />
               </div>
             </Table.Td>
           </Table.Tr>
@@ -137,24 +132,8 @@ export default function Home() {
             </Table.Td>
             <Table.Td>
               <div className="flex items-center justify-end gap-2">
-                <Button variant="edit" icon={Pencil} tooltip="Editar">
-
-                </Button>
-                <Button variant="remove"
-                  icon={Trash2}>
-
-                </Button>
-                <Button variant="info" tooltip="Deletar"
-                  icon={Trash2}>
-
-                </Button>
-                <Button
-                  variant="cancel"
-                  icon={Trash2}
-                  tooltip="Cancelar"
-                >
-
-                </Button>
+                <Button icon={Pencil} tooltip="Editar" />
+                <Button icon={Trash2} tooltip="Remover" />
               </div>
             </Table.Td>
           </Table.Tr>

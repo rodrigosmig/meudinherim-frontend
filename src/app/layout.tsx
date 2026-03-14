@@ -1,16 +1,10 @@
 import "./globals.css";
 
 import { AuthProvider } from "@/contexts/auth-context";
-import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { Metadata } from "next";
 
 import BProgressProvider from "../providers/b-progress-provider";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans"
-});
 
 export const metadata: Metadata = {
   title: {
@@ -26,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={inter.variable}>
-      <body className={`${inter.className} antialiased text-sm md:text-base text-white`}>
+    <html lang="pt-BR">
+      <body className={`antialiased text-default-text`}>
         <Toaster richColors closeButton position="top-right" />
         <BProgressProvider>
           <AuthProvider>

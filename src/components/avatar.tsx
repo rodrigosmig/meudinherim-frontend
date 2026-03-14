@@ -16,11 +16,11 @@ export function Avatar({
   name,
   src,
   size = 40,
-  backgroundColor = '8b5cf6',
-  textColor = 'ffffff',
+  backgroundColor = '6759f4',
+  textColor = 'f8f8fa',
   className = '',
   ring = false,
-  ringColor = 'violet-500',
+  ringColor = 'purple-500',
   alt,
   ...props
 }: AvatarProps) {

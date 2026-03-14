@@ -16,7 +16,7 @@ function SidebarRoot() {
   return (
     <>
       <Button
-        className="md:hidden fixed top-4 left-4 z-50 bg-gray-900 p-2 rounded-lg border border-gray-800 text-gray-300 shadow-lg"
+        className="md:hidden fixed top-4 left-4 z-50 bg-gray-900 p-2 rounded-lg border border-gray-800 shadow-lg"
         onClick={() => setOpen(true)}
         aria-label="Abrir menu"
         icon={Menu}
@@ -129,7 +129,10 @@ function NavItem({ title, link, icon: Icon, collapsed = false, onNavigate }: Nav
       aria-label={collapsed ? title : undefined}
       onClick={() => onNavigate?.()}
       className={cn(
-        "sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-gray-300 hover:bg-violet-600/10 hover:border-l-3 border-violet-500 transition-all duration-200 ease-in-out",
+        "sidebar-item active",
+        "flex items-center gap-3 px-3 py-2.5 rounded-lg",
+        "hover:text-gray-300 hover:bg-primary/10 hover:border-l-3 border-primary",
+        "transition-all duration-100 ease-in-out",
         collapsed && "justify-center px-0",
       )}
     >

@@ -7,7 +7,7 @@ interface CardProps extends ComponentProps<'div'> {
 
 function CardRoot({ children, className, ...props }: CardProps) {
   return (
-    <div className={cn("bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden", className)} {...props}>
+    <div className={cn("bg-card rounded-2xl border border-gray-800 overflow-hidden", className)} {...props}>
       {children}
     </div>
   );

@@ -1,6 +1,64 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/woff2/PretendardVariable.woff2")
+    format("woff2-variations");
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-sans:
+    "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+@theme {
+  --color-purple-900: #29246a;
+  --color-purple-800: #312a80;
+  --color-purple-700: #3e35a6;
+  --color-purple-600: #4c40cd;
+  --color-purple-500: #6759f4;
+  --color-purple-400: #897efa;
+  --color-purple-300: #a49efb;
+  --color-purple-200: #c9c4fc;
+  --color-purple-100: #e8e7fe;
+  --color-purple-50: #f7f5ff;
+
+  --color-cyan-900: #23717b;
+  --color-cyan-800: #217e8c;
+  --color-cyan-700: #2096a7;
+  --color-cyan-600: #1ea8bc;
+  --color-cyan-500: #1ebad3;
+  --color-cyan-400: #52cce0;
+  --color-cyan-300: #7ed8e7;
+  --color-cyan-200: #a6e2ec;
+  --color-cyan-100: #d4f1f5;
+  --color-cyan-50: #f3fcfd;
+
+  --color-gray-900: #171a1e;
+  --color-gray-800: #242830;
+  --color-gray-700: #3e404d;
+  --color-gray-600: #525463;
+  --color-gray-500: #85899a;
+  --color-gray-400: #ababb7;
+  --color-gray-300: #cecfd7;
+  --color-gray-200: #e9e8ef;
+  --color-gray-100: #f1f0f5;
+  --color-gray-50: #f8f8fa;
+
+  --color-error: #f87171;
+  --color-primary: var(--color-purple-500);
+  --color-secondary: var(--color-purple-400);
+  --color-button-hover: var(--color-purple-100);
+  --color-card: var(--color-gray-800);
+  --color-default-text: var(--color-gray-50);
+  --color-input-text: var(--color-purple-500);
+}
+
 /* Configuração de fonte padrão para todos os elementos */
 @layer base {
   * {
@@ -9,23 +67,13 @@
 
   /* Estilo global de foco */
   *:focus-visible {
-    outline: 2px solid #a855f7; /* purple-500 */
-    outline-offset: 2px;
-  }
-
-  /* Para elementos que não devem ter outline (opcional) */
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
-    outline: 2px solid #a855f7; /* purple-500 */
+    outline: 2px solid var(--color-primary); /* primary color */
     outline-offset: 2px;
   }
 }
 
 body {
-  background: #030712;
-  color: #ffffff;
+  background: var(--color-gray-900);
+  color: var(--color-gray-50);
   font-family: var(--font-sans);
 }

@@ -14,17 +14,17 @@ export default function LoginPage() {
     <div className="flex flex-col w-screen h-screen">
       <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
         <Text variant="heading-large">MEU DINHEIRIM</Text>
-        <Card.Root className="w-96 max-w-md">
+        <Card.Root className="w-87.5 md:w-90">
           <LoginForm />
 
           <Card.Footer>
             <div className="flex flex-col gap-1">
-              <Link className="hover:text-violet-500" href="/recuperar-senha">
-                <Text className="hover:text-violet-500">Esqueci minha senha</Text>
+              <Link href="/recuperar-senha">
+                <Text className="hover:text-primary">Esqueci minha senha</Text>
               </Link>
 
               <Text>
-                Não tem uma conta? <Link href="/cadastrar-usuario" className="hover:text-violet-500">Cadastre-se</Link>
+                Não tem uma conta? <Link href="/cadastrar-usuario" className="hover:text-primary">Cadastre-se</Link>
               </Text>
             </div>
           </Card.Footer>

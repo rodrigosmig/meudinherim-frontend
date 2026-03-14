@@ -9,30 +9,21 @@ import Tooltip from "./tooltip";
 
 const buttonVariants = tv({
   base: [
-    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-bold hover:text-white transition-colors rounded-md"
+    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-bold transition-colors rounded-md"
   ],
   variants: {
     variant: {
       primary: [
-        "text-white bg-violet-600 border border-violet-500/50 hover:bg-violet-400",
-      ],
-      edit: [
-        "text-violet-500 border border-violet-500/50 hover:bg-violet-500",
-      ],
-      remove: [
-        "text-red-400 border border-red-400/50 hover:bg-red-400",
-      ],
-      info: [
-        "text-green-500 border border-green-500/50 hover:bg-green-500",
-      ],
-      cancel: [
-        "text-zinc-300 border border-zinc-300/50 hover:bg-zinc-600",
+        "bg-primary text-default-text hover:bg-button-hover hover:text-primary active:bg-secondary active:text-default-text border border-primary/50 ",
       ],
       pagination: [
-        "bg-gray-800 hover:bg-gray-700 w-8 h-8 text-gray-400",
+        "w-7 h-7 bg-button-hover hover:bg-purple-600 text-primary hover:text-default-text",
       ],
       icon: [
         "p-2 hover:bg-gray-800 rounded-lg transition-colors relative",
+      ],
+      back: [
+        "relative w-6 h-6 p-4 border border-gray-700 hover:text-primary rounded-md transition-colors",
       ],
     },
     disabled: {
@@ -47,7 +38,7 @@ const buttonVariants = tv({
 });
 
 interface ButtonProps extends ComponentProps<'button'> {
-  variant?: "primary" | "edit" | "remove" | "info" | "cancel" | "pagination" | "icon";
+  variant?: "primary" | "pagination" | "icon" | "back";
   icon?: ElementType;
   iconClassName?: string;
   children?: ReactNode;
@@ -69,9 +60,9 @@ export function Button({
       <button className={buttonVariants({ variant, className, disabled: props.disabled })}
         {...props}
       >
-        {Icon && <Icon className={cn("w-4 h-4 md:w-5 md:h-5", iconClassName)} />}
+        {Icon && <Icon className={cn("w-4 h-4", iconClassName)} />}
         {isLoading
-          ? <LoaderCircle className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
+          ? <LoaderCircle className="w-4 h-4 animate-spin" />
           : children && <span>{children}</span>
         }
 

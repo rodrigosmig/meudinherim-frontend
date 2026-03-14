@@ -4,7 +4,7 @@ import { ElementType } from "react";
 
 const iconVariants = tv({
   base: [
-    "w-4 h-4 md:w-5 md:h-5 text-gray-400"
+    "w-4 h-4 md:w-5 md:h-5"
   ],
   variants: {
     loading: {

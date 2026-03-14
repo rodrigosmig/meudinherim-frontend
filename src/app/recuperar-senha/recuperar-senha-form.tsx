@@ -11,6 +11,7 @@ import { recuperarSenha } from "@/services/auth-service";
 import { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -61,6 +62,7 @@ export function RecuperarSenhaForm() {
   return (
     <Form onSubmit={form.handleSubmit(onSubmit)}>
       <Input
+        icon={Mail}
         label="E-mail"
         placeholder="Digite seu e-mail"
         error={form.formState.errors.email}

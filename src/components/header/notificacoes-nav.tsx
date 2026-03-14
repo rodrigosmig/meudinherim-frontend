@@ -56,7 +56,7 @@ export default function NotificacoesNav({ }: Props) {
               >
                 <div className="flex flex-col">
                   <Text className="text-xs md:text-sm font-bold">{getTipoContaAgendada(notificacao.tipo)}</Text>
-                  <Text className="text-xs md:text-sm font-medium">Descrição: {notificacao.descricao}</Text>
+                  <Text className="text-xs md:text-sm font-medium">{notificacao.descricao}</Text>
                   <Text className="text-xs md:text-sm font-medium">Vencimento: {toBrDate(notificacao.dataVencimento)}</Text>
                 </div>
                 <Text className="text-xs md:text-sm font-bold">{toCurrency(5673.22)}</Text>
