@@ -56,8 +56,6 @@ function HeaderContent({ className, ...props }: HeaderContentProps) {
 
       <NotificacoesNav />
 
-
-
       <ContasNav />
 
       <FaturasNav />

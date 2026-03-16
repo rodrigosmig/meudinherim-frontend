@@ -16,7 +16,7 @@ export function FaturasNav() {
   const [faturas, setFaturas] = useState<Fatura[]>([]);
   const [total, setTotal] = useState(0);
   const isMobile = useMobile();
-  const align = isMobile ? "center" : "end";
+  const align = isMobile ? "end" : "center";
   const avatarSize = isMobile ? 38 : 42;
 
   const { data, isFetching: isFetchingFaturas } = useProximasFaturas();
@@ -36,12 +36,12 @@ export function FaturasNav() {
         </Button>
       </DropdownMenu.Trigger>
 
-      <DropdownMenu.Content align={align}>
-        <div className="px-2 text-center">
-          <Text className="text-sm md:text-base font-bold">Contas</Text>
+      <DropdownMenu.Content align={"end"} className="w-72">
+        <div className="px-2 text-center border-b border-default-border pb-2">
+          <Text variant="label-medium-bold">Faturas</Text>
         </div>
 
-        <div className="mt-2 space-x-3 divide-y divide-gray-800 max-h-76 overflow-y-auto overflow-x-hidden">
+        <div className="mt-2 space-x-3 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-default-border">
           {faturas.map((fatura) => (
             <DropdownMenu.Item key={fatura.uuid}>
               <Link
@@ -50,22 +50,24 @@ export function FaturasNav() {
               >
                 <Avatar name={fatura.cartao} size={avatarSize} />
 
-                <div className="w-full flex items-center gap-3 px-3 py-2 text-left">
+                <div className="w-full flex items-center py-1 text-left">
                   <div className="flex flex-col">
-                    <Text variant="label-medium" className="text-xs md:text-sm font-medium">{fatura.cartao}</Text>
-                    <Text className="text-xs md:text-sm font-medium">{toBrDate(fatura.dataVencimento)}</Text>
+                    <Text variant="label-small-bold">{fatura.cartao}</Text>
+                    <Text variant="label-small">{toBrDate(fatura.dataVencimento)}</Text>
                   </div>
-                  <Text className="text-xs md:text-sm font-bold">{toCurrency(fatura.valorTotal)}</Text>
+                  <div className="ml-auto">
+                    <Text variant="label-small-bold">{toCurrency(fatura.valorTotal)}</Text>
+                  </div>
                 </div>
               </Link>
             </DropdownMenu.Item>
           ))}
         </div>
 
-        <div className="mt-3 pt-2 border-t border-gray-800 px-3">
+        <div className="mt-3 pt-2 border-t border-default-border px-3">
           <div className="flex items-center justify-between">
-            <Text className="text-xs leading-[150%] font-semibold md:text-base">Total:</Text>
-            <Text className={`text-xs leading-[150%] font-semibold md:text-base text-red-400`}>{toCurrency(total)}</Text>
+            <Text variant="label-medium-bold">Total:</Text>
+            <Text variant="label-medium-bold" className={`text-red-400`}>{toCurrency(total)}</Text>
           </div>
         </div>
       </DropdownMenu.Content>

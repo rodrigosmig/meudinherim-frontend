@@ -37,24 +37,24 @@ export function ContasNav() {
         </Button>
       </DropdownMenu.Trigger>
 
-      <DropdownMenu.Content align={align}>
-        <div className="px-2 text-center">
-          <Text className="text-sm md:text-base font-bold">Contas</Text>
+      <DropdownMenu.Content align={align} className="w-64 md:w-72">
+        <div className="px-2 text-center border-b border-default-border pb-2">
+          <Text variant="label-medium-bold">Contas</Text>
         </div>
 
-        <div className="mt-2 space-x-3 divide-y divide-gray-800 max-h-76 overflow-y-auto overflow-x-hidden">
+        <div className="mt-2 space-x-3 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-default-border">
           {contas.map((conta: Conta) => (
             <DropdownMenu.Item key={conta.uuid}>
               <Link
                 href={`#`}
-                className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-gray-800 rounded-lg"
+                className="w-full flex items-center gap-2 px-2 py-2 hover:bg-gray-800 rounded-lg"
               >
                 <Avatar name={conta.nome} size={avatarSize} />
 
                 <div className="flex-1">
                   <div className="flex flex-col">
-                    <Text variant="paragraph-small" className="md:text-sm">{conta.nome}</Text>
-                    <Text variant="paragraph-small" className={`md:text-sm mt-1 ${conta.saldo < 0 ? 'text-red-400' : 'text-green-400'}`}>
+                    <Text variant="label-small-bold">{conta.nome}</Text>
+                    <Text variant="label-small" className={`md:text-sm mt-1 ${conta.saldo < 0 ? 'text-red-400' : 'text-cyan-400'}`}>
                       {toCurrency(conta.saldo)}
                     </Text>
                   </div>
@@ -64,10 +64,10 @@ export function ContasNav() {
           ))}
         </div>
 
-        <div className="mt-3 pt-2 border-t border-gray-800 px-3">
+        <div className="mt-3 pt-2 border-t border-default-border px-3">
           <div className="flex items-center justify-between">
-            <Text className="text-xs leading-[150%] font-semibold md:text-base">Total:</Text>
-            <Text className={`text-xs leading-[150%] font-semibold md:text-base ${total < 0 ? 'text-red-400' : 'text-green-400'}`}>{toCurrency(total)}</Text>
+            <Text variant="label-medium-bold">Total:</Text>
+            <Text variant="label-medium-bold" className={`${total < 0 ? 'text-red-400' : 'text-cyan-400'}`}>{toCurrency(total)}</Text>
           </div>
         </div>
       </DropdownMenu.Content>

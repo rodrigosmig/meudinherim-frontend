@@ -3,13 +3,13 @@
 import { cn } from "@/helpers/string-helper";
 import { LoaderCircle } from "lucide-react";
 import { ComponentProps, ElementType, ReactNode } from "react";
-import { tv } from "tailwind-variants";
+import { tv, VariantProps } from "tailwind-variants";
 
 import Tooltip from "./tooltip";
 
 const buttonVariants = tv({
   base: [
-    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-bold transition-colors rounded-md"
+    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-medium transition-colors rounded-md"
   ],
   variants: {
     variant: {
@@ -37,8 +37,7 @@ const buttonVariants = tv({
   },
 });
 
-interface ButtonProps extends ComponentProps<'button'> {
-  variant?: "primary" | "pagination" | "icon" | "back";
+interface ButtonProps extends ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
   icon?: ElementType;
   iconClassName?: string;
   children?: ReactNode;

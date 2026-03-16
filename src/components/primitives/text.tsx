@@ -5,18 +5,21 @@ export const textVariants = tv({
   base: "text-gray-300",
   variants: {
     variant: {
-      "heading-large": "text-2xl font-bold",
-      "heading-medium": "text-xl font-bold",
-      "heading-small": "text-base font-bold",
-      "paragraph-large": "text-base font-medium",
-      "paragraph-medium": "text-sm font-medium",
-      "paragraph-small": "text-xs font-medium",
-      "label-medium": "text-base font-semibold",
-      "label-small": "text-xs font-semibold",
+      "heading-large": "text-2xl font-bold", //24px
+      "heading-medium": "text-xl font-bold", //20px
+      "heading-small": "text-lg font-bold", //18px
+      "label-mini": "text-xs font-regular", //12px
+      "label-small": "text-sm font-regular", //14px
+      "label-medium": "text-base font-regular", //16px
+      "label-large": "text-lg font-regular", //18px
+      "label-mini-bold": "text-xs font-bold", //12px
+      "label-small-bold": "text-sm font-bold", //14px
+      "label-medium-bold": "text-base font-bold", //16px
+      "label-large-bold": "text-lg font-bold", //18px
     },
   },
   defaultVariants: {
-    variant: "paragraph-medium",
+    variant: "label-medium",
   },
 });
 

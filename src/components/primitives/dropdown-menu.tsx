@@ -37,7 +37,7 @@ export function DropdownContent({ className, align = "center", children }: Dropd
       side="bottom"
       align={align}
       sideOffset={2}
-      className={cn("rounded-lg border border-gray-800 bg-gray-700 shadow-lg z-50 p-2",
+      className={cn("rounded-lg border border-default-border bg-gray-700 shadow-lg z-50 p-2",
         className,
         "data-[state=open]:animate-in",
         "data-[state=closed]:animate-out",

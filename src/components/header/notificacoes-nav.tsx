@@ -42,30 +42,32 @@ export default function NotificacoesNav({ }: Props) {
         </Button>
       </DropdownMenu.Trigger>
 
-      <DropdownMenu.Content align={align}>
-        <div className="px-2 text-center">
-          <Text className="text-sm md:text-base font-bold">Notificações</Text>
+      <DropdownMenu.Content align={align} className="w-72 md:w-80">
+        <div className="px-2 text-center border-b border-default-border pb-2">
+          <Text variant="label-medium-bold">Notificações</Text>
         </div>
 
-        <div className="mt-2 space-x-3 divide-y divide-gray-800 max-h-76 overflow-y-auto overflow-x-hidden">
+        <div className="mt-2 space-x-4 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-default-border">
           {notificacoes.map((notificacao) => (
             <DropdownMenu.Item key={notificacao.id}>
               <Link
                 href={`#`}
-                className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-gray-800 rounded-lg"
+                className="w-full flex items-center gap-3 px-2 py-2 hover:bg-gray-800 rounded-lg transition-colors"
               >
                 <div className="flex flex-col">
-                  <Text className="text-xs md:text-sm font-bold">{getTipoContaAgendada(notificacao.tipo)}</Text>
-                  <Text className="text-xs md:text-sm font-medium">{notificacao.descricao}</Text>
-                  <Text className="text-xs md:text-sm font-medium">Vencimento: {toBrDate(notificacao.dataVencimento)}</Text>
+                  <Text variant="label-small-bold">{getTipoContaAgendada(notificacao.tipo)}</Text>
+                  <Text variant="label-small">{notificacao.descricao}</Text>
+                  <Text variant="label-small">Vencimento: {toBrDate(notificacao.dataVencimento)}</Text>
                 </div>
-                <Text className="text-xs md:text-sm font-bold">{toCurrency(5673.22)}</Text>
+                <div className="ml-auto">
+                  <Text variant="label-small-bold" className="text-center">{toCurrency(notificacao.valor)}</Text>
+                </div>
               </Link>
             </DropdownMenu.Item>
           ))}
         </div>
 
-        <div className="mt-3 pt-2 border-t border-gray-800 px-3">
+        <div className="px-2 mt-2">
           <Button className="w-full">
             Marcar todas como lidas
           </Button>
