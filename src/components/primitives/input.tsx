@@ -25,12 +25,12 @@ export function Input({
       {label && <label htmlFor={label} className="mb-1">{label}</label>}
       <div
         className={cn(
-          "flex w-full bg-gray-800 hover:bg-gray-900 border border-gray-600",
-          "text-input-text items-center gap-2 rounded-lg px-3 py-2 shadow-sm focus-within:ring-2",
+          "flex w-full bg-gray-800 hover:bg-gray-900 border border-gray-700",
+          "text-input-text items-center gap-2 rounded-lg px-3 py-2 shadow-2xs focus-within:ring-2",
           isError ? "focus-within:ring-red-400" : "focus-within:ring-primary",
         )}
       >
-        {Icon && <Icon className="text-gray-400 w-4 md:w-5 h-4 md:h-5" />}
+        {Icon && <Icon className="text-gray-500 w-4 h-4 md:w-5 md:h-5" />}
         <input
           id={label}
           type="text"

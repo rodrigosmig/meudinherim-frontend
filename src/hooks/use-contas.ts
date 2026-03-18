@@ -12,7 +12,7 @@ export function useContas() {
       const response = await contaService.listar({
         comPaginacao: false,
         status: Status.ATIVO,
-        pagina: 0,
+        pagina: 1,
         size: 10,
       });
       return response.data;

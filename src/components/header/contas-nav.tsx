@@ -46,7 +46,7 @@ export function ContasNav() {
           {contas.map((conta: Conta) => (
             <DropdownMenu.Item key={conta.uuid}>
               <Link
-                href={`#`}
+                href={`/contas/${conta.uuid}/lancamentos`}
                 className="w-full flex items-center gap-2 px-2 py-2 hover:bg-gray-800 rounded-lg"
               >
                 <Avatar name={conta.nome} size={avatarSize} />

@@ -1,8 +1,16 @@
 import "./globals.css";
 
 import { AuthProvider } from "@/contexts/auth-context";
-import { Toaster } from "sonner";
 import { Metadata } from "next";
+import localFont from "next/font/local";
+import { Toaster } from "sonner";
+
+const pretendard = localFont({
+  src: "../../public/fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  weight: "100 900",
+  display: "swap",
+});
 
 import BProgressProvider from "../providers/b-progress-provider";
 
@@ -20,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={pretendard.variable}>
       <body className={`antialiased text-default-text`}>
         <Toaster richColors closeButton position="top-right" />
         <BProgressProvider>

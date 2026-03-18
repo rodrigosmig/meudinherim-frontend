@@ -1,3 +1,4 @@
+import { paraPaginaBackend } from "@/helpers/paginacao-helper";
 import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { ContasRequest, ListaDeContas } from "@/types/contas";
 import { ApiResponse } from "@/types/api";
@@ -9,7 +10,7 @@ export const contaService = {
     const params = new URLSearchParams({
       status: request.status,
       comPaginacao: request.comPaginacao.toString(),
-      pagina: request.pagina.toString(),
+      page: paraPaginaBackend(request.pagina).toString(),
       size: request.size.toString(),
     });
 

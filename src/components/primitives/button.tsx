@@ -9,7 +9,7 @@ import Tooltip from "./tooltip";
 
 const buttonVariants = tv({
   base: [
-    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-medium transition-colors rounded-md"
+    "flex items-center justify-center gap-2 px-2 py-2 text-xs md:text-sm font-semibold transition-colors rounded-md"
   ],
   variants: {
     variant: {
@@ -17,7 +17,7 @@ const buttonVariants = tv({
         "bg-primary text-default-text hover:bg-button-hover hover:text-primary active:bg-secondary active:text-default-text border border-primary/50 ",
       ],
       pagination: [
-        "w-7 h-7 bg-button-hover hover:bg-purple-600 text-primary hover:text-default-text",
+        "w-7 h-7 bg-transparent border border-primary hover:bg-purple-600 text-primary hover:text-default-text",
       ],
       icon: [
         "p-2 hover:bg-gray-800 rounded-lg transition-colors relative",
