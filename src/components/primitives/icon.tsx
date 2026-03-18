@@ -1,10 +1,10 @@
 import { cn } from "@/helpers/string-helper";
-import { tv } from "tailwind-variants";
 import { ElementType } from "react";
+import { tv } from "tailwind-variants";
 
 const iconVariants = tv({
   base: [
-    "w-4 h-4 md:w-5 md:h-5"
+    "w-4 h-4"
   ],
   variants: {
     loading: {

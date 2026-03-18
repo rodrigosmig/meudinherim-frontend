@@ -7,6 +7,7 @@ import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import Heading from "@/components/primitives/heading";
 import { Input } from "@/components/primitives/input";
+import Loading from "@/components/primitives/loading";
 import Skeleton from "@/components/primitives/skeleton";
 import Text from "@/components/primitives/text";
 import { toCurrency } from "@/helpers/string-helper";
@@ -14,13 +15,18 @@ import { useContas } from "@/hooks/use-contas";
 import { useLancamentosConta } from "@/hooks/use-lancamentos-conta";
 import { LancamentoConta } from "@/types/lancamento-conta";
 import { Calendar, Filter, Plus, Search } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import TabelaLancamentos from "./tabelaLancamentos";
 
 export default function LancamentosPage() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const query = searchParams?.get("q") ?? "";
+
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [search, setSearch] = useState(query);
 
   const params = useParams<{ uuid: string }>();
   const uuid = params.uuid;
@@ -40,18 +46,57 @@ export default function LancamentosPage() {
     paraElemento: data?.pagina.paginacao?.paraElemento || 0,
   }
 
+  const isLoading = isContasLoading || isLancamentosLoading;
+  const isFetching = isContasFetching || isLancamentosFetching;
+
   useEffect(() => {
     if (data) {
       setLancamentos(data.pagina.conteudo)
     }
   }, [data])
 
-  const isLoading = isContasLoading || isLancamentosLoading;
+  useEffect(() => {
+    setSearch(query);
+  }, [query]);
 
   const handleChangePerPage = useCallback((value: number) => {
     setPage(1)
     setPerPage(value)
   }, []);
+
+  const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const nextSearch = event.target.value;
+    setSearch(nextSearch);
+
+    setPage(1);
+
+    const params = new URLSearchParams(searchParams?.toString() ?? "");
+
+    if (nextSearch.trim().length > 0) {
+      params.set("q", nextSearch);
+    } else {
+      params.delete("q");
+    }
+
+    const queryString = params.toString();
+    const nextUrl = queryString ? `${pathname}?${queryString}` : pathname;
+    window.history.replaceState(null, "", nextUrl);
+  }, [pathname, searchParams]);
+
+  const lancamentosFiltrados = useMemo(() => {
+    const termo = search.trim().toLocaleLowerCase();
+
+    if (!termo) {
+      return lancamentos;
+    }
+
+    return lancamentos.filter((lancamento) => {
+      return (
+        lancamento.descricao.toLocaleLowerCase().includes(termo)
+        || lancamento.categoria.descricao.toLocaleLowerCase().includes(termo)
+      );
+    });
+  }, [lancamentos, search]);
 
   if (isLoading) {
     return (
@@ -72,7 +117,10 @@ export default function LancamentosPage() {
   return (
     <>
       <Header.Title>
-        <Heading variant="heading2">{conta?.nome}</Heading>
+        <div className="flex gap-2 items-center">
+          <Heading variant="heading2">{conta?.nome}</Heading>
+          {isFetching && <Loading />}
+        </div>
         <div className="flex flex-col items-end mr-4"> {/* verificar se é possível padronizar para todoas as paginas */}
           <Text variant="paragraph-small">Saldo:</Text>
           <Heading variant="heading4" className="text-positive">{toCurrency(conta?.saldo || 0)}</Heading>
@@ -108,12 +156,17 @@ export default function LancamentosPage() {
             <FiltroPorPagina value={perPage} onChange={handleChangePerPage} />
 
             <div className="flex-1">
-              <Input placeholder="Pesquisar" icon={Search} />
+              <Input
+                placeholder="Pesquisar"
+                icon={Search}
+                value={search}
+                onChange={handleSearchChange}
+              />
             </div>
           </div>
         </Card.Header>
 
-        <TabelaLancamentos lancamentos={lancamentos} />
+        <TabelaLancamentos lancamentos={lancamentosFiltrados} />
 
         <Card.Footer>
           <Pagination paginacao={paginacao} onPageChange={setPage} />
