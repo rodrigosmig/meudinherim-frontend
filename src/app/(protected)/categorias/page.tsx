@@ -1,6 +1,5 @@
 "use client"; //TODO tentar remover isso
 
-import { Header } from "@/components/header/header";
 import Pagination from "@/components/pagination";
 import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
@@ -16,13 +15,7 @@ export default function Home() {
 
   return (
     <>
-      <Header.Title>
-        <Text variant="heading-large">Categorias</Text>
-      </Header.Title>
 
-      <div className="mb-2 block md:hidden">
-        <Text variant="heading-large">Categorias</Text>
-      </div>
 
       <Card.Root>
         <Card.Header>

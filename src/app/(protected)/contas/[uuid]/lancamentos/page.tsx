@@ -2,14 +2,12 @@
 
 import FiltroPorPagina from "@/components/filtro-por-pagina";
 import { Header } from "@/components/header/header";
+import ResponsivePageTitle from "@/components/header/responsive-page-title";
 import Pagination from "@/components/pagination";
 import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
-import Heading from "@/components/primitives/heading";
 import { Input } from "@/components/primitives/input";
-import Loading from "@/components/primitives/loading";
 import Skeleton from "@/components/primitives/skeleton";
-import Text from "@/components/primitives/text";
 import { toCurrency } from "@/helpers/string-helper";
 import { useContas } from "@/hooks/use-contas";
 import { useLancamentosConta } from "@/hooks/use-lancamentos-conta";
@@ -116,24 +114,13 @@ export default function LancamentosPage() {
 
   return (
     <>
-      <Header.Title>
-        <div className="flex gap-2 items-center">
-          <Heading variant="heading2">{conta?.nome}</Heading>
-          {isFetching && <Loading />}
-        </div>
-        <div className="flex flex-col items-end mr-4"> {/* verificar se é possível padronizar para todoas as paginas */}
-          <Text variant="paragraph-small">Saldo:</Text>
-          <Heading variant="heading4" className="text-positive">{toCurrency(conta?.saldo || 0)}</Heading>
-        </div>
-      </Header.Title>
-
-      <div className="flex justify-between md:hidden mb-2 px-1">
-        <Heading variant="heading2">{conta?.nome}</Heading>
-        <div className="flex flex-col items-end">
-          <Text variant="caption">Saldo:</Text>
-          <Text variant="paragraph-medium" className="font-bold text-positive">{toCurrency(conta?.saldo || 0)}</Text>
-        </div>
-      </div>
+      <ResponsivePageTitle
+        title={conta?.nome || ""}
+        isLoading={isFetching}
+        metricLabel="Saldo:"
+        metricValue={toCurrency(conta?.saldo || 0)}
+        metricValueClassName={(conta?.saldo || 0) >= 0 ? "text-positive" : "text-negative"}
+      />
 
       <Card.Root className="mb-6">
         <Card.Header>

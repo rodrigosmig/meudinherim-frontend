@@ -43,8 +43,9 @@
 
   --color-error: #f87171;
   --color-primary: var(--color-purple-500);
-  --color-positive: var(--color-cyan-500);
   --color-secondary: var(--color-purple-400);
+  --color-positive: var(--color-cyan-400);
+  --color-negative: var(--color-gray-300);
   --color-button-hover: var(--color-purple-100);
   --color-card: var(--color-gray-800);
   --color-default-text: var(--color-gray-50);
