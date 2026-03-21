@@ -1,5 +1,5 @@
-import Select from "./primitives/select";
 import { SelectItem } from "./primitives/select-item";
+import Select from "./primitives/select";
 import Text from "./primitives/text";
 
 type FiltroPorPaginaProps = {
@@ -9,10 +9,10 @@ type FiltroPorPaginaProps = {
 
 export default function FiltroPorPagina({ value, onChange }: FiltroPorPaginaProps) {
   return (
-    <div className="flex items-center gap-2 text-sm text-gray-400">
+    <div className="flex items-center gap-2 text-default-text">
       <Select
         value={String(value)}
-        className="md:w-22"
+        className="md:w-22 text-xs md:text-sm h-full"
         onValueChange={(selectedValue) => onChange(Number(selectedValue))}
       >
         <SelectItem text="10" value="10" />

@@ -1,6 +1,7 @@
 'use client'
 
 import FiltroPorPagina from "@/components/filtro-por-pagina";
+import FiltroPorPeriodo from "@/components/filtro-por-periodo";
 import { Header } from "@/components/header/header";
 import ResponsivePageTitle from "@/components/header/responsive-page-title";
 import Pagination from "@/components/pagination";
@@ -10,9 +11,10 @@ import { Input } from "@/components/primitives/input";
 import Skeleton from "@/components/primitives/skeleton";
 import { toCurrency } from "@/helpers/string-helper";
 import { useContas } from "@/hooks/use-contas";
+import { useDateFilter } from "@/hooks/use-date-filter";
 import { useLancamentosConta } from "@/hooks/use-lancamentos-conta";
 import { LancamentoConta } from "@/types/lancamento-conta";
-import { Calendar, Filter, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import TabelaLancamentos from "./tabelaLancamentos";
@@ -26,12 +28,18 @@ export default function LancamentosPage() {
   const [perPage, setPerPage] = useState(10);
   const [search, setSearch] = useState(query);
 
+  const { dateRange, stringDateBR, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
+
+  console.log(11111, stringDateBR)
+  console.log(22222, stringDateUS)
+  console.log(33333, dateRange)
+
   const params = useParams<{ uuid: string }>();
   const uuid = params.uuid;
   const [lancamentos, setLancamentos] = useState<LancamentoConta[]>([])
 
   const { data: contas, isLoading: isContasLoading, isFetching: isContasFetching } = useContas();
-  const { data, isLoading: isLancamentosLoading, isFetching: isLancamentosFetching, error } = useLancamentosConta(uuid, page, perPage);
+  const { data, isLoading: isLancamentosLoading, isFetching: isLancamentosFetching, error } = useLancamentosConta(uuid, page, perPage, stringDateUS.from, stringDateUS.to);
 
   const conta = contas?.contas.find((c) => c.uuid === uuid);
 
@@ -107,7 +115,7 @@ export default function LancamentosPage() {
         </Header.Title>
 
         <Skeleton rounded="lg" className="w-full h-20 mb-6" />
-        <Skeleton rounded="lg" className="w-full h-1/2" />
+        <Skeleton rounded="lg" className="w-full h-225" />
       </>
     )
   }
@@ -124,11 +132,12 @@ export default function LancamentosPage() {
 
       <Card.Root className="mb-6">
         <Card.Header>
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <div className="flex items-center gap-4 ">
-              <Input placeholder="Filtrar por período" icon={Calendar} />
-              <Button icon={Filter} tooltip="Filtrar" aria-label="Filtrar" />
-            </div>
+          <div className="flex flex-col md:flex-row flex-wrap md:items-center md:justify-between gap-6">
+            <FiltroPorPeriodo
+              selectedRange={dateRange}
+              onRangeChange={handleChangeDateFilter}
+              onClickFilter={handleOnClickFilter}
+            />
 
             <Button icon={Plus}>
               Adicionar

@@ -1,9 +1,9 @@
-import { Paginacao } from "@/types/pagina";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Paginacao } from "@/types/pagina";
 
 import { Button } from "./primitives/button";
-import Icon from "./primitives/icon";
 import Text from "./primitives/text";
+import Icon from "./primitives/icon";
 
 function gerarArrayDePaginas(from: number, to: number) {
   return [...new Array(to - from)].map((_, index) => {
@@ -32,6 +32,10 @@ export default function Pagination({ paginacao, onPageChange }: PaginationProps)
   const nextPages = paginaAtual < ultimaPagina
     ? gerarArrayDePaginas(paginaAtual, Math.min(paginaAtual + contagemDeIrmaos, ultimaPagina))
     : [];
+
+  if (paginaAtual > ultimaPagina) {
+    onPageChange(ultimaPagina);
+  }
 
   return (
     <div className="flex flex-col md:flex-row items-center gap-3 justify-between">

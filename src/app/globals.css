@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
+@import "react-day-picker/dist/style.css";
 
 :root {
   --font-sans:
@@ -70,4 +71,76 @@ body {
   background: var(--color-gray-900);
   color: var(--color-gray-50);
   font-family: var(--font-sans);
+}
+
+.periodo-day-picker {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-accent-background-color: rgb(103 89 244 / 0.16);
+  --rdp-selected-border: 1px solid var(--color-purple-400);
+  --rdp-today-color: var(--color-purple-300);
+  --rdp-range_middle-background-color: rgb(103 89 244 / 0.3);
+  --rdp-range_middle-color: var(--color-gray-50);
+  --rdp-range_start-color: var(--color-gray-50);
+  --rdp-range_end-color: var(--color-gray-50);
+  --rdp-range_start-date-background-color: var(--color-purple-500);
+  --rdp-range_end-date-background-color: var(--color-purple-500);
+}
+
+.periodo-day-picker .rdp-chevron {
+  fill: var(--color-primary);
+}
+
+.periodo-day-picker .rdp-button_previous:hover,
+.periodo-day-picker .rdp-button_next:hover {
+  background-color: rgb(103 89 244 / 0.14);
+  border-radius: 0.5rem;
+}
+
+.periodo-day-picker .rdp-today:not(.rdp-outside) .rdp-day_button {
+  font-weight: 500;
+}
+
+.periodo-day-picker .rdp-day_button {
+  transition: background-color 120ms ease;
+}
+
+.periodo-day-picker
+  .rdp-day:not(.rdp-selected):not(.rdp-disabled):not(.rdp-outside)
+  .rdp-day_button:hover {
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+@media (max-width: 767px) {
+  .periodo-day-picker {
+    font-size: 0.78rem;
+  }
+
+  .periodo-day-picker .rdp-month_caption {
+    font-size: 0.78rem;
+  }
+
+  .periodo-day-picker .rdp-caption_label,
+  .periodo-day-picker .rdp-dropdown,
+  .periodo-day-picker .rdp-dropdown_root,
+  .periodo-day-picker .rdp-dropdown option,
+  .periodo-day-picker .rdp-weekday,
+  .periodo-day-picker .rdp-day_button {
+    font-size: 0.72rem;
+  }
+
+  .periodo-day-picker .rdp-day_button {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  .periodo-day-picker .rdp-button_previous,
+  .periodo-day-picker .rdp-button_next {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  .periodo-day-picker .rdp-chevron {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
 }

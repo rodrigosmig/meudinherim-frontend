@@ -63,7 +63,7 @@ async function proxy(request: Request, path: string[]) {
     duplex: hasBody ? "half" : undefined,
     cache: "no-store",
   } as RequestInit);
-
+  console.log("Resposta do upstream:", response);
   const contentType = response.headers.get("content-type") ?? "";
 
   if (contentType.includes("application/json")) {

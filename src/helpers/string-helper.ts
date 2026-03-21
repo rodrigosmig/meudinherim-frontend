@@ -28,3 +28,7 @@ export const reverseBrDate = (date: string) => {
 export const toUsDate = (date: Date) => {
   return format(date, "yyyy-MM-dd");
 };
+
+export const toStringBrDate = (date: Date) => {
+  return format(date, "dd/MM/yyyy");
+};

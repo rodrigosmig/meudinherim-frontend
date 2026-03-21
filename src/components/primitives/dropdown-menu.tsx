@@ -3,12 +3,15 @@ import { cn } from "@/helpers/string-helper";
 
 interface DropdownProps {
   children: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  modal?: boolean;
 }
 
-export function DropdownRoot({ children }: DropdownProps) {
+export function DropdownRoot({ children, open, onOpenChange, modal }: DropdownProps) {
   return (
     <div className="relative">
-      <DropdownPrimitive.Root>
+      <DropdownPrimitive.Root open={open} onOpenChange={onOpenChange} modal={modal}>
         {children}
       </DropdownPrimitive.Root>
     </div>
