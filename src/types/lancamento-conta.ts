@@ -1,3 +1,5 @@
+import { TipoCategoria } from "@/helpers/enum/tipo-categoria";
+
 export interface LancamentosContaRequest {
   idConta: string;
   inicio: string;
@@ -19,6 +21,7 @@ export type LancamentoConta = {
   categoria: {
     uuid: string;
     descricao: string;
+    tipo: TipoCategoria;
   };
   conta: {
     uuid: string;

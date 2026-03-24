@@ -8,7 +8,13 @@ const hasCurrencyText = (value: number) => (_: string, element: Element | null) 
   if (!element?.textContent) return false;
 
   const normalize = (text: string) => text.replace(/\s+/g, "");
-  return normalize(element.textContent) === normalize(toCurrency(value));
+  const expected = normalize(toCurrency(value));
+  const hasSameText = normalize(element.textContent) === expected;
+  const childHasSameText = Array.from(element.children).some((child) => {
+    return normalize(child.textContent ?? "") === expected;
+  });
+
+  return hasSameText && !childHasSameText;
 };
 
 const mockedUseProximasFaturas = jest.fn();
@@ -64,7 +70,7 @@ describe("Componente FaturasNav", () => {
 
     await user.click(screen.getByRole("button", { name: "Faturas" }));
 
-    expect(screen.getByText("Contas")).toBeVisible();
+    expect(screen.getByText("Faturas")).toBeVisible();
     expect(screen.getByText("Cartao Black")).toBeVisible();
     expect(screen.getByText("Cartao Gold")).toBeVisible();
     expect(screen.getByText(toBrDate("2026-03-20"))).toBeVisible();

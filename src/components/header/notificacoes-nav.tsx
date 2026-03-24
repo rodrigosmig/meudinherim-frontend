@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
+import Heading from "../primitives/heading";
 import Icon from "../primitives/icon";
 import Text from "../primitives/text";
 
@@ -44,7 +45,7 @@ export default function NotificacoesNav({ }: Props) {
 
       <DropdownMenu.Content align={align} className="w-72 md:w-80">
         <div className="px-2 text-center border-b border-default-border pb-2">
-          <Text variant="label-medium-bold">Notificações</Text>
+          <Heading variant="heading4">Notificações</Heading>
         </div>
 
         <div className="mt-2 space-x-4 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-default-border">
@@ -55,12 +56,12 @@ export default function NotificacoesNav({ }: Props) {
                 className="w-full flex items-center gap-3 px-2 py-2 hover:bg-gray-800 rounded-lg transition-colors"
               >
                 <div className="flex flex-col">
-                  <Text variant="label-small-bold">{getTipoContaAgendada(notificacao.tipo)}</Text>
-                  <Text variant="label-small">{notificacao.descricao}</Text>
-                  <Text variant="label-small">Vencimento: {toBrDate(notificacao.dataVencimento)}</Text>
+                  <Text className="font-bold">{getTipoContaAgendada(notificacao.tipo)}</Text>
+                  <Text variant="paragraph-small">{notificacao.descricao}</Text>
+                  <Text variant="paragraph-small"><strong>Vencimento:</strong> {toBrDate(notificacao.dataVencimento)}</Text>
                 </div>
                 <div className="ml-auto">
-                  <Text variant="label-small-bold" className="text-center">{toCurrency(notificacao.valor)}</Text>
+                  <Text className="font-bold text-center">{toCurrency(notificacao.valor)}</Text>
                 </div>
               </Link>
             </DropdownMenu.Item>

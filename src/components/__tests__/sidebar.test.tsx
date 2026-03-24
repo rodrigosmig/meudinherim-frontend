@@ -3,6 +3,21 @@ import userEvent from "@testing-library/user-event";
 
 import { Sidebar } from "../sidebar";
 
+jest.mock('next/link', () => {
+  return ({ children, ...props }: any) => {
+    // Adiciona preventDefault para evitar navegação real nos testes
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      if (props.onClick) props.onClick(e);
+    };
+    return (
+      <a {...props} onClick={handleClick}>
+        {children}
+      </a>
+    );
+  };
+});
+
 describe("Componente Sidebar", () => {
   it("deve renderizar itens principais e seções", () => {
     render(<Sidebar />);
@@ -77,5 +92,42 @@ describe("Componente Sidebar", () => {
     await waitFor(() => {
       expect(btnClose).not.toBeVisible();
     });
+  });
+
+  it("deve fechar o menu mobile ao clicar em um item de navegação", async () => {
+    window.innerWidth = 375;
+    window.dispatchEvent(new Event("resize"));
+
+    const user = userEvent.setup();
+    render(<Sidebar />);
+    const btnOpen = screen.getByRole("button", { name: "Abrir menu" });
+    await user.click(btnOpen);
+
+    // Lista de todos os itens de navegação
+    const navItems = [
+      "Dashboard",
+      "Categorias",
+      "Tags",
+      "Contas Bancárias",
+      "Cartões de Crédito",
+      "Contas a Pagar",
+      "Contas a Receber",
+      "Contas a Pagar/Receber",
+      "Lançamentos por categoria"
+    ];
+
+    for (const item of navItems) {
+      // Reabre o menu antes de cada clique
+      if (!screen.queryByRole("button", { name: "Fechar menu" })) {
+        const btnOpenAgain = screen.getByRole("button", { name: "Abrir menu" });
+        await user.click(btnOpenAgain);
+      }
+      const link = screen.getByRole("link", { name: item });
+      // Simula apenas o clique normalmente (userEvent v14+ não aceita mais 2º argumento)
+      await user.click(link);
+      await waitFor(() => {
+        expect(screen.queryByRole("button", { name: "Fechar menu" })).not.toBeInTheDocument();
+      });
+    }
   });
 });

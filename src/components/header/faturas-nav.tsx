@@ -8,6 +8,7 @@ import Link from "next/link";
 
 import { DropdownMenu } from "../primitives/dropdown-menu";
 import { Button } from "../primitives/button";
+import Heading from "../primitives/heading";
 import Text from "../primitives/text";
 import Icon from "../primitives/icon";
 import { Avatar } from "../avatar";
@@ -38,7 +39,7 @@ export function FaturasNav() {
 
       <DropdownMenu.Content align={"end"} className="w-72">
         <div className="px-2 text-center border-b border-default-border pb-2">
-          <Text variant="label-medium-bold">Faturas</Text>
+          <Heading variant="heading4">Faturas</Heading>
         </div>
 
         <div className="mt-2 space-x-3 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-default-border">
@@ -52,11 +53,11 @@ export function FaturasNav() {
 
                 <div className="w-full flex items-center py-1 text-left">
                   <div className="flex flex-col">
-                    <Text variant="label-small-bold">{fatura.cartao}</Text>
-                    <Text variant="label-small">{toBrDate(fatura.dataVencimento)}</Text>
+                    <Text>{fatura.cartao}</Text>
+                    <Text>{toBrDate(fatura.dataVencimento)}</Text>
                   </div>
                   <div className="ml-auto">
-                    <Text variant="label-small-bold">{toCurrency(fatura.valorTotal)}</Text>
+                    <Text className="font-bold">{toCurrency(fatura.valorTotal)}</Text>
                   </div>
                 </div>
               </Link>
@@ -66,8 +67,8 @@ export function FaturasNav() {
 
         <div className="mt-3 pt-2 border-t border-default-border px-3">
           <div className="flex items-center justify-between">
-            <Text variant="label-medium-bold">Total:</Text>
-            <Text variant="label-medium-bold" className={`text-red-400`}>{toCurrency(total)}</Text>
+            <Text className="font-bold">Total:</Text>
+            <Text className={`font-bold ${total > 0 ? "text-negative" : "text-positive"}`}>{toCurrency(total)}</Text>
           </div>
         </div>
       </DropdownMenu.Content>

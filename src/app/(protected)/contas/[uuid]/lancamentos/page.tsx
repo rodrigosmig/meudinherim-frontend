@@ -17,7 +17,7 @@ import { LancamentoConta } from "@/types/lancamento-conta";
 import { Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import TabelaLancamentos from "./tabelaLancamentos";
+import TabelaLancamentosConta from "./tabela-lancamentos-conta";
 
 export default function LancamentosPage() {
   const pathname = usePathname();
@@ -130,8 +130,8 @@ export default function LancamentosPage() {
         metricValueClassName={(conta?.saldo || 0) >= 0 ? "text-positive" : "text-negative"}
       />
 
-      <Card.Root className="mb-6">
-        <Card.Header>
+      <Card.Root className="mb-4">
+        <Card.Header className="py-3">
           <div className="flex flex-col md:flex-row flex-wrap md:items-center md:justify-between gap-6">
             <FiltroPorPeriodo
               selectedRange={dateRange}
@@ -162,7 +162,7 @@ export default function LancamentosPage() {
           </div>
         </Card.Header>
 
-        <TabelaLancamentos lancamentos={lancamentosFiltrados} />
+        <TabelaLancamentosConta lancamentos={lancamentosFiltrados} />
 
         <Card.Footer>
           <Pagination paginacao={paginacao} onPageChange={setPage} />

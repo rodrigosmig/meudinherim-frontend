@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Avatar } from "../avatar";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
+import Heading from "../primitives/heading";
 import Icon from "../primitives/icon";
 import Text from "../primitives/text";
 
@@ -39,7 +40,7 @@ export function ContasNav() {
 
       <DropdownMenu.Content align={align} className="w-64 md:w-72">
         <div className="px-2 text-center border-b border-default-border pb-2">
-          <Text variant="label-medium-bold">Contas</Text>
+          <Heading variant="heading4">Contas</Heading>
         </div>
 
         <div className="mt-2 space-x-3 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-default-border">
@@ -53,8 +54,8 @@ export function ContasNav() {
 
                 <div className="flex-1">
                   <div className="flex flex-col">
-                    <Text variant="label-small-bold">{conta.nome}</Text>
-                    <Text variant="label-small" className={`md:text-sm mt-1 ${conta.saldo < 0 ? 'text-red-400' : 'text-cyan-400'}`}>
+                    <Text className="font-bold">{conta.nome}</Text>
+                    <Text className={`md:text-sm mt-1 ${conta.saldo < 0 ? 'text-negative' : 'text-cyan-400'}`}>
                       {toCurrency(conta.saldo)}
                     </Text>
                   </div>
@@ -66,8 +67,8 @@ export function ContasNav() {
 
         <div className="mt-3 pt-2 border-t border-default-border px-3">
           <div className="flex items-center justify-between">
-            <Text variant="label-medium-bold">Total:</Text>
-            <Text variant="label-medium-bold" className={`${total < 0 ? 'text-red-400' : 'text-cyan-400'}`}>{toCurrency(total)}</Text>
+            <Text className="font-bold">Total:</Text>
+            <Text className={`font-bold ${total < 0 ? 'text-negative' : 'text-cyan-400'}`}>{toCurrency(total)}</Text>
           </div>
         </div>
       </DropdownMenu.Content>
