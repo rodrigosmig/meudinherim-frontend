@@ -1,5 +1,5 @@
 import { toBrDate, toCurrency } from '@/helpers/string-helper';
-import { TipoCategoria } from '@/helpers/enum/tipo-categoria';
+import { TipoCategoria } from '@/types/enum/tipo-categoria';
 import { LancamentoConta } from '@/types/lancamento-conta';
 import { Button } from '@/components/primitives/button';
 import { Table } from '@/components/primitives/table';

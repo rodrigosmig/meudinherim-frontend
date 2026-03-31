@@ -1,4 +1,4 @@
-import { Status } from "@/helpers/enum/status";
+import { Status } from "@/types/enum/status";
 
 export type Conta = {
   uuid: string;

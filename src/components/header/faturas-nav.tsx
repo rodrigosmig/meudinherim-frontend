@@ -1,4 +1,4 @@
-import { useProximasFaturas } from "@/hooks/use-proximas-faturas";
+import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
 import { toBrDate, toCurrency } from "@/helpers/string-helper";
 import { useMobile } from "@/hooks/use-is-mobile";
 import { useEffect, useState } from "react";
@@ -20,7 +20,7 @@ export function FaturasNav() {
   const align = isMobile ? "end" : "center";
   const avatarSize = isMobile ? 38 : 42;
 
-  const { data, isFetching: isFetchingFaturas } = useProximasFaturas();
+  const { data, isFetching: isFetchingFaturas } = useConfiguracaoInicial();
 
   useEffect(() => {
     if (data) {

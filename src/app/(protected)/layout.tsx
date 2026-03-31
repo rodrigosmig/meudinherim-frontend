@@ -1,10 +1,10 @@
+import { InitialConfigDataProvider } from "@/providers/data-provider";
+import { DateFilterProvider } from "@/contexts/date-filter-context";
+import { getSessionToken } from "@/helpers/session-server-helper";
+import { QueryProvider } from "@/providers/query-provider";
+import { HeaderProvider } from "@/contexts/header-context";
 import { DefaultHeader } from "@/components/header/header";
 import { Sidebar } from "@/components/sidebar";
-import { DateFilterProvider } from "@/contexts/date-filter-context";
-import { HeaderProvider } from "@/contexts/header-context";
-import { getSessionToken } from "@/helpers/session-server-helper";
-import { DataProvider } from "@/providers/data-provider";
-import { QueryProvider } from "@/providers/query-provider";
 import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({
@@ -20,7 +20,7 @@ export default async function ProtectedLayout({
 
   return (
     <QueryProvider>
-      <DataProvider>
+      <InitialConfigDataProvider>
         <HeaderProvider>
           <div className="h-screen flex overflow-hidden">
             <Sidebar />
@@ -32,7 +32,7 @@ export default async function ProtectedLayout({
             </div>
           </div>
         </HeaderProvider>
-      </DataProvider>
+      </InitialConfigDataProvider>
     </QueryProvider>
   );
 }

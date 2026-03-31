@@ -1,8 +1,8 @@
-import { LANCAMENTOS_CONTA_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { lancamentoContaService } from "@/services/lancamento-conta-service";
+import { LANCAMENTOS_CONTA_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { useQuery } from "@tanstack/react-query";
 
-export function useLancamentosConta(
+export function useLancamentosContaPaginacao(
   idConta: string,
   page: number,
   perPage: number,
@@ -10,7 +10,14 @@ export function useLancamentosConta(
   fim: string,
 ) {
   return useQuery({
-    queryKey: [LANCAMENTOS_CONTA_QUERY_KEY, idConta, page, perPage, inicio, fim],
+    queryKey: [
+      LANCAMENTOS_CONTA_QUERY_KEY,
+      idConta,
+      page,
+      perPage,
+      inicio,
+      fim,
+    ],
     queryFn: async () => {
       const response = await lancamentoContaService.listar({
         idConta: idConta,

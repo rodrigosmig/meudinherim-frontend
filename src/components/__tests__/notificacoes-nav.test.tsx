@@ -6,9 +6,9 @@ import userEvent from "@testing-library/user-event";
 import NotificacoesNav from "../header/notificacoes-nav";
 
 // Mocks dos hooks
-const mockedUseNotificacoes = jest.fn();
-jest.mock("@/hooks/use-notificacoes", () => ({
-  useNotificacoes: () => mockedUseNotificacoes(),
+const mockedUseConfiguracaoInicial = jest.fn();
+jest.mock("@/hooks/use-configuracao-inicial", () => ({
+  useConfiguracaoInicial: () => mockedUseConfiguracaoInicial(),
 }));
 
 const mockedUseMobile = jest.fn();
@@ -17,7 +17,7 @@ jest.mock("@/hooks/use-is-mobile", () => ({
 }));
 
 // Mocks dos helpers
-jest.mock("@/helpers/enum/conta-agendada", () => ({
+jest.mock("@/types/enum/conta-agendada", () => ({
   getTipoContaAgendada: (tipo: string) => `Tipo ${tipo}`,
 }));
 jest.mock("@/helpers/string-helper", () => ({
@@ -47,7 +47,7 @@ describe("NotificacoesNav", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseMobile.mockReturnValue(false);
-    mockedUseNotificacoes.mockReturnValue({
+    mockedUseConfiguracaoInicial.mockReturnValue({
       data: { notificacoes: notificacoesMock },
       isFetching: false,
     });
@@ -64,7 +64,7 @@ describe("NotificacoesNav", () => {
   });
 
   it("não deve mostrar badge se não houver notificações", () => {
-    mockedUseNotificacoes.mockReturnValue({ data: { notificacoes: [] }, isFetching: false });
+    mockedUseConfiguracaoInicial.mockReturnValue({ data: { notificacoes: [] }, isFetching: false });
     render(<NotificacoesNav />);
     expect(screen.queryByText("0")).not.toBeInTheDocument();
   });

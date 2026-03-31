@@ -1,6 +1,6 @@
+import { cn } from "@/helpers/string-helper";
 import * as RadixSwitch from "@radix-ui/react-switch";
 import { FieldError } from "react-hook-form";
-import { cn } from "@/helpers/string-helper";
 
 interface SwitchProps extends React.ComponentPropsWithoutRef<typeof RadixSwitch.Root> {
   label?: string;
@@ -26,7 +26,7 @@ export default function Switch({
         id={switchId}
         className={cn(
           "relative w-10 h-6 flex items-center rounded-full transition-colors px-1",
-          "bg-gray-700 data-[state=checked]:bg-violet-600 focus:ring-violet-500",
+          "bg-gray-700 data-[state=checked]:bg-purple-600 focus:ring-primary",
           className
         )}
         {...props}

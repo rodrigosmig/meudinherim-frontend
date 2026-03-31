@@ -30,7 +30,7 @@ export default function Home() {
 
               <label className="flex items-center gap-2 text-xs">
                 <input type="checkbox"
-                  className="w-4 h-4 rounded border-gray-700 bg-gray-800 text-violet-600 focus:ring-violet-500" />
+                  className="w-4 h-4 rounded border-gray-700 bg-gray-800 " />
                 <span className="text-gray-300">Ativas</span>
               </label>
             </div>

@@ -1,4 +1,4 @@
-import { StatusPagamento } from "@/helpers/enum/status-pagamento";
+import { StatusPagamento } from "@/types/enum/status-pagamento";
 
 export interface Fatura {
   uuid: string;

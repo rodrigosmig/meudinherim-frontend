@@ -12,11 +12,13 @@ import Skeleton from "@/components/primitives/skeleton";
 import { toCurrency } from "@/helpers/string-helper";
 import { useContas } from "@/hooks/use-contas";
 import { useDateFilter } from "@/hooks/use-date-filter";
-import { useLancamentosConta } from "@/hooks/use-lancamentos-conta";
+import { useDisclosure } from "@/hooks/use-disclosure";
+import { useLancamentosContaPaginacao } from "@/hooks/use-lancamentos-conta-paginacao";
 import { LancamentoConta } from "@/types/lancamento-conta";
 import { Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import LancamentoContaForm from "./lancamento-conta-form";
 import TabelaLancamentosConta from "./tabela-lancamentos-conta";
 
 export default function LancamentosPage() {
@@ -28,20 +30,18 @@ export default function LancamentosPage() {
   const [perPage, setPerPage] = useState(10);
   const [search, setSearch] = useState(query);
 
-  const { dateRange, stringDateBR, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
+  const { isOpen: isOpenAddLancamento, onOpen: onOpenAddLancamento, onClose: onCloseAddLancamento } = useDisclosure();
 
-  console.log(11111, stringDateBR)
-  console.log(22222, stringDateUS)
-  console.log(33333, dateRange)
+  const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
 
   const params = useParams<{ uuid: string }>();
   const uuid = params.uuid;
   const [lancamentos, setLancamentos] = useState<LancamentoConta[]>([])
 
-  const { data: contas, isLoading: isContasLoading, isFetching: isContasFetching } = useContas();
-  const { data, isLoading: isLancamentosLoading, isFetching: isLancamentosFetching, error } = useLancamentosConta(uuid, page, perPage, stringDateUS.from, stringDateUS.to);
+  const { contas, isLoading: isContasLoading, isFetching: isContasFetching } = useContas();
+  const { data, isLoading: isLancamentosLoading, isFetching: isLancamentosFetching, error } = useLancamentosContaPaginacao(uuid, page, perPage, stringDateUS.from, stringDateUS.to);
 
-  const conta = contas?.contas.find((c) => c.uuid === uuid);
+  const conta = contas?.find((c) => c.uuid === uuid);
 
   const paginacao = {
     paginaAtual: data?.pagina.paginacao?.paginaAtual || 1,
@@ -104,6 +104,10 @@ export default function LancamentosPage() {
     });
   }, [lancamentos, search]);
 
+  function handleOpenAddLancamentoModal() {
+    onOpenAddLancamento();
+  }
+
   if (isLoading) {
     return (
       <>
@@ -130,6 +134,12 @@ export default function LancamentosPage() {
         metricValueClassName={(conta?.saldo || 0) >= 0 ? "text-positive" : "text-negative"}
       />
 
+      {/* Modal */}
+      <LancamentoContaForm
+        isOpen={isOpenAddLancamento}
+        onClose={onCloseAddLancamento}
+      />
+
       <Card.Root className="mb-4">
         <Card.Header className="py-3">
           <div className="flex flex-col md:flex-row flex-wrap md:items-center md:justify-between gap-6">
@@ -139,7 +149,7 @@ export default function LancamentosPage() {
               onClickFilter={handleOnClickFilter}
             />
 
-            <Button icon={Plus}>
+            <Button icon={Plus} onClick={handleOpenAddLancamentoModal}>
               Adicionar
             </Button>
           </div>

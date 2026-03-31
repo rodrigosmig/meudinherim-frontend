@@ -13,7 +13,7 @@ export default function Select({ children, className, placeholder, ...props }: S
     <SelectPrimitive.Root {...props}>
       <SelectPrimitive.Trigger
         className={cn(
-          "flex w-full h-10 items-center justify-between gap-2 bg-card hover:bg-gray-900 border border-default-border rounded-lg px-3 py-2 text-base text-default-text focus:outline-none focus:ring-2 focus:ring-purple-500",
+          "flex w-full h-10 items-center justify-between gap-2 bg-card hover:bg-gray-900 border border-default-border rounded-lg px-3 py-2 text-base text-default-text data-placeholder:text-default-placeholder focus:outline-none focus:ring-2 focus:ring-primary",
           className
         )}>
         <span className="truncate max-w-40 md:max-w-none">
@@ -27,7 +27,7 @@ export default function Select({ children, className, placeholder, ...props }: S
 
       <SelectPrimitive.Portal>
         <SelectPrimitive.Content side="bottom" position="popper" sideOffset={4}
-          className="w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-sm">
+          className="z-60 w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-sm">
           <SelectPrimitive.Viewport className="outline-none divide-y divide-gray-600">
             {children}
           </SelectPrimitive.Viewport>

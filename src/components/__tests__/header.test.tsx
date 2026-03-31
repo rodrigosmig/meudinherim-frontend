@@ -10,10 +10,6 @@ jest.mock("../header/notificacoes-nav", () => () => (
   <button aria-label="Notificações">Notificações</button>
 ));
 
-jest.mock("../header/faturas-nav", () => ({
-  FaturasNav: () => <button aria-label="Faturas">Faturas</button>,
-}));
-
 jest.mock("../user-profile", () => () => <div data-testid="user-profile" />);
 
 describe("Componente Header", () => {
@@ -23,7 +19,6 @@ describe("Componente Header", () => {
     expect(screen.getByRole("button", { name: "Notificações" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Adicionar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Contas" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Faturas" })).toBeInTheDocument();
     expect(screen.getByTestId("user-profile")).toBeInTheDocument();
   });
 });

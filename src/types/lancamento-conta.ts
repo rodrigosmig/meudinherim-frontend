@@ -1,4 +1,4 @@
-import { TipoCategoria } from "@/helpers/enum/tipo-categoria";
+import { TipoCategoria } from "@/types/enum/tipo-categoria";
 
 export interface LancamentosContaRequest {
   idConta: string;

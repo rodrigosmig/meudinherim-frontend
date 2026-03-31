@@ -1,5 +1,5 @@
 import { render, screen, within } from "@/helpers/test/test-helper";
-import { TipoCategoria } from "@/helpers/enum/tipo-categoria";
+import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { toCurrency } from "@/helpers/string-helper";
 
 import TabelaLancamentosConta from "../tabela-lancamentos-conta";

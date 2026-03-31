@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import { toBrDate, toCurrency } from "@/helpers/string-helper";
+import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 
 import { FaturasNav } from "../header/faturas-nav";
@@ -17,9 +17,9 @@ const hasCurrencyText = (value: number) => (_: string, element: Element | null) 
   return hasSameText && !childHasSameText;
 };
 
-const mockedUseProximasFaturas = jest.fn();
-jest.mock("@/hooks/use-proximas-faturas", () => ({
-  useProximasFaturas: () => mockedUseProximasFaturas(),
+const mockedUseConfiguracaoInicial = jest.fn();
+jest.mock("@/hooks/use-configuracao-inicial", () => ({
+  useConfiguracaoInicial: () => mockedUseConfiguracaoInicial(),
 }));
 
 const mockedUseMobile = jest.fn();
@@ -31,7 +31,7 @@ describe("Componente FaturasNav", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseMobile.mockReturnValue(false);
-    mockedUseProximasFaturas.mockReturnValue({
+    mockedUseConfiguracaoInicial.mockReturnValue({
       data: {
         faturas: [
           {

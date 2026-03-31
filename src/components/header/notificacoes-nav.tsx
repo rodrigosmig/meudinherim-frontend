@@ -1,14 +1,14 @@
 "use client";
 
-import { getTipoContaAgendada } from "@/helpers/enum/conta-agendada";
 import { toBrDate, toCurrency } from "@/helpers/string-helper";
 import { useMobile } from "@/hooks/use-is-mobile";
-import { useNotificacoes } from "@/hooks/use-notificacoes";
+import { getTipoContaAgendada } from "@/types/enum/conta-agendada";
 import { Notificacao } from "@/types/notificacoes";
 import { Bell } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
 import Heading from "../primitives/heading";
@@ -22,7 +22,7 @@ export default function NotificacoesNav({ }: Props) {
   const isMobile = useMobile();
   const align = isMobile ? "center" : "end";
 
-  const { data, isFetching: i } = useNotificacoes();
+  const { data, isFetching } = useConfiguracaoInicial();
 
   useEffect(() => {
     if (data) {
@@ -44,11 +44,11 @@ export default function NotificacoesNav({ }: Props) {
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content align={align} className="w-72 md:w-80">
-        <div className="px-2 text-center border-b border-default-border pb-2">
+        <div className="px-2 text-center border-b border-line-separator pb-2">
           <Heading variant="heading4">Notificações</Heading>
         </div>
 
-        <div className="mt-2 space-x-4 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-default-border">
+        <div className="mt-2 space-x-4 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-line-separator">
           {notificacoes.map((notificacao) => (
             <DropdownMenu.Item key={notificacao.id}>
               <Link

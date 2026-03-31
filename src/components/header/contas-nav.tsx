@@ -6,7 +6,6 @@ import { useMobile } from "@/hooks/use-is-mobile";
 import { Conta } from "@/types/contas";
 import { Landmark } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Avatar } from "../avatar";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
@@ -15,20 +14,11 @@ import Icon from "../primitives/icon";
 import Text from "../primitives/text";
 
 export function ContasNav() {
-  const [contas, setContas] = useState<Conta[]>([]);
-  const [total, setTotal] = useState(0);
   const isMobile = useMobile();
   const align = isMobile ? "center" : "end";
   const avatarSize = isMobile ? 38 : 42;
 
-  const { data, isFetching: isFetchingContas } = useContas();
-
-  useEffect(() => {
-    if (data) {
-      setContas(data.contas);
-      setTotal(data.contas.reduce((acc, conta) => acc + conta.saldo, 0));
-    }
-  }, [data]);
+  const { contas, saldoTotal, isLoading, isFetching } = useContas();
 
   return (
     <DropdownMenu.Root>
@@ -39,11 +29,11 @@ export function ContasNav() {
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content align={align} className="w-64 md:w-72">
-        <div className="px-2 text-center border-b border-default-border pb-2">
+        <div className="px-2 text-center border-b border-line-separator pb-2">
           <Heading variant="heading4">Contas</Heading>
         </div>
 
-        <div className="mt-2 space-x-3 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-default-border">
+        <div className="mt-2 space-x-3 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-line-separator">
           {contas.map((conta: Conta) => (
             <DropdownMenu.Item key={conta.uuid}>
               <Link
@@ -65,10 +55,10 @@ export function ContasNav() {
           ))}
         </div>
 
-        <div className="mt-3 pt-2 border-t border-default-border px-3">
+        <div className="mt-3 pt-2 border-t border-line-separator px-3">
           <div className="flex items-center justify-between">
             <Text className="font-bold">Total:</Text>
-            <Text className={`font-bold ${total < 0 ? 'text-negative' : 'text-cyan-400'}`}>{toCurrency(total)}</Text>
+            <Text className={`font-bold ${saldoTotal < 0 ? 'text-negative' : 'text-cyan-400'}`}>{toCurrency(saldoTotal)}</Text>
           </div>
         </div>
       </DropdownMenu.Content>

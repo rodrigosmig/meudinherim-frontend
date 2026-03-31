@@ -41,7 +41,7 @@ export default function UserProfile() {
           <button
             type="button"
             aria-label="Abrir menu do usuário"
-            className="rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500"
+            className="rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <Avatar name={usuario?.nome ?? ""} size={40} />
           </button>
@@ -49,7 +49,7 @@ export default function UserProfile() {
 
         <DropdownMenu.Content align="end" className="w-full">
           <div className="p-1">
-            <div className="flex items-center gap-3 px-2 pb-2 border-b border-gray-800">
+            <div className="flex items-center gap-3 px-2 pb-2 border-b border-line-separator">
               <Avatar name={usuario?.nome ?? ""} size={52} />
               <div className="text-left">
                 <p className="text-sm font-medium text-white">{usuario?.nome}</p>
@@ -80,7 +80,7 @@ export default function UserProfile() {
                 </button>
               </DropdownMenu.Item>
 
-              <div className="my-1 h-px bg-gray-800" />
+              <div className="my-1 h-px bg-line-separator" />
 
               <DropdownMenu.Item>
                 <button

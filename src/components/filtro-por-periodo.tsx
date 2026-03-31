@@ -1,10 +1,10 @@
-import { DateRange, DayPicker, OnSelectHandler } from "react-day-picker";
 import { DropdownMenu } from "@/components/primitives/dropdown-menu";
-import { useDateFilter } from "@/hooks/use-date-filter";
-import { Calendar, Filter, X } from "lucide-react";
-import { ptBR } from "date-fns/locale/pt-BR";
 import { cn } from "@/helpers/string-helper";
+import { useDateFilter } from "@/hooks/use-date-filter";
+import { ptBR } from "date-fns/locale/pt-BR";
+import { Calendar, Filter, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { DateRange, DayPicker, OnSelectHandler } from "react-day-picker";
 
 import { Button } from "./primitives/button";
 
@@ -48,7 +48,7 @@ export default function FiltroPorPeriodo({
     <div className="flex gap-2 items-center">
       <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
         <div className={cn("relative flex w-64 md:w-68 items-center gap-2 ",
-          "rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 hover:bg-gray-900 cursor-pointer"
+          "rounded-lg border border-default-border bg-gray-800 px-3 py-2 hover:bg-gray-900 cursor-pointer"
         )}>
           <DropdownMenu.Trigger>
             <div className="w-full flex items-center gap-2">
@@ -58,7 +58,7 @@ export default function FiltroPorPeriodo({
                 placeholder="Filtrar por período"
                 value={rangeString}
                 readOnly
-                className="w-full bg-transparent placeholder-gray-700 outline-none cursor-pointer text-input-text text-sm md:text-base"
+                className="w-full bg-transparent placeholder-default-placeholder outline-none cursor-pointer text-input-text text-sm md:text-base"
               />
             </div>
           </DropdownMenu.Trigger>
@@ -83,19 +83,22 @@ export default function FiltroPorPeriodo({
 
         </div>
 
-        <DropdownMenu.Content align="center" className="w-auto border-gray-700 bg-gray-700 p-2 md:p-4">
-          <DayPicker
-            animate
-            mode="range"
-            resetOnSelect
-            captionLayout="dropdown-years"
-            navLayout="around"
-            reverseYears
-            locale={ptBR}
-            selected={selectedRange}
-            onSelect={handleSelect}
-            className="periodo-day-picker"
-          />
+        <DropdownMenu.Content align="center" className="border-default-border bg-gray-700 p-0">
+          <div className="scale-85">
+            <DayPicker
+              animate
+              mode="range"
+              resetOnSelect
+              showOutsideDays
+              captionLayout="dropdown"
+              navLayout="around"
+              reverseYears
+              locale={ptBR}
+              selected={selectedRange}
+              onSelect={handleSelect}
+              className="periodo-day-picker"
+            />
+          </div>
         </DropdownMenu.Content>
       </DropdownMenu.Root >
 
@@ -106,6 +109,5 @@ export default function FiltroPorPeriodo({
         onClick={onClickFilter}
       />
     </div>
-
   );
 }

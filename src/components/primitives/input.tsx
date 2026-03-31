@@ -25,7 +25,7 @@ export function Input({
       {label && <label htmlFor={label} className="mb-1">{label}</label>}
       <div
         className={cn(
-          "flex w-full bg-gray-800 hover:bg-gray-900 border border-gray-700 text-xs md:text-sm",
+          "flex w-full bg-gray-800 hover:bg-gray-900 border border-default-border text-xs md:text-base",
           "text-input-text items-center gap-2 rounded-lg px-3 py-2 shadow-2xs focus-within:ring-2",
           isError ? "focus-within:ring-red-400" : "focus-within:ring-primary",
         )}
@@ -34,7 +34,7 @@ export function Input({
         <input
           id={label}
           type="text"
-          className="flex-1 w-full border-0 bg-transparent p-0 placeholder-gray-600 outline-none "
+          className="flex-1 w-full border-0 bg-transparent p-0 placeholder-default-placeholder outline-none "
           {...props}
         />
       </div>

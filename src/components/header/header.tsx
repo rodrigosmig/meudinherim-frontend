@@ -8,7 +8,6 @@ import { HeaderSlot, useHeader } from '@/contexts/header-context';
 import { Button } from '../primitives/button';
 import UserProfile from '../user-profile';
 import { ContasNav } from './contas-nav';
-import { FaturasNav } from './faturas-nav';
 import NotificacoesNav from './notificacoes-nav';
 
 interface HeaderProps {
@@ -16,8 +15,6 @@ interface HeaderProps {
 }
 
 export function HeaderRoot({ title }: HeaderProps) {
-  const { headerTitleContent } = useHeader();
-
   return (
     <header className="bg-gray-900 border-b border-gray-800 px-6 py-4">
       <div className="flex justify-end md:justify-between">
@@ -58,7 +55,7 @@ function HeaderContent({ className, ...props }: HeaderContentProps) {
 
       <ContasNav />
 
-      <FaturasNav />
+      {/* <FaturasNav /> */}
 
       <UserProfile />
     </div>

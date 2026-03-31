@@ -1,9 +1,7 @@
 'use client';
 
 import { InlineFetchingIndicator } from '@/components/primitives/fetching-indicator';
-import { useContas } from '@/hooks/use-contas';
-import { useNotificacoes } from '@/hooks/use-notificacoes';
-import { useProximasFaturas } from '@/hooks/use-proximas-faturas';
+import { useConfiguracaoInicial } from '@/hooks/use-configuracao-inicial';
 import type { ReactNode } from 'react';
 
 type DataProviderProps = {
@@ -12,29 +10,12 @@ type DataProviderProps = {
   errorFallback?: ReactNode;
 };
 
-export function DataProvider({
+export function InitialConfigDataProvider({
   children,
   loadingFallback,
   errorFallback,
 }: DataProviderProps) {
-  const {
-    isLoading: accountsLoading,
-    isError: accountsError,
-    isFetching: accountsFetching,
-  } = useContas();
-
-  const {
-    isLoading: notificacoesLoading,
-    isError: notificacoesError,
-  } = useNotificacoes();
-
-  const {
-    isLoading: proximasFaturasLoading,
-    isError: proximasFaturasError,
-  } = useProximasFaturas();
-
-  const isLoading = accountsLoading || notificacoesLoading || proximasFaturasLoading;
-  const isError = accountsError || notificacoesError || proximasFaturasError;
+  const { isLoading, isError, isFetching } = useConfiguracaoInicial();
 
   if (isLoading) {
     return loadingFallback ?? <DefaultLoadingScreen />;
@@ -47,7 +28,7 @@ export function DataProvider({
   return (
     <>
       {children}
-      {accountsFetching && <InlineFetchingIndicator />}
+      {isFetching && <InlineFetchingIndicator />}
     </>
   );
 }

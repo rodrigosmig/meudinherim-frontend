@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import { toCurrency } from "@/helpers/string-helper";
+import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 
 import { ContasNav } from "../header/contas-nav";
@@ -26,27 +26,27 @@ describe("Componente ContasNav", () => {
     jest.clearAllMocks();
     mockedUseMobile.mockReturnValue(false);
     mockedUseContas.mockReturnValue({
-      data: {
-        contas: [
-          {
-            uuid: "1",
-            nome: "Conta Principal",
-            tipo: "CORRENTE",
-            status: "ATIVO",
-            icon: "landmark",
-            saldo: 1000,
-          },
-          {
-            uuid: "2",
-            nome: "Cartao Virtual",
-            tipo: "CORRENTE",
-            status: "ATIVO",
-            icon: "credit-card",
-            saldo: -250,
-          },
-        ],
-      },
+      contas: [
+        {
+          uuid: "1",
+          nome: "Conta Principal",
+          tipo: "CORRENTE",
+          status: "ATIVO",
+          icon: "landmark",
+          saldo: 1000,
+        },
+        {
+          uuid: "2",
+          nome: "Cartao Virtual",
+          tipo: "CORRENTE",
+          status: "ATIVO",
+          icon: "credit-card",
+          saldo: -250,
+        },
+      ],
+      saldoTotal: 750,
       isFetching: false,
+      isLoading: false,
     });
   });
 

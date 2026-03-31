@@ -1,21 +1,25 @@
 "use client";
 
-import { Status } from "@/helpers/enum/status";
-import { CONTAS_QUERY_KEY } from "@/helpers/query-keys-helper";
-import { contaService } from "@/services/conta-service";
-import { useQuery } from "@tanstack/react-query";
+import { Conta } from "@/types/contas";
+import { useEffect, useState } from "react";
+import { useConfiguracaoInicial } from "./use-configuracao-inicial";
 
 export function useContas() {
-  return useQuery({
-    queryKey: [CONTAS_QUERY_KEY],
-    queryFn: async () => {
-      const response = await contaService.listar({
-        comPaginacao: false,
-        status: Status.ATIVO,
-        pagina: 1,
-        size: 10,
-      });
-      return response.data;
-    },
-  });
+  const { data, isLoading, isFetching } = useConfiguracaoInicial();
+  const [total, setTotal] = useState(0);
+  const [contas, setContas] = useState<Conta[]>([]);
+
+  useEffect(() => {
+    if (data?.contas) {
+      setContas(data.contas);
+      setTotal(data.contas.reduce((acc, conta) => acc + conta.saldo, 0));
+    }
+  }, [data]);
+
+  return {
+    contas,
+    saldoTotal: total,
+    isLoading,
+    isFetching,
+  };
 }
