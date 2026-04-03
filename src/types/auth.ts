@@ -1,18 +1,19 @@
 import { ApiFormErrorResponse, ApiResponse } from "./api";
 import { Usuario } from "./usuario";
 
-export interface LoginBody {
+export interface LoginRequest {
   email: string;
   password: string;
 }
 
 export interface LoginData {
+  //TODO verificar pq o response não retorna usuario completo
   usuario: Usuario;
 }
 
 export type LoginResponse = ApiResponse<LoginData>; // | ApiFormErrorResponse;
 
-export interface CadastrarUsuarioBody {
+export interface CadastrarUsuarioRequest {
   nome: string;
   email: string;
   password: string;
@@ -27,7 +28,7 @@ export type CadastrarUsuarioResponse =
   | ApiResponse<CadastrarUsuarioData>
   | ApiFormErrorResponse;
 
-export interface RecuperarSenhaBody {
+export interface RecuperarSenhaRequest {
   email: string;
 }
 
@@ -45,7 +46,7 @@ export type ReenviarEmailConfirmacaoResponse =
   | ApiResponse<void>
   | ApiFormErrorResponse;
 
-export interface ResetarSenhaBody {
+export interface ResetarSenhaRequest {
   token: string;
   password: string;
   passwordConfirmation: string;

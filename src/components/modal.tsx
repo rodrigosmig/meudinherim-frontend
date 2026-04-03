@@ -1,19 +1,22 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { ReactNode } from "react";
 import { X } from "lucide-react";
+import { ReactNode } from "react";
 
 import { Button } from "./primitives/button";
 
-interface ModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+interface ModalProps extends Dialog.DialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  trigger?: ReactNode;
   title: string;
   children: ReactNode;
 }
 
-export default function Modal({ open, onOpenChange, title, children }: ModalProps) {
+export default function Modal({ onOpenChange, trigger, title, children, ...props }: ModalProps) {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root onOpenChange={onOpenChange} {...props}>
+      {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
+
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" />
         <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-card p-6 shadow-lg focus:outline-none">

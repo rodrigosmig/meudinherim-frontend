@@ -1,16 +1,17 @@
-import * as DropdownPrimitive from "@radix-ui/react-dropdown-menu";
 import { cn } from "@/helpers/string-helper";
+import * as DropdownPrimitive from "@radix-ui/react-dropdown-menu";
 
 interface DropdownProps {
+  className?: string;
   children: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   modal?: boolean;
 }
 
-export function DropdownRoot({ children, open, onOpenChange, modal }: DropdownProps) {
+function DropdownRoot({ className, children, open, onOpenChange, modal }: DropdownProps) {
   return (
-    <div className="relative">
+    <div className={cn("relative", className)}>
       <DropdownPrimitive.Root open={open} onOpenChange={onOpenChange} modal={modal}>
         {children}
       </DropdownPrimitive.Root>
@@ -22,7 +23,7 @@ interface DropdownTriggerProps {
   children: React.ReactNode;
 }
 
-export function DropdownTrigger({ children }: DropdownTriggerProps) {
+function DropdownTrigger({ children }: DropdownTriggerProps) {
   return <DropdownPrimitive.Trigger asChild>
     {children}
   </DropdownPrimitive.Trigger>
@@ -34,7 +35,7 @@ interface DropdownContentProps {
   children: React.ReactNode;
 }
 
-export function DropdownContent({ className, align = "center", children }: DropdownContentProps) {
+function DropdownContent({ className, align = "center", children }: DropdownContentProps) {
   return <DropdownPrimitive.Portal>
     <DropdownPrimitive.Content
       side="bottom"
@@ -61,7 +62,7 @@ interface DropdownItemProps {
   children: React.ReactNode;
 }
 
-export function DropdownItem({ children }: DropdownItemProps) {
+function DropdownItem({ children }: DropdownItemProps) {
   return (
     <DropdownPrimitive.Item
       asChild

@@ -1,9 +1,19 @@
-import { CadastrarUsuarioBody, CadastrarUsuarioResponse, ConfirmarUsuarioParam, LoginBody, LoginResponse, RecuperarSenhaBody, RecuperarSenhaResponse, ReenviarEmailConfirmacaoBody, ResetarSenhaBody, } from "@/types/auth";
 import { handleApiResponse } from "@/helpers/response-helper";
 import { ApiResponse } from "@/types/api";
+import {
+  CadastrarUsuarioRequest,
+  CadastrarUsuarioResponse,
+  ConfirmarUsuarioParam,
+  LoginRequest,
+  LoginResponse,
+  RecuperarSenhaRequest,
+  RecuperarSenhaResponse,
+  ReenviarEmailConfirmacaoBody,
+  ResetarSenhaBody,
+} from "@/types/auth";
 
 export async function cadastrarUsuario(
-  cadastrarUsuarioBody: CadastrarUsuarioBody,
+  cadastrarUsuarioBody: CadastrarUsuarioRequest,
 ): Promise<CadastrarUsuarioResponse> {
   const response = await fetch("/api/auth/cadastrar-usuario", {
     method: "POST",
@@ -16,7 +26,9 @@ export async function cadastrarUsuario(
   return data;
 }
 
-export async function autenticar(loginBody: LoginBody): Promise<LoginResponse> {
+export async function autenticar(
+  loginBody: LoginRequest,
+): Promise<LoginResponse> {
   const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -29,7 +41,7 @@ export async function autenticar(loginBody: LoginBody): Promise<LoginResponse> {
 }
 
 export async function recuperarSenha(
-  recuperarSenhaBody: RecuperarSenhaBody,
+  recuperarSenhaBody: RecuperarSenhaRequest,
 ): Promise<RecuperarSenhaResponse> {
   const response = await fetch("/api/auth/recuperar-senha", {
     method: "POST",

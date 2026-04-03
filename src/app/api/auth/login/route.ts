@@ -1,15 +1,15 @@
-import { extractToken, verificarAssinatura } from "@/helpers/token-helper";
-import { setSessionToken } from "@/helpers/session-server-helper";
-import { getApiBaseUrl } from "@/helpers/route-helpers";
 import { catalogoErros } from "@/helpers/erros-helper";
+import { getApiBaseUrl } from "@/helpers/route-helpers";
+import { setSessionToken } from "@/helpers/session-server-helper";
+import { extractToken, verificarAssinatura } from "@/helpers/token-helper";
+import { LoginRequest } from "@/types/auth";
 import { NextResponse } from "next/server";
-import { LoginBody } from "@/types/auth";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as LoginBody;
+    const body = (await request.json()) as LoginRequest;
 
     const response = await fetch(`${getApiBaseUrl()}/v1/auth/login`, {
       method: "POST",

@@ -1,12 +1,12 @@
-import { NextResponse } from "next/dist/server/web/spec-extension/response";
-import { ApiFormErrorResponse, ApiResponse } from "@/types/api";
 import { httpClient } from "@/services/api/axios-client";
-import { RecuperarSenhaBody } from "@/types/auth";
+import { ApiFormErrorResponse, ApiResponse } from "@/types/api";
+import { RecuperarSenhaRequest } from "@/types/auth";
 import { AxiosError } from "axios";
+import { NextResponse } from "next/dist/server/web/spec-extension/response";
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as RecuperarSenhaBody;
+    const body = (await request.json()) as RecuperarSenhaRequest;
     const response = await httpClient.post<ApiResponse<void>>(
       "/v1/auth/recuperar-senha",
       body,

@@ -154,3 +154,10 @@ body {
   opacity: 0.4;
   color: var(--color-gray-400);
 }
+
+.periodo-day-picker-input-date .rdp-selected .rdp-day_button,
+.periodo-day-picker-input-date .rdp-day_button.rdp-selected {
+  background-color: var(--color-primary) !important;
+  color: var(--color-gray-100) !important;
+  border: 1px solid var(--color-cyan-300) !important;
+}

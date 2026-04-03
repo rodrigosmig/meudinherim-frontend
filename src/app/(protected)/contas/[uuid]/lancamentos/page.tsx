@@ -134,12 +134,6 @@ export default function LancamentosPage() {
         metricValueClassName={(conta?.saldo || 0) >= 0 ? "text-positive" : "text-negative"}
       />
 
-      {/* Modal */}
-      <LancamentoContaForm
-        isOpen={isOpenAddLancamento}
-        onClose={onCloseAddLancamento}
-      />
-
       <Card.Root className="mb-4">
         <Card.Header className="py-3">
           <div className="flex flex-col md:flex-row flex-wrap md:items-center md:justify-between gap-6">
@@ -149,9 +143,12 @@ export default function LancamentosPage() {
               onClickFilter={handleOnClickFilter}
             />
 
-            <Button icon={Plus} onClick={handleOpenAddLancamentoModal}>
-              Adicionar
-            </Button>
+            <LancamentoContaForm>
+              <Button icon={Plus} onClick={handleOpenAddLancamentoModal}>
+                Adicionar
+              </Button>
+            </LancamentoContaForm>
+
           </div>
         </Card.Header>
       </Card.Root>

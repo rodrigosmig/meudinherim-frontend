@@ -1,5 +1,6 @@
-import { ComponentProps, useState } from 'react';
+import { ComponentProps, useEffect, useState } from 'react';
 import { FieldError } from 'react-hook-form';
+import { Banknote } from 'lucide-react';
 
 import { Input } from './input';
 
@@ -11,11 +12,15 @@ interface InputMoneyProps extends Omit<ComponentProps<'input'>, 'onChange' | 'va
   value?: number;
 }
 
-export default function InputMoney({ label, error, className, onChange, value: externalValue, ...props }: InputMoneyProps) {
+export function InputMoney({ label, error, className, onChange, value: externalValue, ...props }: InputMoneyProps) {
   const isError = !!error;
   const [digits, setDigits] = useState<string>(
     externalValue != null ? String(Math.round(externalValue * 100)) : ''
   );
+
+  useEffect(() => {
+    setDigits(externalValue != null ? String(Math.round(externalValue * 100)) : "");
+  }, [externalValue]);
 
   const formatDisplay = (d: string): string => {
     if (!d) return '';
@@ -28,33 +33,33 @@ export default function InputMoney({ label, error, className, onChange, value: e
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace') {
+    if (e.key === "Backspace") {
       e.preventDefault();
-      setDigits(prev => {
-        const next = prev.slice(0, -1);
-        onChange?.(next ? parseInt(next, 10) / 100 : 0);
-        return next;
-      });
+
+      const next = digits.slice(0, -1);
+      setDigits(next);
+      onChange?.(next ? parseInt(next, 10) / 100 : 0);
       return;
     }
 
     if (!/^\d$/.test(e.key)) return;
 
     e.preventDefault();
-    setDigits(prev => {
-      const next = prev + e.key;
-      onChange?.(parseInt(next, 10) / 100);
-      return next;
-    });
+
+    const next = digits + e.key;
+    setDigits(next);
+    onChange?.(parseInt(next, 10) / 100);
   };
 
   return (
     <Input
       label={label}
+      icon={Banknote}
       inputMode="numeric"
       placeholder="R$ 0,00"
       value={formatDisplay(digits)}
       onKeyDown={handleKeyDown}
+      readOnly
       error={error}
       {...props}
     />

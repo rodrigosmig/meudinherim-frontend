@@ -1,14 +1,14 @@
 'use client'
 
 import { autenticar } from '@/services/auth-service'
-import { LoginBody } from '@/types/auth'
+import { LoginRequest } from '@/types/auth'
 import { Usuario } from '@/types/usuario'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 interface AuthContextData {
   usuario: Usuario | null
   isLoading: boolean
-  login: (payload: LoginBody) => Promise<void>
+  login: (payload: LoginRequest) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const login = async (loginBody: LoginBody) => {
+  const login = async (loginBody: LoginRequest) => {
     setIsLoading(true)
     await autenticar(loginBody);
 

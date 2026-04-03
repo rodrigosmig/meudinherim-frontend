@@ -5,14 +5,16 @@ import {
 import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { ApiResponse } from "@/types/api";
 import {
+  CadastrarLancamentoContaData,
+  CadastrarLancamentoContaRequest,
   LancamentoConta,
-  LancamentosContaRequest,
+  ListarLancamentosContaRequest,
 } from "@/types/lancamento-conta";
 import { Pagina } from "@/types/pagina";
 
 export const lancamentoContaService = {
   listar: async (
-    request: LancamentosContaRequest,
+    request: ListarLancamentosContaRequest,
   ): Promise<ApiResponse<Pagina<LancamentoConta>>> => {
     const params = new URLSearchParams({
       inicio: request.inicio,
@@ -38,3 +40,24 @@ export const lancamentoContaService = {
     return normalizarApiResponsePaginadaBackendParaFrontend(payload);
   },
 };
+
+export async function cadastrarLancamentoConta(
+  request: CadastrarLancamentoContaRequest,
+): Promise<ApiResponse<CadastrarLancamentoContaData>> {
+  const url = `/api/proxy/v1/contas/${request.idConta}/lancamentos`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+
+  validarAutenticacao(response);
+
+  if (!response.ok) throw new Error("Falha ao cadastrar lançamento de conta");
+
+  const payload: ApiResponse<CadastrarLancamentoContaData> =
+    await response.json();
+
+  return payload;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/helpers/string-helper";
-import { ComponentProps, ElementType } from "react";
+import { ComponentProps, ElementType, useId } from "react";
 import { FieldError } from "react-hook-form";
 
 import Text from "./text";
@@ -13,16 +13,18 @@ interface InputProps extends ComponentProps<"input"> {
 }
 
 export function Input({
+  id,
   icon: Icon,
   label,
   error,
   ...props
 }: InputProps) {
   const isError = !!error;
+  const inputId = id ?? useId();
 
   return (
     <div className="flex flex-col gap-1">
-      {label && <label htmlFor={label} className="mb-1">{label}</label>}
+      {label && <label htmlFor={inputId} className="mb-1">{label}</label>}
       <div
         className={cn(
           "flex w-full bg-gray-800 hover:bg-gray-900 border border-default-border text-xs md:text-base",
@@ -32,7 +34,7 @@ export function Input({
       >
         {Icon && <Icon className="text-gray-500 w-4 h-4 md:w-5 md:h-5" />}
         <input
-          id={label}
+          id={inputId}
           type="text"
           className="flex-1 w-full border-0 bg-transparent p-0 placeholder-default-placeholder outline-none "
           {...props}
