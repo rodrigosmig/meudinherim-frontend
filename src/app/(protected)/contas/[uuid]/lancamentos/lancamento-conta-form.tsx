@@ -72,29 +72,15 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
         tags: data.tags?.length ? data.tags : undefined,
       });
     },
-  });
-
-  function handleOpenChange(isOpen: boolean) {
-    setIsOpen(isOpen);
-
-    if (!isOpen) {
-      form.reset(getDefaultValues(idContaRota));
-    }
-  }
-
-  const onSubmit = async (data: LancamentoContaFormValue) => {
-    try {
-      await cadastrarLancamentoMutation.mutateAsync(data);
-
+    onSuccess: () => {
       toast.success("Lançamento cadastrado com sucesso!");
-
       handleOpenChange(false);
-
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
         queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
       ]);
-    } catch (error) {
+    },
+    onError: (error) => {
       if (error instanceof ApiError) {
         if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
           const formError = error.data as ApiFormError;
@@ -114,8 +100,19 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
       }
 
       toast.error(DEFAULT_ERROR_MESSAGE);
-      return;
+    },
+  });
+
+  function handleOpenChange(isOpen: boolean) {
+    setIsOpen(isOpen);
+
+    if (!isOpen) {
+      form.reset(getDefaultValues(idContaRota));
     }
+  }
+
+  const onCreateLancamentoConta = async (data: LancamentoContaFormValue) => {
+    await cadastrarLancamentoMutation.mutateAsync(data);
   };
 
   return (
@@ -125,7 +122,7 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
       open={isOpen}
       onOpenChange={handleOpenChange}
     >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onCreateLancamentoConta)} className="space-y-4">
         <Controller
           control={form.control}
           name="idConta"
