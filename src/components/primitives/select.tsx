@@ -1,104 +1,135 @@
-import * as SelectPrimitive from "@radix-ui/react-select";
-import { ElementType, useId, useRef } from "react";
-import { Check, ChevronDown } from "lucide-react";
-import { cn } from "@/helpers/string-helper";
+import ReactSelect, { MultiValue, SingleValue } from "react-select";
+import { FieldError } from "react-hook-form";
+import { ElementType, useId } from "react";
 
-interface SelectProps extends SelectPrimitive.SelectProps {
-  id?: string;
-  icon?: ElementType;
-  label?: string;
-  placeholder?: string;
-  className?: string;
-  children: React.ReactNode;
-}
+import Text from "./text";
 
-function SelectRoot({ id, icon: Icon, label, children, className, placeholder, ...props }: SelectProps) {
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const triggerId = id ?? useId();
-
-  return (
-    <SelectPrimitive.Root {...props}>
-      <div className="flex flex-col gap-1">
-        {label && <label htmlFor={triggerId} className="mb-1">{label}</label>}
-        <SelectPrimitive.Trigger
-          id={triggerId}
-          ref={triggerRef}
-          className={cn(
-            "flex w-full h-10 items-center justify-between gap-2 bg-card hover:bg-gray-900 border border-default-border rounded-lg px-3 py-2 text-base text-input-text data-placeholder:text-default-placeholder focus:outline-none focus:ring-2 focus:ring-primary",
-            className
-          )}>
-
-          <div className="flex items-center gap-2">
-            {Icon && <Icon className="text-gray-500 w-4 h-4 md:w-5 md:h-5 shrink-0" />}
-            <span className="truncate max-w-40 md:max-w-none">
-              <SelectPrimitive.Value placeholder={placeholder} />
-            </span>
-          </div>
-
-          <SelectPrimitive.Icon>
-            <ChevronDown className="h-4 w-4 md:h-5 md:w-5 text-default-text" />
-          </SelectPrimitive.Icon>
-        </SelectPrimitive.Trigger>
-      </div>
-
-      <SelectPrimitive.Portal>
-        <SelectPrimitive.Content
-          position="popper"
-          sideOffset={4}
-          className="z-60 w-(--radix-select-trigger-width) overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-sm">
-
-          <SelectPrimitive.Viewport className="max-h-(--radix-select-content-available-height) overflow-y-auto outline-none divide-y divide-gray-600">
-            {children}
-          </SelectPrimitive.Viewport>
-
-        </SelectPrimitive.Content>
-      </SelectPrimitive.Portal>
-    </SelectPrimitive.Root>
-  )
-}
-
-interface SelectGroupProps extends SelectPrimitive.SelectGroupProps {
+export interface SelectOption {
+  value: string;
   label: string;
-  className?: string;
 }
 
-function SelectGroup({ label, children, className }: SelectGroupProps) {
+export interface GroupedOption {
+  label: string;
+  options: SelectOption[];
+}
+
+type MultiSelectProps = {
+  options: SelectOption[] | GroupedOption[];
+  placeholder?: string;
+  id?: string;
+  label?: string;
+  error?: FieldError;
+  icon?: ElementType;
+  isMulti?: boolean;
+  value?: string[] | string;
+  onChange?: (values: string[] | string | undefined) => void;
+  onBlur?: () => void;
+  name?: string;
+}
+
+export function Select({
+  options,
+  placeholder = "Selecione",
+  id,
+  label,
+  error,
+  icon: Icon,
+  isMulti = false,
+  value,
+  onChange,
+  onBlur,
+  name,
+}: MultiSelectProps) {
+  const triggerId = id ?? useId();
+  const isError = !!error;
+
+  const isGroupedOptions = (items: SelectOption[] | GroupedOption[]): items is GroupedOption[] => {
+    const firstItem = items[0];
+    return !!firstItem && "options" in firstItem;
+  };
+
+  const flatOptions = isGroupedOptions(options)
+    ? options.flatMap((group) => group.options)
+    : options;
+
+  const selectedValue = isMulti
+    ? flatOptions.filter((option) => Array.isArray(value) && value.includes(option.value))
+    : flatOptions.find((option) => option.value === value) ?? null;
+
   return (
-    <SelectPrimitive.Group>
-      <SelectPrimitive.Label className={cn(className, "bg-gray-700 px-3 py-2 text-lg font-semibold text-gray-500 italic")}>
-        {label}
-      </SelectPrimitive.Label>
-      {children}
-    </SelectPrimitive.Group>
-  );
-}
+    <div className="flex flex-col gap-1">
+      {label && (
+        <label htmlFor={triggerId} className="mb-1">
+          {label}
+        </label>
+      )
+      }
+      <div className="relative z-0 w-full focus-within:z-80">
+        {Icon && <Icon className="pointer-events-none absolute left-3 top-1/2 z-1 h-4 w-4 -translate-y-1/2 text-gray-500 md:h-5 md:w-5" />}
+        <ReactSelect<SelectOption, boolean>
+          inputId={triggerId}
+          options={options}
+          isMulti={isMulti}
+          unstyled
+          menuPlacement="auto"
+          name={name}
+          value={selectedValue}
+          onBlur={onBlur}
+          closeMenuOnSelect={!isMulti}
+          onChange={(selected: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
+            if (isMulti) {
+              const selectedValues = (selected as MultiValue<SelectOption> ?? []).map((option) => option.value);
+              onChange?.(selectedValues);
+              return;
+            }
 
-interface SelectItemProps extends SelectPrimitive.SelectItemProps {
-  text: string;
-  className?: string;
-}
-
-function SelectItem({ text, className, ...props }: SelectItemProps) {
-  return (
-    <SelectPrimitive.Item
-      className={cn(
-        "flex items-center justify-between gap-2 px-3 py-2.5 outline-none bg-gray-700 data-highlighted:bg-purple-500 cursor-default text-xs md:text-base",
-        className
+            const selectedValue = (selected as SingleValue<SelectOption>)?.value;
+            onChange?.(selectedValue);
+          }}
+          placeholder={placeholder}
+          classNames={{
+            container: () => "w-full",
+            control: ({ isFocused }) =>
+              [
+                "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border bg-card px-3 py-2 text-base",
+                "hover:bg-gray-900",
+                "text-input-text",
+                Icon ? "pl-10" : "",
+                isError
+                  ? isFocused
+                    ? "border-red-400 ring-2 ring-red-400"
+                    : "border-red-400"
+                  : isFocused
+                    ? "border-default-border ring-2 ring-primary"
+                    : "border-default-border",
+              ].join(" "),
+            valueContainer: () => "gap-1 py-0",
+            placeholder: () => "text-default-placeholder",
+            input: () => "text-input-text m-0 p-0",
+            multiValue: () => "bg-input-text/20 rounded-md",
+            multiValueLabel: () => "text-input-text px-2 py-0.5 text-sm",
+            multiValueRemove: () => "text-gray-300 hover:bg-primary hover:text-default-text rounded-r-md px-1",
+            indicatorsContainer: () => "text-default-text",
+            dropdownIndicator: () => "text-default-text",
+            clearIndicator: () => "text-default-text",
+            menu: () => "z-[90] mt-1 overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-sm",
+            menuList: () => "max-h-60 divide-y divide-line-separator overflow-y-auto",
+            groupHeading: () => "bg-gray-700 px-3 py-2.5 text-xs font-medium text-gray-500 md:text-lg italic",
+            option: ({ isFocused, isSelected }) =>
+              [
+                "cursor-pointer bg-gray-700 px-3 py-2.5 text-xs md:text-base",
+                isFocused || isSelected ? "bg-primary" : "",
+              ].join(" "),
+            noOptionsMessage: () => "px-3 py-2 text-gray-500",
+          }}
+        />
+      </div>
+      {!!isError && (
+        <Text className="pt-1 text-sm text-error">
+          {error.message?.toString()}
+        </Text>
       )}
-      {...props}
-    >
-      <SelectPrimitive.ItemText className="text-xs md:text-base" asChild>
-        <span>{text}</span>
-      </SelectPrimitive.ItemText>
-      <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 text-cyan-200" />
-      </SelectPrimitive.ItemIndicator>
-    </SelectPrimitive.Item>
+    </div >
   )
-}
-
-export const Select = {
-  Root: SelectRoot,
-  Group: SelectGroup,
-  Item: SelectItem,
 }

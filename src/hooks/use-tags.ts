@@ -1,9 +1,17 @@
 "use client";
 
+import { SelectOption } from "@/components/primitives/select";
 import { useEffect, useState } from "react";
 import { useConfiguracaoInicial } from "./use-configuracao-inicial";
 
-export function useTags() {
+type UseTagsResult = {
+  tags: string[];
+  tagsOptions: SelectOption[];
+  isLoading: boolean;
+  isFetching: boolean;
+};
+
+export function useTags(): UseTagsResult {
   const { data, isLoading, isFetching } = useConfiguracaoInicial();
   const [tags, setTags] = useState<string[]>([]);
 

@@ -5,19 +5,18 @@ import FiltroPorPagina from "../filtro-por-pagina";
 
 jest.mock("@/components/primitives/select", () => ({
   __esModule: true,
-  default: ({ value, onValueChange, children, ...props }: any) => (
+  Select: ({ value, onChange, options, ...props }: any) => (
     <select
       data-testid="select"
       value={value}
-      onChange={e => onValueChange(e.target.value)}
+      onChange={e => onChange?.(e.target.value)}
       {...props}
     >
-      {children}
+      {options?.map((option: any) => (
+        <option key={option.value} value={option.value}>{option.label}</option>
+      ))}
     </select>
   ),
-}));
-jest.mock("@/components/primitives/select-item", () => ({
-  SelectItem: ({ value, text }: any) => <option value={value}>{text}</option>,
 }));
 jest.mock("@/components/primitives/text", () => ({
   __esModule: true,

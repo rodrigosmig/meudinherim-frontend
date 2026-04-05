@@ -2,7 +2,6 @@ import { LancamentoContaFormValue, lancamentoContaSchema } from "@/schema-valida
 import { Controller, DefaultValues, useForm } from "react-hook-form";
 import { Bookmark, BookType, Landmark, Tags } from "lucide-react";
 import { InputMoney } from "@/components/primitives/input-money";
-import MultiSelect from "@/components/primitives/multi-select";
 import InputDate from "@/components/primitives/input-date";
 import { LancamentoConta } from "@/types/lancamento-conta";
 import { Select } from "@/components/primitives/select";
@@ -26,13 +25,14 @@ const getDefaultValues = (): DefaultValues<LancamentoContaFormValue> => ({
   dataLancamento: new Date(),
   descricao: "",
   valor: undefined,
+  tags: []
 });
 
 export default function LancamentoContaForm({ lancamentoConta, children }: AddLancamentoContaFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { contas, isLoading: isContasLoading } = useContas();
+  const { contasOptions, isLoading: isContasLoading } = useContas();
   const { tagsOptions, isLoading: isTagsLoading } = useTags();
-  const { categoriasEntrada, categoriasSaida, isLoading: isCategoriasLoading } = useCategorias();
+  const { categoriasEntrada, categoriasSaida, categoriasOptions, isLoading: isCategoriasLoading } = useCategorias();
 
 
   const form = useForm<LancamentoContaFormValue>({
@@ -92,17 +92,14 @@ export default function LancamentoContaForm({ lancamentoConta, children }: AddLa
           control={form.control}
           name="idConta"
           render={({ field }) => (
-            <Select.Root
+            <Select
               icon={Landmark}
-              label="Conta"
+              label={"Conta"}
+              options={contasOptions}
               placeholder="Selecione uma conta"
-              value={field.value}
-              onValueChange={field.onChange}
-            >
-              {contas.map(conta => (
-                <Select.Item key={conta.uuid} text={conta.nome} value={conta.uuid} />
-              ))}
-            </Select.Root>
+              {...field}
+              error={form.formState.errors.idConta}
+            />
           )}
         />
 
@@ -122,32 +119,15 @@ export default function LancamentoContaForm({ lancamentoConta, children }: AddLa
           control={form.control}
           name="idCategoria"
           render={({ field }) => (
-            <Select.Root
+
+            <Select
               icon={Bookmark}
+              label={"Categoria"}
+              options={categoriasOptions}
               placeholder="Selecione uma categoria"
-              label="Categoria"
-              value={field.value}
-              onValueChange={field.onChange}
-            >
-              <Select.Group label="Entrada">
-                {categoriasEntrada.map(categoria => (
-                  <Select.Item
-                    key={categoria.uuid}
-                    text={categoria.nome}
-                    value={categoria.uuid}
-                  />
-                ))}
-              </Select.Group>
-              <Select.Group label="Saída">
-                {categoriasSaida.map(categoria => (
-                  <Select.Item
-                    key={categoria.uuid}
-                    text={categoria.nome}
-                    value={categoria.uuid}
-                  />
-                ))}
-              </Select.Group>
-            </Select.Root>
+              {...field}
+              error={form.formState.errors.idCategoria}
+            />
           )}
         />
 
@@ -156,21 +136,30 @@ export default function LancamentoContaForm({ lancamentoConta, children }: AddLa
           label="Descrição"
           placeholder="Descrição"
           {...form.register("descricao")}
+          error={form.formState.errors.descricao}
         />
 
         <Controller
           control={form.control}
           name="valor"
           render={({ field }) => (
-            <InputMoney label="Valor" {...field} />
+            <InputMoney label="Valor" {...field} error={form.formState.errors.valor} />
           )}
         />
 
-        <MultiSelect
-          icon={Tags}
-          label={"Tags"}
-          options={tagsOptions}
-          placeholder="Selecione as tags..."
+        <Controller
+          control={form.control}
+          name="tags"
+          render={({ field }) => (
+            <Select
+              isMulti
+              icon={Tags}
+              label={"Tags"}
+              options={tagsOptions}
+              placeholder="Selecione as tags..."
+              {...field}
+            />
+          )}
         />
 
         <div className="flex justify-end gap-2">

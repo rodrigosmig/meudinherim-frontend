@@ -8,12 +8,11 @@ interface InputMoneyProps extends Omit<ComponentProps<'input'>, 'onChange' | 'va
   className?: string;
   label?: string;
   error?: FieldError;
-  onChange?: (value: number) => void;
+  onChange?: (value: number | undefined) => void;
   value?: number;
 }
 
 export function InputMoney({ label, error, className, onChange, value: externalValue, ...props }: InputMoneyProps) {
-  const isError = !!error;
   const [digits, setDigits] = useState<string>(
     externalValue != null ? String(Math.round(externalValue * 100)) : ''
   );
@@ -38,7 +37,7 @@ export function InputMoney({ label, error, className, onChange, value: externalV
 
       const next = digits.slice(0, -1);
       setDigits(next);
-      onChange?.(next ? parseInt(next, 10) / 100 : 0);
+      onChange?.(next ? parseInt(next, 10) / 100 : undefined);
       return;
     }
 
@@ -52,16 +51,19 @@ export function InputMoney({ label, error, className, onChange, value: externalV
   };
 
   return (
-    <Input
-      label={label}
-      icon={Banknote}
-      inputMode="numeric"
-      placeholder="R$ 0,00"
-      value={formatDisplay(digits)}
-      onKeyDown={handleKeyDown}
-      readOnly
-      error={error}
-      {...props}
-    />
+    <div className="flex flex-col gap-1">
+      <Input
+        label={label}
+        icon={Banknote}
+        inputMode="numeric"
+        placeholder="R$ 0,00"
+        value={formatDisplay(digits)}
+        onKeyDown={handleKeyDown}
+        readOnly
+        error={error}
+        {...props}
+      />
+    </div>
+
   );
 }

@@ -27,9 +27,9 @@ export function Input({
       {label && <label htmlFor={inputId} className="mb-1">{label}</label>}
       <div
         className={cn(
-          "flex w-full bg-gray-800 hover:bg-gray-900 border border-default-border text-xs md:text-base",
-          "text-input-text items-center gap-2 rounded-lg px-3 py-2 shadow-2xs focus-within:ring-2",
-          isError ? "focus-within:ring-red-400" : "focus-within:ring-primary",
+          "flex w-full bg-gray-800 hover:bg-gray-900 border text-xs md:text-base",
+          "text-input-text items-center gap-2 rounded-lg px-3 py-2 shadow-2xs focus-within:ring-3",
+          isError ? "border-red-400 focus-within:ring-red-400" : "border-default-border focus-within:ring-primary",
         )}
       >
         {Icon && <Icon className="text-gray-500 w-4 h-4 md:w-5 md:h-5" />}
