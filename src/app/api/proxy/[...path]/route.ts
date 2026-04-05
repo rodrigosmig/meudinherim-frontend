@@ -52,6 +52,7 @@ async function proxy(request: Request, path: string[]) {
 
   const headers = new Headers(request.headers);
   headers.set("Authorization", `Bearer ${token}`);
+  headers.set("Accept-Language", "pt-BR");
   headers.delete("host");
 
   const method = request.method.toUpperCase();

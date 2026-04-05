@@ -37,13 +37,26 @@ export type CadastrarLancamentoContaRequest = {
   idCategoria: string;
   dataLancamento: string;
   descricao: string;
-  valor: string;
+  valor: number;
+  tags?: string[];
 };
 
 export interface CadastrarLancamentoContaData {
   idLancamento: string;
 }
 
+export interface ObterLancamentoContaData {
+  lancamento: LancamentoConta;
+}
+
 export type CadastrarLancamentoContaResponse =
   | ApiResponse<CadastrarLancamentoContaData>
+  | ApiFormErrorResponse;
+
+export type ObterLancamentoContaResponse =
+  | ApiResponse<ObterLancamentoContaData>
+  | ApiFormErrorResponse;
+
+export type AlterarLancamentoContaResponse =
+  | ApiResponse<ObterLancamentoContaData>
   | ApiFormErrorResponse;

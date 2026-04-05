@@ -26,6 +26,8 @@ export const reverseBrDate = (date: string) => {
 };
 
 export const toUsDate = (date: Date) => {
+  if (!date) return "";
+
   return format(date, "yyyy-MM-dd");
 };
 

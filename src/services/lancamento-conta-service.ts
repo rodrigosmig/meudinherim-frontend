@@ -1,16 +1,9 @@
-import {
-  normalizarApiResponsePaginadaBackendParaFrontend,
-  paraPaginaBackend,
-} from "@/helpers/paginacao-helper";
+import { AlterarLancamentoContaResponse, CadastrarLancamentoContaData, CadastrarLancamentoContaRequest, LancamentoConta, ListarLancamentosContaRequest, ObterLancamentoContaResponse, } from "@/types/lancamento-conta";
+import { normalizarApiResponsePaginadaBackendParaFrontend, paraPaginaBackend, } from "@/helpers/paginacao-helper";
 import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { ApiResponse } from "@/types/api";
-import {
-  CadastrarLancamentoContaData,
-  CadastrarLancamentoContaRequest,
-  LancamentoConta,
-  ListarLancamentosContaRequest,
-} from "@/types/lancamento-conta";
 import { Pagina } from "@/types/pagina";
+import { handleApiResponse } from "@/helpers/response-helper";
 
 export const lancamentoContaService = {
   listar: async (
@@ -39,25 +32,65 @@ export const lancamentoContaService = {
 
     return normalizarApiResponsePaginadaBackendParaFrontend(payload);
   },
+
+  cadastrar: async (
+    request: CadastrarLancamentoContaRequest,
+  ): Promise<ApiResponse<CadastrarLancamentoContaData>> => {
+    const url = `/api/proxy/v1/contas/${request.idConta}/lancamentos`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<CadastrarLancamentoContaData>>(response);
+  },
+
+  alterar: async (
+    idLancamento: string,
+    request: CadastrarLancamentoContaRequest,
+  ): Promise<ApiResponse<AlterarLancamentoContaResponse>> => {
+    const url = `/api/proxy/v1/contas/lancamentos/${idLancamento}`;
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<AlterarLancamentoContaResponse>>(response);
+  },
+
+  obter: async (
+    idLancamento: string,
+  ): Promise<ApiResponse<ObterLancamentoContaResponse>> => {
+    const url = `/api/proxy/v1/contas/lancamentos/${idLancamento}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "same-origin",
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<ObterLancamentoContaResponse>>(response);
+  },
+
+  deletar: async (idLancamento: string): Promise<ApiResponse<void>> => {
+    const url = `/api/proxy/v1/contas/lancamentos/${idLancamento}`;
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<void>>(response);
+  },
 };
-
-export async function cadastrarLancamentoConta(
-  request: CadastrarLancamentoContaRequest,
-): Promise<ApiResponse<CadastrarLancamentoContaData>> {
-  const url = `/api/proxy/v1/contas/${request.idConta}/lancamentos`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(request),
-  });
-
-  validarAutenticacao(response);
-
-  if (!response.ok) throw new Error("Falha ao cadastrar lançamento de conta");
-
-  const payload: ApiResponse<CadastrarLancamentoContaData> =
-    await response.json();
-
-  return payload;
-}

@@ -12,15 +12,25 @@ import { Input } from "@/components/primitives/input";
 import { useContas } from "@/hooks/use-contas";
 import { useTags } from "@/hooks/use-tags";
 import Modal from "@/components/modal";
-import { useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
+import { toast } from "@/components/toast";
+import { catalogoErros } from "@/helpers/erros-helper";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
+import { DADOS_CONFIGURACAO_QUERY_KEY, LANCAMENTOS_CONTA_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { toUsDate } from "@/helpers/string-helper";
+import { lancamentoContaService } from "@/services/lancamento-conta-service";
+import { ApiFormError } from "@/types/api";
+import ApiError from "@/types/application-error";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 
-type AddLancamentoContaFormProps = {
+type AddLancamentoContaFormProps = Readonly<{
   lancamentoConta?: LancamentoConta;
-  children?: React.ReactNode;
-}
+  children?: ReactNode;
+}>
 
-const getDefaultValues = (): DefaultValues<LancamentoContaFormValue> => ({
-  idConta: "",
+const getDefaultValues = (idConta = ""): DefaultValues<LancamentoContaFormValue> => ({
+  idConta,
   idCategoria: "",
   dataLancamento: new Date(),
   descricao: "",
@@ -28,56 +38,84 @@ const getDefaultValues = (): DefaultValues<LancamentoContaFormValue> => ({
   tags: []
 });
 
-export default function LancamentoContaForm({ lancamentoConta, children }: AddLancamentoContaFormProps) {
+export default function LancamentoContaForm({ children }: AddLancamentoContaFormProps) {
+  const params = useParams<{ uuid: string }>();
+  const idContaRota = params.uuid;
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const { contasOptions, isLoading: isContasLoading } = useContas();
   const { tagsOptions, isLoading: isTagsLoading } = useTags();
-  const { categoriasEntrada, categoriasSaida, categoriasOptions, isLoading: isCategoriasLoading } = useCategorias();
+  const { categoriasOptions, isLoading: isCategoriasLoading } = useCategorias();
 
 
   const form = useForm<LancamentoContaFormValue>({
     resolver: zodResolver(lancamentoContaSchema),
-    defaultValues: getDefaultValues(),
+    defaultValues: getDefaultValues(idContaRota),
   });
 
   const isLoading = isContasLoading || isTagsLoading || isCategoriasLoading;
+
+  useEffect(() => {
+    if (idContaRota) {
+      form.setValue("idConta", idContaRota, { shouldValidate: true });
+    }
+  }, [form, idContaRota]);
+
+  const cadastrarLancamentoMutation = useMutation({
+    mutationFn: async (data: LancamentoContaFormValue) => {
+      return lancamentoContaService.cadastrar({
+        idConta: idContaRota,
+        idCategoria: data.idCategoria,
+        dataLancamento: toUsDate(data.dataLancamento),
+        descricao: data.descricao.trim(),
+        valor: data.valor,
+        tags: data.tags?.length ? data.tags : undefined,
+      });
+    },
+  });
 
   function handleOpenChange(isOpen: boolean) {
     setIsOpen(isOpen);
 
     if (!isOpen) {
-      form.reset(getDefaultValues());
+      form.reset(getDefaultValues(idContaRota));
     }
   }
 
   const onSubmit = async (data: LancamentoContaFormValue) => {
-    console.log("Dados do formulário:", data);
-    // try {
-    //   //await login(data);
+    try {
+      await cadastrarLancamentoMutation.mutateAsync(data);
 
-    //   setIsOpen(false);
-    // } catch (error) {
-    //   if (error instanceof ApiError) {
-    //     if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
-    //       const formError = error.data as ApiFormError;
+      toast.success("Lançamento cadastrado com sucesso!");
 
-    //       formError.fields.forEach((fieldError) => {
-    //         if (["idCategoria", "dataLancamento", "descricao", "valor"].includes(fieldError.field)) {
-    //           form.setError(fieldError.field as keyof LancamentoContaFormValue, {
-    //             type: "server",
-    //             message: fieldError.message,
-    //           });
-    //         }
-    //       });
-    //     }
+      handleOpenChange(false);
 
-    //     toast.error(error.apiMessage.descricao);
-    //     return;
-    //   }
+      void Promise.all([
+        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
+      ]);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
+          const formError = error.data as ApiFormError;
 
-    //   toast.error(DEFAULT_ERROR_MESSAGE);
-    //   return;
-    // }
+          formError.fields.forEach((fieldError) => {
+            if (["idConta", "idCategoria", "dataLancamento", "descricao", "valor", "tags"].includes(fieldError.field)) {
+              form.setError(fieldError.field as keyof LancamentoContaFormValue, {
+                type: "server",
+                message: fieldError.message,
+              });
+            }
+          });
+        }
+
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+
+      toast.error(DEFAULT_ERROR_MESSAGE);
+      return;
+    }
   };
 
   return (
@@ -111,6 +149,7 @@ export default function LancamentoContaForm({ lancamentoConta, children }: AddLa
               label="Data"
               dateSelected={field.value}
               onChange={field.onChange}
+              error={form.formState.errors.dataLancamento}
             />
           )}
         />
@@ -163,8 +202,16 @@ export default function LancamentoContaForm({ lancamentoConta, children }: AddLa
         />
 
         <div className="flex justify-end gap-2">
-          <Button type="button" onClick={() => handleOpenChange(false)}>Cancelar</Button>
-          <Button type="submit">Salvar</Button>
+          <Button type="button" onClick={() => handleOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            isLoading={form.formState.isSubmitting}
+            disabled={isLoading || form.formState.isSubmitting}
+          >
+            Salvar
+          </Button>
         </div>
       </form>
     </Modal>

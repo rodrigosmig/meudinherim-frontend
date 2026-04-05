@@ -1,5 +1,5 @@
-import { handleApiResponse } from "@/helpers/response-helper";
-import { ApiResponse } from "@/types/api";
+import {handleApiResponse} from "@/helpers/response-helper";
+import {ApiResponse} from "@/types/api";
 import {
   CadastrarUsuarioRequest,
   CadastrarUsuarioResponse,
@@ -9,7 +9,7 @@ import {
   RecuperarSenhaRequest,
   RecuperarSenhaResponse,
   ReenviarEmailConfirmacaoBody,
-  ResetarSenhaBody,
+  ResetarSenhaRequest,
 } from "@/types/auth";
 
 export async function cadastrarUsuario(
@@ -21,9 +21,7 @@ export async function cadastrarUsuario(
     body: JSON.stringify(cadastrarUsuarioBody),
   });
 
-  const data = await handleApiResponse<CadastrarUsuarioResponse>(response);
-
-  return data;
+  return await handleApiResponse<CadastrarUsuarioResponse>(response);
 }
 
 export async function autenticar(
@@ -35,9 +33,7 @@ export async function autenticar(
     body: JSON.stringify(loginBody),
   });
 
-  const data = await handleApiResponse<LoginResponse>(response);
-
-  return data;
+  return await handleApiResponse<LoginResponse>(response);
 }
 
 export async function recuperarSenha(
@@ -49,9 +45,7 @@ export async function recuperarSenha(
     body: JSON.stringify(recuperarSenhaBody),
   });
 
-  const data = await handleApiResponse<RecuperarSenhaResponse>(response);
-
-  return data;
+  return await handleApiResponse<RecuperarSenhaResponse>(response);
 }
 
 export async function logout() {
@@ -69,9 +63,7 @@ export async function confirmarEmail(
     body: JSON.stringify(confirmarEmailParam),
   });
 
-  const data = await handleApiResponse<ApiResponse<void>>(response);
-
-  return data;
+  return await handleApiResponse<ApiResponse<void>>(response);
 }
 
 export async function reenviarEmailConfirmacao(
@@ -83,13 +75,11 @@ export async function reenviarEmailConfirmacao(
     body: JSON.stringify(reenviarEmailConfirmacaoBody),
   });
 
-  const data = await handleApiResponse<ApiResponse<void>>(response);
-
-  return data;
+  return await handleApiResponse<ApiResponse<void>>(response);
 }
 
 export async function resetarSenha(
-  resetarSenhaBody: ResetarSenhaBody,
+  resetarSenhaBody: ResetarSenhaRequest,
 ): Promise<ApiResponse<void>> {
   const response = await fetch("/api/auth/resetar-senha", {
     method: "POST",
@@ -97,7 +87,5 @@ export async function resetarSenha(
     body: JSON.stringify(resetarSenhaBody),
   });
 
-  const data = await handleApiResponse<ApiResponse<void>>(response);
-
-  return data;
+  return await handleApiResponse<ApiResponse<void>>(response);
 }

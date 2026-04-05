@@ -12,7 +12,6 @@ import Skeleton from "@/components/primitives/skeleton";
 import { toCurrency } from "@/helpers/string-helper";
 import { useContas } from "@/hooks/use-contas";
 import { useDateFilter } from "@/hooks/use-date-filter";
-import { useDisclosure } from "@/hooks/use-disclosure";
 import { useLancamentosContaPaginacao } from "@/hooks/use-lancamentos-conta-paginacao";
 import { LancamentoConta } from "@/types/lancamento-conta";
 import { Plus, Search } from "lucide-react";
@@ -29,8 +28,6 @@ export default function LancamentosPage() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [search, setSearch] = useState(query);
-
-  const { isOpen: isOpenAddLancamento, onOpen: onOpenAddLancamento, onClose: onCloseAddLancamento } = useDisclosure();
 
   const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
 
@@ -104,10 +101,6 @@ export default function LancamentosPage() {
     });
   }, [lancamentos, search]);
 
-  function handleOpenAddLancamentoModal() {
-    onOpenAddLancamento();
-  }
-
   if (isLoading) {
     return (
       <>
@@ -144,7 +137,7 @@ export default function LancamentosPage() {
             />
 
             <LancamentoContaForm>
-              <Button icon={Plus} onClick={handleOpenAddLancamentoModal}>
+              <Button icon={Plus}>
                 Adicionar
               </Button>
             </LancamentoContaForm>

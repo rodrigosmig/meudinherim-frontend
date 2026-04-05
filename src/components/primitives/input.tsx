@@ -18,9 +18,10 @@ export function Input({
   label,
   error,
   ...props
-}: InputProps) {
+}: Readonly<InputProps>) {
+  const newId = useId()
+  const inputId = id ?? newId
   const isError = !!error;
-  const inputId = id ?? useId();
 
   return (
     <div className="flex flex-col gap-1">
@@ -40,7 +41,7 @@ export function Input({
           {...props}
         />
       </div>
-      {!!isError && (
+      {isError && (
         <Text className="pt-1 text-sm text-error">
           {error.message?.toString()}
         </Text>
