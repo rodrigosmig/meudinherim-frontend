@@ -53,7 +53,7 @@ export function Button({
   className,
   tooltip,
   isLoading,
-  ...props }: ButtonProps) {
+  ...props }: Readonly<ButtonProps>) {
   return (
     <Tooltip label={tooltip}>
       <button className={buttonVariants({ variant, className, disabled: props.disabled })}

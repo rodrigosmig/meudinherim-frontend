@@ -12,7 +12,7 @@ interface ModalProps extends Dialog.DialogProps {
   children: ReactNode;
 }
 
-export default function Modal({ onOpenChange, trigger, title, children, ...props }: ModalProps) {
+export default function Modal({ onOpenChange, trigger, title, children, ...props }: Readonly<ModalProps>) {
   return (
     <Dialog.Root onOpenChange={onOpenChange} {...props}>
       {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}

@@ -1,13 +1,14 @@
 "use client";
 
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { ReactNode } from "react";
 
 type TooltipProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   label?: string;
 }
 
-export default function Tooltip({ children, label }: TooltipProps) {
+export default function Tooltip({ children, label }: Readonly<TooltipProps>) {
   if (!label) {
     return children;
   }
