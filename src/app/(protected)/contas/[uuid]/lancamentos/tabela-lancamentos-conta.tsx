@@ -3,7 +3,8 @@ import { TipoCategoria } from '@/types/enum/tipo-categoria';
 import { LancamentoConta } from '@/types/lancamento-conta';
 import { Button } from '@/components/primitives/button';
 import { Table } from '@/components/primitives/table';
-import { Pencil, Trash2 } from 'lucide-react';
+import {Pencil, Plus, Trash2} from 'lucide-react';
+import LancamentoContaForm from "@/app/(protected)/contas/[uuid]/lancamentos/lancamento-conta-form";
 
 type TabelaLancamentosProps = {
   lancamentos: LancamentoConta[];
@@ -32,7 +33,9 @@ export default function TabelaLancamentosConta({ lancamentos }: TabelaLancamento
           </Table.Td>
 
           <Table.Td className="flex items-center justify-end gap-2">
-            <Button icon={Pencil} tooltip="Editar" />
+            <LancamentoContaForm lancamentoConta={lancamento}>
+              <Button icon={Pencil} tooltip="Editar" />
+            </LancamentoContaForm>
             <Button icon={Trash2} tooltip="Remover" />
 
           </Table.Td>

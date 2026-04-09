@@ -1,90 +1,133 @@
-import { LancamentoContaFormValue, lancamentoContaSchema } from "@/schema-validation/lancamento-conta";
-import { Controller, DefaultValues, useForm } from "react-hook-form";
-import { Bookmark, BookType, Landmark, Tags } from "lucide-react";
-import { InputMoney } from "@/components/primitives/input-money";
-import InputDate from "@/components/primitives/input-date";
-import { LancamentoConta } from "@/types/lancamento-conta";
-import { Select } from "@/components/primitives/select";
-import { Button } from "@/components/primitives/button";
-import { useCategorias } from "@/hooks/use-categorias";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/primitives/input";
-import { useContas } from "@/hooks/use-contas";
-import { useTags } from "@/hooks/use-tags";
-import Modal from "@/components/modal";
-import { useEffect, useState, ReactNode } from "react";
-import { toast } from "@/components/toast";
-import { catalogoErros } from "@/helpers/erros-helper";
-import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
-import { DADOS_CONFIGURACAO_QUERY_KEY, LANCAMENTOS_CONTA_QUERY_KEY } from "@/helpers/query-keys-helper";
-import { toUsDate } from "@/helpers/string-helper";
-import { lancamentoContaService } from "@/services/lancamento-conta-service";
-import { ApiFormError } from "@/types/api";
-import ApiError from "@/types/application-error";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+"use client";
 
-type AddLancamentoContaFormProps = Readonly<{
+import {useEffect, useMemo, useState, type ReactNode} from "react";
+import {Controller, type DefaultValues, useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {useParams} from "next/navigation";
+import {Bookmark, BookType, Landmark, Tags} from "lucide-react";
+
+import Modal from "@/components/modal";
+import {Button} from "@/components/primitives/button";
+import {Input} from "@/components/primitives/input";
+import InputDate from "@/components/primitives/input-date";
+import {InputMoney} from "@/components/primitives/input-money";
+import {Select} from "@/components/primitives/select";
+import {toast} from "@/components/toast";
+
+import {useContas} from "@/hooks/use-contas";
+import {useCategorias} from "@/hooks/use-categorias";
+import {useTags} from "@/hooks/use-tags";
+
+import {catalogoErros} from "@/helpers/erros-helper";
+import {DEFAULT_ERROR_MESSAGE} from "@/helpers/route-helpers";
+import {
+  DADOS_CONFIGURACAO_QUERY_KEY,
+  LANCAMENTOS_CONTA_QUERY_KEY,
+} from "@/helpers/query-keys-helper";
+import {toUsDate} from "@/helpers/string-helper";
+
+import {lancamentoContaService} from "@/services/lancamento-conta-service";
+import {
+  lancamentoContaSchema,
+  type LancamentoContaFormValue,
+} from "@/schema-validation/lancamento-conta";
+import type {ApiFormError} from "@/types/api";
+import ApiError from "@/types/application-error";
+import type {LancamentoConta} from "@/types/lancamento-conta";
+
+type Props = Readonly<{
   lancamentoConta?: LancamentoConta;
   children?: ReactNode;
-}>
+}>;
 
-const getDefaultValues = (idConta = ""): DefaultValues<LancamentoContaFormValue> => ({
-  idConta,
-  idCategoria: "",
-  dataLancamento: new Date(),
-  descricao: "",
-  valor: undefined,
-  tags: []
-});
+function getDefaultValues(
+  idConta: string,
+  lancamentoConta?: LancamentoConta,
+): DefaultValues<LancamentoContaFormValue> {
+  if (!lancamentoConta) {
+    return {
+      idConta,
+      idCategoria: "",
+      dataLancamento: new Date(),
+      descricao: "",
+      valor: undefined,
+      tags: [],
+    };
+  }
 
-export default function LancamentoContaForm({ children }: AddLancamentoContaFormProps) {
+  return {
+    idConta: lancamentoConta.conta.uuid || idConta,
+    idCategoria: lancamentoConta.categoria.uuid,
+    dataLancamento: new Date(`${lancamentoConta.data}T00:00:00`),
+    descricao: lancamentoConta.descricao,
+    valor: lancamentoConta.valor,
+    tags: lancamentoConta.tags ?? [],
+  };
+}
+
+export default function LancamentoContaForm({lancamentoConta, children}: Props) {
   const params = useParams<{ uuid: string }>();
   const idContaRota = params.uuid;
-  const queryClient = useQueryClient();
-  const [isOpen, setIsOpen] = useState(false);
-  const { contasOptions, isLoading: isContasLoading } = useContas();
-  const { tagsOptions, isLoading: isTagsLoading } = useTags();
-  const { categoriasOptions, isLoading: isCategoriasLoading } = useCategorias();
 
+  const isEditMode = Boolean(lancamentoConta?.uuid);
+  const [isOpen, setIsOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const {contasOptions, isLoading: isContasLoading} = useContas();
+  const {categoriasOptions, isLoading: isCategoriasLoading} = useCategorias();
+  const {tagsOptions, isLoading: isTagsLoading} = useTags();
+
+  const isLoadingDependencies = isContasLoading || isCategoriasLoading || isTagsLoading;
+
+  const defaultValues = useMemo(
+    () => getDefaultValues(idContaRota, lancamentoConta),
+    [idContaRota, lancamentoConta],
+  );
 
   const form = useForm<LancamentoContaFormValue>({
     resolver: zodResolver(lancamentoContaSchema),
-    defaultValues: getDefaultValues(idContaRota),
+    defaultValues,
   });
 
-  const isLoading = isContasLoading || isTagsLoading || isCategoriasLoading;
-
   useEffect(() => {
-    if (idContaRota) {
-      form.setValue("idConta", idContaRota, { shouldValidate: true });
-    }
-  }, [form, idContaRota]);
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
 
-  const cadastrarLancamentoMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: async (data: LancamentoContaFormValue) => {
-      return lancamentoContaService.cadastrar({
+      const payload = {
         idConta: idContaRota,
         idCategoria: data.idCategoria,
         dataLancamento: toUsDate(data.dataLancamento),
         descricao: data.descricao.trim(),
         valor: data.valor,
         tags: data.tags?.length ? data.tags : undefined,
-      });
+      };
+
+      if (isEditMode && lancamentoConta?.uuid) {
+        return lancamentoContaService.alterar(lancamentoConta.uuid, payload);
+      }
+
+      return lancamentoContaService.cadastrar(payload);
     },
     onSuccess: () => {
-      toast.success("Lançamento cadastrado com sucesso!");
+      toast.success(
+        isEditMode
+          ? "Lançamento alterado com sucesso!"
+          : "Lançamento cadastrado com sucesso!",
+      );
       handleOpenChange(false);
+
       void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
+        queryClient.invalidateQueries({queryKey: [LANCAMENTOS_CONTA_QUERY_KEY]}),
+        queryClient.invalidateQueries({queryKey: [DADOS_CONFIGURACAO_QUERY_KEY]}),
       ]);
     },
     onError: (error) => {
       if (error instanceof ApiError) {
         if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
           const formError = error.data as ApiFormError;
-
           formError.fields.forEach((fieldError) => {
             if (["idConta", "idCategoria", "dataLancamento", "descricao", "valor", "tags"].includes(fieldError.field)) {
               form.setError(fieldError.field as keyof LancamentoContaFormValue, {
@@ -94,7 +137,6 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
             }
           });
         }
-
         toast.error(error.apiMessage.descricao);
         return;
       }
@@ -103,33 +145,32 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
     },
   });
 
-  function handleOpenChange(isOpen: boolean) {
-    setIsOpen(isOpen);
-
-    if (!isOpen) {
-      form.reset(getDefaultValues(idContaRota));
+  function handleOpenChange(open: boolean) {
+    setIsOpen(open);
+    if (!open) {
+      form.reset(defaultValues);
     }
   }
 
-  const onCreateLancamentoConta = async (data: LancamentoContaFormValue) => {
-    await cadastrarLancamentoMutation.mutateAsync(data);
-  };
+  async function onSubmit(data: LancamentoContaFormValue) {
+    await mutation.mutateAsync(data);
+  }
 
   return (
     <Modal
-      title="Adicionar lançamento"
+      title={isEditMode ? "Editar lançamento" : "Adicionar lançamento"}
       trigger={children}
       open={isOpen}
       onOpenChange={handleOpenChange}
     >
-      <form onSubmit={form.handleSubmit(onCreateLancamentoConta)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Controller
           control={form.control}
           name="idConta"
-          render={({ field }) => (
+          render={({field}) => (
             <Select
               icon={Landmark}
-              label={"Conta"}
+              label="Conta"
               options={contasOptions}
               placeholder="Selecione uma conta"
               {...field}
@@ -141,7 +182,7 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
         <Controller
           control={form.control}
           name="dataLancamento"
-          render={({ field }) => (
+          render={({field}) => (
             <InputDate
               label="Data"
               dateSelected={field.value}
@@ -154,11 +195,10 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
         <Controller
           control={form.control}
           name="idCategoria"
-          render={({ field }) => (
-
+          render={({field}) => (
             <Select
               icon={Bookmark}
-              label={"Categoria"}
+              label="Categoria"
               options={categoriasOptions}
               placeholder="Selecione uma categoria"
               {...field}
@@ -178,19 +218,26 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
         <Controller
           control={form.control}
           name="valor"
-          render={({ field }) => (
-            <InputMoney label="Valor" {...field} error={form.formState.errors.valor} />
+          render={({field}) => (
+            <InputMoney
+              label="Valor"
+              name={field.name}
+              onBlur={field.onBlur}
+              value={field.value}
+              onChange={(value) => field.onChange(value ?? null)}
+              error={form.formState.errors.valor}
+            />
           )}
         />
 
         <Controller
           control={form.control}
           name="tags"
-          render={({ field }) => (
+          render={({field}) => (
             <Select
               isMulti
               icon={Tags}
-              label={"Tags"}
+              label="Tags"
               options={tagsOptions}
               placeholder="Selecione as tags..."
               {...field}
@@ -205,12 +252,12 @@ export default function LancamentoContaForm({ children }: AddLancamentoContaForm
           <Button
             type="submit"
             isLoading={form.formState.isSubmitting}
-            disabled={isLoading || form.formState.isSubmitting}
+            disabled={isLoadingDependencies || form.formState.isSubmitting}
           >
-            Salvar
+            {isEditMode ? "Salvar alterações" : "Salvar"}
           </Button>
         </div>
       </form>
     </Modal>
-  )
+  );
 }

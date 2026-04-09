@@ -1,44 +1,35 @@
 'use client';
 
-import { toast as toastSonner } from 'sonner';
+import {toast as toastSonner} from 'sonner';
 
-const DEFAULT_DURATION = 8000; // 8 segundos
+const DEFAULT_DURATION = 4000; // 6 segundos
+const DEFAULT_POSITION = "top-right";
 
-export function error(message: string, duration?: number) {
+type Position = "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right";
+
+export function error(message: string, duration: number = DEFAULT_DURATION, position: Position = DEFAULT_POSITION) {
   toastSonner.error(message, {
-    duration: duration ?? DEFAULT_DURATION,
+    duration: duration,
+    position: position,
   });
 }
 
-export function success(message: string, duration?: number) {
+export function success(message: string, duration: number = DEFAULT_DURATION, position: Position = DEFAULT_POSITION) {
   toastSonner.success(message, {
-    duration: duration ?? DEFAULT_DURATION,
+    duration: duration,
+    position: position,
   });
 }
 
-export function warning(message: string, duration?: number) {
+export function warning(message: string, duration: number = DEFAULT_DURATION, position: Position = DEFAULT_POSITION) {
   toastSonner.warning(message, {
-    duration: duration ?? DEFAULT_DURATION,
+    duration: duration,
+    position: position,
   });
-}
-
-export function promise<T>(
-  promise: Promise<T>,
-  messages: { loading: string; success: string; error: string | ((err: any) => any); }
-) {
-  return toastSonner.promise(
-    promise,
-    {
-      loading: messages.loading,
-      success: messages.success,
-      error: messages.error,
-    }
-  );
 }
 
 export const toast = {
   error,
   success,
-  warning,
-  promise
+  warning
 }
