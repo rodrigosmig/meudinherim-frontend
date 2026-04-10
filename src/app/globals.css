@@ -58,6 +58,15 @@
   --color-error: #f87171;
   --color-positive: var(--color-cyan-400);
   --color-negative: #fca5a5;
+
+  /* --- Surfaces --- */
+  --color-surface-raised: var(--color-gray-800);
+  --color-surface-muted: color-mix(in srgb, var(--color-gray-700) 30%, transparent);
+  --color-surface-hover: color-mix(in srgb, var(--color-primary) 8%, transparent);
+
+  /* --- Borders & Dividers --- */
+  --color-divider: color-mix(in srgb, var(--color-gray-700) 40%, transparent);
+  --color-border-muted: color-mix(in srgb, var(--color-gray-700) 50%, transparent);
 }
 
 @keyframes shimmer {

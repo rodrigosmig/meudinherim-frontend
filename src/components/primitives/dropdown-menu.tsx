@@ -41,7 +41,7 @@ function DropdownContent({ className, align = "center", children }: DropdownCont
       side="bottom"
       align={align}
       sideOffset={2}
-      className={cn("rounded-lg border border-gray-700/60 bg-gray-800 shadow-xl shadow-black/40 z-50 p-2",
+      className={cn("rounded-lg border border-border-muted bg-surface-raised shadow-xl shadow-black/40 z-50 p-2",
         className,
         "data-[state=open]:animate-in",
         "data-[state=closed]:animate-out",
@@ -53,7 +53,7 @@ function DropdownContent({ className, align = "center", children }: DropdownCont
         "duration-200")}
     >
       {children}
-      <DropdownPrimitive.Arrow className="fill-gray-800" />
+      <DropdownPrimitive.Arrow className="fill-surface-raised" />
     </DropdownPrimitive.Content>
   </DropdownPrimitive.Portal>
 }
