@@ -2,8 +2,16 @@ import { render, screen } from "@/helpers/test/test-helper";
 
 import { Header } from "../header/header";
 
+jest.mock("../header/adicionar-nav", () => ({
+  AdicionarNav: () => <button aria-label="Adicionar">Adicionar</button>,
+}));
+
 jest.mock("../header/contas-nav", () => ({
   ContasNav: () => <button aria-label="Contas">Contas</button>,
+}));
+
+jest.mock("../header/faturas-nav", () => ({
+  FaturasNav: () => <button aria-label="Faturas">Faturas</button>,
 }));
 
 jest.mock("../header/notificacoes-nav", () => () => (

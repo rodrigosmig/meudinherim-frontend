@@ -10,14 +10,14 @@ import Link from "next/link";
 import { Avatar } from "../avatar";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
-import Heading from "../primitives/heading";
 import Icon from "../primitives/icon";
+import Loading from "../primitives/loading";
 import Text from "../primitives/text";
 
 export function ContasNav() {
   const isMobile = useMobile();
   const align = isMobile ? "center" : "end";
-  const avatarSize = isMobile ? 38 : 42;
+  const avatarSize = isMobile ? 34 : 36;
 
   const { contas, saldoTotal, isLoading, isFetching } = useContas();
 
@@ -30,38 +30,49 @@ export function ContasNav() {
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content align={align} className="w-64 md:w-72">
-        <div className="px-2 text-center border-b border-line-separator pb-2">
-          <Heading variant="heading4">Contas</Heading>
-        </div>
-
-        <div className="mt-2 space-x-3 max-h-76 overflow-y-auto overflow-x-hidden divide-y divide-line-separator">
-          {contas.map((conta: Conta) => (
-            <DropdownMenu.Item key={conta.uuid}>
-              <Link
-                href={`${Urls.CONTAS_BANCARIAS}/${conta.uuid}/lancamentos`}
-                className="w-full flex items-center gap-2 px-2 py-2 hover:bg-gray-800 rounded-lg"
-              >
-                <Avatar name={conta.nome} size={avatarSize} />
-
-                <div className="flex-1">
-                  <div className="flex flex-col">
-                    <Text className="font-bold">{conta.nome}</Text>
-                    <Text className={`md:text-sm mt-1 ${conta.saldo < 0 ? 'text-negative' : 'text-cyan-400'}`}>
-                      {toCurrency(conta.saldo)}
-                    </Text>
-                  </div>
-                </div>
-              </Link>
-            </DropdownMenu.Item>
-          ))}
-        </div>
-
-        <div className="mt-3 pt-2 border-t border-line-separator px-3">
-          <div className="flex items-center justify-between">
-            <Text className="font-bold">Total:</Text>
-            <Text className={`font-bold ${saldoTotal < 0 ? 'text-negative' : 'text-cyan-400'}`}>{toCurrency(saldoTotal)}</Text>
+        {isLoading ? (
+          <div className="h-36 flex justify-center items-center gap-2">
+            <Loading />
+            <Text variant="paragraph-small" className="text-gray-400">Carregando contas...</Text>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-center gap-2 px-3 py-2 border-b border-gray-700/50 mb-1">
+              <div className="w-5 h-5 rounded-md bg-primary/20 flex items-center justify-center">
+                <Landmark className="w-3 h-3 text-primary" />
+              </div>
+              <Text className="text-sm font-semibold text-gray-200">Contas</Text>
+              {isFetching && <Loading className="w-3.5 h-3.5" />}
+            </div>
+
+            <div className="max-h-72 overflow-y-auto overflow-x-hidden divide-y divide-gray-700/40">
+              {contas.map((conta: Conta) => (
+                <DropdownMenu.Item key={conta.uuid}>
+                  <Link
+                    href={`${Urls.CONTAS_BANCARIAS}/${conta.uuid}/lancamentos`}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-primary/8 rounded-lg transition-colors duration-150 group"
+                  >
+                    <Avatar name={conta.nome} size={avatarSize} />
+                    <div className="flex-1 min-w-0">
+                      <Text className="block font-medium text-gray-200 group-hover:text-white truncate">{conta.nome}</Text>
+                      <Text variant="paragraph-small" className={`block font-semibold ${conta.saldo < 0 ? 'text-negative' : 'text-positive'}`}>
+                        {toCurrency(conta.saldo)}
+                      </Text>
+                    </div>
+
+                  </Link>
+                </DropdownMenu.Item>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between px-3 py-2 border-t border-gray-700/50 mt-1">
+              <Text variant="paragraph-small" className="text-gray-400 font-medium">Saldo total</Text>
+              <Text className={`font-bold ${saldoTotal < 0 ? 'text-negative' : 'text-positive'}`}>
+                {toCurrency(saldoTotal)}
+              </Text>
+            </div>
+          </>
+        )}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   );
