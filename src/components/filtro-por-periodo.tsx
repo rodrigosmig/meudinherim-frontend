@@ -21,6 +21,7 @@ export default function FiltroPorPeriodo({
 }: FiltroPorPeriodoProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [rangeString, setRangeString] = useState("");
+  const [month, setMonth] = useState<Date>(new Date());
   const { stringDateBR } = useDateFilter()
   const showClosingButton = !!stringDateBR?.from || !!stringDateBR?.to;
 
@@ -46,7 +47,12 @@ export default function FiltroPorPeriodo({
 
   return (
     <div className="flex gap-2 items-center">
-      <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenu.Root open={isOpen} onOpenChange={(open) => {
+        if (open && selectedRange?.from) {
+          setMonth(selectedRange.from);
+        }
+        setIsOpen(open);
+      }}>
         <div className={cn("relative flex w-64 md:w-68 items-center gap-2 ",
           "rounded-lg border border-default-border bg-gray-800 px-3 py-2 hover:bg-gray-900 cursor-pointer"
         )}>
@@ -94,6 +100,8 @@ export default function FiltroPorPeriodo({
               navLayout="around"
               reverseYears
               locale={ptBR}
+              month={month}
+              onMonthChange={setMonth}
               selected={selectedRange}
               onSelect={handleSelect}
               className="periodo-day-picker"
