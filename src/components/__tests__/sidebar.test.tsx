@@ -1,7 +1,12 @@
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
+import { Urls } from "@/helpers/urls";
 import userEvent from "@testing-library/user-event";
 
 import { Sidebar } from "../sidebar";
+
+jest.mock('next/navigation', () => ({
+  usePathname: () => '/',
+}));
 
 jest.mock('next/link', () => {
   return ({ children, ...props }: any) => {
@@ -43,15 +48,15 @@ describe("Componente Sidebar", () => {
 
   it("deve renderizar links corretos", () => {
     render(<Sidebar />);
-    expect(screen.getByRole("link", { name: "Dashboard" })).toHaveAttribute("href", "/");
-    expect(screen.getByRole("link", { name: "Categorias" })).toHaveAttribute("href", "/categorias");
-    expect(screen.getByRole("link", { name: "Tags" })).toHaveAttribute("href", "/tags");
-    expect(screen.getByRole("link", { name: "Contas Bancárias" })).toHaveAttribute("href", "/contas-bancarias");
-    expect(screen.getByRole("link", { name: "Cartões de Crédito" })).toHaveAttribute("href", "/cartoes-de-credito");
-    expect(screen.getByRole("link", { name: "Contas a Pagar" })).toHaveAttribute("href", "/contas-a-pagar");
-    expect(screen.getByRole("link", { name: "Contas a Receber" })).toHaveAttribute("href", "/contas-a-receber");
-    expect(screen.getByRole("link", { name: "Contas a Pagar/Receber" })).toHaveAttribute("href", "/relatorios/contas-a-pagar-receber");
-    expect(screen.getByRole("link", { name: "Lançamentos por categoria" })).toHaveAttribute("href", "/relatorios/lancamentos-por-categoria");
+    expect(screen.getByRole("link", { name: "Dashboard" })).toHaveAttribute("href", Urls.DASHBOARD);
+    expect(screen.getByRole("link", { name: "Categorias" })).toHaveAttribute("href", Urls.CATEGORIAS);
+    expect(screen.getByRole("link", { name: "Tags" })).toHaveAttribute("href", Urls.TAGS);
+    expect(screen.getByRole("link", { name: "Contas Bancárias" })).toHaveAttribute("href", Urls.CONTAS_BANCARIAS);
+    expect(screen.getByRole("link", { name: "Cartões de Crédito" })).toHaveAttribute("href", Urls.CARTAO_DE_CREDITO);
+    expect(screen.getByRole("link", { name: "Contas a Pagar" })).toHaveAttribute("href", Urls.CONTAS_A_PAGAR);
+    expect(screen.getByRole("link", { name: "Contas a Receber" })).toHaveAttribute("href", Urls.CONTAS_A_RECEBER);
+    expect(screen.getByRole("link", { name: "Contas a Pagar/Receber" })).toHaveAttribute("href", Urls.CONTAS_A_PAGAR_RECEBER);
+    expect(screen.getByRole("link", { name: "Lançamentos por categoria" })).toHaveAttribute("href", Urls.LANCAMENTOS_POR_CATEGORIA);
   });
 
   it("deve abrir o menu ao clicar no botão de menu", async () => {

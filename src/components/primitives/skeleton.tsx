@@ -2,7 +2,7 @@ import { ComponentProps } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
 
 const skeletonVariants = tv({
-	base: "animate-pulse bg-card pointer-events-none",
+	base: "animate-shimmer overflow-hidden pointer-events-none",
 	variants: {
 		rounded: {
 			sm: "rounded-sm",

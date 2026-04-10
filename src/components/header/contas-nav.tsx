@@ -1,6 +1,7 @@
 "use client";
 
 import { toCurrency } from "@/helpers/string-helper";
+import { Urls } from "@/helpers/urls";
 import { useContas } from "@/hooks/use-contas";
 import { useMobile } from "@/hooks/use-is-mobile";
 import { Conta } from "@/types/contas";
@@ -37,7 +38,7 @@ export function ContasNav() {
           {contas.map((conta: Conta) => (
             <DropdownMenu.Item key={conta.uuid}>
               <Link
-                href={`/contas/${conta.uuid}/lancamentos`}
+                href={`${Urls.CONTAS_BANCARIAS}/${conta.uuid}/lancamentos`}
                 className="w-full flex items-center gap-2 px-2 py-2 hover:bg-gray-800 rounded-lg"
               >
                 <Avatar name={conta.nome} size={avatarSize} />

@@ -5,7 +5,9 @@ import { BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasi
 import { ElementType, ReactNode, useState } from 'react';
 
 import { cn } from "@/helpers/string-helper";
+import { Urls } from "@/helpers/urls";
 import Link from "next/link";
+import { usePathname } from 'next/navigation';
 import { Button } from "./primitives/button";
 import Logo from "./primitives/logo";
 
@@ -24,12 +26,14 @@ function SidebarRoot() {
       >
       </Button>
 
-      {open && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={() => setOpen(false)}
-        />
-      )}
+      <div
+        className={cn(
+          "fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-300",
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
+        onClick={() => setOpen(false)}
+        aria-hidden={!open}
+      />
 
       <Collapsible.Root open={open} onOpenChange={setOpen} className="">
         <aside
@@ -46,7 +50,7 @@ function SidebarRoot() {
 
             {!open && (
               <Button
-                className={`hidden md:block bg-gray-800 shadow-2xl border border-gray-800 text-gray-400 hover:text-white absolute z-50 rounded-full p-1 top-2 ${collapsed ? '-right-3' : '-right-3'}`}
+                className="hidden md:block bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 hover:text-primary absolute z-50 rounded-full p-1 top-2 -right-3 transition-colors duration-200"
                 type="button"
                 variant="icon"
                 onClick={() => setCollapsed((prev) => !prev)}
@@ -59,27 +63,31 @@ function SidebarRoot() {
           </div>
           <Collapsible.Content forceMount className="flex flex-col h-full">
             <nav className={cn("flex-1 overflow-y-auto p-4 space-y-1", collapsed && "px-2")}>
-              <NavSection title="Geral" collapsed={collapsed}>
-                <NavItem link="/" title="Dashboard" icon={LayoutDashboard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
-                <NavItem link="/categorias" title="Categorias" icon={Bookmark} collapsed={collapsed} onNavigate={() => setOpen(false)} />
-                <NavItem link="/tags" title="Tags" icon={Tags} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+              <NavSection title="Geral" collapsed={collapsed} isFirst>
+                <NavItem link={Urls.DASHBOARD} title="Dashboard" icon={LayoutDashboard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CATEGORIAS} title="Categorias" icon={Bookmark} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.TAGS} title="Tags" icon={Tags} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Contas" collapsed={collapsed}>
-                <NavItem link="/contas-bancarias" title="Contas Bancárias" icon={Landmark} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CONTAS_BANCARIAS} title="Contas Bancárias" icon={Landmark} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Cartão de Crédito" collapsed={collapsed}>
-                <NavItem link="/cartoes-de-credito" title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CARTAO_DE_CREDITO} title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Agendamento" collapsed={collapsed}>
-                <NavItem link="/contas-a-pagar" title="Contas a Pagar" icon={BanknoteArrowDown} collapsed={collapsed} onNavigate={() => setOpen(false)} />
-                <NavItem link="/contas-a-receber" title="Contas a Receber" icon={BanknoteArrowUp} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CONTAS_A_PAGAR} title="Contas a Pagar" icon={BanknoteArrowDown} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CONTAS_A_RECEBER} title="Contas a Receber" icon={BanknoteArrowUp} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Relatórios" collapsed={collapsed}>
-                <NavItem link="/relatorios/contas-a-pagar-receber" title="Contas a Pagar/Receber" icon={ChartNoAxesColumnIncreasing} collapsed={collapsed} onNavigate={() => setOpen(false)} />
-                <NavItem link="/relatorios/lancamentos-por-categoria" title="Lançamentos por categoria" icon={ChartNoAxesCombined} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CONTAS_A_PAGAR_RECEBER} title="Contas a Pagar/Receber" icon={ChartNoAxesColumnIncreasing} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.LANCAMENTOS_POR_CATEGORIA} title="Lançamentos por categoria" icon={ChartNoAxesCombined} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
             </nav>
           </Collapsible.Content>
+
+          <div className={cn("shrink-0 border-t border-gray-800 py-3", collapsed ? "px-2" : "px-4")}>
+            <div className="h-1 rounded-full bg-gray-800/80" />
+          </div>
 
           {/* Botão fechar mobile */}
           {open && (
@@ -102,11 +110,12 @@ interface NavSectionProps {
   title: string;
   collapsed?: boolean;
   children?: ReactNode;
+  isFirst?: boolean;
 }
 
-function NavSection({ title, collapsed = false, children }: NavSectionProps) {
+function NavSection({ title, collapsed = false, children, isFirst = false }: NavSectionProps) {
   return (
-    <div className={cn("mb-4", collapsed && "mb-2")}>
+    <div className={cn("mb-4", collapsed && "mb-2", !isFirst && "border-t border-gray-800/60 pt-3")}>
       {!collapsed && <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-3">{title}</p>}
       {children}
     </div>
@@ -122,6 +131,9 @@ interface NavItemProps {
 }
 
 function NavItem({ title, link, icon: Icon, collapsed = false, onNavigate }: NavItemProps) {
+  const pathname = usePathname();
+  const isActive = pathname.startsWith(link);
+
   return (
     <Link
       href={link}
@@ -129,14 +141,15 @@ function NavItem({ title, link, icon: Icon, collapsed = false, onNavigate }: Nav
       aria-label={collapsed ? title : undefined}
       onClick={() => onNavigate?.()}
       className={cn(
-        "sidebar-item active",
         "flex items-center gap-3 px-3 py-2.5 rounded-lg",
-        "hover:text-gray-300 hover:bg-primary/10 hover:border-l-3 border-primary",
-        "transition-all duration-100 ease-in-out",
-        collapsed && "justify-center px-0",
+        "transition-all duration-200 ease-in-out",
+        isActive
+          ? "bg-primary/15 text-primary border-l-2 border-primary font-semibold"
+          : "text-gray-400 hover:bg-primary/8 hover:text-gray-200",
+        collapsed && "justify-center px-0 border-l-0",
       )}
     >
-      <Icon className="w-5 h-5" />
+      <Icon className={cn("w-5 h-5", isActive && "text-primary")} />
       {!collapsed && <span className="font-medium">{title}</span>}
     </Link>
   )

@@ -27,7 +27,7 @@ export default async function ProtectedLayout({
             <div className="flex flex-col flex-1 overflow-hidden">
               <DefaultHeader />
               <DateFilterProvider>
-                <main className="flex-1 overflow-y-auto p-6">{children}</main>
+                <main className="flex-1 overflow-y-auto p-6 relative main-content-area animate-in fade-in slide-in-from-bottom-2 duration-300">{children}</main>
               </DateFilterProvider>
             </div>
           </div>

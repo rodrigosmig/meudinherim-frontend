@@ -16,7 +16,7 @@ interface HeaderProps {
 
 export function HeaderRoot({ title }: HeaderProps) {
   return (
-    <header className="bg-gray-900 border-b border-gray-800 px-6 py-4">
+    <header className="sticky top-0 z-30 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 shadow-sm shadow-black/20 px-6 py-4">
       <div className="flex justify-end md:justify-between">
         <HeaderTitle title={title ?? ""} />
 

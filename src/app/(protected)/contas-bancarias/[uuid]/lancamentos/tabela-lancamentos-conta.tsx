@@ -1,6 +1,6 @@
 "use client";
 
-import LancamentoContaForm from "@/app/(protected)/contas/[uuid]/lancamentos/lancamento-conta-form";
+import LancamentoContaForm from "@/app/(protected)/contas-bancarias/[uuid]/lancamentos/lancamento-conta-form";
 import Modal from "@/components/modal";
 import { Button } from '@/components/primitives/button';
 import { Table } from '@/components/primitives/table';
