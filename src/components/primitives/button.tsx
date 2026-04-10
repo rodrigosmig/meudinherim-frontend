@@ -16,6 +16,9 @@ const buttonVariants = tv({
       primary: [
         "bg-primary text-default-text hover:bg-button-hover hover:text-primary active:bg-secondary active:text-default-text border border-primary/50 ",
       ],
+      cancel: [
+        "bg-transparent text-gray-400 hover:bg-gray-800 hover:text-gray-200 active:bg-gray-700 border border-gray-600 hover:border-gray-500",
+      ],
       pagination: [
         "w-7 h-7 bg-transparent border border-primary hover:bg-purple-600 text-primary hover:text-default-text",
       ],
@@ -54,17 +57,20 @@ export function Button({
   tooltip,
   isLoading,
   ...props }: Readonly<ButtonProps>) {
+  const isDisabled = props.disabled || isLoading;
+
   return (
     <Tooltip label={tooltip}>
-      <button className={buttonVariants({ variant, className, disabled: props.disabled })}
+      <button
+        className={buttonVariants({ variant, className, disabled: isDisabled })}
         {...props}
+        disabled={isDisabled}
       >
-        {Icon && <Icon className={cn("w-4 h-4", iconClassName)} />}
         {isLoading
-          ? <LoaderCircle className="w-4 h-4 animate-spin" />
-          : children && <span>{children}</span>
+          ? <LoaderCircle className="w-4 h-4 animate-spin shrink-0" />
+          : Icon && <Icon className={cn("w-4 h-4 shrink-0", iconClassName)} />
         }
-
+        {children && <span>{children}</span>}
       </button>
     </Tooltip>
   )

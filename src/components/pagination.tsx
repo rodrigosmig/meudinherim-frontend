@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
 import { Paginacao } from "@/types/pagina";
 
 import { Button } from "./primitives/button";
@@ -33,9 +34,11 @@ export default function Pagination({ paginacao, onPageChange }: PaginationProps)
     ? gerarArrayDePaginas(paginaAtual, Math.min(paginaAtual + contagemDeIrmaos, ultimaPagina))
     : [];
 
-  if (paginaAtual > ultimaPagina) {
-    onPageChange(ultimaPagina);
-  }
+  useEffect(() => {
+    if (paginaAtual > ultimaPagina) {
+      onPageChange(ultimaPagina);
+    }
+  }, [paginaAtual, ultimaPagina]);
 
   return (
     <div className="flex flex-col md:flex-row items-center gap-3 justify-between">
