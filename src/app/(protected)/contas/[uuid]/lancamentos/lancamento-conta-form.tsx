@@ -1,40 +1,40 @@
 "use client";
 
-import {useEffect, useMemo, useState, type ReactNode} from "react";
-import {Controller, type DefaultValues, useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {useParams} from "next/navigation";
-import {Bookmark, BookType, Landmark, Tags} from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Bookmark, BookType, Landmark, Tags } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Controller, useForm, type DefaultValues } from "react-hook-form";
 
 import Modal from "@/components/modal";
-import {Button} from "@/components/primitives/button";
-import {Input} from "@/components/primitives/input";
+import { Button } from "@/components/primitives/button";
+import { Input } from "@/components/primitives/input";
 import InputDate from "@/components/primitives/input-date";
-import {InputMoney} from "@/components/primitives/input-money";
-import {Select} from "@/components/primitives/select";
-import {toast} from "@/components/toast";
+import { InputMoney } from "@/components/primitives/input-money";
+import { Select } from "@/components/primitives/select";
+import { toast } from "@/components/toast";
 
-import {useContas} from "@/hooks/use-contas";
-import {useCategorias} from "@/hooks/use-categorias";
-import {useTags} from "@/hooks/use-tags";
+import { useCategorias } from "@/hooks/use-categorias";
+import { useContas } from "@/hooks/use-contas";
+import { useTags } from "@/hooks/use-tags";
 
-import {catalogoErros} from "@/helpers/erros-helper";
-import {DEFAULT_ERROR_MESSAGE} from "@/helpers/route-helpers";
+import { catalogoErros } from "@/helpers/erros-helper";
 import {
   DADOS_CONFIGURACAO_QUERY_KEY,
   LANCAMENTOS_CONTA_QUERY_KEY,
 } from "@/helpers/query-keys-helper";
-import {toUsDate} from "@/helpers/string-helper";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
+import { toUsDate } from "@/helpers/string-helper";
 
-import {lancamentoContaService} from "@/services/lancamento-conta-service";
 import {
   lancamentoContaSchema,
   type LancamentoContaFormValue,
 } from "@/schema-validation/lancamento-conta";
-import type {ApiFormError} from "@/types/api";
+import { lancamentoContaService } from "@/services/lancamento-conta-service";
+import type { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
-import type {LancamentoConta} from "@/types/lancamento-conta";
+import type { LancamentoConta } from "@/types/lancamento-conta";
 
 type Props = Readonly<{
   lancamentoConta?: LancamentoConta;
@@ -66,7 +66,7 @@ function getDefaultValues(
   };
 }
 
-export default function LancamentoContaForm({lancamentoConta, children}: Props) {
+export default function LancamentoContaForm({ lancamentoConta, children }: Props) {
   const params = useParams<{ uuid: string }>();
   const idContaRota = params.uuid;
 
@@ -74,9 +74,9 @@ export default function LancamentoContaForm({lancamentoConta, children}: Props) 
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const {contasOptions, isLoading: isContasLoading} = useContas();
-  const {categoriasOptions, isLoading: isCategoriasLoading} = useCategorias();
-  const {tagsOptions, isLoading: isTagsLoading} = useTags();
+  const { contasOptions, isLoading: isContasLoading } = useContas();
+  const { categoriasOptions, isLoading: isCategoriasLoading } = useCategorias();
+  const { tagsOptions, isLoading: isTagsLoading } = useTags();
 
   const isLoadingDependencies = isContasLoading || isCategoriasLoading || isTagsLoading;
 
@@ -120,8 +120,8 @@ export default function LancamentoContaForm({lancamentoConta, children}: Props) 
       handleOpenChange(false);
 
       void Promise.all([
-        queryClient.invalidateQueries({queryKey: [LANCAMENTOS_CONTA_QUERY_KEY]}),
-        queryClient.invalidateQueries({queryKey: [DADOS_CONFIGURACAO_QUERY_KEY]}),
+        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
       ]);
     },
     onError: (error) => {
@@ -167,7 +167,7 @@ export default function LancamentoContaForm({lancamentoConta, children}: Props) 
         <Controller
           control={form.control}
           name="idConta"
-          render={({field}) => (
+          render={({ field }) => (
             <Select
               icon={Landmark}
               label="Conta"
@@ -182,7 +182,7 @@ export default function LancamentoContaForm({lancamentoConta, children}: Props) 
         <Controller
           control={form.control}
           name="dataLancamento"
-          render={({field}) => (
+          render={({ field }) => (
             <InputDate
               label="Data"
               dateSelected={field.value}
@@ -195,7 +195,7 @@ export default function LancamentoContaForm({lancamentoConta, children}: Props) 
         <Controller
           control={form.control}
           name="idCategoria"
-          render={({field}) => (
+          render={({ field }) => (
             <Select
               icon={Bookmark}
               label="Categoria"
@@ -218,7 +218,7 @@ export default function LancamentoContaForm({lancamentoConta, children}: Props) 
         <Controller
           control={form.control}
           name="valor"
-          render={({field}) => (
+          render={({ field }) => (
             <InputMoney
               label="Valor"
               name={field.name}
@@ -233,7 +233,7 @@ export default function LancamentoContaForm({lancamentoConta, children}: Props) 
         <Controller
           control={form.control}
           name="tags"
-          render={({field}) => (
+          render={({ field }) => (
             <Select
               isMulti
               icon={Tags}
@@ -246,7 +246,7 @@ export default function LancamentoContaForm({lancamentoConta, children}: Props) 
         />
 
         <div className="flex justify-end gap-2">
-          <Button type="button" onClick={() => handleOpenChange(false)}>
+          <Button type="button" variant="cancel" onClick={() => handleOpenChange(false)}>
             Cancelar
           </Button>
           <Button

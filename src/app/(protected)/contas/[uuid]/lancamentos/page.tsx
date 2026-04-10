@@ -9,7 +9,7 @@ import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import { Input } from "@/components/primitives/input";
 import Skeleton from "@/components/primitives/skeleton";
-import { toCurrency } from "@/helpers/string-helper";
+import {toCurrency, toUsDate} from "@/helpers/string-helper";
 import { useContas } from "@/hooks/use-contas";
 import { useDateFilter } from "@/hooks/use-date-filter";
 import { useLancamentosContaPaginacao } from "@/hooks/use-lancamentos-conta-paginacao";
@@ -19,6 +19,21 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import LancamentoContaForm from "./lancamento-conta-form";
 import TabelaLancamentosConta from "./tabela-lancamentos-conta";
+import {
+  ACCOUNT_BALANCE,
+  ACCOUNT_TOTAL_BY_CATEGORY,
+  ACCOUNTS_ENTRIES,
+  getMessage
+} from "../../../../../../legacy/utils/helpers";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import type {LancamentoContaFormValue} from "@/schema-validation/lancamento-conta";
+import {lancamentoContaService} from "@/services/lancamento-conta-service";
+import {toast} from "@components/toast";
+import {DADOS_CONFIGURACAO_QUERY_KEY, LANCAMENTOS_CONTA_QUERY_KEY} from "@/helpers/query-keys-helper";
+import ApiError from "@/types/application-error";
+import {catalogoErros} from "@/helpers/erros-helper";
+import type {ApiFormError} from "@/types/api";
+import {DEFAULT_ERROR_MESSAGE} from "@/helpers/route-helpers";
 
 export default function LancamentosPage() {
   const pathname = usePathname();
@@ -28,6 +43,7 @@ export default function LancamentosPage() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [search, setSearch] = useState(query);
+  const queryClient = useQueryClient();
 
   const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
 
@@ -100,6 +116,32 @@ export default function LancamentosPage() {
       );
     });
   }, [lancamentos, search]);
+
+  const deleteLancamentoMutation = useMutation({
+    mutationFn: async (idLancamento: string) => {
+      return lancamentoContaService.deletar(idLancamento);
+    },
+    onSuccess: () => {
+      toast.success("Lançamento excluído com sucesso!");
+
+      void Promise.all([
+        queryClient.invalidateQueries({queryKey: [LANCAMENTOS_CONTA_QUERY_KEY]}),
+        queryClient.invalidateQueries({queryKey: [DADOS_CONFIGURACAO_QUERY_KEY]}),
+      ]);
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+
+      toast.error(DEFAULT_ERROR_MESSAGE);
+    },
+  });
+
+  const handleDeleteLancamento = async (id: string) => {
+    await deleteLancamentoMutation.mutateAsync(id);
+  }
 
   if (isLoading) {
     return (

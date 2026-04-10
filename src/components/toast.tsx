@@ -1,9 +1,9 @@
 'use client';
 
-import {toast as toastSonner} from 'sonner';
+import { toast as toastSonner } from 'sonner';
 
 const DEFAULT_DURATION = 4000; // 6 segundos
-const DEFAULT_POSITION = "top-right";
+const DEFAULT_POSITION = "top-center";
 
 type Position = "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right";
 
