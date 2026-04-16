@@ -8,6 +8,7 @@ import { CreditCard } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { Urls } from "@/helpers/urls";
 import { Avatar } from "../avatar";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
@@ -56,14 +57,14 @@ export function FaturasNav() {
             faturas.map((fatura) => (
               <DropdownMenu.Item key={fatura.uuid}>
                 <Link
-                  href={`#`}
+                  href={`${Urls.CARTOES_DE_CREDITO}/${fatura.cartao.uuid}/faturas/${fatura.uuid}`}
                   className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-hover rounded-lg transition-colors duration-150 group"
                 >
-                  <Avatar name={fatura.cartao} size={avatarSize} />
+                  <Avatar name={fatura.cartao.descricao} size={avatarSize} />
                   <div className="flex-1 min-w-0">
-                    <Text className="block font-medium text-gray-200 group-hover:text-white truncate">{fatura.cartao}</Text>
+                    <Text className="block font-medium text-gray-200 group-hover:text-white truncate">{fatura.cartao.descricao}</Text>
                     <Text variant="paragraph-small" className="block text-gray-500">
-                      Vence: {toBrDate(fatura.dataVencimento)}
+                      Vencimento: {toBrDate(fatura.dataVencimento)}
                     </Text>
                   </div>
                   <Text className={`font-bold shrink-0 ${fatura.valorTotal > 0 ? 'text-negative' : 'text-positive'}`}>

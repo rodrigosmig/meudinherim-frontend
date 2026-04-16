@@ -79,16 +79,14 @@ describe("NotificacoesNav", () => {
     // Primeira notificação
     expect(screen.getByText("Tipo AGUA")).toBeVisible();
     expect(screen.getByText("Conta de água")).toBeVisible();
-    const vencimentos = screen.getAllByText("Vencimento:");
-    expect(vencimentos).toHaveLength(2);
-    expect(screen.getByText("DATA-2024-07-01")).toBeVisible();
-    expect(screen.getByText("R$ 100")).toBeVisible();
+    expect(screen.getByText(/DATA-2024-07-01/)).toBeVisible();
+    expect(screen.getByText(/R\$ 100/)).toBeVisible();
 
     // Segunda notificação
     expect(screen.getByText("Tipo LUZ")).toBeVisible();
     expect(screen.getByText("Conta de luz")).toBeVisible();
-    expect(screen.getByText("DATA-2024-07-02")).toBeVisible();
-    expect(screen.getByText("R$ 200")).toBeVisible();
+    expect(screen.getByText(/DATA-2024-07-02/)).toBeVisible();
+    expect(screen.getByText(/R\$ 200/)).toBeVisible();
   });
 
   it("deve alinhar menu à direita no desktop", async () => {

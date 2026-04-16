@@ -98,15 +98,39 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
   });
 
   const handleDeleteLancamento = async (id: string) => {
-    await deleteLancamentoMutation.mutateAsync(id);
-    setLancamentoParaDeletar(null);
+    try {
+      await deleteLancamentoMutation.mutateAsync(id);
+      setLancamentoParaDeletar(null);
+    } catch {
+      // Erros tratados pelo callback onError da mutation
+    }
   }
 
   const handleCancelarPagamentoContaAgendada = async (lancamento: LancamentoConta) => {
-    if (isContaAPagar(lancamento)) {
+    try {
+      if (isContaAPagar(lancamento)) {
+        if (lancamento.contaAgendada) {
+          await cancelarPagamentoContaAPagarMutation.mutateAsync({
+            idContaAPagar: lancamento.contaAgendada.uuid,
+            idParcela: "",
+          });
+          setLancamentoParaCancelar(null);
+          return;
+        }
+
+        if (lancamento.parcela) {
+          await cancelarPagamentoContaAPagarMutation.mutateAsync({
+            idContaAPagar: lancamento.parcela.idContaAgendada,
+            idParcela: lancamento.parcela.idParcela,
+          });
+          setLancamentoParaCancelar(null);
+          return;
+        }
+      }
+
       if (lancamento.contaAgendada) {
-        await cancelarPagamentoContaAPagarMutation.mutateAsync({
-          idContaAPagar: lancamento.contaAgendada.uuid,
+        await cancelarPagamentoContaAReceberMutation.mutateAsync({
+          idContaAReceber: lancamento.contaAgendada.uuid,
           idParcela: "",
         });
         setLancamentoParaCancelar(null);
@@ -114,31 +138,15 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
       }
 
       if (lancamento.parcela) {
-        await cancelarPagamentoContaAPagarMutation.mutateAsync({
-          idContaAPagar: lancamento.parcela.idContaAgendada,
+        await cancelarPagamentoContaAReceberMutation.mutateAsync({
+          idContaAReceber: lancamento.parcela.idContaAgendada,
           idParcela: lancamento.parcela.idParcela,
         });
         setLancamentoParaCancelar(null);
         return;
       }
-    }
-
-    if (lancamento.contaAgendada) {
-      await cancelarPagamentoContaAReceberMutation.mutateAsync({
-        idContaAReceber: lancamento.contaAgendada.uuid,
-        idParcela: "",
-      });
-      setLancamentoParaCancelar(null);
-      return;
-    }
-
-    if (lancamento.parcela) {
-      await cancelarPagamentoContaAReceberMutation.mutateAsync({
-        idContaAReceber: lancamento.parcela.idContaAgendada,
-        idParcela: lancamento.parcela.idParcela,
-      });
-      setLancamentoParaCancelar(null);
-      return;
+    } catch {
+      // Erros tratados pelo callback onError da mutation
     }
   }
 

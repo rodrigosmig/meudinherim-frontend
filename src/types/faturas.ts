@@ -7,7 +7,10 @@ export interface Fatura {
   valorTotal: number;
   status: StatusPagamento;
   isFechada: boolean;
-  cartao: string;
+  cartao: {
+    uuid: string;
+    descricao: string;
+  };
 }
 
 export interface ListaDeFaturas {

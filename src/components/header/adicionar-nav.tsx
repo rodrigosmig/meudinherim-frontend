@@ -59,7 +59,7 @@ export function AdicionarNav() {
         </div>
 
         <SectionLabel label="Lançamentos" />
-        <AdicionarItem href={Urls.CARTAO_DE_CREDITO} icon={CreditCard} label="Lançamento no cartão" />
+        <AdicionarItem href={Urls.CARTOES_DE_CREDITO} icon={CreditCard} label="Lançamento no cartão" />
 
         <AdicionarItem href={Urls.CONTAS_BANCARIAS} icon={Landmark} label="Lançamento na conta" />
 

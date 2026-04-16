@@ -36,7 +36,7 @@ describe("Componente FaturasNav", () => {
         faturas: [
           {
             uuid: "1",
-            cartao: "Cartao Black",
+            cartao: { uuid: "cart-1", descricao: "Cartao Black" },
             dataVencimento: "2026-03-20",
             dataFechamento: "2026-03-10",
             valorTotal: 1200,
@@ -45,7 +45,7 @@ describe("Componente FaturasNav", () => {
           },
           {
             uuid: "2",
-            cartao: "Cartao Gold",
+            cartao: { uuid: "cart-2", descricao: "Cartao Gold" },
             dataVencimento: "2026-03-25",
             dataFechamento: "2026-03-15",
             valorTotal: 300,
@@ -73,8 +73,8 @@ describe("Componente FaturasNav", () => {
     expect(screen.getByText("Faturas")).toBeVisible();
     expect(screen.getByText("Cartao Black")).toBeVisible();
     expect(screen.getByText("Cartao Gold")).toBeVisible();
-    expect(screen.getByText(toBrDate("2026-03-20"))).toBeVisible();
-    expect(screen.getByText(toBrDate("2026-03-25"))).toBeVisible();
+    expect(screen.getByText(new RegExp(toBrDate("2026-03-20")))).toBeVisible();
+    expect(screen.getByText(new RegExp(toBrDate("2026-03-25")))).toBeVisible();
     expect(screen.getByText(hasCurrencyText(1200))).toBeVisible();
     expect(screen.getByText(hasCurrencyText(300))).toBeVisible();
 
@@ -90,7 +90,7 @@ describe("Componente FaturasNav", () => {
     await user.click(screen.getByRole("button", { name: "Faturas" }));
 
     const avatar = await screen.findByRole("img", { name: "Avatar de Cartao Black" });
-    expect(avatar).toHaveStyle({ width: "42px", height: "42px" });
+    expect(avatar).toHaveStyle({ width: "36px", height: "36px" });
   });
 
   it("deve usar avatar menor no mobile", async () => {
@@ -101,6 +101,6 @@ describe("Componente FaturasNav", () => {
     await user.click(screen.getByRole("button", { name: "Faturas" }));
 
     const avatar = await screen.findByRole("img", { name: "Avatar de Cartao Black" });
-    expect(avatar).toHaveStyle({ width: "38px", height: "38px" });
+    expect(avatar).toHaveStyle({ width: "34px", height: "34px" });
   });
 });

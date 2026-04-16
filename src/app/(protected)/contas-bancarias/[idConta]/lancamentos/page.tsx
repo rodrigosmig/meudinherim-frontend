@@ -18,7 +18,7 @@ import { useLancamentosContaPaginacao } from "@/hooks/use-lancamentos-conta-pagi
 import { lancamentoContaService } from "@/services/lancamento-conta-service";
 import ApiError from "@/types/application-error";
 import { LancamentoConta } from "@/types/lancamento-conta";
-import { toast } from "@components/toast";
+import { toast } from "@/components/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";

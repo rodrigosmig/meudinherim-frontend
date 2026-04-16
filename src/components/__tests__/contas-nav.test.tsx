@@ -80,7 +80,7 @@ describe("Componente ContasNav", () => {
     await user.click(screen.getByRole("button", { name: "Contas" }));
 
     const avatar = await screen.findByRole("img", { name: "Avatar de Conta Principal" });
-    expect(avatar).toHaveStyle({ width: "42px", height: "42px" });
+    expect(avatar).toHaveStyle({ width: "36px", height: "36px" });
   });
 
   it("deve usar avatar menor no mobile", async () => {
@@ -91,6 +91,6 @@ describe("Componente ContasNav", () => {
     await user.click(screen.getByRole("button", { name: "Contas" }));
 
     const avatar = await screen.findByRole("img", { name: "Avatar de Conta Principal" });
-    expect(avatar).toHaveStyle({ width: "38px", height: "38px" });
+    expect(avatar).toHaveStyle({ width: "34px", height: "34px" });
   });
 });

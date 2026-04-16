@@ -90,6 +90,24 @@ const lancamentoContaAPagar: LancamentoConta = {
   contaAgendada: { uuid: "cta-pagar-1", tipo: TipoContaAgendada.CONTA_A_PAGAR },
 };
 
+const lancamentoParcelaAPagar: LancamentoConta = {
+  uuid: "lanc-5",
+  data: "2026-03-24",
+  descricao: "Parcela Aluguel",
+  valor: 400,
+  categoria: { uuid: "cat-3", descricao: "Moradia", tipo: TipoCategoria.SAIDA },
+  conta: { uuid: "conta-1", descricao: "Conta Principal" },
+  tags: [],
+  parcela: {
+    idParcela: "parcela-abc",
+    idContaAgendada: "cta-pagar-2",
+    tipoContaAgendada: TipoContaAgendada.CONTA_A_PAGAR,
+    numeroDaParcela: 2,
+    totalDeParcelas: 6,
+  },
+  contaAgendada: null,
+};
+
 const lancamentoContaAReceber: LancamentoConta = {
   uuid: "lanc-4",
   data: "2026-03-23",
@@ -100,6 +118,24 @@ const lancamentoContaAReceber: LancamentoConta = {
   tags: [],
   parcela: null,
   contaAgendada: { uuid: "cta-receber-1", tipo: TipoContaAgendada.CONTA_A_RECEBER },
+};
+
+const lancamentoParcelaAReceber: LancamentoConta = {
+  uuid: "lanc-6",
+  data: "2026-03-25",
+  descricao: "Parcela Freelance",
+  valor: 250,
+  categoria: { uuid: "cat-1", descricao: "Receita", tipo: TipoCategoria.ENTRADA },
+  conta: { uuid: "conta-1", descricao: "Conta Principal" },
+  tags: [],
+  parcela: {
+    idParcela: "parcela-xyz",
+    idContaAgendada: "cta-receber-2",
+    tipoContaAgendada: TipoContaAgendada.CONTA_A_RECEBER,
+    numeroDaParcela: 1,
+    totalDeParcelas: 4,
+  },
+  contaAgendada: null,
 };
 
 const getByNormalizedText = (text: string) =>
@@ -188,27 +224,29 @@ describe("TabelaLancamentosConta", () => {
   });
 
   describe("estado dos botões", () => {
-    it("deve habilitar Excluir e desabilitar Cancelar para lançamentos simples", () => {
+    it("deve habilitar Editar, Excluir e desabilitar Cancelar para lançamentos simples", () => {
       render(<TabelaLancamentosConta lancamentos={[lancamentoSimples]} />, {
         wrapper: createWrapper(),
       });
 
       const [, row] = screen.getAllByRole("row");
-      const [, trash, banknote] = within(row).getAllByRole("button");
+      const [pencil, trash, banknote] = within(row).getAllByRole("button");
 
+      expect(pencil).toBeEnabled();
       expect(trash).toBeEnabled();
       expect(banknote).toBeDisabled();
     });
 
-    it("deve desabilitar Excluir e habilitar Cancelar para lançamentos de conta agendada", () => {
+    it("deve desabilitar Editar, Excluir e habilitar Cancelar para lançamentos de conta agendada", () => {
       render(
         <TabelaLancamentosConta lancamentos={[lancamentoContaAPagar]} />,
         { wrapper: createWrapper() },
       );
 
       const [, row] = screen.getAllByRole("row");
-      const [, trash, banknote] = within(row).getAllByRole("button");
+      const [pencil, trash, banknote] = within(row).getAllByRole("button");
 
+      expect(pencil).toBeDisabled();
       expect(trash).toBeDisabled();
       expect(banknote).toBeEnabled();
     });
@@ -269,6 +307,60 @@ describe("TabelaLancamentosConta", () => {
         );
       });
     });
+
+    it("deve fechar o modal após excluir com sucesso", async () => {
+      lancamentoContaService.deletar.mockResolvedValueOnce(undefined);
+      const user = userEvent.setup();
+      render(<TabelaLancamentosConta lancamentos={[lancamentoSimples]} />, {
+        wrapper: createWrapper(),
+      });
+
+      const [, row] = screen.getAllByRole("row");
+      const [, trash] = within(row).getAllByRole("button");
+      await user.click(trash);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      });
+    });
+
+    it("deve exibir toast de erro da API ao falhar exclusão", async () => {
+      const ApiError = (await import("@/types/application-error")).default;
+      lancamentoContaService.deletar.mockRejectedValueOnce(
+        new ApiError({ codigo: 500, descricao: "Erro ao excluir" }, 500),
+      );
+      const user = userEvent.setup();
+      render(<TabelaLancamentosConta lancamentos={[lancamentoSimples]} />, {
+        wrapper: createWrapper(),
+      });
+
+      const [, row] = screen.getAllByRole("row");
+      const [, trash] = within(row).getAllByRole("button");
+      await user.click(trash);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith("Erro ao excluir");
+      });
+    });
+
+    it("deve exibir toast de erro genérico ao falhar com erro inesperado", async () => {
+      lancamentoContaService.deletar.mockRejectedValueOnce(new Error("network error"));
+      const user = userEvent.setup();
+      render(<TabelaLancamentosConta lancamentos={[lancamentoSimples]} />, {
+        wrapper: createWrapper(),
+      });
+
+      const [, row] = screen.getAllByRole("row");
+      const [, trash] = within(row).getAllByRole("button");
+      await user.click(trash);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(expect.stringMatching(/.+/));
+      });
+    });
   });
 
   describe("modal de cancelamento — conta a pagar", () => {
@@ -314,6 +406,48 @@ describe("TabelaLancamentosConta", () => {
         );
       });
     });
+
+    it("deve chamar contasAPagarService com idContaAgendada e idParcela ao cancelar via parcela", async () => {
+      contasAPagarService.cancelarPagamento.mockResolvedValueOnce(undefined);
+      const user = userEvent.setup();
+      render(
+        <TabelaLancamentosConta lancamentos={[lancamentoParcelaAPagar]} />,
+        { wrapper: createWrapper() },
+      );
+
+      const [, row] = screen.getAllByRole("row");
+      const [, , banknote] = within(row).getAllByRole("button");
+      await user.click(banknote);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(contasAPagarService.cancelarPagamento).toHaveBeenCalledWith(
+          "cta-pagar-2",
+          "parcela-abc",
+        );
+      });
+    });
+
+    it("deve exibir toast de erro da API ao falhar cancelamento de pagamento", async () => {
+      const ApiError = (await import("@/types/application-error")).default;
+      contasAPagarService.cancelarPagamento.mockRejectedValueOnce(
+        new ApiError({ codigo: 500, descricao: "Erro ao cancelar pagamento" }, 500),
+      );
+      const user = userEvent.setup();
+      render(
+        <TabelaLancamentosConta lancamentos={[lancamentoContaAPagar]} />,
+        { wrapper: createWrapper() },
+      );
+
+      const [, row] = screen.getAllByRole("row");
+      const [, , banknote] = within(row).getAllByRole("button");
+      await user.click(banknote);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith("Erro ao cancelar pagamento");
+      });
+    });
   });
 
   describe("modal de cancelamento — conta a receber", () => {
@@ -357,6 +491,48 @@ describe("TabelaLancamentosConta", () => {
         expect(toast.success).toHaveBeenCalledWith(
           "Recebimento cancelado com sucesso!",
         );
+      });
+    });
+
+    it("deve chamar contasAReceberService com idContaAgendada e idParcela ao cancelar via parcela", async () => {
+      contasAReceberService.cancelarPagamento.mockResolvedValueOnce(undefined);
+      const user = userEvent.setup();
+      render(
+        <TabelaLancamentosConta lancamentos={[lancamentoParcelaAReceber]} />,
+        { wrapper: createWrapper() },
+      );
+
+      const [, row] = screen.getAllByRole("row");
+      const [, , banknote] = within(row).getAllByRole("button");
+      await user.click(banknote);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(contasAReceberService.cancelarPagamento).toHaveBeenCalledWith(
+          "cta-receber-2",
+          "parcela-xyz",
+        );
+      });
+    });
+
+    it("deve exibir toast de erro da API ao falhar cancelamento de recebimento", async () => {
+      const ApiError = (await import("@/types/application-error")).default;
+      contasAReceberService.cancelarPagamento.mockRejectedValueOnce(
+        new ApiError({ codigo: 500, descricao: "Erro ao cancelar recebimento" }, 500),
+      );
+      const user = userEvent.setup();
+      render(
+        <TabelaLancamentosConta lancamentos={[lancamentoContaAReceber]} />,
+        { wrapper: createWrapper() },
+      );
+
+      const [, row] = screen.getAllByRole("row");
+      const [, , banknote] = within(row).getAllByRole("button");
+      await user.click(banknote);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith("Erro ao cancelar recebimento");
       });
     });
   });
