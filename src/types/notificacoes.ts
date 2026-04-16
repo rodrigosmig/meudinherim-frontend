@@ -1,4 +1,4 @@
-import { ContaAgendada } from "./conta-agendada";
+import { TipoContaAgendada } from "./enum/tipo-conta-agendada";
 
 export interface Notificacao {
   id: string;
@@ -6,7 +6,7 @@ export interface Notificacao {
   dataVencimento: string;
   descricao: string;
   valor: number;
-  tipo: ContaAgendada;
+  tipo: TipoContaAgendada;
   isParcela: boolean;
 }
 

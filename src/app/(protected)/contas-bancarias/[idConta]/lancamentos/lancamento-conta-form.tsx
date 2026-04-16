@@ -67,8 +67,8 @@ function getDefaultValues(
 }
 
 export default function LancamentoContaForm({ lancamentoConta, children }: Props) {
-  const params = useParams<{ uuid: string }>();
-  const idContaRota = params.uuid;
+  const params = useParams<{ idConta: string }>();
+  const idContaRota = params.idConta;
 
   const isEditMode = Boolean(lancamentoConta?.uuid);
   const [isOpen, setIsOpen] = useState(false);
@@ -254,7 +254,7 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
             isLoading={form.formState.isSubmitting}
             disabled={isLoadingDependencies || form.formState.isSubmitting}
           >
-            {isEditMode ? "Salvar alterações" : "Salvar"}
+            Salvar
           </Button>
         </div>
       </form>

@@ -72,7 +72,7 @@ function SidebarRoot() {
                 <NavItem link={Urls.CONTAS_BANCARIAS} title="Contas Bancárias" icon={Landmark} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Cartão de Crédito" collapsed={collapsed}>
-                <NavItem link={Urls.CARTAO_DE_CREDITO} title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CARTOES_DE_CREDITO} title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Agendamento" collapsed={collapsed}>
                 <NavItem link={Urls.CONTAS_A_PAGAR} title="Contas a Pagar" icon={BanknoteArrowDown} collapsed={collapsed} onNavigate={() => setOpen(false)} />

@@ -3,7 +3,7 @@ export enum Urls {
   CATEGORIAS = "/categorias",
   TAGS = "/tags",
   CONTAS_BANCARIAS = "/contas-bancarias",
-  CARTAO_DE_CREDITO = "/cartao-de-credito",
+  CARTOES_DE_CREDITO = "/cartoes-de-credito",
   CONTAS_A_RECEBER = "/contas-a-receber",
   CONTAS_A_PAGAR = "/contas-a-pagar",
   RELATORIOS = "/relatorios",

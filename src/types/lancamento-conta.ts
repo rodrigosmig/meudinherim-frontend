@@ -1,6 +1,7 @@
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 
 import { ApiFormErrorResponse, ApiResponse } from "./api";
+import { TipoContaAgendada } from "./enum/tipo-conta-agendada";
 
 export type LancamentoConta = {
   uuid: string;
@@ -17,6 +18,21 @@ export type LancamentoConta = {
     descricao: string;
   };
   tags: string[];
+  parcela: DadosParcela;
+  contaAgendada: DadosContaAgendada;
+};
+
+export type DadosParcela = {
+  idParcela: string;
+  idContaAgendada: string;
+  tipoContaAgendada: TipoContaAgendada;
+  numeroDaParcela: number;
+  totalDeParcelas: number;
+};
+
+export type DadosContaAgendada = {
+  uuid: string;
+  tipo: TipoContaAgendada;
 };
 
 export interface ListarLancamentosContaRequest {

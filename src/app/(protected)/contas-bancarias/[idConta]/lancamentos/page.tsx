@@ -38,14 +38,14 @@ export default function LancamentosPage() {
 
   const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
 
-  const params = useParams<{ uuid: string }>();
-  const uuid = params.uuid;
+  const params = useParams<{ idConta: string }>();
+  const idConta = params.idConta;
   const [lancamentos, setLancamentos] = useState<LancamentoConta[]>([])
 
   const { contas, isLoading: isContasLoading, isFetching: isContasFetching } = useContas();
-  const { data, isLoading: isLancamentosLoading, isFetching: isLancamentosFetching, error } = useLancamentosContaPaginacao(uuid, page, perPage, stringDateUS.from, stringDateUS.to);
+  const { data, isLoading: isLancamentosLoading, isFetching: isLancamentosFetching, error } = useLancamentosContaPaginacao(idConta, page, perPage, stringDateUS.from, stringDateUS.to);
 
-  const conta = contas?.find((c) => c.uuid === uuid);
+  const conta = contas?.find((c) => c.uuid === idConta);
 
   const paginacao = {
     paginaAtual: data?.pagina.paginacao?.paginaAtual || 1,
