@@ -1,10 +1,9 @@
-import React from "react";
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
-import userEvent from "@testing-library/user-event";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { LancamentoConta } from "@/types/lancamento-conta";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import userEvent from "@testing-library/user-event";
+import React from "react";
 
 import LancamentosPage from "../page";
 
@@ -51,6 +50,28 @@ jest.mock("@/components/header/header", () => ({
 jest.mock("@/components/primitives/skeleton", () => ({
   __esModule: true,
   default: () => <div data-testid="skeleton" />,
+}));
+
+jest.mock("@/components/primitives/query-list-state", () => ({
+  __esModule: true,
+  default: ({
+    isLoading,
+    isError,
+    isEmpty,
+    children,
+  }: {
+    isLoading: boolean;
+    isError: boolean;
+    isEmpty: boolean;
+    children: React.ReactNode;
+  }) => {
+    if (isLoading) return <div data-testid="query-list-loading">Carregando...</div>;
+    if (isError)
+      return <div data-testid="query-list-error">Erro ao carregar</div>;
+    if (isEmpty)
+      return <div data-testid="query-list-empty">Nenhum registro</div>;
+    return <div data-testid="query-list-content">{children}</div>;
+  },
 }));
 
 jest.mock(
@@ -140,7 +161,6 @@ const createWrapper = () => {
 const makeLancamento = (
   overrides: Partial<LancamentoConta> & { uuid: string },
 ): LancamentoConta => ({
-  uuid: overrides.uuid,
   data: "2026-03-20",
   descricao: "Despesa",
   valor: 100,
@@ -151,8 +171,8 @@ const makeLancamento = (
   },
   conta: { uuid: "conta-123", descricao: "Conta Principal" },
   tags: [],
-  parcela: null,
-  contaAgendada: null,
+  parcela: null as any,
+  contaAgendada: null as any,
   ...overrides,
 });
 
@@ -167,12 +187,21 @@ const paginacaoDefault = {
 
 const defaultLancamentosReturn = (
   conteudo: LancamentoConta[] = [],
-  extra: Partial<{ isLoading: boolean; isFetching: boolean }> = {},
+  extra: Partial<{
+    data: { pagina: { conteudo: LancamentoConta[]; paginacao: typeof paginacaoDefault } } | undefined;
+    error: unknown;
+    isError: boolean;
+    isFetching: boolean;
+    isLoading: boolean;
+    refetch: jest.Mock;
+  }> = {},
 ) => ({
   data: { pagina: { conteudo, paginacao: paginacaoDefault } },
+  error: null,
+  isError: false,
   isLoading: false,
   isFetching: false,
-  error: null,
+  refetch: jest.fn(),
   ...extra,
 });
 
@@ -248,12 +277,31 @@ describe("LancamentosPage", () => {
       expect(screen.getByTestId("lancamento-lanc-2")).toBeVisible();
     });
 
-    it("deve renderizar tabela vazia quando não há lançamentos", () => {
+    it("deve renderizar estado vazio quando não há lançamentos", () => {
       mockedUseLancamentos.mockReturnValue(defaultLancamentosReturn([]));
 
       render(<LancamentosPage />, { wrapper: createWrapper() });
 
-      expect(screen.getByTestId("tabela-lancamentos")).toBeEmptyDOMElement();
+      expect(screen.getByTestId("query-list-empty")).toBeVisible();
+    });
+
+    it("deve renderizar estado de erro quando a query falha", () => {
+      const refetch = jest.fn();
+
+      mockedUseLancamentos.mockReturnValue(
+        defaultLancamentosReturn([], {
+          data: undefined,
+          error: new Error("Falha ao buscar lançamentos"),
+          isError: true,
+          refetch,
+        }),
+      );
+
+      render(<LancamentosPage />, { wrapper: createWrapper() });
+
+      expect(screen.getByTestId("query-list-error")).toBeVisible();
+      expect(screen.queryByTestId("tabela-lancamentos")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("pagination")).not.toBeInTheDocument();
     });
   });
 
@@ -316,7 +364,7 @@ describe("LancamentosPage", () => {
 
       await user.type(screen.getByPlaceholderText("Pesquisar"), "xyzxyzxyz");
 
-      expect(screen.getByTestId("tabela-lancamentos")).toBeEmptyDOMElement();
+      expect(screen.getByTestId("query-list-empty")).toBeVisible();
     });
   });
 

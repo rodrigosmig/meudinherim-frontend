@@ -1,9 +1,19 @@
-import { AlterarLancamentoContaResponse, CadastrarLancamentoContaData, CadastrarLancamentoContaRequest, LancamentoConta, ListarLancamentosContaRequest, ObterLancamentoContaResponse, } from "@/types/lancamento-conta";
-import { normalizarApiResponsePaginadaBackendParaFrontend, paraPaginaBackend, } from "@/helpers/paginacao-helper";
+import {
+  normalizarApiResponsePaginadaBackendParaFrontend,
+  paraPaginaBackend,
+} from "@/helpers/paginacao-helper";
+import { handleApiResponse } from "@/helpers/response-helper";
 import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { ApiResponse } from "@/types/api";
+import {
+  AlterarLancamentoContaResponse,
+  CadastrarLancamentoContaData,
+  CadastrarLancamentoContaRequest,
+  LancamentoConta,
+  ListarLancamentosContaRequest,
+  ObterLancamentoContaResponse,
+} from "@/types/lancamento-conta";
 import { Pagina } from "@/types/pagina";
-import { handleApiResponse } from "@/helpers/response-helper";
 
 export const lancamentoContaService = {
   listar: async (
@@ -46,7 +56,9 @@ export const lancamentoContaService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<ApiResponse<CadastrarLancamentoContaData>>(response);
+    return handleApiResponse<ApiResponse<CadastrarLancamentoContaData>>(
+      response,
+    );
   },
 
   alterar: async (
@@ -63,7 +75,9 @@ export const lancamentoContaService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<ApiResponse<AlterarLancamentoContaResponse>>(response);
+    return handleApiResponse<ApiResponse<AlterarLancamentoContaResponse>>(
+      response,
+    );
   },
 
   obter: async (
@@ -78,7 +92,9 @@ export const lancamentoContaService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<ApiResponse<ObterLancamentoContaResponse>>(response);
+    return handleApiResponse<ApiResponse<ObterLancamentoContaResponse>>(
+      response,
+    );
   },
 
   deletar: async (idLancamento: string): Promise<ApiResponse<void>> => {

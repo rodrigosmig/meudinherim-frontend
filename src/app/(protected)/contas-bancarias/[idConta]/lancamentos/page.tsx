@@ -8,18 +8,16 @@ import Pagination from "@/components/pagination";
 import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import { Input } from "@/components/primitives/input";
+import QueryListState from "@/components/primitives/query-list-state";
 import Skeleton from "@/components/primitives/skeleton";
-import { DADOS_CONFIGURACAO_QUERY_KEY, LANCAMENTOS_CONTA_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toCurrency } from "@/helpers/string-helper";
 import { useContas } from "@/hooks/use-contas";
 import { useDateFilter } from "@/hooks/use-date-filter";
 import { useLancamentosContaPaginacao } from "@/hooks/use-lancamentos-conta-paginacao";
-import { lancamentoContaService } from "@/services/lancamento-conta-service";
 import ApiError from "@/types/application-error";
 import { LancamentoConta } from "@/types/lancamento-conta";
-import { toast } from "@/components/toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -43,7 +41,14 @@ export default function LancamentosPage() {
   const [lancamentos, setLancamentos] = useState<LancamentoConta[]>([])
 
   const { contas, isLoading: isContasLoading, isFetching: isContasFetching } = useContas();
-  const { data, isLoading: isLancamentosLoading, isFetching: isLancamentosFetching, error } = useLancamentosContaPaginacao(idConta, page, perPage, stringDateUS.from, stringDateUS.to);
+  const {
+    data,
+    error,
+    isLoading: isLancamentosLoading,
+    isFetching: isLancamentosFetching,
+    isError,
+    refetch,
+  } = useLancamentosContaPaginacao(idConta, page, perPage, stringDateUS.from, stringDateUS.to);
 
   const conta = contas?.find((c) => c.uuid === idConta);
 
@@ -58,6 +63,9 @@ export default function LancamentosPage() {
 
   const isLoading = isContasLoading || isLancamentosLoading;
   const isFetching = isContasFetching || isLancamentosFetching;
+  const lancamentosErrorMessage = error instanceof ApiError
+    ? error.apiMessage.descricao
+    : DEFAULT_ERROR_MESSAGE;
 
   useEffect(() => {
     if (data) {
@@ -106,31 +114,7 @@ export default function LancamentosPage() {
     });
   }, [lancamentos, search]);
 
-  const deleteLancamentoMutation = useMutation({
-    mutationFn: async (idLancamento: string) => {
-      return lancamentoContaService.deletar(idLancamento);
-    },
-    onSuccess: () => {
-      toast.success("Lançamento excluído com sucesso!");
-
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
-    },
-    onError: (error) => {
-      if (error instanceof ApiError) {
-        toast.error(error.apiMessage.descricao);
-        return;
-      }
-
-      toast.error(DEFAULT_ERROR_MESSAGE);
-    },
-  });
-
-  const handleDeleteLancamento = async (id: string) => {
-    await deleteLancamentoMutation.mutateAsync(id);
-  }
+  const isListEmpty = !isLancamentosLoading && lancamentosFiltrados.length === 0;
 
   if (isLoading) {
     return (
@@ -193,11 +177,24 @@ export default function LancamentosPage() {
           </div>
         </Card.Header>
 
-        <TabelaLancamentosConta lancamentos={lancamentosFiltrados} />
+        <QueryListState
+          isLoading={isLancamentosLoading}
+          isError={isError}
+          isEmpty={isListEmpty}
+          errorMessage={lancamentosErrorMessage}
+          emptyMessage="Nenhum lançamento encontrado para este período e filtros."
+          onRetry={() => void refetch()}
+          isRetrying={isLancamentosFetching}
+          containerClassName="border-t border-default-border"
+        >
+          <>
+            <TabelaLancamentosConta lancamentos={lancamentosFiltrados} />
 
-        <Card.Footer>
-          <Pagination paginacao={paginacao} onPageChange={setPage} />
-        </Card.Footer>
+            <Card.Footer>
+              <Pagination paginacao={paginacao} onPageChange={setPage} />
+            </Card.Footer>
+          </>
+        </QueryListState>
       </Card.Root >
     </>
   )
