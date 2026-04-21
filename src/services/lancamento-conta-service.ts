@@ -7,8 +7,8 @@ import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { ApiResponse } from "@/types/api";
 import {
   AlterarLancamentoContaResponse,
-  CadastrarLancamentoContaData,
   CadastrarLancamentoContaRequest,
+  CadastrarLancamentoContaResponse,
   LancamentoConta,
   ListarLancamentosContaRequest,
   ObterLancamentoContaResponse,
@@ -45,7 +45,7 @@ export const lancamentoContaService = {
 
   cadastrar: async (
     request: CadastrarLancamentoContaRequest,
-  ): Promise<ApiResponse<CadastrarLancamentoContaData>> => {
+  ): Promise<CadastrarLancamentoContaResponse> => {
     const url = `/api/proxy/v1/contas/${request.idConta}/lancamentos`;
 
     const response = await fetch(url, {
@@ -56,15 +56,13 @@ export const lancamentoContaService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<ApiResponse<CadastrarLancamentoContaData>>(
-      response,
-    );
+    return handleApiResponse<CadastrarLancamentoContaResponse>(response);
   },
 
   alterar: async (
     idLancamento: string,
     request: CadastrarLancamentoContaRequest,
-  ): Promise<ApiResponse<AlterarLancamentoContaResponse>> => {
+  ): Promise<AlterarLancamentoContaResponse> => {
     const url = `/api/proxy/v1/contas/lancamentos/${idLancamento}`;
 
     const response = await fetch(url, {
@@ -75,14 +73,12 @@ export const lancamentoContaService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<ApiResponse<AlterarLancamentoContaResponse>>(
-      response,
-    );
+    return handleApiResponse<AlterarLancamentoContaResponse>(response);
   },
 
   obter: async (
     idLancamento: string,
-  ): Promise<ApiResponse<ObterLancamentoContaResponse>> => {
+  ): Promise<ObterLancamentoContaResponse> => {
     const url = `/api/proxy/v1/contas/lancamentos/${idLancamento}`;
 
     const response = await fetch(url, {
@@ -92,9 +88,7 @@ export const lancamentoContaService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<ApiResponse<ObterLancamentoContaResponse>>(
-      response,
-    );
+    return handleApiResponse<ObterLancamentoContaResponse>(response);
   },
 
   deletar: async (idLancamento: string): Promise<ApiResponse<void>> => {

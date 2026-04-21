@@ -1,5 +1,6 @@
 'use client'
 
+import { ErrorPage } from "@/components/error-page";
 import FiltroPorPagina from "@/components/filtro-por-pagina";
 import FiltroPorPeriodo from "@/components/filtro-por-periodo";
 import { Header } from "@/components/header/header";
@@ -63,6 +64,7 @@ export default function LancamentosPage() {
 
   const isLoading = isContasLoading || isLancamentosLoading;
   const isFetching = isContasFetching || isLancamentosFetching;
+  const isContaInvalida = !isContasLoading && !conta;
   const lancamentosErrorMessage = error instanceof ApiError
     ? error.apiMessage.descricao
     : DEFAULT_ERROR_MESSAGE;
@@ -131,6 +133,16 @@ export default function LancamentosPage() {
       </>
     )
   }
+
+  if (isContaInvalida) {
+    return (
+      <ErrorPage
+        title="Conta não encontrada"
+        message="A conta informada não existe ou não pertence à sua conta."
+      />
+    );
+  }
+
 
   return (
     <>

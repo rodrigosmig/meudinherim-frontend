@@ -26,6 +26,7 @@ type MultiSelectProps = {
   onChange?: (values: string[] | string | undefined) => void;
   onBlur?: () => void;
   name?: string;
+  disabled?: boolean;
 }
 
 export function Select({
@@ -40,6 +41,7 @@ export function Select({
   onChange,
   onBlur,
   name,
+  disabled = false,
 }: MultiSelectProps) {
   const triggerId = id ?? useId();
   const isError = !!error;
@@ -71,6 +73,7 @@ export function Select({
           inputId={triggerId}
           options={options}
           isMulti={isMulti}
+          isDisabled={disabled}
           unstyled
           menuPlacement="auto"
           name={name}

@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Bookmark, BookType, Landmark, Tags } from "lucide-react";
+import { Bookmark, BookType, CreditCard, Tags } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Controller, useForm, type DefaultValues } from "react-hook-form";
@@ -16,38 +16,38 @@ import { Select } from "@/components/primitives/select";
 import { toast } from "@/components/toast";
 
 import { useCategorias } from "@/hooks/use-categorias";
-import { useContas } from "@/hooks/use-contas";
+import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
 import { useTags } from "@/hooks/use-tags";
 
 import { catalogoErros } from "@/helpers/erros-helper";
 import {
   DADOS_CONFIGURACAO_QUERY_KEY,
-  LANCAMENTOS_CONTA_QUERY_KEY,
+  LANCAMENTOS_CARTAO_QUERY_KEY,
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toUsDate } from "@/helpers/string-helper";
 
 import {
-  lancamentoContaSchema,
-  type LancamentoContaFormValue,
-} from "@/schema-validation/lancamento-conta";
-import { lancamentoContaService } from "@/services/lancamento-conta-service";
+  lancamentoCartaoSchema,
+  type LancamentoCartaoFormValue,
+} from "@/schema-validation/lancamento-cartao";
+import { lancamentoCartaoService } from "@/services/lancamento-cartao-service";
 import type { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
-import type { LancamentoConta } from "@/types/lancamento-conta";
+import type { LancamentoCartao } from "@/types/lancamento-cartao";
 
 type Props = Readonly<{
-  lancamentoConta?: LancamentoConta;
+  lancamentoCartao?: LancamentoCartao;
   children?: ReactNode;
 }>;
 
 function getDefaultValues(
-  idConta: string,
-  lancamentoConta?: LancamentoConta,
-): DefaultValues<LancamentoContaFormValue> {
-  if (!lancamentoConta) {
+  idCartao: string,
+  lancamentoCartao?: LancamentoCartao,
+): DefaultValues<LancamentoCartaoFormValue> {
+  if (!lancamentoCartao) {
     return {
-      idConta,
+      idCartao,
       idCategoria: "",
       dataLancamento: new Date(),
       descricao: "",
@@ -57,36 +57,44 @@ function getDefaultValues(
   }
 
   return {
-    idConta: lancamentoConta.conta.uuid || idConta,
-    idCategoria: lancamentoConta.categoria.uuid,
-    dataLancamento: new Date(`${lancamentoConta.data}T00:00:00`),
-    descricao: lancamentoConta.descricao,
-    valor: lancamentoConta.valor,
-    tags: lancamentoConta.tags ?? [],
+    idCartao,
+    idCategoria: lancamentoCartao.categoria.uuid,
+    dataLancamento: new Date(`${lancamentoCartao.data}T00:00:00`),
+    descricao: lancamentoCartao.descricao,
+    valor: lancamentoCartao.valor,
+    tags: lancamentoCartao.tags ?? [],
   };
 }
 
-export default function LancamentoContaForm({ lancamentoConta, children }: Props) {
-  const params = useParams<{ idConta: string }>();
-  const idContaRota = params.idConta;
+export default function LancamentoCartaoForm({ lancamentoCartao, children }: Props) {
+  const params = useParams<{ idCartao: string; idFatura: string }>();
+  const idCartao = params.idCartao;
+  const idFatura = params.idFatura;
 
-  const isEditMode = Boolean(lancamentoConta?.uuid);
+  const isEditMode = Boolean(lancamentoCartao?.uuid);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { contasOptions, isLoading: isContasLoading } = useContas();
+  const { data: configData } = useConfiguracaoInicial();
   const { categoriasOptions, isLoading: isCategoriasLoading } = useCategorias();
   const { tagsOptions, isLoading: isTagsLoading } = useTags();
 
-  const isLoadingDependencies = isContasLoading || isCategoriasLoading || isTagsLoading;
+  const isLoadingDependencies = isCategoriasLoading || isTagsLoading;
+
+  const fatura = configData?.faturas.find(
+    (f) => f.uuid === idFatura && f.cartao.uuid === idCartao,
+  );
+  const cartaoOptions = fatura
+    ? [{ value: fatura.cartao.uuid, label: fatura.cartao.descricao }]
+    : [];
 
   const defaultValues = useMemo(
-    () => getDefaultValues(idContaRota, lancamentoConta),
-    [idContaRota, lancamentoConta],
+    () => getDefaultValues(idCartao, lancamentoCartao),
+    [idCartao, lancamentoCartao],
   );
 
-  const form = useForm<LancamentoContaFormValue>({
-    resolver: zodResolver(lancamentoContaSchema),
+  const form = useForm<LancamentoCartaoFormValue>({
+    resolver: zodResolver(lancamentoCartaoSchema),
     defaultValues,
   });
 
@@ -94,33 +102,37 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
     form.reset(defaultValues);
   }, [defaultValues, form]);
 
-  const cadastrarLancamentoContaMutation = useMutation({
-    mutationFn: async (data: LancamentoContaFormValue) => {
-      const payload = {
-        idConta: idContaRota,
+  const cadastrarLancamentoCartaoMutation = useMutation({
+    mutationFn: async (data: LancamentoCartaoFormValue) => {
+      if (isEditMode && lancamentoCartao?.uuid) {
+        return lancamentoCartaoService.alterar(lancamentoCartao.uuid, {
+          idConta: idCartao,
+          idCategoria: data.idCategoria,
+          descricao: data.descricao.trim(),
+          valor: data.valor,
+          tags: data.tags?.length ? data.tags : undefined,
+        });
+      }
+
+      return lancamentoCartaoService.cadastrar({
+        idConta: idCartao,
         idCategoria: data.idCategoria,
         dataLancamento: toUsDate(data.dataLancamento),
         descricao: data.descricao.trim(),
         valor: data.valor,
+        parcelado: false,
+        quantidadeParcelas: 1,
         tags: data.tags?.length ? data.tags : undefined,
-      };
-
-      if (isEditMode && lancamentoConta?.uuid) {
-        return lancamentoContaService.alterar(lancamentoConta.uuid, payload);
-      }
-
-      return lancamentoContaService.cadastrar(payload);
+      });
     },
     onSuccess: () => {
       toast.success(
-        isEditMode
-          ? "Lançamento alterado com sucesso!"
-          : "Lançamento cadastrado com sucesso!",
+        isEditMode ? "Lançamento alterado com sucesso!" : "Lançamento cadastrado com sucesso!",
       );
       handleOpenChange(false);
 
       void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CARTAO_QUERY_KEY] }),
         queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
       ]);
     },
@@ -129,8 +141,12 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
         if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
           const formError = error.data as ApiFormError;
           formError.fields.forEach((fieldError) => {
-            if (["idConta", "idCategoria", "dataLancamento", "descricao", "valor", "tags"].includes(fieldError.field)) {
-              form.setError(fieldError.field as keyof LancamentoContaFormValue, {
+            if (
+              ["idCartao", "idCategoria", "dataLancamento", "descricao", "valor", "tags"].includes(
+                fieldError.field,
+              )
+            ) {
+              form.setError(fieldError.field as keyof LancamentoCartaoFormValue, {
                 type: "server",
                 message: fieldError.message,
               });
@@ -152,8 +168,8 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
     }
   }
 
-  async function onSubmit(data: LancamentoContaFormValue) {
-    await cadastrarLancamentoContaMutation.mutateAsync(data);
+  async function onSubmit(data: LancamentoCartaoFormValue) {
+    await cadastrarLancamentoCartaoMutation.mutateAsync(data);
   }
 
   return (
@@ -166,15 +182,16 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Controller
           control={form.control}
-          name="idConta"
+          name="idCartao"
           render={({ field }) => (
             <Select
-              icon={Landmark}
-              label="Conta"
-              options={contasOptions}
-              placeholder="Selecione uma conta"
+              icon={CreditCard}
+              label="Cartão"
+              options={cartaoOptions}
+              placeholder="Cartão"
+              disabled
               {...field}
-              error={form.formState.errors.idConta}
+              error={form.formState.errors.idCartao}
             />
           )}
         />
@@ -187,6 +204,7 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
               label="Data"
               dateSelected={field.value}
               onChange={field.onChange}
+              disabled={isEditMode}
               error={form.formState.errors.dataLancamento}
             />
           )}

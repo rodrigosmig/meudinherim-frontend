@@ -98,39 +98,15 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
   });
 
   const handleDeleteLancamento = async (id: string) => {
-    try {
-      await deleteLancamentoMutation.mutateAsync(id);
-      setLancamentoParaDeletar(null);
-    } catch {
-      // Erros tratados pelo callback onError da mutation
-    }
+    await deleteLancamentoMutation.mutateAsync(id);
+    setLancamentoParaDeletar(null);
   }
 
   const handleCancelarPagamentoContaAgendada = async (lancamento: LancamentoConta) => {
-    try {
-      if (isContaAPagar(lancamento)) {
-        if (lancamento.contaAgendada) {
-          await cancelarPagamentoContaAPagarMutation.mutateAsync({
-            idContaAPagar: lancamento.contaAgendada.uuid,
-            idParcela: "",
-          });
-          setLancamentoParaCancelar(null);
-          return;
-        }
-
-        if (lancamento.parcela) {
-          await cancelarPagamentoContaAPagarMutation.mutateAsync({
-            idContaAPagar: lancamento.parcela.idContaAgendada,
-            idParcela: lancamento.parcela.idParcela,
-          });
-          setLancamentoParaCancelar(null);
-          return;
-        }
-      }
-
+    if (isContaAPagar(lancamento)) {
       if (lancamento.contaAgendada) {
-        await cancelarPagamentoContaAReceberMutation.mutateAsync({
-          idContaAReceber: lancamento.contaAgendada.uuid,
+        await cancelarPagamentoContaAPagarMutation.mutateAsync({
+          idContaAPagar: lancamento.contaAgendada.uuid,
           idParcela: "",
         });
         setLancamentoParaCancelar(null);
@@ -138,15 +114,31 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
       }
 
       if (lancamento.parcela) {
-        await cancelarPagamentoContaAReceberMutation.mutateAsync({
-          idContaAReceber: lancamento.parcela.idContaAgendada,
+        await cancelarPagamentoContaAPagarMutation.mutateAsync({
+          idContaAPagar: lancamento.parcela.idContaAgendada,
           idParcela: lancamento.parcela.idParcela,
         });
         setLancamentoParaCancelar(null);
         return;
       }
-    } catch {
-      // Erros tratados pelo callback onError da mutation
+    }
+
+    if (lancamento.contaAgendada) {
+      await cancelarPagamentoContaAReceberMutation.mutateAsync({
+        idContaAReceber: lancamento.contaAgendada.uuid,
+        idParcela: "",
+      });
+      setLancamentoParaCancelar(null);
+      return;
+    }
+
+    if (lancamento.parcela) {
+      await cancelarPagamentoContaAReceberMutation.mutateAsync({
+        idContaAReceber: lancamento.parcela.idContaAgendada,
+        idParcela: lancamento.parcela.idParcela,
+      });
+      setLancamentoParaCancelar(null);
+      return;
     }
   }
 
@@ -172,7 +164,7 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
             {toCurrency(lancamento.valor)}
           </Table.Td>
 
-          <Table.Td className="flex items-center justify-end gap-2">
+          <Table.Td className="flex items-center gap-2">
             <LancamentoContaForm lancamentoConta={lancamento}>
               <Button disabled={isPagamentoContaAgendada(lancamento)} icon={Pencil} />
             </LancamentoContaForm>
@@ -207,7 +199,7 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
         <ModalConfirmacao
           isOpen={true}
           lancamento={lancamentoParaCancelar}
-          isLoading={cancelarPagamentoContaAPagarMutation.isPending}
+          isLoading={cancelarPagamentoContaAPagarMutation.isPending || cancelarPagamentoContaAReceberMutation.isPending}
           onOpenChange={(open) => { if (!open) setLancamentoParaCancelar(null); }}
           onClickConfirmacao={handleCancelarPagamentoContaAgendada}
         />
