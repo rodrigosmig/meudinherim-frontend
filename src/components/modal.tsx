@@ -4,22 +4,30 @@ import { ReactNode } from "react";
 
 import { Button } from "./primitives/button";
 
+const sizeClasses = {
+  sm: "max-w-sm",
+  md: "max-w-md",
+  lg: "max-w-2xl",
+  xl: "max-w-4xl",
+};
+
 interface ModalProps extends Dialog.DialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   trigger?: ReactNode;
   title: string;
   children: ReactNode;
+  size?: keyof typeof sizeClasses;
 }
 
-export default function Modal({ onOpenChange, trigger, title, children, ...props }: Readonly<ModalProps>) {
+export default function Modal({ onOpenChange, trigger, title, children, size = "md", ...props }: Readonly<ModalProps>) {
   return (
     <Dialog.Root onOpenChange={onOpenChange} {...props}>
       {trigger && <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/80 z-50" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-card p-6 shadow-lg focus:outline-none">
+        <Dialog.Content className={`fixed left-1/2 top-1/2 z-50 w-full ${sizeClasses[size]} -translate-x-1/2 -translate-y-1/2 rounded-lg bg-card p-6 shadow-lg focus:outline-none`}>
           <div className="flex items-center justify-between mb-4 border-b-2 border-gray-700">
             <Dialog.Title className="text-lg font-bold">
               {title}

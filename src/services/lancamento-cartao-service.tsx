@@ -80,4 +80,23 @@ export const lancamentoCartaoService = {
 
     return handleApiResponse<ApiResponse<void>>(response);
   },
+
+  antecipar: async (
+    idCartao: string,
+    idLancamento: string,
+    idParcelas: string[],
+  ): Promise<ApiResponse<void>> => {
+    const url = `/api/proxy/v1/cartoes/${idCartao}/lancamentos/${idLancamento}/antecipar`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idParcelas }),
+      credentials: "same-origin",
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<void>>(response);
+  },
 }

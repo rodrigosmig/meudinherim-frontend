@@ -19,6 +19,7 @@ import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { LancamentoCartao } from "@/types/lancamento-cartao";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { History, Pencil, Trash2 } from "lucide-react";
+import { useParams } from "next/navigation";
 import { ReactNode, useState } from "react";
 import LancamentoCartaoForm from "./lancamento-cartao-form";
 
@@ -29,6 +30,7 @@ type TabelaLancamentosCartaoProps = {
 export default function TabelaLancamentosCartao({ lancamentos }: Readonly<TabelaLancamentosCartaoProps>) {
   const dadosCabecalho = ["Data", "Categoria", "Descrição", "Valor", "Ações"];
   const [lancamentoParaDeletar, setLancamentoParaDeletar] = useState<LancamentoCartao | null>(null);
+  const [lancamentoParaAntecipar, setLancamentoParaAntecipar] = useState<LancamentoCartao | null>(null);
   const queryClient = useQueryClient();
 
   const deleteLancamentoMutation = useMutation({
@@ -115,7 +117,7 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
             <Button
               icon={History}
               disabled={!canAnteciparParcelas(lancamento)}
-              onClick={() => null}
+              onClick={() => setLancamentoParaAntecipar(lancamento)}
             />
           </Table.Td>
         </Table.Tr>
@@ -130,6 +132,14 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
           onClickConfirmacao={() => void handleDeleteLancamento(lancamentoParaDeletar.uuid)}
         />
       )}
+
+      {lancamentoParaAntecipar && (
+        <ModalAnteciparParcelas
+          isOpen={true}
+          lancamento={lancamentoParaAntecipar}
+          onOpenChange={(open) => { if (!open) setLancamentoParaAntecipar(null); }}
+        />
+      )}
     </Table.Root>
   );
 }
@@ -141,6 +151,96 @@ interface ModalConfirmacaoDeleteProps {
   isLoading: boolean;
   onOpenChange: (open: boolean | null) => void;
   onClickConfirmacao: () => void;
+}
+
+interface ModalAnteciparParcelasProps {
+  lancamento: LancamentoCartao;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+function ModalAnteciparParcelas({ lancamento, isOpen, onOpenChange }: ModalAnteciparParcelasProps) {
+  const params = useParams<{ idCartao: string }>();
+  const idCartao = params.idCartao;
+  const queryClient = useQueryClient();
+  const [selecionadas, setSelecionadas] = useState<string[]>([]);
+
+  const parcelasElegiveis = lancamento.parcelas.filter(
+    (p) => p.idParcela !== lancamento.uuid && p.status !== StatusPagamento.PAGO
+  );
+
+  const handleToggle = (idParcela: string) => {
+    setSelecionadas((prev) =>
+      prev.includes(idParcela) ? prev.filter((id) => id !== idParcela) : [...prev, idParcela]
+    );
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) setSelecionadas([]);
+    onOpenChange(open);
+  };
+
+  const anteciparMutation = useMutation({
+    mutationFn: () => lancamentoCartaoService.antecipar(idCartao, lancamento.uuid, selecionadas),
+    onSuccess: () => {
+      toast.success("Parcelas antecipadas com sucesso!");
+      handleOpenChange(false);
+      void Promise.all([
+        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CARTAO_QUERY_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
+      ]);
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
+    },
+  });
+
+  return (
+    <Modal
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+      title="Antecipar Parcelas"
+      size="xl"
+    >
+      <div className="flex flex-col gap-4">
+        <Table.Root theadData={["Parcela", "Data", "Descrição", "Valor", "Antecipar"]}>
+          {parcelasElegiveis.map((parcela) => (
+            <Table.Tr key={parcela.idParcela}>
+              <Table.Td className="font-bold">{parcela.numeroDaParcela}</Table.Td>
+              <Table.Td>{toBrDate(parcela.data)}</Table.Td>
+              <Table.Td>{parcela.descricao}</Table.Td>
+              <Table.Td>{toCurrency(parcela.valorDaParcela)}</Table.Td>
+              <Table.Td className="text-center">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 cursor-pointer accent-primary"
+                  checked={selecionadas.includes(parcela.idParcela)}
+                  onChange={() => handleToggle(parcela.idParcela)}
+                />
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Root>
+
+        <div className="flex justify-end gap-2">
+          <Button variant="cancel" onClick={() => handleOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button
+            isLoading={anteciparMutation.isPending}
+            disabled={selecionadas.length === 0 || anteciparMutation.isPending}
+            onClick={() => void anteciparMutation.mutateAsync()}
+          >
+            Antecipar
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
 }
 
 function ModalConfirmacaoDelete({
