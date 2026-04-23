@@ -40,6 +40,8 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
     onSuccess: () => {
       toast.success("Lançamento excluído com sucesso!");
 
+      setLancamentoParaDeletar(null);
+
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CARTAO_QUERY_KEY] }),
         queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
@@ -55,14 +57,12 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
     },
   });
 
-  const handleDeleteLancamento = async (id: string) => {
+  const handleDeleteLancamento = (id: string) => {
     const idLancamento = lancamentoParaDeletar!.isParcelado
       ? lancamentoParaDeletar!.parcelas.find((parcela) => parcela.idParcela === lancamentoParaDeletar!.uuid)!.idLancamento
       : id;
 
-    await deleteLancamentoMutation.mutateAsync(idLancamento);
-    setLancamentoParaDeletar(null);
-
+    deleteLancamentoMutation.mutate(idLancamento);
   };
 
   function canDeleteLancamento(lancamento: LancamentoCartao) {

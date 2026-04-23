@@ -18,7 +18,7 @@ import ApiError from "@/types/application-error";
 import { TipoCategoria } from '@/types/enum/tipo-categoria';
 import { LancamentoConta } from '@/types/lancamento-conta';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Banknote, Pencil, Trash2 } from 'lucide-react';
+import { BanknoteX, Pencil, Trash2 } from 'lucide-react';
 import { ReactNode, useState } from "react";
 
 type TabelaLancamentosProps = {
@@ -37,6 +37,7 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
     },
     onSuccess: () => {
       toast.success("Lançamento excluído com sucesso!");
+      setLancamentoParaDeletar(null);
 
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
@@ -59,6 +60,7 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
     },
     onSuccess: () => {
       toast.success("Pagamento cancelado com sucesso!");
+      setLancamentoParaCancelar(null);
 
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
@@ -81,6 +83,7 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
     },
     onSuccess: () => {
       toast.success("Recebimento cancelado com sucesso!");
+      setLancamentoParaCancelar(null);
 
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
@@ -97,47 +100,42 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
     },
   });
 
-  const handleDeleteLancamento = async (id: string) => {
-    await deleteLancamentoMutation.mutateAsync(id);
-    setLancamentoParaDeletar(null);
+  const handleDeleteLancamento = (id: string) => {
+    deleteLancamentoMutation.mutate(id);
   }
 
-  const handleCancelarPagamentoContaAgendada = async (lancamento: LancamentoConta) => {
+  const handleCancelarPagamentoContaAgendada = (lancamento: LancamentoConta) => {
     if (isContaAPagar(lancamento)) {
       if (lancamento.contaAgendada) {
-        await cancelarPagamentoContaAPagarMutation.mutateAsync({
+        cancelarPagamentoContaAPagarMutation.mutate({
           idContaAPagar: lancamento.contaAgendada.uuid,
           idParcela: "",
         });
-        setLancamentoParaCancelar(null);
         return;
       }
 
       if (lancamento.parcela) {
-        await cancelarPagamentoContaAPagarMutation.mutateAsync({
+        cancelarPagamentoContaAPagarMutation.mutate({
           idContaAPagar: lancamento.parcela.idContaAgendada,
           idParcela: lancamento.parcela.idParcela,
         });
-        setLancamentoParaCancelar(null);
         return;
       }
     }
 
     if (lancamento.contaAgendada) {
-      await cancelarPagamentoContaAReceberMutation.mutateAsync({
+      cancelarPagamentoContaAReceberMutation.mutate({
         idContaAReceber: lancamento.contaAgendada.uuid,
         idParcela: "",
       });
-      setLancamentoParaCancelar(null);
       return;
     }
 
     if (lancamento.parcela) {
-      await cancelarPagamentoContaAReceberMutation.mutateAsync({
+      cancelarPagamentoContaAReceberMutation.mutate({
         idContaAReceber: lancamento.parcela.idContaAgendada,
         idParcela: lancamento.parcela.idParcela,
       });
-      setLancamentoParaCancelar(null);
       return;
     }
   }
@@ -177,7 +175,7 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
 
             <Button
               disabled={!isPagamentoContaAgendada(lancamento)}
-              icon={Banknote}
+              icon={BanknoteX}
               onClick={() => setLancamentoParaCancelar(lancamento)}
             />
 
