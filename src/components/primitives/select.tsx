@@ -95,7 +95,7 @@ export function Select({
             container: () => "w-full",
             control: ({ isFocused }) =>
               [
-                "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border bg-card px-3 py-2 text-base",
+                "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border bg-card px-3 py-2 text-xs md:text-base",
                 "hover:bg-gray-900",
                 "text-input-text",
                 Icon ? "pl-10" : "",

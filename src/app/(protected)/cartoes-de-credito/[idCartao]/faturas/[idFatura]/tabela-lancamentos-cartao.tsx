@@ -56,8 +56,13 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
   });
 
   const handleDeleteLancamento = async (id: string) => {
-    await deleteLancamentoMutation.mutateAsync(id);
+    const idLancamento = lancamentoParaDeletar!.isParcelado
+      ? lancamentoParaDeletar!.parcelas.find((parcela) => parcela.idParcela === lancamentoParaDeletar!.uuid)!.idLancamento
+      : id;
+
+    await deleteLancamentoMutation.mutateAsync(idLancamento);
     setLancamentoParaDeletar(null);
+
   };
 
   function canDeleteLancamento(lancamento: LancamentoCartao) {
@@ -71,9 +76,15 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
 
   function canAnteciparParcelas(lancamento: LancamentoCartao) {
     if (lancamento.isParcelado) {
-      return lancamento.parcelas.some((parcela) =>
-        parcela.idParcela !== lancamento.uuid && parcela.status !== StatusPagamento.PAGO
-      );
+      const parcelaAtual = lancamento.parcelas.find((parcela) => parcela.idParcela === lancamento.uuid);
+
+      if (!parcelaAtual || parcelaAtual.status !== StatusPagamento.ABERTO) {
+        return false;
+      }
+
+      return lancamento.parcelas
+        .filter((parcela) => parcela.idParcela !== lancamento.uuid)
+        .some((parcela) => parcela.status === StatusPagamento.ABERTO);
     }
 
     return false;
@@ -166,7 +177,7 @@ function ModalAnteciparParcelas({ lancamento, isOpen, onOpenChange }: ModalAntec
   const [selecionadas, setSelecionadas] = useState<string[]>([]);
 
   const parcelasElegiveis = lancamento.parcelas.filter(
-    (p) => p.idParcela !== lancamento.uuid && p.status !== StatusPagamento.PAGO
+    (parcela) => parcela.idParcela !== lancamento.uuid && ![StatusPagamento.PAGO, StatusPagamento.ANTECIPADO].includes(parcela.status),
   );
 
   const handleToggle = (idParcela: string) => {
@@ -174,14 +185,15 @@ function ModalAnteciparParcelas({ lancamento, isOpen, onOpenChange }: ModalAntec
       prev.includes(idParcela) ? prev.filter((id) => id !== idParcela) : [...prev, idParcela]
     );
   };
-
   const handleOpenChange = (open: boolean) => {
     if (!open) setSelecionadas([]);
     onOpenChange(open);
   };
 
+  const idLancamento = lancamento.parcelas[0].idLancamento;
+
   const anteciparMutation = useMutation({
-    mutationFn: () => lancamentoCartaoService.antecipar(idCartao, lancamento.uuid, selecionadas),
+    mutationFn: () => lancamentoCartaoService.antecipar(idCartao, idLancamento, selecionadas),
     onSuccess: () => {
       toast.success("Parcelas antecipadas com sucesso!");
       handleOpenChange(false);
