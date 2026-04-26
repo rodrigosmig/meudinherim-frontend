@@ -1,5 +1,8 @@
-import { clearSessionToken, getSessionToken, } from "@/helpers/session-server-helper";
 import { getApiBaseUrl } from "@/helpers/route-helpers";
+import {
+  clearSessionToken,
+  getSessionToken,
+} from "@/helpers/session-server-helper";
 import { isValidToken } from "@/helpers/token-helper";
 import { NextResponse } from "next/server";
 
@@ -18,6 +21,7 @@ const ALLOWED_RESOURCES = new Set([
   "usuarios",
   "notificacoes",
   "dados-configuracao",
+  "dashboard",
 ]);
 
 async function proxy(request: Request, path: string[]) {

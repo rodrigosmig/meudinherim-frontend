@@ -1,9 +1,16 @@
 'use client';
 
+import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
+import { DonutsSection } from "@/components/dashboard/sections/donuts-section";
+import { ProgressoSection } from "@/components/dashboard/sections/progresso-section";
+import { ResumoSection } from "@/components/dashboard/sections/resumo-section";
+import { TendenciaSection } from "@/components/dashboard/sections/tendencia-section";
+import { TopCategoriasSection } from "@/components/dashboard/sections/top-categorias-section";
 import { Header } from "@/components/header/header";
 import { Button } from "@/components/primitives/button";
-import { Card } from "@/components/primitives/card";
-import Text from "@/components/primitives/text";
+import Heading from "@/components/primitives/heading";
+import QueryListState from "@/components/primitives/query-list-state";
+import { useDashboard } from "@/hooks/use-dashboard";
 import { addMonths, format, getYear, subMonths } from "date-fns";
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -13,19 +20,16 @@ export default function Home() {
   const [dataAtual, setDataAtual] = useState(new Date());
   const mesAtual = format(dataAtual, 'LLLL', { locale: ptBR });
   const anoAtual = getYear(dataAtual);
+  const mes = dataAtual.getMonth() + 1;
+  const ano = getYear(dataAtual);
 
-  const handlePreviousMonth = () => {
-    const newDate = subMonths(dataAtual, 1);
-    setDataAtual(newDate);
-  }
+  const { data, isLoading, isError } = useDashboard(mes, ano);
 
-  const handleNextMonth = () => {
-    const newDate = addMonths(dataAtual, 1);
-    setDataAtual(newDate);
-  }
+  const handlePreviousMonth = () => setDataAtual(subMonths(dataAtual, 1));
+  const handleNextMonth = () => setDataAtual(addMonths(dataAtual, 1));
 
   return (
-    <div>
+    <div className="space-y-6">
       <Header.Title>
         <PageTitle
           mes={mesAtual}
@@ -44,19 +48,25 @@ export default function Home() {
         />
       </div>
 
-      <Card.Root>
-        <Card.Header>
-          <div className="flex items-center gap-4">
-            <Text variant="heading-medium">Dashboard</Text>
+      <QueryListState
+        isLoading={isLoading}
+        isError={isError}
+        loadingFallback={<DashboardSkeleton />}
+      >
+        {data && (
+          <div className="space-y-6">
+            <ResumoSection resumo={data.resumoMes} />
+            <DonutsSection categorias={data.categorias} />
+            <TendenciaSection pontos={data.tendencia.pontos} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <TopCategoriasSection top10={data.topCategorias.top10Saidas} />
+              <ProgressoSection progressoCategorias={data.progressoCategorias} />
+            </div>
           </div>
-        </Card.Header>
-        <Text variant="paragraph-medium">Conteúdo da dashboard</Text>
-
-        <Card.Footer>Teste</Card.Footer>
-      </Card.Root>
-
+        )}
+      </QueryListState>
     </div>
-  )
+  );
 }
 
 interface PageTitleProps {
@@ -69,26 +79,15 @@ interface PageTitleProps {
 function PageTitle({ mes, ano, onPreviousMonth, onNextMonth }: PageTitleProps) {
   return (
     <>
-      <Text variant="heading-large" className="first-letter:capitalize">{mes}, {ano}</Text>
-
+      <Heading variant="heading3" className="first-letter:capitalize">{mes}, {ano}</Heading>
       <div className="flex gap-2 md:pl-2">
-        <Button
-          variant="icon"
-          aria-label="Voltar"
-          tooltip="Mês anterior"
-          onClick={onPreviousMonth}
-        >
+        <Button variant="icon" aria-label="Voltar" tooltip="Mês anterior" onClick={onPreviousMonth}>
           <ChevronLeft className="w-5 h-5 text-gray-400 hover:text-white" />
         </Button>
-        <Button
-          variant="icon"
-          aria-label="Avançar"
-          tooltip="Mês seguinte"
-          onClick={onNextMonth}
-        >
+        <Button variant="icon" aria-label="Avançar" tooltip="Mês seguinte" onClick={onNextMonth}>
           <ChevronRight className="w-5 h-5 text-gray-400 hover:text-white" />
         </Button>
       </div>
     </>
-  )
+  );
 }

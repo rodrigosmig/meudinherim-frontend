@@ -1,5 +1,5 @@
-import { lancamentoContaService } from "@/services/lancamento-conta-service";
 import { LANCAMENTOS_CONTA_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { lancamentoContaService } from "@/services/lancamento-conta-service";
 import { useQuery } from "@tanstack/react-query";
 
 export function useLancamentosContaPaginacao(
@@ -29,5 +29,6 @@ export function useLancamentosContaPaginacao(
       });
       return response.data;
     },
+    staleTime: 1000 * 60 * 15,
   });
 }

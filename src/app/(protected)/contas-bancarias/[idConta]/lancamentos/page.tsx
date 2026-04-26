@@ -18,7 +18,6 @@ import { useDateFilter } from "@/hooks/use-date-filter";
 import { useLancamentosContaPaginacao } from "@/hooks/use-lancamentos-conta-paginacao";
 import ApiError from "@/types/application-error";
 import { LancamentoConta } from "@/types/lancamento-conta";
-import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -33,7 +32,6 @@ export default function LancamentosPage() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [search, setSearch] = useState(query);
-  const queryClient = useQueryClient();
 
   const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
 

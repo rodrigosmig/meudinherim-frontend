@@ -1,5 +1,5 @@
 export enum Urls {
-  DASHBOARD = "/dashboard",
+  DASHBOARD = "/",
   CATEGORIAS = "/categorias",
   TAGS = "/tags",
   CONTAS_BANCARIAS = "/contas-bancarias",
