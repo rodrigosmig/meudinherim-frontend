@@ -1,5 +1,6 @@
 import { ApiFormErrorResponse, ApiResponse } from "./api";
 import { TipoCategoria } from "./enum/tipo-categoria";
+import { PaginaRequest } from "./pagina";
 import { Parcela } from "./parcela";
 
 export type LancamentoCartao = {
@@ -18,12 +19,9 @@ export type LancamentoCartao = {
   tags: string[];
 };
 
-export interface ListarLancamentosCartaoRequest {
+export interface ListarLancamentosCartaoRequest extends PaginaRequest {
   idCartao: string;
   idFatura: string;
-  comPaginacao: boolean;
-  pagina: number;
-  size: number;
 }
 
 export type CadastrarLancamentoCartaoRequest = {

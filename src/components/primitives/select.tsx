@@ -76,6 +76,7 @@ export function Select({
           isDisabled={disabled}
           unstyled
           menuPlacement="auto"
+          menuPosition="fixed"
           name={name}
           value={selectedValue}
           onBlur={onBlur}

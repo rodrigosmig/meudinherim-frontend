@@ -13,3 +13,9 @@ export interface Paginacao {
   doElemento: number;
   paraElemento: number;
 }
+
+export interface PaginaRequest {
+  comPaginacao: boolean;
+  pagina: number;
+  size: number;
+}

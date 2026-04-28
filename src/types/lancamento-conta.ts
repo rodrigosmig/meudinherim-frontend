@@ -2,6 +2,7 @@ import { TipoCategoria } from "@/types/enum/tipo-categoria";
 
 import { ApiFormErrorResponse, ApiResponse } from "./api";
 import { TipoContaAgendada } from "./enum/tipo-conta-agendada";
+import { PaginaRequest } from "./pagina";
 
 export type LancamentoConta = {
   uuid: string;
@@ -35,13 +36,10 @@ export type DadosContaAgendada = {
   tipo: TipoContaAgendada;
 };
 
-export interface ListarLancamentosContaRequest {
+export interface ListarLancamentosContaRequest extends PaginaRequest {
   idConta: string;
   inicio: string;
   fim: string;
-  comPaginacao: boolean;
-  pagina: number;
-  size: number;
 }
 
 export interface ListaDeLancamentosConta {

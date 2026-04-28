@@ -6,7 +6,8 @@ import { TopCategoriaSaida } from "@/types/dashboard";
 import {
   Bar,
   BarChart,
-  Cell,
+  BarShapeProps,
+  Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -61,11 +62,16 @@ export function BarTopCategorias({ top10 }: BarTopCategoriasProps) {
           width={100}
         />
         <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-        <Bar dataKey="valor" radius={[0, 6, 6, 0] as [number, number, number, number]}>
-          {top10.map((_, index) => (
-            <Cell key={index} fill={RANKING_COLORS[index % RANKING_COLORS.length]} />
-          ))}
-        </Bar>
+        <Bar
+          dataKey="valor"
+          radius={[0, 6, 6, 0] as [number, number, number, number]}
+          shape={(props: BarShapeProps) => (
+            <Rectangle
+              {...props}
+              fill={RANKING_COLORS[(props.index ?? 0) % RANKING_COLORS.length]}
+            />
+          )}
+        />
       </BarChart>
     </ResponsiveContainer>
   );

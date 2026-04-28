@@ -132,7 +132,7 @@ interface NavItemProps {
 
 function NavItem({ title, link, icon: Icon, collapsed = false, onNavigate }: NavItemProps) {
   const pathname = usePathname();
-  const isActive = pathname.startsWith(link);
+  const isActive = link === "/" ? pathname === link : pathname.startsWith(link);
 
   return (
     <Link

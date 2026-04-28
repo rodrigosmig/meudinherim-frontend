@@ -153,7 +153,11 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
   }
 
   async function onSubmit(data: LancamentoContaFormValue) {
-    await cadastrarLancamentoContaMutation.mutateAsync(data);
+    try {
+      await cadastrarLancamentoContaMutation.mutateAsync(data);
+    } catch {
+      // errors handled by onError
+    }
   }
 
   return (

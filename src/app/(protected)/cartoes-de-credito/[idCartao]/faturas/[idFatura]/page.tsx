@@ -2,6 +2,7 @@
 
 import { ErrorPage } from "@/components/error-page";
 import FiltroPorPagina from "@/components/filtro-por-pagina";
+import { Header } from "@/components/header/header";
 import ResponsivePageTitle from "@/components/header/responsive-page-title";
 import Pagination from "@/components/pagination";
 import { Button } from "@/components/primitives/button";
@@ -115,8 +116,12 @@ export default function FaturaPage() {
   if (isConfigLoading) {
     return (
       <>
-        <Skeleton rounded="sm" className="w-48 h-10 mb-1" />
-        <Skeleton rounded="lg" className="w-full h-20 mb-6" />
+        <Header.Title>
+          <Skeleton rounded="sm" className="w-32 h-10 mb-1" />
+          <div className="flex flex-col items-end mr-4">
+            <Skeleton rounded="sm" className="w-32 h-10" />
+          </div>
+        </Header.Title>
         <Skeleton rounded="lg" className="w-full h-225" />
       </>
     );
