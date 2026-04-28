@@ -15,6 +15,7 @@ import { Conta } from "@/types/contas";
 import { Status } from "@/types/enum/status";
 import { TipoConta } from "@/types/enum/tipo-conta";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { BankIcon } from "@/components/bank-icon";
 import { Banknote, CircleCheck, CircleX, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
@@ -100,7 +101,12 @@ export default function TabelaContas({ contas }: Readonly<TabelaContasProps>) {
         const isAtivo = conta.status === Status.ATIVO;
         return (
           <Table.Tr key={conta.uuid} className="text-sm md:text-base font-semibold">
-            <Table.Td>{conta.nome}</Table.Td>
+            <Table.Td>
+              <div className="flex items-center gap-2">
+                <BankIcon icon={conta.icon} name={conta.nome} size={28} />
+                {conta.nome}
+              </div>
+            </Table.Td>
 
             <Table.Td>
               <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-900/40 text-blue-400">

@@ -10,6 +10,7 @@ export const contaSchema = z.object({
   tipo: z.nativeEnum(TipoConta, {
     error: "O campo tipo é obrigatório",
   }),
+  icon: z.string(),
 });
 
 export type ContaFormValue = z.infer<typeof contaSchema>;

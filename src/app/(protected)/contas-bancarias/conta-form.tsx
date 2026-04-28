@@ -6,6 +6,8 @@ import { Landmark } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Controller, useForm, type DefaultValues } from "react-hook-form";
 
+import { BankIconPicker } from "@/components/bank-icon-picker";
+
 import Modal from "@/components/modal";
 import { Button } from "@/components/primitives/button";
 import { Input } from "@/components/primitives/input";
@@ -37,9 +39,9 @@ type Props = Readonly<{
 
 function getDefaultValues(conta?: Conta): DefaultValues<ContaFormValue> {
   if (!conta) {
-    return { nome: "", tipo: undefined };
+    return { nome: "", tipo: undefined, icon: "" };
   }
-  return { nome: conta.nome, tipo: conta.tipo };
+  return { nome: conta.nome, tipo: conta.tipo, icon: conta.icon ?? "" };
 }
 
 export default function ContaForm({ conta, children }: Props) {
@@ -60,7 +62,7 @@ export default function ContaForm({ conta, children }: Props) {
 
   const salvarContaMutation = useMutation({
     mutationFn: async (data: ContaFormValue) => {
-      const payload = { nome: data.nome, tipo: data.tipo, icon: "" };
+      const payload = { nome: data.nome, tipo: data.tipo, icon: data.icon ?? "" };
       if (isEditMode && conta?.uuid) {
         return contasService.alterar(conta.uuid, payload);
       }
@@ -137,6 +139,18 @@ export default function ContaForm({ conta, children }: Props) {
               onBlur={field.onBlur}
               name={field.name}
               error={form.formState.errors.tipo}
+            />
+          )}
+        />
+
+        <Controller
+          control={form.control}
+          name="icon"
+          render={({ field }) => (
+            <BankIconPicker
+              label="Ícone do banco"
+              value={field.value ?? ""}
+              onChange={field.onChange}
             />
           )}
         />

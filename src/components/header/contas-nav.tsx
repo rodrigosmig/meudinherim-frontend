@@ -7,7 +7,7 @@ import { useMobile } from "@/hooks/use-is-mobile";
 import { Conta } from "@/types/contas";
 import { Landmark } from "lucide-react";
 import Link from "next/link";
-import { Avatar } from "../avatar";
+import { BankIcon } from "../bank-icon";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
 import Icon from "../primitives/icon";
@@ -52,7 +52,7 @@ export function ContasNav() {
                     href={`${Urls.CONTAS_BANCARIAS}/${conta.uuid}/lancamentos`}
                     className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-hover rounded-lg transition-colors duration-150 group"
                   >
-                    <Avatar name={conta.nome} size={avatarSize} />
+                    <BankIcon icon={conta.icon} name={conta.nome} size={avatarSize} />
                     <div className="flex-1 min-w-0">
                       <Text className="block font-medium text-gray-200 group-hover:text-white truncate">{conta.nome}</Text>
                       <Text variant="paragraph-small" className={`block font-semibold ${conta.saldo < 0 ? 'text-negative' : 'text-positive'}`}>

@@ -73,24 +73,26 @@ describe("Componente ContasNav", () => {
     });
   });
 
-  it("deve usar avatar maior no desktop", async () => {
+  it("deve usar ícone maior no desktop", async () => {
     const user = userEvent.setup();
     render(<ContasNav />);
 
     await user.click(screen.getByRole("button", { name: "Contas" }));
 
-    const avatar = await screen.findByRole("img", { name: "Avatar de Conta Principal" });
-    expect(avatar).toHaveStyle({ width: "36px", height: "36px" });
+    await screen.findByText("Conta Principal");
+    const icons = document.querySelectorAll<HTMLElement>('[style*="width: 36px"]');
+    expect(icons.length).toBeGreaterThan(0);
   });
 
-  it("deve usar avatar menor no mobile", async () => {
+  it("deve usar ícone menor no mobile", async () => {
     mockedUseMobile.mockReturnValue(true);
     const user = userEvent.setup();
     render(<ContasNav />);
 
     await user.click(screen.getByRole("button", { name: "Contas" }));
 
-    const avatar = await screen.findByRole("img", { name: "Avatar de Conta Principal" });
-    expect(avatar).toHaveStyle({ width: "34px", height: "34px" });
+    await screen.findByText("Conta Principal");
+    const icons = document.querySelectorAll<HTMLElement>('[style*="width: 34px"]');
+    expect(icons.length).toBeGreaterThan(0);
   });
 });
