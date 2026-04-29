@@ -6,19 +6,19 @@ import { handleApiResponse } from "@/helpers/response-helper";
 import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { ApiResponse } from "@/types/api";
 import {
-  AlterarContaResponse,
-  CadastrarContaRequest,
-  CadastrarContaResponse,
-  Conta,
-  ContasRequest,
-  ObterContaResponse,
-} from "@/types/contas";
+  AlterarCartaoResponse,
+  CadastrarCartaoRequest,
+  CadastrarCartaoResponse,
+  Cartao,
+  CartoesRequest,
+  ObterCartaoResponse,
+} from "@/types/cartao";
 import { Pagina } from "@/types/pagina";
 
-export const contasService = {
+export const cartoesService = {
   listar: async (
-    request: ContasRequest,
-  ): Promise<ApiResponse<Pagina<Conta>>> => {
+    request: CartoesRequest,
+  ): Promise<ApiResponse<Pagina<Cartao>>> => {
     const params = new URLSearchParams({
       status: request.status,
       comPaginacao: request.comPaginacao.toString(),
@@ -26,7 +26,7 @@ export const contasService = {
       size: request.size.toString(),
     });
 
-    const url = `/api/proxy/v1/contas?${params.toString()}`;
+    const url = `/api/proxy/v1/cartoes?${params.toString()}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -35,17 +35,17 @@ export const contasService = {
 
     validarAutenticacao(response);
 
-    if (!response.ok) throw new Error("Falha ao listar contas");
+    if (!response.ok) throw new Error("Falha ao listar cartões");
 
-    const payload: ApiResponse<Pagina<Conta>> = await response.json();
+    const payload: ApiResponse<Pagina<Cartao>> = await response.json();
 
     return normalizarApiResponsePaginadaBackendParaFrontend(payload);
   },
 
   cadastrar: async (
-    request: CadastrarContaRequest,
-  ): Promise<CadastrarContaResponse> => {
-    const url = `/api/proxy/v1/contas`;
+    request: CadastrarCartaoRequest,
+  ): Promise<CadastrarCartaoResponse> => {
+    const url = `/api/proxy/v1/cartoes`;
 
     const response = await fetch(url, {
       method: "POST",
@@ -55,14 +55,14 @@ export const contasService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<CadastrarContaResponse>(response);
+    return handleApiResponse<CadastrarCartaoResponse>(response);
   },
 
   alterar: async (
-    idConta: string,
-    request: CadastrarContaRequest,
-  ): Promise<AlterarContaResponse> => {
-    const url = `/api/proxy/v1/contas/${idConta}`;
+    idCartao: string,
+    request: CadastrarCartaoRequest,
+  ): Promise<AlterarCartaoResponse> => {
+    const url = `/api/proxy/v1/cartoes/${idCartao}`;
 
     const response = await fetch(url, {
       method: "PUT",
@@ -72,11 +72,11 @@ export const contasService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<AlterarContaResponse>(response);
+    return handleApiResponse<AlterarCartaoResponse>(response);
   },
 
-  obter: async (idConta: string): Promise<ObterContaResponse> => {
-    const url = `/api/proxy/v1/contas/${idConta}`;
+  obter: async (idCartao: string): Promise<ObterCartaoResponse> => {
+    const url = `/api/proxy/v1/cartoes/${idCartao}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -85,24 +85,11 @@ export const contasService = {
 
     validarAutenticacao(response);
 
-    return handleApiResponse<ObterContaResponse>(response);
+    return handleApiResponse<ObterCartaoResponse>(response);
   },
 
-  deletar: async (idConta: string): Promise<ApiResponse<void>> => {
-    const url = `/api/proxy/v1/contas/${idConta}`;
-
-    const response = await fetch(url, {
-      method: "DELETE",
-      credentials: "same-origin",
-    });
-
-    validarAutenticacao(response);
-
-    return handleApiResponse<ApiResponse<void>>(response);
-  },
-
-  ativar: async (idConta: string): Promise<ApiResponse<void>> => {
-    const url = `/api/proxy/v1/contas/${idConta}/ativar`;
+  ativar: async (idCartao: string): Promise<ApiResponse<void>> => {
+    const url = `/api/proxy/v1/cartoes/${idCartao}/ativar`;
 
     const response = await fetch(url, {
       method: "PATCH",
@@ -114,8 +101,8 @@ export const contasService = {
     return handleApiResponse<ApiResponse<void>>(response);
   },
 
-  desativar: async (idConta: string): Promise<ApiResponse<void>> => {
-    const url = `/api/proxy/v1/contas/${idConta}/desativar`;
+  desativar: async (idCartao: string): Promise<ApiResponse<void>> => {
+    const url = `/api/proxy/v1/cartoes/${idCartao}/desativar`;
 
     const response = await fetch(url, {
       method: "PATCH",

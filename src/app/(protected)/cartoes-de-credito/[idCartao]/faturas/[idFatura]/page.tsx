@@ -10,12 +10,16 @@ import { Card } from "@/components/primitives/card";
 import { Input } from "@/components/primitives/input";
 import QueryListState from "@/components/primitives/query-list-state";
 import Skeleton from "@/components/primitives/skeleton";
+import { FATURAS_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toBrDate, toCurrency } from "@/helpers/string-helper";
-import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
 import { useLancamentosCartaoPaginacao } from "@/hooks/use-lancamentos-cartao-paginacao";
+import { faturasService } from "@/services/faturas-service";
+import { ApiResponse } from "@/types/api";
 import ApiError from "@/types/application-error";
+import { ObterFaturaData } from "@/types/faturas";
 import { LancamentoCartao } from "@/types/lancamento-cartao";
+import { useQuery } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -36,7 +40,22 @@ export default function FaturaPage() {
   const [search, setSearch] = useState(query);
   const [lancamentos, setLancamentos] = useState<LancamentoCartao[]>([]);
 
-  const { data: configData, isLoading: isConfigLoading } = useConfiguracaoInicial();
+  const {
+    data: faturaData,
+    isLoading: isFaturaLoading,
+    isError: isFaturaError,
+  } = useQuery({
+    queryKey: [FATURAS_QUERY_KEY, idCartao, idFatura],
+    queryFn: async () => {
+      const response = await faturasService.obter(idCartao, idFatura);
+      const fatura = (response as ApiResponse<ObterFaturaData>).data?.fatura;
+      if (!fatura) throw new Error("Fatura não encontrada");
+      return fatura;
+    },
+    enabled: !!idCartao && !!idFatura,
+    retry: false,
+  });
+
   const {
     data,
     error,
@@ -45,12 +64,6 @@ export default function FaturaPage() {
     isError,
     refetch,
   } = useLancamentosCartaoPaginacao(idCartao, idFatura, page, perPage);
-
-  const fatura = configData?.faturas.find(
-    (f) => f.uuid === idFatura && f.cartao.uuid === idCartao,
-  );
-
-  const isFaturaInvalida = !isConfigLoading && !fatura;
 
   const paginacao = {
     paginaAtual: data?.pagina.paginacao?.paginaAtual || 1,
@@ -113,7 +126,7 @@ export default function FaturaPage() {
 
   const isListEmpty = !isLancamentosLoading && lancamentosFiltrados.length === 0;
 
-  if (isConfigLoading) {
+  if (isFaturaLoading) {
     return (
       <>
         <Header.Title>
@@ -127,7 +140,7 @@ export default function FaturaPage() {
     );
   }
 
-  if (isFaturaInvalida) {
+  if (isFaturaError || !faturaData) {
     return (
       <ErrorPage
         title="Fatura não encontrada"
@@ -139,11 +152,11 @@ export default function FaturaPage() {
   return (
     <>
       <ResponsivePageTitle
-        title={`${fatura!.cartao.descricao} - ${toBrDate(fatura!.dataVencimento)}`}
+        title={`${faturaData.cartao.descricao} - ${toBrDate(faturaData.dataVencimento)}`}
         isLoading={isLancamentosFetching}
         metricLabel="Total Fatura:"
-        metricValue={toCurrency(fatura!.valorTotal)}
-        metricValueClassName={(fatura!.valorTotal || 0) >= 0 ? "text-negative" : "text-positive"}
+        metricValue={toCurrency(faturaData.valorTotal)}
+        metricValueClassName={(faturaData.valorTotal || 0) >= 0 ? "text-negative" : "text-positive"}
       />
 
       <Card.Root>

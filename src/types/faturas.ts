@@ -1,5 +1,8 @@
 import { StatusPagamento } from "@/types/enum/status-pagamento";
 
+import { ApiFormErrorResponse, ApiResponse } from "./api";
+import { PaginaRequest } from "./pagina";
+
 export interface Fatura {
   uuid: string;
   dataVencimento: string;
@@ -13,6 +16,15 @@ export interface Fatura {
   };
 }
 
-export interface ListaDeFaturas {
-  faturas: Fatura[];
+export interface FaturasRequest extends PaginaRequest {
+  idCartao: string;
+  statusPagamento: StatusPagamento;
 }
+
+export interface ObterFaturaData {
+  fatura: Fatura;
+}
+
+export type ObterFaturaResponse =
+  | ApiResponse<ObterFaturaData>
+  | ApiFormErrorResponse;

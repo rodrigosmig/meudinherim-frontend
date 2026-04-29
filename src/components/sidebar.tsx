@@ -55,7 +55,6 @@ function SidebarRoot() {
                 variant="icon"
                 onClick={() => setCollapsed((prev) => !prev)}
                 aria-label={collapsed ? "Expandir" : "Recolher"}
-                tooltip={collapsed ? "Expandir" : "Recolher"}
               >
                 {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
               </Button>

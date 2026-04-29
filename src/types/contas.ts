@@ -19,10 +19,6 @@ export interface ContasRequest {
   size: number;
 }
 
-export interface ListaDeContas {
-  contas: Conta[];
-}
-
 export interface CadastrarContaRequest {
   nome: string;
   tipo: TipoConta;
