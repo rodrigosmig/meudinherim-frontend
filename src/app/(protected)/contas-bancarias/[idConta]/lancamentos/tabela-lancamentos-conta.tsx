@@ -8,7 +8,7 @@ import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
 import { toast } from "@/components/toast";
 import { isContaAPagar, isPagamentoContaAgendada } from "@/helpers/conta-agendada-helper";
-import { DADOS_CONFIGURACAO_QUERY_KEY, LANCAMENTOS_CONTA_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { keysToInvalidate } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toBrDate, toCurrency } from '@/helpers/string-helper';
 import { contasAPagarService } from "@/services/contas-a-pagar-service";
@@ -39,10 +39,11 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
       toast.success("Lançamento excluído com sucesso!");
       setLancamentoParaDeletar(null);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidate.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {
@@ -62,10 +63,11 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
       toast.success("Pagamento cancelado com sucesso!");
       setLancamentoParaCancelar(null);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidate.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {
@@ -85,10 +87,11 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
       toast.success("Recebimento cancelado com sucesso!");
       setLancamentoParaCancelar(null);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidate.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {

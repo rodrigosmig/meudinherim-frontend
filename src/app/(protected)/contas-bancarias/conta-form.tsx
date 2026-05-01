@@ -102,12 +102,8 @@ export default function ContaForm({ conta, children }: Props) {
     if (!open) form.reset(defaultValues);
   }
 
-  async function onSubmit(data: ContaFormValue) {
-    try {
-      await salvarContaMutation.mutateAsync(data);
-    } catch {
-      // errors handled by onError
-    }
+  function onSubmit(data: ContaFormValue) {
+    salvarContaMutation.mutate(data);
   }
 
   return (

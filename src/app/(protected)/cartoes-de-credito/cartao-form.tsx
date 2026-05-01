@@ -109,12 +109,8 @@ export default function CartaoForm({ cartao, children }: Props) {
     if (!open) form.reset(defaultValues);
   }
 
-  async function onSubmit(data: CartaoFormValue) {
-    try {
-      await salvarCartaoMutation.mutateAsync(data);
-    } catch {
-      // errors handled by onError
-    }
+  function onSubmit(data: CartaoFormValue) {
+    salvarCartaoMutation.mutate(data);
   }
 
   return (

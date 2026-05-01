@@ -6,7 +6,7 @@ import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
 import { toast } from "@/components/toast";
-import { CONTAS_A_PAGAR_QUERY_KEY, CONTAS_QUERY_KEY, DADOS_CONFIGURACAO_QUERY_KEY, LANCAMENTOS_CONTA_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { CONTAS_A_PAGAR_QUERY_KEY, keysToInvalidate } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { cn, toBrDate, toCurrency } from "@/helpers/string-helper";
 import { contasAPagarService } from "@/services/contas-a-pagar-service";
@@ -57,10 +57,11 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
     mutationFn: (id: string) => contasAPagarService.deletar(id),
     onSuccess: () => {
       toast.success("Conta a pagar excluída com sucesso!");
+
       setContaParaDeletar(null);
+
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: [CONTAS_A_PAGAR_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
       ]);
     },
     onError: handleMutationError,
@@ -71,13 +72,14 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
       contasAPagarService.cancelarPagamento(conta.uuid, conta.dadosParcela?.idParcela),
     onSuccess: () => {
       toast.success("Pagamento cancelado com sucesso!");
+
       setContaParaCancelarPagamento(null);
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [CONTAS_A_PAGAR_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [CONTAS_QUERY_KEY] }),
-      ]);
+
+      void Promise.all(
+        keysToInvalidate.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: handleMutationError,
   });

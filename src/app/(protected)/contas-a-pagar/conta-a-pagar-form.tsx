@@ -20,8 +20,7 @@ import { useTags } from "@/hooks/use-tags";
 
 import { catalogoErros } from "@/helpers/erros-helper";
 import {
-  CONTAS_A_PAGAR_QUERY_KEY,
-  DADOS_CONFIGURACAO_QUERY_KEY,
+  CONTAS_A_PAGAR_QUERY_KEY
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toUsDate } from "@/helpers/string-helper";
@@ -139,7 +138,6 @@ export default function ContaAPagarForm({ contaAPagar, children }: Props) {
 
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: [CONTAS_A_PAGAR_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
       ]);
     },
     onError: (error) => {
@@ -171,12 +169,8 @@ export default function ContaAPagarForm({ contaAPagar, children }: Props) {
     if (!open) form.reset(defaultValues);
   }
 
-  async function onSubmit(data: ContaAPagarFormValue) {
-    try {
-      await mutation.mutateAsync(data);
-    } catch {
-      // errors handled by onError
-    }
+  function onSubmit(data: ContaAPagarFormValue) {
+    mutation.mutate(data);
   }
 
   return (

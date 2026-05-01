@@ -168,8 +168,8 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
     }
   }
 
-  async function onSubmit(data: LancamentoCartaoFormValue) {
-    await cadastrarLancamentoCartaoMutation.mutateAsync(data);
+  function onSubmit(data: LancamentoCartaoFormValue) {
+    cadastrarLancamentoCartaoMutation.mutate(data);
   }
 
   return (

@@ -115,12 +115,8 @@ export default function CategoriaForm({ categoria, children }: Props) {
     }
   }
 
-  async function onSubmit(data: CategoriaFormValue) {
-    try {
-      await salvarCategoriaMutation.mutateAsync(data);
-    } catch {
-      // errors handled by onError
-    }
+  function onSubmit(data: CategoriaFormValue) {
+    salvarCategoriaMutation.mutate(data);
   }
 
   return (

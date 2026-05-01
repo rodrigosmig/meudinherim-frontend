@@ -21,8 +21,7 @@ import { useTags } from "@/hooks/use-tags";
 
 import { catalogoErros } from "@/helpers/erros-helper";
 import {
-  DADOS_CONFIGURACAO_QUERY_KEY,
-  LANCAMENTOS_CONTA_QUERY_KEY,
+  keysToInvalidate
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toUsDate } from "@/helpers/string-helper";
@@ -119,10 +118,11 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
       );
       handleOpenChange(false);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidate.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {
@@ -152,12 +152,8 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
     }
   }
 
-  async function onSubmit(data: LancamentoContaFormValue) {
-    try {
-      await cadastrarLancamentoContaMutation.mutateAsync(data);
-    } catch {
-      // errors handled by onError
-    }
+  function onSubmit(data: LancamentoContaFormValue) {
+    cadastrarLancamentoContaMutation.mutate(data);
   }
 
   return (
@@ -258,7 +254,7 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
             isLoading={form.formState.isSubmitting}
             disabled={isLoadingDependencies || form.formState.isSubmitting}
           >
-            Salvar
+            Cadastrar
           </Button>
         </div>
       </form>

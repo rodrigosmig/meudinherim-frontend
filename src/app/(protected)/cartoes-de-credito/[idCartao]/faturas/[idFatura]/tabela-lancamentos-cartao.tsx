@@ -245,7 +245,7 @@ function ModalAnteciparParcelas({ lancamento, isOpen, onOpenChange }: ModalAntec
           <Button
             isLoading={anteciparMutation.isPending}
             disabled={selecionadas.length === 0 || anteciparMutation.isPending}
-            onClick={() => void anteciparMutation.mutateAsync()}
+            onClick={() => anteciparMutation.mutate()}
           >
             Antecipar
           </Button>

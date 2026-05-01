@@ -9,6 +9,7 @@ import { TopCategoriasSection } from "@/components/dashboard/sections/top-catego
 import { Header } from "@/components/header/header";
 import { Button } from "@/components/primitives/button";
 import Heading from "@/components/primitives/heading";
+import Loading from "@/components/primitives/loading";
 import QueryListState from "@/components/primitives/query-list-state";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { addMonths, format, getYear, subMonths } from "date-fns";
@@ -23,7 +24,7 @@ export default function Home() {
   const mes = dataAtual.getMonth() + 1;
   const ano = getYear(dataAtual);
 
-  const { data, isLoading, isError } = useDashboard(mes, ano);
+  const { data, isLoading, isFetching, isError } = useDashboard(mes, ano);
 
   const handlePreviousMonth = () => setDataAtual(subMonths(dataAtual, 1));
   const handleNextMonth = () => setDataAtual(addMonths(dataAtual, 1));
@@ -34,6 +35,7 @@ export default function Home() {
         <PageTitle
           mes={mesAtual}
           ano={anoAtual}
+          isLoading={isLoading || isFetching}
           onPreviousMonth={handlePreviousMonth}
           onNextMonth={handleNextMonth}
         />
@@ -43,6 +45,7 @@ export default function Home() {
         <PageTitle
           mes={mesAtual}
           ano={anoAtual}
+          isLoading={isLoading || isFetching}
           onPreviousMonth={handlePreviousMonth}
           onNextMonth={handleNextMonth}
         />
@@ -72,14 +75,18 @@ export default function Home() {
 interface PageTitleProps {
   mes: string;
   ano: number;
+  isLoading?: boolean;
   onPreviousMonth: () => void;
   onNextMonth: () => void;
 }
 
-function PageTitle({ mes, ano, onPreviousMonth, onNextMonth }: PageTitleProps) {
+function PageTitle({ mes, ano, isLoading, onPreviousMonth, onNextMonth }: PageTitleProps) {
   return (
     <>
-      <Heading variant="heading3" className="first-letter:capitalize">{mes}, {ano}</Heading>
+      <div className="flex items-center gap-2">
+        <Heading variant="heading3" className="first-letter:capitalize">{mes}, {ano}</Heading>
+        {isLoading && <Loading />}
+      </div>
       <div className="flex gap-2 md:pl-2">
         <Button variant="icon" aria-label="Voltar" tooltip="Mês anterior" onClick={onPreviousMonth}>
           <ChevronLeft className="w-5 h-5 text-gray-400 hover:text-white" />

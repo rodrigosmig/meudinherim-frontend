@@ -16,12 +16,7 @@ import { toast } from "@/components/toast";
 
 import { useContas } from "@/hooks/use-contas";
 
-import {
-  CONTAS_A_PAGAR_QUERY_KEY,
-  CONTAS_QUERY_KEY,
-  DADOS_CONFIGURACAO_QUERY_KEY,
-  LANCAMENTOS_CONTA_QUERY_KEY,
-} from "@/helpers/query-keys-helper";
+import { keysToInvalidate } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toBrDate, toUsDate } from "@/helpers/string-helper";
 
@@ -73,12 +68,12 @@ export default function PagarContaAPagarForm({ contaAPagar, children }: Props) {
       toast.success("Pagamento registrado com sucesso!");
       handleOpenChange(false);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [CONTAS_A_PAGAR_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CONTA_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [CONTAS_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidate.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
+
     },
     onError: (error) => {
       if (error instanceof ApiError) {
@@ -94,12 +89,8 @@ export default function PagarContaAPagarForm({ contaAPagar, children }: Props) {
     if (!open) form.reset(defaultValues);
   }
 
-  async function onSubmit(data: PagarContaFormValue) {
-    try {
-      await mutation.mutateAsync(data);
-    } catch {
-      // errors handled by onError
-    }
+  function onSubmit(data: PagarContaFormValue) {
+    mutation.mutate(data);
   }
 
   return (

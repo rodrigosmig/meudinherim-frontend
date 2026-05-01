@@ -12,7 +12,7 @@ interface InputDateProps extends Omit<ComponentProps<typeof Input>, "value" | "o
   onChange?: (date: Date | undefined) => void;
 }
 
-export default function InputDate({ dateSelected, onChange, ...props }: InputDateProps) {
+export default function InputDate({ dateSelected, onChange, disabled, ...props }: InputDateProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<Date | undefined>(undefined);
 
@@ -24,14 +24,20 @@ export default function InputDate({ dateSelected, onChange, ...props }: InputDat
     setIsOpen(false);
   }
 
+  function handleOpenChange(open: boolean) {
+    if (disabled && open) return;
+    setIsOpen(open);
+  }
+
   return (
     <div className="w-full flex gap-2 items-center">
-      <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen} className="w-full">
+      <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange} className="w-full">
         <DropdownMenu.Trigger>
           <Input
             icon={Calendar}
             type="text"
             readOnly
+            disabled={disabled}
             value={value ? format(value, "dd/MM/yyyy") : ""}
             placeholder="Selecione uma data"
             {...props}

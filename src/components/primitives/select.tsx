@@ -62,11 +62,13 @@ export function Select({
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <label htmlFor={triggerId} className="mb-1">
+        <label
+          htmlFor={triggerId}
+          className={`mb-1${disabled ? " opacity-50 cursor-not-allowed" : ""}`}
+        >
           {label}
         </label>
-      )
-      }
+      )}
       <div className="relative z-0 w-full focus-within:z-80">
         {Icon && <Icon className="pointer-events-none absolute left-3 top-1/2 z-1 h-4 w-4 -translate-y-1/2 text-gray-500 md:h-5 md:w-5" />}
         <ReactSelect<SelectOption, boolean>
@@ -94,19 +96,22 @@ export function Select({
           placeholder={placeholder}
           classNames={{
             container: () => "w-full",
-            control: ({ isFocused }) =>
+            control: ({ isFocused, isDisabled }) =>
               [
-                "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border bg-card px-3 py-2 text-xs md:text-base",
-                "hover:bg-gray-900",
-                "text-input-text",
+                "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs md:text-base",
                 Icon ? "pl-10" : "",
-                isError
-                  ? isFocused
-                    ? "border-red-400 ring-2 ring-red-400"
-                    : "border-red-400"
-                  : isFocused
-                    ? "border-default-border ring-2 ring-primary"
-                    : "border-default-border",
+                isDisabled
+                  ? "bg-gray-800/40 border-gray-700/40 opacity-60 cursor-not-allowed"
+                  : [
+                      "bg-card hover:bg-gray-900 text-input-text",
+                      isError
+                        ? isFocused
+                          ? "border-red-400 ring-2 ring-red-400"
+                          : "border-red-400"
+                        : isFocused
+                          ? "border-default-border ring-2 ring-primary"
+                          : "border-default-border",
+                    ].join(" "),
               ].join(" "),
             valueContainer: () => "gap-1 py-0",
             placeholder: () => "text-default-placeholder",
