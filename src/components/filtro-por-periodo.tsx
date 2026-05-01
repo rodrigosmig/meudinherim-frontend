@@ -1,6 +1,7 @@
 import { DropdownMenu } from "@/components/primitives/dropdown-menu";
 import { cn } from "@/helpers/string-helper";
 import { useDateFilter } from "@/hooks/use-date-filter";
+import { addYears } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { Calendar, Filter, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -24,6 +25,8 @@ export default function FiltroPorPeriodo({
   const [month, setMonth] = useState<Date>(new Date());
   const { stringDateBR } = useDateFilter()
   const showClosingButton = !!stringDateBR?.from || !!stringDateBR?.to;
+
+  const currentYear = month.getFullYear();
 
   const handleSelect: OnSelectHandler<DateRange | undefined> = (range) => {
     onRangeChange(range);
@@ -101,6 +104,8 @@ export default function FiltroPorPeriodo({
               reverseYears
               locale={ptBR}
               month={month}
+              startMonth={new Date(2014, 9, 1)}
+              endMonth={addYears(month, 4)}
               onMonthChange={setMonth}
               selected={selectedRange}
               onSelect={handleSelect}

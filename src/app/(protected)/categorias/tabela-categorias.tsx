@@ -95,11 +95,10 @@ export default function TabelaCategorias({ categorias }: Readonly<TabelaCategori
 
             <Table.Td>
               <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  categoria.tipo === TipoCategoria.ENTRADA
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${categoria.tipo === TipoCategoria.ENTRADA
                     ? "bg-green-900/40 text-green-400"
                     : "bg-red-900/40 text-red-400"
-                }`}
+                  }`}
               >
                 {categoria.tipo === TipoCategoria.ENTRADA ? "Entrada" : "Saída"}
               </span>

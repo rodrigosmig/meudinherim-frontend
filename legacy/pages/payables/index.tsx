@@ -1,36 +1,29 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { Flex, Select, Spinner, Tbody, useBreakpointValue, useDisclosure } from "@chakra-ui/react";
 import Head from "next/head";
-
-import {
-  Flex,
-  Select,
-  Spinner,
-  Tbody,
-  useBreakpointValue,
-  useDisclosure
-} from "@chakra-ui/react";
-import { Layout } from "../../components/Layout";
-import { usePayables } from "../../hooks/usePayables";
-import { AddButton } from "../../components/Buttons/Add";
-import { Loading } from "../../components/Loading";
-import { Table } from "../../components/Table";
-import { Heading } from "../../components/Heading";
-import { DateFilter } from "../../components/DateFilter";
-import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
-import { ACCOUNTS_ENTRIES, ACCOUNTS_REPORT, ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, getMessage, PAYABLES } from '../../utils/helpers';
-import { Pagination } from '../../components/Pagination';
-import { withSSRAuth } from '../../utils/withSSRAuth';
-import { setupApiClient } from '../../services/api';
-import { payableService } from '../../services/ApiService/PayableService';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
+
+import { AddButton } from "../../components/Buttons/Add";
+import { DateFilter } from "../../components/DateFilter";
+import { Heading } from "../../components/Heading";
+import { Input } from '../../components/Inputs/Input';
+import { PayableItemsTable } from '../../components/ItemsTable/PayableItemsTable';
+import { Layout } from "../../components/Layout";
+import { Loading } from "../../components/Loading";
 import { CreatePaymentModal } from '../../components/Modals/payables/CreatePaymentModal';
 import { EditPayableModal } from '../../components/Modals/payables/EditPayableModal';
+import { PaymentModal } from '../../components/Modals/payables/PaymentModal';
+import { Pagination } from '../../components/Pagination';
+import { FilterPerPage } from "../../components/Pagination/FilterPerPage";
+import { Table } from "../../components/Table";
 import { useDateFilter } from '../../contexts/DateFilterContext';
-import { IPayable } from '../../types/payable';
+import { usePayables } from "../../hooks/usePayables";
+import { setupApiClient } from '../../services/api';
+import { payableService } from '../../services/ApiService/PayableService';
 import { ICancelData } from '../../types/accountScheduling';
-import { PayableItemsTable } from '../../components/ItemsTable/PayableItemsTable';
-import { Input } from '../../components/Inputs/Input';
+import { IPayable } from '../../types/payable';
+import { ACCOUNT_BALANCE, ACCOUNT_TOTAL_BY_CATEGORY, ACCOUNTS_ENTRIES, ACCOUNTS_REPORT, getMessage, PAYABLES } from '../../utils/helpers';
+import { withSSRAuth } from '../../utils/withSSRAuth';
 
 interface Props {
   categories: {

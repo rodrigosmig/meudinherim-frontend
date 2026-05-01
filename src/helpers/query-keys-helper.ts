@@ -8,3 +8,4 @@ export const DASHBOARD_QUERY_KEY = "dashboard" as const;
 export const CATEGORIAS_QUERY_KEY = "categorias" as const;
 export const CARTOES_QUERY_KEY = "cartoes" as const;
 export const FATURAS_QUERY_KEY = "faturas" as const;
+export const CONTAS_A_PAGAR_QUERY_KEY = "contas_a_pagar" as const;

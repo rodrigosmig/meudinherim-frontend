@@ -12,29 +12,43 @@ export default function Switch({
   error,
   id,
   className,
+  disabled,
   children,
   ...props
 }: SwitchProps) {
   const switchId = id || (label ? `switch-${label.replace(/\s+/g, "-").toLowerCase()}` : undefined);
 
   return (
-    <div className="flex gap-4">
+    <div className={cn("flex items-center justify-between w-full", disabled && "cursor-not-allowed")}>
       {label && (
-        <label className="text-gray-200 mb-1" htmlFor={switchId}>{label}</label>
+        <label
+          className={cn(
+            "text-gray-200 select-none",
+            disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+          )}
+          htmlFor={switchId}
+        >
+          {label}
+        </label>
       )}
       <RadixSwitch.Root
         id={switchId}
+        disabled={disabled}
         className={cn(
-          "relative w-10 h-6 flex items-center rounded-full transition-colors px-1",
-          "bg-gray-700 data-[state=checked]:bg-purple-600 focus:ring-primary",
-          className
+          "relative w-10 h-6 flex items-center rounded-full transition-colors px-1 shrink-0",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+          disabled
+            ? "bg-gray-700/50 cursor-not-allowed"
+            : "bg-gray-700 data-[state=checked]:bg-purple-600 cursor-pointer",
+          className,
         )}
         {...props}
       >
         <RadixSwitch.Thumb
           className={cn(
-            "inline-block w-4 h-4 bg-white rounded-full shadow transform transition-transform",
-            "translate-x-0 data-[state=checked]:translate-x-4"
+            "inline-block w-4 h-4 rounded-full shadow transform transition-transform",
+            "translate-x-0 data-[state=checked]:translate-x-4",
+            disabled ? "bg-gray-500" : "bg-white",
           )}
         />
         {children}

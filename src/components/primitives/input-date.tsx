@@ -42,6 +42,7 @@ export default function InputDate({ dateSelected, onChange, ...props }: InputDat
           <div className="scale-85">
             <DayPicker
               animate
+              showOutsideDays
               mode="single"
               selected={value}
               onSelect={handleSelect}

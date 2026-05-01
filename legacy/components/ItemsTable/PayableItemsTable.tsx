@@ -1,24 +1,17 @@
-import { memo } from "react";
+import { Flex, HStack, LinkBox, LinkOverlay, Td, Text, Tr } from "@chakra-ui/react";
 import NextLink from "next/link";
-import {
-  Flex,
-  HStack,
-  LinkBox,
-  LinkOverlay,
-  Td,
-  Text,
-  Tr
-} from "@chakra-ui/react";
-import { PopoverTotal } from "../PopoverTotal";
-import { toCurrency } from "../../utils/helpers";
-import { EditButton } from "../Buttons/Edit";
+import { memo } from "react";
+
 import { IPayable } from "../../types/payable";
-import { DeleteButton } from "../Buttons/Delete";
-import { PaymentButton } from "../Buttons/Payment";
+import { toCurrency } from "../../utils/helpers";
 import { CancelPaymentButton } from "../Buttons/CancelPayment";
+import { DeleteButton } from "../Buttons/Delete";
+import { EditButton } from "../Buttons/Edit";
+import { PaymentButton } from "../Buttons/Payment";
 import { Check } from "../Icons/Check";
 import { Close } from "../Icons/Close";
 import { PopoverTag } from "../PopoverTag/PopoverTag";
+import { PopoverTotal } from "../PopoverTotal";
 
 interface Props {
   data: IPayable[];
