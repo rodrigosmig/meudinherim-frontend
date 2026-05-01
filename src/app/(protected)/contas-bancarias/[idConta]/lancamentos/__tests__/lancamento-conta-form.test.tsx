@@ -1,14 +1,12 @@
-import React from "react";
-import { fireEvent, render, screen, waitFor, within } from "@/helpers/test/test-helper";
-import userEvent from "@testing-library/user-event";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { toast } from "@/components/toast";
-import ApiError from "@/types/application-error";
 import { catalogoErros } from "@/helpers/erros-helper";
+import { fireEvent, render, screen, waitFor, within } from "@/helpers/test/test-helper";
+import ApiError from "@/types/application-error";
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
-import { TipoContaAgendada } from "@/types/enum/tipo-conta-agendada";
 import { LancamentoConta } from "@/types/lancamento-conta";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import userEvent from "@testing-library/user-event";
+import React from "react";
 
 import LancamentoContaForm from "../lancamento-conta-form";
 

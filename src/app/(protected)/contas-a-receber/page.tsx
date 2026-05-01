@@ -12,7 +12,7 @@ import QueryListState from "@/components/primitives/query-list-state";
 import { Select } from "@/components/primitives/select";
 import Skeleton from "@/components/primitives/skeleton";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
-import { useContasAPagarPaginacao } from "@/hooks/use-contas-a-pagar-paginacao";
+import { useContasAReceberPaginacao } from "@/hooks/use-contas-a-receber-paginacao";
 import { useDateFilter } from "@/hooks/use-date-filter";
 import ApiError from "@/types/application-error";
 import { ContaAgendada } from "@/types/conta-agendada";
@@ -20,15 +20,15 @@ import { StatusPagamento } from "@/types/enum/status-pagamento";
 import { Plus, Search } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import ContaAPagarForm from "./conta-a-pagar-form";
-import TabelaContasAPagar from "./tabela-contas-a-pagar";
+import ContaAReceberForm from "./conta-a-receber-form";
+import TabelaContasAReceber from "./tabela-contas-a-receber";
 
 const STATUS_OPTIONS = [
   { value: StatusPagamento.ABERTO, label: "Abertas" },
-  { value: StatusPagamento.PAGO, label: "Pagas" },
+  { value: StatusPagamento.PAGO, label: "Recebidas" },
 ];
 
-export default function ContasAPagarPage() {
+export default function ContasAReceberPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const query = searchParams?.get("q") ?? "";
@@ -48,7 +48,7 @@ export default function ContasAPagarPage() {
     isFetching,
     isError,
     refetch,
-  } = useContasAPagarPaginacao(
+  } = useContasAReceberPaginacao(
     page,
     perPage,
     stringDateUS.from,
@@ -130,7 +130,7 @@ export default function ContasAPagarPage() {
 
   return (
     <>
-      <ResponsivePageTitle title="Contas a Pagar" isLoading={isFetching} />
+      <ResponsivePageTitle title="Contas a Receber" isLoading={isFetching} />
 
       <Card.Root className="mb-4">
         <Card.Header className="py-3">
@@ -149,9 +149,9 @@ export default function ContasAPagarPage() {
               />
             </div>
 
-            <ContaAPagarForm>
+            <ContaAReceberForm>
               <Button icon={Plus}>Adicionar</Button>
-            </ContaAPagarForm>
+            </ContaAReceberForm>
           </div>
         </Card.Header>
       </Card.Root>
@@ -177,13 +177,13 @@ export default function ContasAPagarPage() {
           isError={isError}
           isEmpty={isListEmpty}
           errorMessage={errorMessage}
-          emptyMessage="Nenhuma conta a pagar encontrada para o período selecionado."
+          emptyMessage="Nenhuma conta a receber encontrada para o período selecionado."
           onRetry={() => void refetch()}
           isRetrying={isFetching}
           containerClassName="border-t border-default-border"
         >
           <>
-            <TabelaContasAPagar contas={contasFiltradas} />
+            <TabelaContasAReceber contas={contasFiltradas} />
 
             <Card.Footer>
               <Pagination paginacao={paginacao} onPageChange={setPage} />

@@ -2,22 +2,25 @@
 
 import { toBrDate, toCurrency } from "@/helpers/string-helper";
 import { useMobile } from "@/hooks/use-is-mobile";
-import { getTipoContaAgendada } from "@/types/enum/conta-agendada";
 import { Notificacao } from "@/types/notificacoes";
 import { Bell } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
+import { TipoContaAgendada } from "@/types/enum/tipo-conta-agendada";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
 import Icon from "../primitives/icon";
 import Loading from "../primitives/loading";
 import Text from "../primitives/text";
 
-type Props = {}
+const tipoContasAgendadas = {
+  [TipoContaAgendada.CONTA_A_RECEBER]: "Conta a Receber",
+  [TipoContaAgendada.CONTA_A_PAGAR]: "Conta a Pagar",
+};
 
-export default function NotificacoesNav({ }: Props) {
+export default function NotificacoesNav() {
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
   const isMobile = useMobile();
   const align = isMobile ? "center" : "end";
@@ -78,7 +81,7 @@ export default function NotificacoesNav({ }: Props) {
                       className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-hover rounded-lg transition-colors duration-150"
                     >
                       <div className="flex-1 flex flex-col gap-0.5 min-w-0">
-                        <Text className="font-semibold text-gray-200 truncate">{getTipoContaAgendada(notificacao.tipo)}</Text>
+                        <Text className="font-semibold text-gray-200 truncate">{tipoContasAgendadas[notificacao.tipo]}</Text>
                         <Text variant="paragraph-small" className="text-gray-400 truncate">{notificacao.descricao}</Text>
                         <Text variant="paragraph-small" className="text-gray-500">
                           Vence: {toBrDate(notificacao.dataVencimento)}

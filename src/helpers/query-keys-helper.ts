@@ -7,6 +7,7 @@ export const CATEGORIAS_QUERY_KEY = "categorias" as const;
 export const CARTOES_QUERY_KEY = "cartoes" as const;
 export const FATURAS_QUERY_KEY = "faturas" as const;
 export const CONTAS_A_PAGAR_QUERY_KEY = "contas_a_pagar" as const;
+export const CONTAS_A_RECEBER_QUERY_KEY = "contas_a_receber" as const;
 
 export const keysToInvalidate = [
   CONTAS_QUERY_KEY,
@@ -14,6 +15,7 @@ export const keysToInvalidate = [
   DADOS_CONFIGURACAO_QUERY_KEY,
   LANCAMENTOS_CONTA_QUERY_KEY,
   CONTAS_A_PAGAR_QUERY_KEY,
+  CONTAS_A_RECEBER_QUERY_KEY,
   LANCAMENTOS_CARTAO_QUERY_KEY,
   CARTOES_QUERY_KEY,
   FATURAS_QUERY_KEY,

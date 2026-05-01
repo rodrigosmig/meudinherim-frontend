@@ -81,7 +81,7 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
 
   const cancelarPagamentoContaAReceberMutation = useMutation({
     mutationFn: async ({ idContaAReceber, idParcela }: { idContaAReceber: string, idParcela: string }) => {
-      return contasAReceberService.cancelarPagamento(idContaAReceber, idParcela);
+      return contasAReceberService.cancelarRecebimento(idContaAReceber, idParcela);
     },
     onSuccess: () => {
       toast.success("Recebimento cancelado com sucesso!");
