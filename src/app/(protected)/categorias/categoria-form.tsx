@@ -170,8 +170,8 @@ export default function CategoriaForm({ categoria, children }: Props) {
           </Button>
           <Button
             type="submit"
-            isLoading={form.formState.isSubmitting}
-            disabled={form.formState.isSubmitting}
+            isLoading={salvarCategoriaMutation.isPending}
+            disabled={salvarCategoriaMutation.isPending}
           >
             Salvar
           </Button>

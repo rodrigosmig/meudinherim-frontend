@@ -166,8 +166,8 @@ export default function CartaoForm({ cartao, children }: Props) {
           </Button>
           <Button
             type="submit"
-            isLoading={form.formState.isSubmitting}
-            disabled={form.formState.isSubmitting}
+            isLoading={salvarCartaoMutation.isPending}
+            disabled={salvarCartaoMutation.isPending}
           >
             Salvar
           </Button>

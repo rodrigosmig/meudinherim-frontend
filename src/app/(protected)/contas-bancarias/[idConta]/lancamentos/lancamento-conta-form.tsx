@@ -251,8 +251,8 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
           </Button>
           <Button
             type="submit"
-            isLoading={form.formState.isSubmitting}
-            disabled={isLoadingDependencies || form.formState.isSubmitting}
+            isLoading={cadastrarLancamentoContaMutation.isPending}
+            disabled={isLoadingDependencies || cadastrarLancamentoContaMutation.isPending}
           >
             Cadastrar
           </Button>

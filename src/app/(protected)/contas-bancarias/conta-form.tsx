@@ -157,8 +157,8 @@ export default function ContaForm({ conta, children }: Props) {
           </Button>
           <Button
             type="submit"
-            isLoading={form.formState.isSubmitting}
-            disabled={form.formState.isSubmitting}
+            isLoading={salvarContaMutation.isPending}
+            disabled={salvarContaMutation.isPending}
           >
             Salvar
           </Button>

@@ -269,8 +269,8 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
           </Button>
           <Button
             type="submit"
-            isLoading={form.formState.isSubmitting}
-            disabled={isLoadingDependencies || form.formState.isSubmitting}
+            isLoading={cadastrarLancamentoCartaoMutation.isPending}
+            disabled={isLoadingDependencies || cadastrarLancamentoCartaoMutation.isPending}
           >
             Salvar
           </Button>

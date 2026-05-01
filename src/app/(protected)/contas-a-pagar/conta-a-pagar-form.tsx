@@ -318,8 +318,8 @@ export default function ContaAPagarForm({ contaAPagar, children }: Props) {
           </Button>
           <Button
             type="submit"
-            isLoading={form.formState.isSubmitting}
-            disabled={form.formState.isSubmitting}
+            isLoading={mutation.isPending}
+            disabled={mutation.isPending}
           >
             Salvar
           </Button>
