@@ -14,7 +14,6 @@ import {
   ObterContaAPagarResponse,
   PagarContaAgendadaRequest,
 } from "@/types/conta-agendada";
-import { CadastrarLancamentoContaRequest } from "@/types/lancamento-conta";
 import { Pagina } from "@/types/pagina";
 
 export const contasAPagarService = {
@@ -67,7 +66,7 @@ export const contasAPagarService = {
 
   alterar: async (
     idContaAPagar: string,
-    request: CadastrarLancamentoContaRequest,
+    request: CadastrarContaAgendadaRequest,
   ): Promise<AlterarContaAPagarResponse> => {
     const url = `/api/proxy/v1/contas-a-pagar/${idContaAPagar}`;
 

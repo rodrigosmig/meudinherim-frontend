@@ -255,62 +255,64 @@ export default function ContaAPagarForm({ contaAPagar, children }: Props) {
           )}
         />
 
-        {!isEditMode && (
-          <div className="space-y-3">
-            <Switch
-              label="Periodicidade"
-              checked={periodicidadeAtiva}
-              disabled={parcelado}
-              onCheckedChange={handlePeriodicidadeSwitch}
+        <div className="space-y-3">
+          <Switch
+            label="Periodicidade"
+            checked={periodicidadeAtiva}
+            disabled={parcelado}
+            onCheckedChange={handlePeriodicidadeSwitch}
+          />
+
+          {periodicidadeAtiva && (
+            <Controller
+              control={form.control}
+              name="periodicidade"
+              render={({ field }) => (
+                <Select
+                  options={PERIODICIDADE_OPTIONS}
+                  placeholder="Selecione"
+                  value={field.value === Periodicidade.NENHUMA ? "" : field.value}
+                  onChange={(value) => field.onChange(value)}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  error={form.formState.errors.periodicidade}
+                />
+              )}
             />
+          )}
 
-            {periodicidadeAtiva && (
-              <Controller
-                control={form.control}
-                name="periodicidade"
-                render={({ field }) => (
-                  <Select
-                    options={PERIODICIDADE_OPTIONS}
-                    placeholder="Selecione"
-                    value={field.value === Periodicidade.NENHUMA ? "" : field.value}
-                    onChange={(value) => field.onChange(value)}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    error={form.formState.errors.periodicidade}
-                  />
-                )}
+          {!isEditMode && (
+            <>
+              <Switch
+                label="Parcelado"
+                checked={parcelado}
+                disabled={!valorPreenchido || periodicidadeAtiva}
+                onCheckedChange={handleParceladoSwitch}
               />
-            )}
 
-            <Switch
-              label="Parcelado"
-              checked={parcelado}
-              disabled={!valorPreenchido || periodicidadeAtiva}
-              onCheckedChange={handleParceladoSwitch}
-            />
-
-            {parcelado && (
-              <Input
-                placeholder="Informe o número de parcelas"
-                type="number"
-                inputMode="numeric"
-                min={2}
-                step={1}
-                onKeyDown={(e) => {
-                  if (!/^[0-9]$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
-                    e.preventDefault();
-                  }
-                }}
-                onInput={(e) => {
-                  const input = e.currentTarget as HTMLInputElement;
-                  input.value = input.value.replace(/[^0-9]/g, "");
-                }}
-                {...form.register("quantidadeParcelas", { valueAsNumber: true })}
-                error={form.formState.errors.quantidadeParcelas}
-              />
-            )}
-          </div>
-        )}
+              {parcelado && (
+                <Input
+                  placeholder="Informe o número de parcelas"
+                  type="number"
+                  inputMode="numeric"
+                  min={2}
+                  step={1}
+                  onKeyDown={(e) => {
+                    if (!/^[0-9]$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onInput={(e) => {
+                    const input = e.currentTarget as HTMLInputElement;
+                    input.value = input.value.replace(/[^0-9]/g, "");
+                  }}
+                  {...form.register("quantidadeParcelas", { valueAsNumber: true })}
+                  error={form.formState.errors.quantidadeParcelas}
+                />
+              )}
+            </>
+          )}
+        </div>
 
         <div className="flex justify-end gap-2">
           <Button type="button" variant="cancel" onClick={() => handleOpenChange(false)}>
