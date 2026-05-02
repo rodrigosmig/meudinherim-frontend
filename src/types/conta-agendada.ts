@@ -29,7 +29,7 @@ export interface ContaAgendada {
   tags: string[];
 }
 
-export interface ListarContaAgendadaRequestRequest extends PaginaRequest {
+export interface ListarContaAgendadaRequest extends PaginaRequest {
   statusPagamento?: StatusPagamento;
   inicio: string;
   fim: string;

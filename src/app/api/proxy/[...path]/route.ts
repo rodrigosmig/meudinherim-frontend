@@ -22,6 +22,7 @@ const ALLOWED_RESOURCES = new Set([
   "notificacoes",
   "dados-configuracao",
   "dashboard",
+  "orcamentos",
 ]);
 
 async function proxy(request: Request, path: string[]) {

@@ -5,7 +5,7 @@ import { Button } from "@/components/primitives/button";
 import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
 import { toast } from "@/components/toast";
-import { CATEGORIAS_QUERY_KEY, DADOS_CONFIGURACAO_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForCategoria } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { categoriasService } from "@/services/categorias-service";
 import ApiError from "@/types/application-error";
@@ -26,10 +26,11 @@ type TabelaCategoriasProps = {
 function useInvalidarCategorias() {
   const queryClient = useQueryClient();
   return () =>
-    void Promise.all([
-      queryClient.invalidateQueries({ queryKey: [CATEGORIAS_QUERY_KEY] }),
-      queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-    ]);
+    void Promise.all(
+      keysToInvalidateForCategoria.map((key) =>
+        queryClient.invalidateQueries({ queryKey: [key] }),
+      ),
+    );
 }
 
 function handleMutationError(error: unknown) {
@@ -96,8 +97,8 @@ export default function TabelaCategorias({ categorias }: Readonly<TabelaCategori
             <Table.Td>
               <span
                 className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${categoria.tipo === TipoCategoria.ENTRADA
-                    ? "bg-green-900/40 text-green-400"
-                    : "bg-red-900/40 text-red-400"
+                  ? "bg-green-900/40 text-green-400"
+                  : "bg-red-900/40 text-red-400"
                   }`}
               >
                 {categoria.tipo === TipoCategoria.ENTRADA ? "Entrada" : "Saída"}

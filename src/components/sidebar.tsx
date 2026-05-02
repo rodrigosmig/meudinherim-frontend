@@ -1,7 +1,7 @@
 'use client';
 
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasing, ChartNoAxesCombined, ChevronLeft, ChevronRight, CreditCard, Landmark, LayoutDashboard, Menu, Tags, X } from 'lucide-react';
+import { BanknoteArrowDown, BanknoteArrowUp, Bookmark, ChartNoAxesColumnIncreasing, ChartNoAxesCombined, ChevronLeft, ChevronRight, CreditCard, Landmark, LayoutDashboard, Menu, PiggyBank, Tags, X } from 'lucide-react';
 import { ElementType, ReactNode, useState } from 'react';
 
 import { cn } from "@/helpers/string-helper";
@@ -65,6 +65,7 @@ function SidebarRoot() {
               <NavSection title="Geral" collapsed={collapsed} isFirst>
                 <NavItem link={Urls.DASHBOARD} title="Dashboard" icon={LayoutDashboard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
                 <NavItem link={Urls.CATEGORIAS} title="Categorias" icon={Bookmark} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.ORCAMENTOS} title="Orçamentos" icon={PiggyBank} collapsed={collapsed} onNavigate={() => setOpen(false)} />
                 <NavItem link={Urls.TAGS} title="Tags" icon={Tags} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Contas" collapsed={collapsed}>

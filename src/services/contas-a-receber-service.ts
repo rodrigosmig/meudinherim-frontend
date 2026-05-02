@@ -10,7 +10,7 @@ import {
   CadastrarContaAgendadaRequest,
   CadastrarContaAReceberResponse,
   ContaAgendada,
-  ListarContaAgendadaRequestRequest,
+  ListarContaAgendadaRequest,
   ObterContaAReceberResponse,
   PagarContaAgendadaRequest,
 } from "@/types/conta-agendada";
@@ -18,7 +18,7 @@ import { Pagina } from "@/types/pagina";
 
 export const contasAReceberService = {
   listar: async (
-    request: ListarContaAgendadaRequestRequest,
+    request: ListarContaAgendadaRequest,
   ): Promise<ApiResponse<Pagina<ContaAgendada>>> => {
     const params = new URLSearchParams({
       inicio: request.inicio,
