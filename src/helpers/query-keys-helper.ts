@@ -10,6 +10,7 @@ export const CONTAS_A_PAGAR_QUERY_KEY = "contas_a_pagar" as const;
 export const CONTAS_A_RECEBER_QUERY_KEY = "contas_a_receber" as const;
 export const ORCAMENTOS_QUERY_KEY = "orcamentos" as const;
 export const RELATORIO_CONTAS_AGENDADAS_QUERY_KEY = "relatorio_contas_agendadas" as const;
+export const RELATORIO_LANCAMENTOS_POR_CATEGORIA_QUERY_KEY = "relatorio_lancamentos_por_categoria" as const;
 
 export const keysToInvalidate = [
   CONTAS_QUERY_KEY,
@@ -22,6 +23,7 @@ export const keysToInvalidate = [
   CARTOES_QUERY_KEY,
   FATURAS_QUERY_KEY,
   RELATORIO_CONTAS_AGENDADAS_QUERY_KEY,
+  RELATORIO_LANCAMENTOS_POR_CATEGORIA_QUERY_KEY,
 ];
 
 export const keysToInvalidateForCategoria = [

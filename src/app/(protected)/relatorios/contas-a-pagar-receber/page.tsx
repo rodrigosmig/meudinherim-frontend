@@ -14,9 +14,10 @@ import { useContas } from "@/hooks/use-contas";
 import { useDateFilter } from "@/hooks/use-date-filter";
 import { useRelatorioContasAgendadas } from "@/hooks/use-relatorio-contas-agendadas";
 
+import Text from "@/components/primitives/text";
 import { cn, toBrDate, toCurrency } from "@/helpers/string-helper";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
 import type { ContaAgendada } from "@/types/conta-agendada";
+import { StatusPagamento } from "@/types/enum/status-pagamento";
 
 const CABECALHO = ["Vencimento", "Categoria", "Descrição", "Valor"];
 
@@ -63,11 +64,14 @@ export default function ContasAPagarReceberPage() {
 
       <Card.Root className="mb-4">
         <Card.Header className="py-3">
-          <FiltroPorPeriodo
-            selectedRange={dateRange}
-            onRangeChange={handleChangeDateFilter}
-            onClickFilter={handleOnClickFilter}
-          />
+          <div>
+            <Text variant="paragraph-medium" className="hidden md:block font-bold">Período:</Text>
+            <FiltroPorPeriodo
+              selectedRange={dateRange}
+              onRangeChange={handleChangeDateFilter}
+              onClickFilter={handleOnClickFilter}
+            />
+          </div>
         </Card.Header>
       </Card.Root>
 
