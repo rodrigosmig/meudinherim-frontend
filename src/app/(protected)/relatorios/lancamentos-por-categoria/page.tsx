@@ -4,19 +4,23 @@ import { useMemo, useState } from "react";
 
 import FiltroPorPeriodo from "@/components/filtro-por-periodo";
 import ResponsivePageTitle from "@/components/header/responsive-page-title";
+import Modal from "@/components/modal";
+import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import { Select, SelectOption } from "@/components/primitives/select";
 import Skeleton from "@/components/primitives/skeleton";
 import { Table } from "@/components/primitives/table";
+import Text from "@/components/primitives/text";
+import TagsPopover from "@/components/tags-popover";
 
 import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
 import { useContas } from "@/hooks/use-contas";
 import { useDateFilter } from "@/hooks/use-date-filter";
+import { useDetalhesLancamentosPorCategoria } from "@/hooks/use-detalhes-lancamentos-por-categoria";
 import { useRelatorioLancamentosPorCategoria } from "@/hooks/use-relatorio-lancamentos-por-categoria";
 import { useTags } from "@/hooks/use-tags";
 
-import Text from "@/components/primitives/text";
-import { cn, toCurrency } from "@/helpers/string-helper";
+import { cn, toBrDate, toCurrency } from "@/helpers/string-helper";
 import { TipoRelatorioPorCategoria } from "@/types/enum/tipo-relatorio-por-categoria";
 
 const TIPO_OPTIONS: SelectOption[] = [
@@ -27,11 +31,17 @@ const TIPO_OPTIONS: SelectOption[] = [
 
 type Aba = "entrada" | "saida";
 
+type CategoriaModal = {
+  idCategoria: string;
+  nomeCategoria: string;
+};
+
 export default function LancamentosPorCategoriaPage() {
   const [tipo, setTipo] = useState<TipoRelatorioPorCategoria>(TipoRelatorioPorCategoria.TODOS);
   const [uuid, setUuid] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [abaAtiva, setAbaAtiva] = useState<Aba>("entrada");
+  const [categoriaModal, setCategoriaModal] = useState<CategoriaModal | null>(null);
 
   const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
   const { contas } = useContas();
@@ -67,6 +77,12 @@ export default function LancamentosPorCategoriaPage() {
     uuid,
     tags,
   );
+
+  const detalhesParams = categoriaModal
+    ? { inicio: stringDateUS.from, fim: stringDateUS.to, tipo, uuid, tags, idCategoria: categoriaModal.idCategoria }
+    : null;
+
+  const { data: detalhesData, isLoading: detalhesLoading } = useDetalhesLancamentosPorCategoria(detalhesParams);
 
   const itensAtivos = abaAtiva === "entrada" ? (data?.entrada ?? []) : (data?.saida ?? []);
 
@@ -126,7 +142,7 @@ export default function LancamentosPorCategoriaPage() {
             </div>
           </div>
 
-          <div>
+          <div className="mb-2">
             <Text variant="paragraph-medium" className="hidden md:block font-bold">Filtro por tags:</Text>
             <Select
               options={tagsOptions}
@@ -168,9 +184,13 @@ export default function LancamentosPorCategoriaPage() {
                 <Table.Tr key={item.idCategoria} className="text-sm md:text-base">
                   <Table.Td>{item.nomeCategoria}</Table.Td>
                   <Table.Td>
-                    <span className="inline-flex items-center justify-center rounded-md bg-green-700 text-white text-xs font-bold px-2 py-0.5 min-w-6">
+                    <button
+                      type="button"
+                      onClick={() => setCategoriaModal({ idCategoria: item.idCategoria, nomeCategoria: item.nomeCategoria })}
+                      className="inline-flex items-center justify-center rounded-md bg-green-700 hover:bg-green-600 text-white text-xs font-bold px-2 py-0.5 min-w-6 transition-colors cursor-pointer"
+                    >
                       {item.quantidade}
-                    </span>
+                    </button>
                   </Table.Td>
                   <Table.Td className={abaAtiva === "entrada" ? "text-positive" : "text-negative"}>
                     {toCurrency(item.total)}
@@ -181,6 +201,52 @@ export default function LancamentosPorCategoriaPage() {
           )}
         </Card.Root>
       )}
+
+      <Modal
+        open={!!categoriaModal}
+        onOpenChange={(open) => { if (!open) setCategoriaModal(null); }}
+        title={`Categoria: ${categoriaModal?.nomeCategoria ?? ""}`}
+        size="xl"
+      >
+        {detalhesLoading ? (
+          <Skeleton rounded="lg" className="w-full h-40" />
+        ) : (
+          <>
+            {(detalhesData?.lancamentos ?? []).length === 0 ? (
+              <p className="text-sm text-gray-500 text-center py-6">Nenhum lançamento encontrado.</p>
+            ) : (
+              <Table.Root theadData={["Data", "Descrição", "Tipo", "Conta / Cartão", "Valor"]}>
+                {(detalhesData?.lancamentos ?? []).map((lancamento) => (
+                  <Table.Tr key={lancamento.uuid} className="text-sm md:text-base">
+                    <Table.Td className="whitespace-nowrap">{toBrDate(lancamento.data)}</Table.Td>
+                    <Table.Td>
+                      <span className="inline-flex items-center gap-1.5">
+                        {lancamento.descricao}
+                        <TagsPopover tags={lancamento.tags} />
+                      </span>
+                    </Table.Td>
+                    <Table.Td>
+                      <span className={cn(
+                        "text-xs font-semibold px-2 py-0.5 rounded-full",
+                        lancamento.tipo === "CARTAO"
+                          ? "bg-blue-900/50 text-blue-300"
+                          : "bg-purple-900/50 text-purple-300",
+                      )}>
+                        {lancamento.tipo === "CARTAO" ? "Cartão" : "Conta"}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="font-semibold">{lancamento.contaOuCartao.descricao}</Table.Td>
+                    <Table.Td>{toCurrency(lancamento.valor)}</Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Root>
+            )}
+            <div className="flex justify-end mt-4">
+              <Button variant="cancel" onClick={() => setCategoriaModal(null)}>Fechar</Button>
+            </div>
+          </>
+        )}
+      </Modal>
     </>
   );
 }

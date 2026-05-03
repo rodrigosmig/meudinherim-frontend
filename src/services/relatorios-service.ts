@@ -1,13 +1,6 @@
-import { handleApiResponse } from "@/helpers/response-helper";
+import { RelatorioContasAgendadasRequest, RelatorioContasAgendadasResponse, RelatorioDetalhesLancamentosPorCategoriaRequest, RelatorioDetalhesLancamentosPorCategoriaResponse, RelatorioLancamentosPorCategoriaRequest, RelatorioLancamentosPorCategoriaResponse, } from "@/types/relatorio";
 import { validarAutenticacao } from "@/helpers/session-client-helper";
-import {
-  RelatorioContasAgendadasRequest,
-  RelatorioContasAgendadasResponse,
-  RelatorioDetalhesLancamentosPorCategoriaRequest,
-  RelatorioDetalhesLancamentosPorCategoriaResponse,
-  RelatorioLancamentosPorCategoriaRequest,
-  RelatorioLancamentosPorCategoriaResponse,
-} from "@/types/relatorio";
+import { handleApiResponse } from "@/helpers/response-helper";
 
 export const relatorioService = {
   contasAgendadas: async (
@@ -64,11 +57,11 @@ export const relatorioService = {
       fim: request.fim,
       idCategoria: request.idCategoria,
       tipo: request.tipo,
-      uuid: request.uuid,
       tags: request.tags.join(","),
     });
+    if (request.uuid) params.append("uuid", request.uuid);
 
-    const url = `/api/proxy/v1/relatorios/lancamentos-por-categoria/?${params.toString()}`;
+    const url = `/api/proxy/v1/relatorios/lancamentos-por-categoria/detalhes?${params.toString()}`;
 
     const response = await fetch(url, {
       method: "GET",
