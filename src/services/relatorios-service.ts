@@ -1,6 +1,13 @@
-import { RelatorioContasAgendadasRequest, RelatorioContasAgendadasResponse, RelatorioDetalhesLancamentosPorCategoriaRequest, RelatorioDetalhesLancamentosPorCategoriaResponse, RelatorioLancamentosPorCategoriaRequest, RelatorioLancamentosPorCategoriaResponse, } from "@/types/relatorio";
-import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { handleApiResponse } from "@/helpers/response-helper";
+import { validarAutenticacao } from "@/helpers/session-client-helper";
+import {
+  RelatorioContasAgendadasRequest,
+  RelatorioContasAgendadasResponse,
+  RelatorioDetalhesLancamentosPorCategoriaRequest,
+  RelatorioDetalhesLancamentosPorCategoriaResponse,
+  RelatorioLancamentosPorCategoriaRequest,
+  RelatorioLancamentosPorCategoriaResponse,
+} from "@/types/relatorio";
 
 export const relatorioService = {
   contasAgendadas: async (
@@ -9,7 +16,7 @@ export const relatorioService = {
     const params = new URLSearchParams({
       inicio: request.inicio,
       fim: request.fim,
-      statusPagamento: request.statusPagamento.toString(),
+      status: request.status.toString(),
     });
 
     const url = `/api/proxy/v1/relatorios/contas-agendadas/?${params.toString()}`;

@@ -13,7 +13,7 @@ import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toBrDate, toCurrency } from "@/helpers/string-helper";
 import { lancamentoCartaoService } from "@/services/lancamento-cartao-service";
 import ApiError from "@/types/application-error";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusParcela } from "@/types/enum/status-parcela";
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { LancamentoCartao } from "@/types/lancamento-cartao";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -78,13 +78,13 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
     if (lancamento.isParcelado) {
       const parcelaAtual = lancamento.parcelas.find((parcela) => parcela.idParcela === lancamento.uuid);
 
-      if (!parcelaAtual || parcelaAtual.status !== StatusPagamento.ABERTO) {
+      if (!parcelaAtual || parcelaAtual.status !== StatusParcela.ABERTO) {
         return false;
       }
 
       return lancamento.parcelas
         .filter((parcela) => parcela.idParcela !== lancamento.uuid)
-        .some((parcela) => parcela.status === StatusPagamento.ABERTO);
+        .some((parcela) => parcela.status === StatusParcela.ABERTO);
     }
 
     return false;
@@ -177,7 +177,7 @@ function ModalAnteciparParcelas({ lancamento, isOpen, onOpenChange }: ModalAntec
   const [selecionadas, setSelecionadas] = useState<string[]>([]);
 
   const parcelasElegiveis = lancamento.parcelas.filter(
-    (parcela) => parcela.idParcela !== lancamento.uuid && ![StatusPagamento.PAGO, StatusPagamento.ANTECIPADO].includes(parcela.status),
+    (parcela) => parcela.idParcela !== lancamento.uuid && ![StatusParcela.PAGO, StatusParcela.ANTECIPADO].includes(parcela.status),
   );
 
   const handleToggle = (idParcela: string) => {

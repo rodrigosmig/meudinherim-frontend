@@ -32,7 +32,7 @@ jest.mock("@/services/contas-a-pagar-service", () => ({
 }));
 
 jest.mock("@/services/contas-a-receber-service", () => ({
-  contasAReceberService: { cancelarPagamento: jest.fn() },
+  contasAReceberService: { cancelarRecebimento: jest.fn() },
 }));
 
 const { lancamentoContaService } = jest.requireMock(
@@ -471,7 +471,7 @@ describe("TabelaLancamentosConta", () => {
     });
 
     it("deve chamar contasAReceberService e exibir toast ao confirmar cancelamento", async () => {
-      contasAReceberService.cancelarPagamento.mockResolvedValueOnce(undefined);
+      contasAReceberService.cancelarRecebimento.mockResolvedValueOnce(undefined);
       const user = userEvent.setup();
       render(
         <TabelaLancamentosConta lancamentos={[lancamentoContaAReceber]} />,
@@ -484,7 +484,7 @@ describe("TabelaLancamentosConta", () => {
       await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
       await waitFor(() => {
-        expect(contasAReceberService.cancelarPagamento).toHaveBeenCalledWith(
+        expect(contasAReceberService.cancelarRecebimento).toHaveBeenCalledWith(
           "cta-receber-1",
           "",
         );
@@ -495,7 +495,7 @@ describe("TabelaLancamentosConta", () => {
     });
 
     it("deve chamar contasAReceberService com idContaAgendada e idParcela ao cancelar via parcela", async () => {
-      contasAReceberService.cancelarPagamento.mockResolvedValueOnce(undefined);
+      contasAReceberService.cancelarRecebimento.mockResolvedValueOnce(undefined);
       const user = userEvent.setup();
       render(
         <TabelaLancamentosConta lancamentos={[lancamentoParcelaAReceber]} />,
@@ -508,7 +508,7 @@ describe("TabelaLancamentosConta", () => {
       await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
       await waitFor(() => {
-        expect(contasAReceberService.cancelarPagamento).toHaveBeenCalledWith(
+        expect(contasAReceberService.cancelarRecebimento).toHaveBeenCalledWith(
           "cta-receber-2",
           "parcela-xyz",
         );
@@ -517,7 +517,7 @@ describe("TabelaLancamentosConta", () => {
 
     it("deve exibir toast de erro da API ao falhar cancelamento de recebimento", async () => {
       const ApiError = (await import("@/types/application-error")).default;
-      contasAReceberService.cancelarPagamento.mockRejectedValueOnce(
+      contasAReceberService.cancelarRecebimento.mockRejectedValueOnce(
         new ApiError({ codigo: 500, descricao: "Erro ao cancelar recebimento" }, 500),
       );
       const user = userEvent.setup();

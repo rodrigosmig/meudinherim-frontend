@@ -158,7 +158,7 @@ async function preencherESubmeter(triggerLabel = "Abrir formulário") {
   fireEvent.change(within(dialog).getByLabelText("Valor"), {
     target: { value: "150" },
   });
-  await user.click(within(dialog).getByRole("button", { name: "Salvar" }));
+  await user.click(within(dialog).getByRole("button", { name: "Cadastrar" }));
 }
 
 // ── setup ──────────────────────────────────────────────────────────────────
@@ -232,7 +232,7 @@ describe("LancamentoContaForm", () => {
       const user = userEvent.setup();
       await abrirModal();
 
-      await user.click(screen.getByRole("button", { name: "Salvar" }));
+      await user.click(screen.getByRole("button", { name: "Cadastrar" }));
 
       await waitFor(() => {
         expect(
@@ -249,7 +249,7 @@ describe("LancamentoContaForm", () => {
       fireEvent.change(within(dialog).getByLabelText("Categoria"), {
         target: { value: "cat-1" },
       });
-      await user.click(within(dialog).getByRole("button", { name: "Salvar" }));
+      await user.click(within(dialog).getByRole("button", { name: "Cadastrar" }));
 
       await waitFor(() => {
         expect(
@@ -385,7 +385,7 @@ describe("LancamentoContaForm", () => {
         { wrapper: createWrapper() },
       );
       await user.click(screen.getByRole("button", { name: "Editar" }));
-      await user.click(screen.getByRole("button", { name: "Salvar" }));
+      await user.click(screen.getByRole("button", { name: "Cadastrar" }));
 
       await waitFor(() => {
         expect(lancamentoContaService.alterar).toHaveBeenCalledWith(
@@ -410,7 +410,7 @@ describe("LancamentoContaForm", () => {
       });
       await abrirModal();
 
-      expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
+      expect(screen.getByRole("button", { name: "Cadastrar" })).toBeDisabled();
     });
   });
 });

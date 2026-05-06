@@ -13,7 +13,7 @@ import { contasAPagarService } from "@/services/contas-a-pagar-service";
 import ApiError from "@/types/application-error";
 import { ContaAgendada } from "@/types/conta-agendada";
 import { Periodicidade } from "@/types/enum/periodicidade";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BanknoteArrowDown, BanknoteX, Pencil, Trash2 } from "lucide-react";
 import { ReactNode, useState } from "react";
@@ -22,10 +22,9 @@ import PagarContaAPagarForm from "./pagar-conta-a-pagar-form";
 
 const CABECALHO = ["Vencimento", "Categoria", "Descrição", "Valor", "Status", "Recorrência", "Ações"];
 
-const STATUS_CONFIG: Record<StatusPagamento, { label: string; className: string }> = {
-  [StatusPagamento.ABERTO]: { label: "Aberto", className: "bg-yellow-900/40 text-yellow-400" },
-  [StatusPagamento.PAGO]: { label: "Pago", className: "bg-green-900/40 text-green-400" },
-  [StatusPagamento.ANTECIPADO]: { label: "Antecipado", className: "bg-blue-900/40 text-blue-400" },
+const STATUS_CONFIG: Record<StatusContaAgendada, { label: string; className: string }> = {
+  [StatusContaAgendada.ABERTO]: { label: "Aberto", className: "bg-yellow-900/40 text-yellow-400" },
+  [StatusContaAgendada.PAGO]: { label: "Pago", className: "bg-green-900/40 text-green-400" },
 };
 
 const PERIODICIDADE_LABEL: Record<Periodicidade, string> = {
@@ -87,7 +86,7 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
   return (
     <Table.Root theadData={CABECALHO}>
       {contas.map((contaAPagar) => {
-        const isAberto = contaAPagar.status === StatusPagamento.ABERTO;
+        const isAberto = contaAPagar.status === StatusContaAgendada.ABERTO;
         const statusConfig = STATUS_CONFIG[contaAPagar.status];
 
         return (

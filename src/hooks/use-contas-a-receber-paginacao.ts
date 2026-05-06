@@ -1,6 +1,6 @@
 import { CONTAS_A_RECEBER_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { contasAReceberService } from "@/services/contas-a-receber-service";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
 import { useQuery } from "@tanstack/react-query";
 
 export function useContasAReceberPaginacao(
@@ -8,22 +8,15 @@ export function useContasAReceberPaginacao(
   perPage: number,
   inicio: string,
   fim: string,
-  statusPagamento: StatusPagamento | "",
+  status: StatusContaAgendada | "",
 ) {
   return useQuery({
-    queryKey: [
-      CONTAS_A_RECEBER_QUERY_KEY,
-      page,
-      perPage,
-      inicio,
-      fim,
-      statusPagamento,
-    ],
+    queryKey: [CONTAS_A_RECEBER_QUERY_KEY, page, perPage, inicio, fim, status],
     queryFn: async () => {
       const response = await contasAReceberService.listar({
         inicio,
         fim,
-        statusPagamento: statusPagamento as StatusPagamento,
+        status: status as StatusContaAgendada,
         comPaginacao: true,
         pagina: page,
         size: perPage,

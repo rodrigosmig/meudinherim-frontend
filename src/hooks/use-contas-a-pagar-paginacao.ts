@@ -1,29 +1,23 @@
 import { CONTAS_A_PAGAR_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { contasAPagarService } from "@/services/contas-a-pagar-service";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
 import { useQuery } from "@tanstack/react-query";
+
+import { StatusContaAgendada } from "./../types/enum/status-conta-agendada";
 
 export function useContasAPagarPaginacao(
   page: number,
   perPage: number,
   inicio: string,
   fim: string,
-  statusPagamento: StatusPagamento | "",
+  status: StatusContaAgendada | "",
 ) {
   return useQuery({
-    queryKey: [
-      CONTAS_A_PAGAR_QUERY_KEY,
-      page,
-      perPage,
-      inicio,
-      fim,
-      statusPagamento,
-    ],
+    queryKey: [CONTAS_A_PAGAR_QUERY_KEY, page, perPage, inicio, fim, status],
     queryFn: async () => {
       const response = await contasAPagarService.listar({
         inicio,
         fim,
-        statusPagamento: statusPagamento as StatusPagamento,
+        status: status as StatusContaAgendada,
         comPaginacao: true,
         pagina: page,
         size: perPage,

@@ -1,6 +1,5 @@
-import { StatusPagamento } from "@/types/enum/status-pagamento";
-
 import { ApiFormErrorResponse, ApiResponse } from "./api";
+import { StatusFatura } from "./enum/status-fatura";
 import { PaginaRequest } from "./pagina";
 
 export interface Fatura {
@@ -8,7 +7,7 @@ export interface Fatura {
   dataVencimento: string;
   dataFechamento: string;
   valorTotal: number;
-  status: StatusPagamento;
+  status: StatusFatura;
   isFechada: boolean;
   cartao: {
     uuid: string;
@@ -18,7 +17,7 @@ export interface Fatura {
 
 export interface FaturasRequest extends PaginaRequest {
   idCartao: string;
-  statusPagamento: StatusPagamento;
+  status: StatusFatura;
 }
 
 export interface PagamentoParcialFaturaRequest {

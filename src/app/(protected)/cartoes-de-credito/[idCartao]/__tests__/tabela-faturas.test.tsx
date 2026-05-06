@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, within } from "@/helpers/test/test-helper";
 
 import { Fatura } from "@/types/faturas";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusFatura } from "@/types/enum/status-fatura";
 
 import TabelaFaturas from "../tabela-faturas";
 
@@ -24,7 +24,7 @@ const faturaAberta: Fatura = {
   dataVencimento: "2026-05-10",
   dataFechamento: "2026-05-03",
   valorTotal: 1500,
-  status: StatusPagamento.ABERTO,
+  status: StatusFatura.ABERTO,
   isFechada: false,
   cartao: { uuid: idCartao, descricao: "Nubank" },
 };
@@ -34,7 +34,7 @@ const faturaPaga: Fatura = {
   dataVencimento: "2026-04-10",
   dataFechamento: "2026-04-03",
   valorTotal: 800,
-  status: StatusPagamento.PAGO,
+  status: StatusFatura.PAGO,
   isFechada: true,
   cartao: { uuid: idCartao, descricao: "Nubank" },
 };
@@ -44,7 +44,7 @@ const faturaAntecipada: Fatura = {
   dataVencimento: "2026-03-10",
   dataFechamento: "2026-03-03",
   valorTotal: 200,
-  status: StatusPagamento.ANTECIPADO,
+  status: StatusFatura.FECHADO,
   isFechada: true,
   cartao: { uuid: idCartao, descricao: "Nubank" },
 };
@@ -87,9 +87,9 @@ describe("TabelaFaturas", () => {
       expect(screen.getByText("Pago")).toBeVisible();
     });
 
-    it("deve exibir 'Antecipado' para status ANTECIPADO", () => {
+    it("deve exibir 'Fechado' para status FECHADO", () => {
       render(<TabelaFaturas idCartao={idCartao} faturas={[faturaAntecipada]} />);
-      expect(screen.getByText("Antecipado")).toBeVisible();
+      expect(screen.getByText("Fechado")).toBeVisible();
     });
   });
 

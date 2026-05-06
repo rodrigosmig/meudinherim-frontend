@@ -12,7 +12,7 @@ import Skeleton from "@/components/primitives/skeleton";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { useFaturasPaginacao } from "@/hooks/use-faturas-paginacao";
 import ApiError from "@/types/application-error";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusFatura } from "@/types/enum/status-fatura";
 import { Fatura } from "@/types/faturas";
 import { Search } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -20,8 +20,8 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import TabelaFaturas from "./tabela-faturas";
 
 const STATUS_OPTIONS = [
-  { value: StatusPagamento.ABERTO, label: "Abertas" },
-  { value: StatusPagamento.PAGO, label: "Pagas" },
+  { value: StatusFatura.ABERTO, label: "Abertas" },
+  { value: StatusFatura.PAGO, label: "Pagas" },
 ];
 
 export default function CartaoFaturasPage() {
@@ -31,7 +31,7 @@ export default function CartaoFaturasPage() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [search, setSearch] = useState("");
-  const [statusPagamento, setStatusPagamento] = useState<StatusPagamento | "">(StatusPagamento.ABERTO);
+  const [status, setStatus] = useState<StatusFatura | "">(StatusFatura.ABERTO);
   const [faturas, setFaturas] = useState<Fatura[]>([]);
 
   const {
@@ -41,7 +41,7 @@ export default function CartaoFaturasPage() {
     isFetching,
     isError,
     refetch,
-  } = useFaturasPaginacao(idCartao, page, perPage, statusPagamento);
+  } = useFaturasPaginacao(idCartao, page, perPage, status);
 
   const cartaoNome = data?.pagina.conteudo[0]?.cartao.descricao ?? "Faturas";
 
@@ -69,7 +69,7 @@ export default function CartaoFaturasPage() {
 
   const handleChangeStatus = useCallback((value: string | string[] | undefined) => {
     setPage(1);
-    setStatusPagamento((value as StatusPagamento | "") ?? "");
+    setStatus((value as StatusFatura | "") ?? "");
   }, []);
 
   const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +110,7 @@ export default function CartaoFaturasPage() {
 
             <Select
               options={STATUS_OPTIONS}
-              value={statusPagamento}
+              value={status}
               onChange={handleChangeStatus}
               placeholder="Todas"
             />

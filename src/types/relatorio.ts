@@ -1,7 +1,7 @@
-import { TipoRelatorioPorCategoria } from "./enum/tipo-relatorio-por-categoria";
-import { StatusPagamento } from "./enum/status-pagamento";
 import { ApiFormErrorResponse, ApiResponse } from "./api";
 import { ContaAgendada } from "./conta-agendada";
+import { StatusContaAgendada } from "./enum/status-conta-agendada";
+import { TipoRelatorioPorCategoria } from "./enum/tipo-relatorio-por-categoria";
 
 export interface RelatorioRequest {
   inicio: string;
@@ -9,7 +9,7 @@ export interface RelatorioRequest {
 }
 
 export interface RelatorioContasAgendadasRequest extends RelatorioRequest {
-  statusPagamento: StatusPagamento;
+  status: StatusContaAgendada;
 }
 
 export interface RelatorioLancamentosPorCategoriaRequest extends RelatorioRequest {

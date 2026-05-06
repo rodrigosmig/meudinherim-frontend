@@ -1,28 +1,27 @@
 "use client";
 
+import { Button } from "@/components/primitives/button";
 import { Table } from "@/components/primitives/table";
-import { cn } from "@/helpers/string-helper";
-import { toBrDate, toCurrency } from "@/helpers/string-helper";
+import { cn, toBrDate, toCurrency } from "@/helpers/string-helper";
 import { Urls } from "@/helpers/urls";
+import { StatusFatura } from "@/types/enum/status-fatura";
 import { Fatura } from "@/types/faturas";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
 import { Eye } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/primitives/button";
 
 const CABECALHO = ["Vencimento", "Fechamento", "Valor Total", "Status", "Ações"];
 
-const STATUS_CONFIG: Record<StatusPagamento, { label: string; className: string }> = {
-  [StatusPagamento.ABERTO]: {
+const STATUS_CONFIG: Record<StatusFatura, { label: string; className: string }> = {
+  [StatusFatura.ABERTO]: {
     label: "Em aberto",
     className: "bg-yellow-900/40 text-yellow-400",
   },
-  [StatusPagamento.PAGO]: {
+  [StatusFatura.PAGO]: {
     label: "Pago",
     className: "bg-green-900/40 text-green-400",
   },
-  [StatusPagamento.ANTECIPADO]: {
-    label: "Antecipado",
+  [StatusFatura.FECHADO]: {
+    label: "Fechado",
     className: "bg-blue-900/40 text-blue-400",
   },
 };

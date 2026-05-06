@@ -18,7 +18,7 @@ export const faturasService = {
     request: FaturasRequest,
   ): Promise<ApiResponse<Pagina<Fatura>>> => {
     const params = new URLSearchParams({
-      statusPagamento: request.statusPagamento,
+      status: request.status,
       comPaginacao: request.comPaginacao.toString(),
       page: paraPaginaBackend(request.pagina).toString(),
       size: request.size.toString(),

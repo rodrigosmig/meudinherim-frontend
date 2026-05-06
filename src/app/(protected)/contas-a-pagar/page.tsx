@@ -16,7 +16,7 @@ import { useContasAPagarPaginacao } from "@/hooks/use-contas-a-pagar-paginacao";
 import { useDateFilter } from "@/hooks/use-date-filter";
 import ApiError from "@/types/application-error";
 import { ContaAgendada } from "@/types/conta-agendada";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
 import { Plus, Search } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -24,8 +24,8 @@ import ContaAPagarForm from "./conta-a-pagar-form";
 import TabelaContasAPagar from "./tabela-contas-a-pagar";
 
 const STATUS_OPTIONS = [
-  { value: StatusPagamento.ABERTO, label: "Abertas" },
-  { value: StatusPagamento.PAGO, label: "Pagas" },
+  { value: StatusContaAgendada.ABERTO, label: "Abertas" },
+  { value: StatusContaAgendada.PAGO, label: "Pagas" },
 ];
 
 export default function ContasAPagarPage() {
@@ -36,7 +36,7 @@ export default function ContasAPagarPage() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [search, setSearch] = useState(query);
-  const [statusPagamento, setStatusPagamento] = useState<StatusPagamento>(StatusPagamento.ABERTO);
+  const [statusPagamento, setStatusPagamento] = useState<StatusContaAgendada>(StatusContaAgendada.ABERTO);
   const [contas, setContas] = useState<ContaAgendada[]>([]);
 
   const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
@@ -80,7 +80,7 @@ export default function ContasAPagarPage() {
 
   const handleChangeStatus = useCallback((value: string | string[] | undefined) => {
     setPage(1);
-    setStatusPagamento((value as StatusPagamento) ?? StatusPagamento.ABERTO);
+    setStatusPagamento((value as StatusContaAgendada) ?? StatusContaAgendada.ABERTO);
   }, []);
 
   useEffect(() => {

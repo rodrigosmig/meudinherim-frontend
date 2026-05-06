@@ -13,7 +13,7 @@ import { contasAReceberService } from "@/services/contas-a-receber-service";
 import ApiError from "@/types/application-error";
 import { ContaAgendada } from "@/types/conta-agendada";
 import { Periodicidade } from "@/types/enum/periodicidade";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BanknoteArrowUp, BanknoteX, Pencil, Trash2 } from "lucide-react";
 import { ReactNode, useState } from "react";
@@ -22,10 +22,9 @@ import ReceberContaAReceberForm from "./receber-conta-a-receber-form";
 
 const CABECALHO = ["Vencimento", "Categoria", "Descrição", "Valor", "Status", "Recorrência", "Ações"];
 
-const STATUS_CONFIG: Record<StatusPagamento, { label: string; className: string }> = {
-  [StatusPagamento.ABERTO]: { label: "Aberto", className: "bg-yellow-900/40 text-yellow-400" },
-  [StatusPagamento.PAGO]: { label: "Recebido", className: "bg-green-900/40 text-green-400" },
-  [StatusPagamento.ANTECIPADO]: { label: "Antecipado", className: "bg-blue-900/40 text-blue-400" },
+const STATUS_CONFIG: Record<StatusContaAgendada, { label: string; className: string }> = {
+  [StatusContaAgendada.ABERTO]: { label: "Aberto", className: "bg-yellow-900/40 text-yellow-400" },
+  [StatusContaAgendada.PAGO]: { label: "Recebido", className: "bg-green-900/40 text-green-400" },
 };
 
 const PERIODICIDADE_LABEL: Record<Periodicidade, string> = {
@@ -81,7 +80,7 @@ export default function TabelaContasAReceber({ contas }: Readonly<TabelaContasAR
   return (
     <Table.Root theadData={CABECALHO}>
       {contas.map((contaAReceber) => {
-        const isAberto = contaAReceber.status === StatusPagamento.ABERTO;
+        const isAberto = contaAReceber.status === StatusContaAgendada.ABERTO;
         const statusConfig = STATUS_CONFIG[contaAReceber.status];
 
         return (
@@ -167,9 +166,7 @@ export default function TabelaContasAReceber({ contas }: Readonly<TabelaContasAR
           details={
             <div className="flex flex-col gap-0.5 mt-1">
               <Text><strong>Valor:</strong> {toCurrency(contaParaCancelarRecebimento.valor)}</Text>
-              {contaParaCancelarRecebimento.dataPagamento && (
-                <Text><strong>Data do recebimento:</strong> {toBrDate(contaParaCancelarRecebimento.dataPagamento)}</Text>
-              )}
+              <Text><strong>Vencimento:</strong> {toBrDate(contaParaCancelarRecebimento.dataVencimento)}</Text>
             </div>
           }
           isLoading={cancelarRecebimentoMutation.isPending}

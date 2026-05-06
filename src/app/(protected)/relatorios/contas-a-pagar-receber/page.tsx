@@ -17,7 +17,7 @@ import { useRelatorioContasAgendadas } from "@/hooks/use-relatorio-contas-agenda
 import Text from "@/components/primitives/text";
 import { cn, toBrDate, toCurrency } from "@/helpers/string-helper";
 import type { ContaAgendada } from "@/types/conta-agendada";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
 
 const CABECALHO = ["Vencimento", "Categoria", "Descrição", "Valor"];
 
@@ -33,7 +33,7 @@ export default function ContasAPagarReceberPage() {
   const { data, isLoading, isFetching, isError } = useRelatorioContasAgendadas(
     stringDateUS.from,
     stringDateUS.to,
-    StatusPagamento.ABERTO,
+    StatusContaAgendada.ABERTO,
   );
 
   function toggleConta(uuid: string, checked: boolean) {

@@ -1,6 +1,6 @@
 import { ApiFormErrorResponse, ApiResponse } from "./api";
 import { Periodicidade } from "./enum/periodicidade";
-import { StatusPagamento } from "./enum/status-pagamento";
+import { StatusContaAgendada } from "./enum/status-conta-agendada";
 import { TipoContaAgendada } from "./enum/tipo-conta-agendada";
 import { PaginaRequest } from "./pagina";
 
@@ -16,7 +16,7 @@ export interface ContaAgendada {
   };
   tipo: TipoContaAgendada;
   periodicidade: Periodicidade;
-  status: StatusPagamento;
+  status: StatusContaAgendada;
   parcelado: boolean;
   dadosParcela: {
     idParcela: string;
@@ -30,7 +30,7 @@ export interface ContaAgendada {
 }
 
 export interface ListarContaAgendadaRequest extends PaginaRequest {
-  statusPagamento?: StatusPagamento;
+  status?: StatusContaAgendada;
   inicio: string;
   fim: string;
 }

@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { Fatura } from "@/types/faturas";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusFatura } from "@/types/enum/status-fatura";
 
 import CartaoFaturasPage from "../page";
 
@@ -156,7 +156,7 @@ const makeFatura = (overrides: Partial<Fatura> & { uuid: string }): Fatura => ({
   dataVencimento: "2026-05-10",
   dataFechamento: "2026-05-03",
   valorTotal: 1500,
-  status: StatusPagamento.ABERTO,
+  status: StatusFatura.ABERTO,
   isFechada: false,
   cartao: { uuid: "cartao-123", descricao: "Nubank" },
   ...overrides,
@@ -258,7 +258,7 @@ describe("CartaoFaturasPage", () => {
 
       await user.selectOptions(
         screen.getByRole("combobox", { name: "Todas" }),
-        StatusPagamento.ABERTO,
+        StatusFatura.ABERTO,
       );
 
       await waitFor(() => {
@@ -266,7 +266,7 @@ describe("CartaoFaturasPage", () => {
           "cartao-123",
           1,
           expect.any(Number),
-          StatusPagamento.ABERTO,
+          StatusFatura.ABERTO,
         );
       });
     });

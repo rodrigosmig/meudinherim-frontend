@@ -28,8 +28,8 @@ export const contasAPagarService = {
       size: request.size.toString(),
     });
 
-    if (request.statusPagamento) {
-      params.append("statusPagamento", request.statusPagamento);
+    if (request.status) {
+      params.append("status", request.status);
     }
 
     const url = `/api/proxy/v1/contas-a-pagar?${params.toString()}`;

@@ -4,6 +4,7 @@ const originalStringHelper = jest.requireActual("@/helpers/string-helper");
 import { render, screen } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 import NotificacoesNav from "../header/notificacoes-nav";
+import { TipoContaAgendada } from "@/types/enum/tipo-conta-agendada";
 
 // Mocks dos hooks
 const mockedUseConfiguracaoInicial = jest.fn();
@@ -17,9 +18,6 @@ jest.mock("@/hooks/use-is-mobile", () => ({
 }));
 
 // Mocks dos helpers
-jest.mock("@/types/enum/conta-agendada", () => ({
-  getTipoContaAgendada: (tipo: string) => `Tipo ${tipo}`,
-}));
 jest.mock("@/helpers/string-helper", () => ({
   ...originalStringHelper,
   toBrDate: (date: string) => `DATA-${date}`,
@@ -30,17 +28,21 @@ describe("NotificacoesNav", () => {
   const notificacoesMock = [
     {
       id: "1",
-      tipo: "AGUA",
+      idContaAgendada: "ca-1",
+      tipo: TipoContaAgendada.CONTA_A_RECEBER,
       descricao: "Conta de água",
       dataVencimento: "2024-07-01",
       valor: 100,
+      isParcela: false,
     },
     {
       id: "2",
-      tipo: "LUZ",
+      idContaAgendada: "ca-2",
+      tipo: TipoContaAgendada.CONTA_A_PAGAR,
       descricao: "Conta de luz",
       dataVencimento: "2024-07-02",
       valor: 200,
+      isParcela: false,
     },
   ];
 
@@ -77,13 +79,13 @@ describe("NotificacoesNav", () => {
     expect(screen.getByText("Notificações")).toBeVisible();
 
     // Primeira notificação
-    expect(screen.getByText("Tipo AGUA")).toBeVisible();
+    expect(screen.getByText("Conta a Receber")).toBeVisible();
     expect(screen.getByText("Conta de água")).toBeVisible();
     expect(screen.getByText(/DATA-2024-07-01/)).toBeVisible();
     expect(screen.getByText(/R\$ 100/)).toBeVisible();
 
     // Segunda notificação
-    expect(screen.getByText("Tipo LUZ")).toBeVisible();
+    expect(screen.getByText("Conta a Pagar")).toBeVisible();
     expect(screen.getByText("Conta de luz")).toBeVisible();
     expect(screen.getByText(/DATA-2024-07-02/)).toBeVisible();
     expect(screen.getByText(/R\$ 200/)).toBeVisible();

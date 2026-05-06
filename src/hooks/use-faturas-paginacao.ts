@@ -1,20 +1,20 @@
 import { FATURAS_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { faturasService } from "@/services/faturas-service";
-import { StatusPagamento } from "@/types/enum/status-pagamento";
+import { StatusFatura } from "@/types/enum/status-fatura";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFaturasPaginacao(
   idCartao: string,
   page: number,
   perPage: number,
-  status: StatusPagamento | "",
+  status: StatusFatura | "",
 ) {
   return useQuery({
     queryKey: [FATURAS_QUERY_KEY, idCartao, page, perPage, status],
     queryFn: async () => {
       const response = await faturasService.listar({
         idCartao,
-        statusPagamento: status as StatusPagamento,
+        status: status as StatusFatura,
         comPaginacao: true,
         pagina: page,
         size: perPage,

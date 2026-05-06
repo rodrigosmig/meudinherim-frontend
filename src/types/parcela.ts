@@ -1,4 +1,4 @@
-import { StatusPagamento } from "./enum/status-pagamento";
+import { StatusParcela } from "./enum/status-parcela";
 
 export interface Parcela {
   data: string;
@@ -11,5 +11,5 @@ export interface Parcela {
   idLancamento: string;
   idContaAgendada: string | null;
   idFatura: string;
-  status: StatusPagamento;
+  status: StatusParcela;
 }

@@ -18,6 +18,7 @@ export default {
     "<rootDir>/src/lib/",
     "<rootDir>/src/services/",
     "<rootDir>/legacy/",
+    "<rootDir>/.claude/",
   ],
   collectCoverageFrom: [
     "src/**/*.{js,jsx,ts,tsx}", // cobre todos os arquivos da pasta src
