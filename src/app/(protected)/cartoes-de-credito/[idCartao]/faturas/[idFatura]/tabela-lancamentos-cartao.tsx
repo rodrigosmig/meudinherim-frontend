@@ -7,8 +7,7 @@ import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
 import { toast } from "@/components/toast";
 import {
-  DADOS_CONFIGURACAO_QUERY_KEY,
-  LANCAMENTOS_CARTAO_QUERY_KEY,
+  keysToInvalidateForCartao
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toBrDate, toCurrency } from "@/helpers/string-helper";
@@ -42,10 +41,11 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
 
       setLancamentoParaDeletar(null);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CARTAO_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidateForCartao.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {
@@ -196,11 +196,14 @@ function ModalAnteciparParcelas({ lancamento, isOpen, onOpenChange }: ModalAntec
     mutationFn: () => lancamentoCartaoService.antecipar(idCartao, idLancamento, selecionadas),
     onSuccess: () => {
       toast.success("Parcelas antecipadas com sucesso!");
+
       handleOpenChange(false);
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CARTAO_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+
+      void Promise.all(
+        keysToInvalidateForCartao.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {

@@ -21,6 +21,15 @@ export interface FaturasRequest extends PaginaRequest {
   statusPagamento: StatusPagamento;
 }
 
+export interface PagamentoParcialFaturaRequest {
+  idCategoriaEntrada: string;
+  idCategoriaSaida: string;
+  idConta: string;
+  dataPagamento: string;
+  descricao: string;
+  valor: number;
+}
+
 export interface ObterFaturaData {
   fatura: Fatura;
 }

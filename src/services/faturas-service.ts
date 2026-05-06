@@ -5,7 +5,12 @@ import {
 import { handleApiResponse } from "@/helpers/response-helper";
 import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { ApiResponse } from "@/types/api";
-import { Fatura, FaturasRequest, ObterFaturaResponse } from "@/types/faturas";
+import {
+  Fatura,
+  FaturasRequest,
+  ObterFaturaResponse,
+  PagamentoParcialFaturaRequest,
+} from "@/types/faturas";
 import { Pagina } from "@/types/pagina";
 
 export const faturasService = {
@@ -49,5 +54,23 @@ export const faturasService = {
     validarAutenticacao(response);
 
     return handleApiResponse<ObterFaturaResponse>(response);
+  },
+
+  pagamentoParcial: async (
+    idCartao: string,
+    idFatura: string,
+    request: PagamentoParcialFaturaRequest,
+  ): Promise<ApiResponse<void>> => {
+    const url = `/api/proxy/v1/cartoes/${idCartao}/faturas/${idFatura}/pagamento-parcial`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<void>>(response);
   },
 };

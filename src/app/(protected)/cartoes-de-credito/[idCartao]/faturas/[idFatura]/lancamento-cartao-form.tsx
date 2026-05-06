@@ -21,8 +21,7 @@ import { useTags } from "@/hooks/use-tags";
 
 import { catalogoErros } from "@/helpers/erros-helper";
 import {
-  DADOS_CONFIGURACAO_QUERY_KEY,
-  LANCAMENTOS_CARTAO_QUERY_KEY,
+  keysToInvalidateForCartao
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toUsDate } from "@/helpers/string-helper";
@@ -131,10 +130,11 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
       );
       handleOpenChange(false);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [LANCAMENTOS_CARTAO_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidateForCartao.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {

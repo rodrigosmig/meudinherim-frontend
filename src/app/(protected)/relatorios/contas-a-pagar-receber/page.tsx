@@ -64,7 +64,7 @@ export default function ContasAPagarReceberPage() {
 
       <Card.Root className="mb-4">
         <Card.Header className="py-3">
-          <div>
+          <div className="mb-2">
             <Text variant="paragraph-medium" className="hidden md:block font-bold">Período:</Text>
             <FiltroPorPeriodo
               selectedRange={dateRange}

@@ -20,10 +20,11 @@ import ApiError from "@/types/application-error";
 import { ObterFaturaData } from "@/types/faturas";
 import { LancamentoCartao } from "@/types/lancamento-cartao";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search } from "lucide-react";
+import { CreditCard, Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import LancamentoCartaoForm from "./lancamento-cartao-form";
+import PagamentoParcialForm from "./pagamento-parcial-form";
 import TabelaLancamentosCartao from "./tabela-lancamentos-cartao";
 
 export default function FaturaPage() {
@@ -161,7 +162,7 @@ export default function FaturaPage() {
 
       <Card.Root>
         <Card.Header>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
             <FiltroPorPagina value={perPage} onChange={handleChangePerPage} />
 
             <div className="flex-1">
@@ -172,6 +173,12 @@ export default function FaturaPage() {
                 onChange={handleSearchChange}
               />
             </div>
+
+            <PagamentoParcialForm>
+              <Button icon={CreditCard} variant="primary">
+                Pagamento Parcial
+              </Button>
+            </PagamentoParcialForm>
 
             <LancamentoCartaoForm>
               <Button icon={Plus}>

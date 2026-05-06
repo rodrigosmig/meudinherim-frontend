@@ -60,7 +60,7 @@ function SidebarRoot() {
               </Button>
             )}
           </div>
-          <Collapsible.Content forceMount className="flex flex-col h-full">
+          <Collapsible.Content forceMount className="flex flex-col flex-1 min-h-0">
             <nav className={cn("flex-1 overflow-y-auto p-4 space-y-1", collapsed && "px-2")}>
               <NavSection title="Geral" collapsed={collapsed} isFirst>
                 <NavItem link={Urls.DASHBOARD} title="Dashboard" icon={LayoutDashboard} collapsed={collapsed} onNavigate={() => setOpen(false)} />

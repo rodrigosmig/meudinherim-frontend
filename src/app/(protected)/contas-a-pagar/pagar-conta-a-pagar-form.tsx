@@ -16,7 +16,7 @@ import { toast } from "@/components/toast";
 
 import { useContas } from "@/hooks/use-contas";
 
-import { keysToInvalidate } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForConta } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toBrDate, toUsDate } from "@/helpers/string-helper";
 
@@ -69,7 +69,7 @@ export default function PagarContaAPagarForm({ contaAPagar, children }: Props) {
       handleOpenChange(false);
 
       void Promise.all(
-        keysToInvalidate.map((key) =>
+        keysToInvalidateForConta.map((key) =>
           queryClient.invalidateQueries({ queryKey: [key] }),
         ),
       );

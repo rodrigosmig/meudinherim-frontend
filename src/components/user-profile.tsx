@@ -62,7 +62,7 @@ export default function UserProfile() {
                 <button
                   type="button"
                   onClick={handleGoToProfile}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg cursor-pointer"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-surface-hover hover:text-white rounded-lg transition-colors duration-150 cursor-pointer"
                 >
                   <User className="w-4 h-4" />
                   Perfil
@@ -73,7 +73,7 @@ export default function UserProfile() {
                 <button
                   type="button"
                   onClick={handleGoToSettings}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg cursor-pointer"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-surface-hover hover:text-white rounded-lg transition-colors duration-150 cursor-pointer"
                 >
                   <Settings className="w-4 h-4" />
                   Configurações
@@ -86,7 +86,7 @@ export default function UserProfile() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg cursor-pointer"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-surface-hover hover:text-white rounded-lg transition-colors duration-150 cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                   Sair

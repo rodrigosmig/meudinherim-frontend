@@ -6,7 +6,7 @@ import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
 import { toast } from "@/components/toast";
-import { CONTAS_A_PAGAR_QUERY_KEY, keysToInvalidate } from "@/helpers/query-keys-helper";
+import { CONTAS_A_PAGAR_QUERY_KEY, keysToInvalidateForConta } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { cn, toBrDate, toCurrency } from "@/helpers/string-helper";
 import { contasAPagarService } from "@/services/contas-a-pagar-service";
@@ -76,7 +76,7 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
       setContaParaCancelarPagamento(null);
 
       void Promise.all(
-        keysToInvalidate.map((key) =>
+        keysToInvalidateForConta.map((key) =>
           queryClient.invalidateQueries({ queryKey: [key] }),
         ),
       );
