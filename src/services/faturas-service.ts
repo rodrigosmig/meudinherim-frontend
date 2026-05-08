@@ -8,6 +8,7 @@ import { ApiResponse } from "@/types/api";
 import {
   Fatura,
   FaturasRequest,
+  FecharFaturaRequestRequest,
   ObterFaturaResponse,
   PagamentoParcialFaturaRequest,
 } from "@/types/faturas";
@@ -62,6 +63,24 @@ export const faturasService = {
     request: PagamentoParcialFaturaRequest,
   ): Promise<ApiResponse<void>> => {
     const url = `/api/proxy/v1/cartoes/${idCartao}/faturas/${idFatura}/pagamento-parcial`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<void>>(response);
+  },
+
+  fecharFatura: async (
+    idCartao: string,
+    idFatura: string,
+    request: FecharFaturaRequestRequest,
+  ): Promise<ApiResponse<void>> => {
+    const url = `/api/proxy/v1/cartoes/${idCartao}/faturas/${idFatura}/fechar-fatura`;
 
     const response = await fetch(url, {
       method: "POST",

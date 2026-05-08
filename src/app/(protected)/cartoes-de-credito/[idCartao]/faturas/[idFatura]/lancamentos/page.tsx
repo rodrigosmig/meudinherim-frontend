@@ -18,11 +18,13 @@ import { faturasService } from "@/services/faturas-service";
 import { ApiResponse } from "@/types/api";
 import ApiError from "@/types/application-error";
 import { ObterFaturaData } from "@/types/faturas";
+import { StatusFatura } from "@/types/enum/status-fatura";
 import { LancamentoCartao } from "@/types/lancamento-cartao";
 import { useQuery } from "@tanstack/react-query";
-import { CreditCard, Plus, Search } from "lucide-react";
+import { BanknoteArrowDown, CreditCard, Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import FecharFaturaForm from "./fechar-fatura-form";
 import LancamentoCartaoForm from "./lancamento-cartao-form";
 import PagamentoParcialForm from "./pagamento-parcial-form";
 import TabelaLancamentosCartao from "./tabela-lancamentos-cartao";
@@ -153,7 +155,15 @@ export default function FaturaPage() {
   return (
     <>
       <ResponsivePageTitle
-        title={`${faturaData.cartao.descricao} - ${toBrDate(faturaData.dataVencimento)}`}
+        title={faturaData.cartao.descricao}
+        subtitle={`Vencimento: ${toBrDate(faturaData.dataVencimento)}`}
+        badge={
+          faturaData.status !== StatusFatura.ABERTO ? (
+            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${faturaData.status === StatusFatura.PAGO ? "bg-green-900/40 text-green-400" : "bg-amber-900/40 text-amber-400"}`}>
+              {faturaData.status === StatusFatura.PAGO ? "Paga" : "Fechada"}
+            </span>
+          ) : null
+        }
         isLoading={isLancamentosFetching}
         metricLabel="Total Fatura:"
         metricValue={toCurrency(faturaData.valorTotal)}
@@ -173,6 +183,14 @@ export default function FaturaPage() {
                 onChange={handleSearchChange}
               />
             </div>
+
+            {faturaData.permiteFecharFatura && (
+              <FecharFaturaForm fatura={faturaData}>
+                <Button icon={BanknoteArrowDown} variant="primary">
+                  Fechar Fatura
+                </Button>
+              </FecharFaturaForm>
+            )}
 
             <PagamentoParcialForm>
               <Button icon={CreditCard} variant="primary">

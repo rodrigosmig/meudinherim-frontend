@@ -46,8 +46,10 @@ export default function OrcamentoForm({ orcamento, children }: Props) {
 
   const defaultValues = useMemo(() => getDefaultValues(orcamento), [orcamento]);
 
-  const categoriasSaidaOptions = categoriasSaida.map(categoria => ({ value: categoria.uuid, label: categoria.nome }));
-
+  const categoriasSaidaOptions = useMemo(
+    () => categoriasSaida.map((c) => ({ value: c.uuid, label: c.nome })),
+    [categoriasSaida],
+  );
 
   const form = useForm<OrcamentoFormValue>({
     resolver: zodResolver(orcamentoSchema),

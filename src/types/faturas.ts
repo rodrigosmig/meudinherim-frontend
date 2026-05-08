@@ -8,7 +8,7 @@ export interface Fatura {
   dataFechamento: string;
   valorTotal: number;
   status: StatusFatura;
-  isFechada: boolean;
+  permiteFecharFatura: boolean;
   cartao: {
     uuid: string;
     descricao: string;
@@ -27,6 +27,10 @@ export interface PagamentoParcialFaturaRequest {
   dataPagamento: string;
   descricao: string;
   valor: number;
+}
+
+export interface FecharFaturaRequestRequest {
+  idCategoria: string;
 }
 
 export interface ObterFaturaData {

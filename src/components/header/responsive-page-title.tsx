@@ -1,4 +1,5 @@
 import { cn } from "@/helpers/string-helper";
+import { ReactNode } from "react";
 
 import Heading from "../primitives/heading";
 import Loading from "../primitives/loading";
@@ -7,6 +8,8 @@ import { Header } from "./header";
 
 type ResponsivePageTitleProps = {
   title: string;
+  subtitle?: string;
+  badge?: ReactNode;
   isLoading?: boolean;
   metricLabel?: string;
   metricValue?: string;
@@ -16,6 +19,8 @@ type ResponsivePageTitleProps = {
 
 export default function ResponsivePageTitle({
   title,
+  subtitle,
+  badge,
   isLoading,
   metricLabel,
   metricValue,
@@ -27,9 +32,15 @@ export default function ResponsivePageTitle({
   return (
     <>
       <Header.Title>
-        <div className={cn("flex gap-2 items-center", className)}>
-          <Heading variant="heading2">{title}</Heading>
-          {isLoading && <Loading />}
+        <div className={cn("flex flex-col justify-center", className)}>
+          <div className="flex gap-2 items-center">
+            <Heading variant="heading2">{title}</Heading>
+            {badge}
+            {isLoading && <Loading />}
+          </div>
+          {subtitle && (
+            <Text variant="paragraph-small" className="text-gray-400">{subtitle}</Text>
+          )}
         </div>
 
         {hasMetric && (
@@ -41,7 +52,15 @@ export default function ResponsivePageTitle({
       </Header.Title>
 
       <div className="flex justify-between md:hidden mb-2 px-1">
-        <Heading variant="heading2">{title}</Heading>
+        <div className="flex flex-col">
+          <div className="flex gap-2 items-center">
+            <Heading variant="heading2">{title}</Heading>
+            {badge}
+          </div>
+          {subtitle && (
+            <Text variant="caption" className="text-gray-400">{subtitle}</Text>
+          )}
+        </div>
 
         {hasMetric && (
           <div className="flex flex-col items-end">

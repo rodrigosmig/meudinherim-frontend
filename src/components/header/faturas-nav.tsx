@@ -4,6 +4,7 @@ import { toBrDate, toCurrency } from "@/helpers/string-helper";
 import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
 import { useMobile } from "@/hooks/use-is-mobile";
 import { Fatura } from "@/types/faturas";
+import { StatusFatura } from "@/types/enum/status-fatura";
 import { CreditCard } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -57,7 +58,7 @@ export function FaturasNav() {
             faturas.map((fatura) => (
               <DropdownMenu.Item key={fatura.uuid}>
                 <Link
-                  href={`${Urls.CARTOES_DE_CREDITO}/${fatura.cartao.uuid}/faturas/${fatura.uuid}`}
+                  href={`${Urls.CARTOES_DE_CREDITO}/${fatura.cartao.uuid}/faturas/${fatura.uuid}/lancamentos`}
                   className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-hover rounded-lg transition-colors duration-150 group"
                 >
                   <Avatar name={fatura.cartao.descricao} size={avatarSize} />
@@ -67,9 +68,16 @@ export function FaturasNav() {
                       Vencimento: {toBrDate(fatura.dataVencimento)}
                     </Text>
                   </div>
-                  <Text className={`font-bold shrink-0 ${fatura.valorTotal > 0 ? 'text-negative' : 'text-positive'}`}>
-                    {toCurrency(fatura.valorTotal)}
-                  </Text>
+                  <div className="flex flex-col items-end shrink-0 gap-0.5">
+                    <Text className={`font-bold ${fatura.valorTotal > 0 ? 'text-negative' : 'text-positive'}`}>
+                      {toCurrency(fatura.valorTotal)}
+                    </Text>
+                    {fatura.status !== StatusFatura.ABERTO && (
+                      <span className={`inline-flex items-center rounded-full px-1.5 py-px text-[10px] font-medium ${fatura.status === StatusFatura.PAGO ? "bg-green-900/40 text-green-400" : "bg-amber-900/40 text-amber-400"}`}>
+                        {fatura.status === StatusFatura.PAGO ? "Paga" : "Fechada"}
+                      </span>
+                    )}
+                  </div>
                 </Link>
               </DropdownMenu.Item>
             ))

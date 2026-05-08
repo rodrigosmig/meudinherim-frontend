@@ -87,8 +87,10 @@ export default function ContaAPagarForm({ contaAPagar, children }: Props) {
   const valor = form.watch("valor");
   const parcelado = form.watch("parcelado");
   const periodicidade = form.watch("periodicidade");
-  const categoriasSaidaOptions = categoriasSaida.map(categoria => ({ value: categoria.uuid, label: categoria.nome }));
-
+  const categoriasSaidaOptions = useMemo(
+    () => categoriasSaida.map((c) => ({ value: c.uuid, label: c.nome })),
+    [categoriasSaida],
+  );
   const periodicidadeAtiva = periodicidade !== Periodicidade.NENHUMA;
   const valorPreenchido = !!valor && valor > 0;
 
