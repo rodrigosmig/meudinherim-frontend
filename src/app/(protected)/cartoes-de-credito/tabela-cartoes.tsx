@@ -92,18 +92,17 @@ export default function TabelaCartoes({ cartoes }: Readonly<TabelaCartoesProps>)
 
             <Table.Td className="flex items-center gap-2">
               <CartaoForm cartao={cartao}>
-                <Button icon={Pencil} />
+                <Button icon={Pencil} tooltip="Editar" />
               </CartaoForm>
 
               <Button
                 icon={isAtivo ? CircleX : CircleCheck}
+                tooltip={isAtivo ? "Desativar" : "Ativar"}
                 onClick={() => setCartaoParaAlterarStatus(cartao)}
               />
 
               <Link href={`${Urls.CARTOES_DE_CREDITO}/${cartao.uuid}`}>
-                <Button
-                  icon={FileText}
-                />
+                <Button icon={FileText} tooltip="Ver faturas" />
               </Link>
             </Table.Td>
           </Table.Tr>

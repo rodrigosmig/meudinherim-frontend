@@ -130,23 +130,26 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
               <ContaAPagarForm contaAPagar={contaAPagar}>
                 <Button
                   icon={Pencil}
+                  tooltip="Editar"
                   disabled={(contaAPagar.parcelado && contaAPagar.dadosParcela?.numeroDaParcela !== 1) || !isAberto || !!contaAPagar.idFatura}
                 />
               </ContaAPagarForm>
 
               <Button
                 icon={Trash2}
+                tooltip="Excluir"
                 onClick={() => setContaParaDeletar(contaAPagar)}
                 disabled={(contaAPagar.parcelado && contaAPagar.dadosParcela?.numeroDaParcela !== 1) || !isAberto}
               />
 
               {isAberto ? (
                 <PagarContaAPagarForm contaAPagar={contaAPagar}>
-                  <Button icon={BanknoteArrowDown} />
+                  <Button icon={BanknoteArrowDown} tooltip="Pagar" />
                 </PagarContaAPagarForm>
               ) : (
                 <Button
                   icon={BanknoteX}
+                  tooltip="Cancelar pagamento"
                   onClick={() => setContaParaCancelarPagamento(contaAPagar)}
                 />
               )}

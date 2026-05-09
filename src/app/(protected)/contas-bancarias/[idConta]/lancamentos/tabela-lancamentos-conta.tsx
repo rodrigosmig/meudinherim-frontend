@@ -167,18 +167,20 @@ export default function TabelaLancamentosConta({ lancamentos }: Readonly<TabelaL
 
           <Table.Td className="flex items-center gap-2">
             <LancamentoContaForm lancamentoConta={lancamento}>
-              <Button disabled={isPagamentoContaAgendada(lancamento)} icon={Pencil} />
+              <Button disabled={isPagamentoContaAgendada(lancamento)} icon={Pencil} tooltip="Editar" />
             </LancamentoContaForm>
 
             <Button
               disabled={isPagamentoContaAgendada(lancamento)}
               icon={Trash2}
+              tooltip="Excluir"
               onClick={() => setLancamentoParaDeletar(lancamento)}
             />
 
             <Button
               disabled={!isPagamentoContaAgendada(lancamento)}
               icon={BanknoteX}
+              tooltip={isContaAPagar(lancamento) ? "Cancelar pagamento" : "Cancelar recebimento"}
               onClick={() => setLancamentoParaCancelar(lancamento)}
             />
 

@@ -121,23 +121,23 @@ export default function TabelaContas({ contas }: Readonly<TabelaContasProps>) {
 
             <Table.Td className="flex items-center gap-2">
               <ContaForm conta={conta}>
-                <Button icon={Pencil} />
+                <Button icon={Pencil} tooltip="Editar" />
               </ContaForm>
 
               <Button
                 icon={Trash2}
+                tooltip="Excluir"
                 onClick={() => setContaParaDeletar(conta)}
               />
 
               <Button
                 icon={isAtivo ? CircleX : CircleCheck}
+                tooltip={isAtivo ? "Desativar" : "Ativar"}
                 onClick={() => setContaParaAlterarStatus(conta)}
               />
 
               <Link href={`${Urls.CONTAS_BANCARIAS}/${conta.uuid}/lancamentos`}>
-                <Button
-                  icon={Banknote}
-                />
+                <Button icon={Banknote} tooltip="Ver lançamentos" />
               </Link>
             </Table.Td>
           </Table.Tr>

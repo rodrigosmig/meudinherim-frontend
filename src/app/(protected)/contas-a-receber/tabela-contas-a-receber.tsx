@@ -126,23 +126,26 @@ export default function TabelaContasAReceber({ contas }: Readonly<TabelaContasAR
               <ContaAReceberForm contaAReceber={contaAReceber}>
                 <Button
                   icon={Pencil}
+                  tooltip="Editar"
                   disabled={(contaAReceber.parcelado && contaAReceber.dadosParcela?.numeroDaParcela !== 1) || !isAberto}
                 />
               </ContaAReceberForm>
 
               <Button
                 icon={Trash2}
+                tooltip="Excluir"
                 onClick={() => setContaParaDeletar(contaAReceber)}
                 disabled={(contaAReceber.parcelado && contaAReceber.dadosParcela?.numeroDaParcela !== 1) || !isAberto}
               />
 
               {isAberto ? (
                 <ReceberContaAReceberForm contaAReceber={contaAReceber}>
-                  <Button icon={BanknoteArrowUp} />
+                  <Button icon={BanknoteArrowUp} tooltip="Receber" />
                 </ReceberContaAReceberForm>
               ) : (
                 <Button
                   icon={BanknoteX}
+                  tooltip="Cancelar recebimento"
                   onClick={() => setContaParaCancelarRecebimento(contaAReceber)}
                 />
               )}

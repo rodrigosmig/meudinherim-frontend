@@ -57,7 +57,7 @@ export default function TabelaFaturas({ idCartao, faturas }: Readonly<TabelaFatu
               <Link
                 href={`${Urls.CARTOES_DE_CREDITO}/${idCartao}/faturas/${fatura.uuid}/lancamentos`}
               >
-                <Button icon={Eye} />
+                <Button icon={Eye} tooltip="Ver lançamentos" />
               </Link>
             </Table.Td>
           </Table.Tr>

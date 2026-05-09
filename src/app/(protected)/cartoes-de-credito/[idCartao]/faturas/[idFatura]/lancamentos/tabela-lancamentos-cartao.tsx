@@ -116,17 +116,20 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
               <Button
                 disabled={lancamento.isParcelado}
                 icon={Pencil}
+                tooltip="Editar"
               />
             </LancamentoCartaoForm>
 
             <Button
               icon={Trash2}
+              tooltip="Excluir"
               disabled={!canDeleteLancamento(lancamento)}
               onClick={() => setLancamentoParaDeletar(lancamento)}
             />
 
             <Button
               icon={History}
+              tooltip="Antecipar parcelas"
               disabled={!canAnteciparParcelas(lancamento)}
               onClick={() => setLancamentoParaAntecipar(lancamento)}
             />
