@@ -11,6 +11,7 @@
 !.yarn/versions
 
 .idea/
+.vscode/
 
 # testing
 /coverage
@@ -49,6 +50,4 @@ next-env.d.ts
 .env.production.local
 
 #IA
-AGENTS.md
 .claude
-CLAUDE.md
