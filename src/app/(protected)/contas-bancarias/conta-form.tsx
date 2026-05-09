@@ -15,7 +15,7 @@ import { Select } from "@/components/primitives/select";
 import { toast } from "@/components/toast";
 
 import { catalogoErros } from "@/helpers/erros-helper";
-import { CONTAS_QUERY_KEY, DADOS_CONFIGURACAO_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForContaBancaria } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 
 import { contaSchema, type ContaFormValue } from "@/schema-validation/conta";
@@ -72,10 +72,11 @@ export default function ContaForm({ conta, children }: Props) {
       toast.success(isEditMode ? "Conta alterada com sucesso!" : "Conta cadastrada com sucesso!");
       handleOpenChange(false);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [CONTAS_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidateForContaBancaria.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {

@@ -19,9 +19,7 @@ import { useCategorias } from "@/hooks/use-categorias";
 import { useTags } from "@/hooks/use-tags";
 
 import { catalogoErros } from "@/helpers/erros-helper";
-import {
-  CONTAS_A_PAGAR_QUERY_KEY
-} from "@/helpers/query-keys-helper";
+import { keysToInvalidateForContaAgendada } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toUsDate } from "@/helpers/string-helper";
 
@@ -138,9 +136,11 @@ export default function ContaAPagarForm({ contaAPagar, children }: Props) {
       );
       handleOpenChange(false);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [CONTAS_A_PAGAR_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidateForContaAgendada.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {

@@ -5,7 +5,7 @@ import { Button } from "@/components/primitives/button";
 import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
 import { toast } from "@/components/toast";
-import { CONTAS_QUERY_KEY, DADOS_CONFIGURACAO_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForContaBancaria } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toCurrency } from "@/helpers/string-helper";
 import { Urls } from "@/helpers/urls";
@@ -37,10 +37,11 @@ type TabelaContasProps = {
 function useInvalidarContas() {
   const queryClient = useQueryClient();
   return () =>
-    void Promise.all([
-      queryClient.invalidateQueries({ queryKey: [CONTAS_QUERY_KEY] }),
-      queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-    ]);
+    void Promise.all(
+      keysToInvalidateForContaBancaria.map((key) =>
+        queryClient.invalidateQueries({ queryKey: [key] }),
+      ),
+    );
 }
 
 function handleMutationError(error: unknown) {

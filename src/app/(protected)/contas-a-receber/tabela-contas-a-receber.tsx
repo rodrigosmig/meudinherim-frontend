@@ -6,7 +6,7 @@ import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
 import { toast } from "@/components/toast";
-import { CONTAS_A_RECEBER_QUERY_KEY, keysToInvalidateForConta } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForConta, keysToInvalidateForContaAgendada } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { cn, toBrDate, toCurrency } from "@/helpers/string-helper";
 import { contasAReceberService } from "@/services/contas-a-receber-service";
@@ -57,7 +57,11 @@ export default function TabelaContasAReceber({ contas }: Readonly<TabelaContasAR
     onSuccess: () => {
       toast.success("Conta a receber excluída com sucesso!");
       setContaParaDeletar(null);
-      void queryClient.invalidateQueries({ queryKey: [CONTAS_A_RECEBER_QUERY_KEY] });
+      void Promise.all(
+        keysToInvalidateForContaAgendada.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: handleMutationError,
   });

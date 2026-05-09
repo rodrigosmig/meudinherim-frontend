@@ -14,7 +14,7 @@ import Switch from "@/components/primitives/switch";
 import { toast } from "@/components/toast";
 
 import { catalogoErros } from "@/helpers/erros-helper";
-import { CATEGORIAS_QUERY_KEY, DADOS_CONFIGURACAO_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForCategoria } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 
 import { categoriaSchema, type CategoriaFormValue } from "@/schema-validation/categoria";
@@ -82,10 +82,11 @@ export default function CategoriaForm({ categoria, children }: Props) {
       );
       handleOpenChange(false);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [CATEGORIAS_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidateForCategoria.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {

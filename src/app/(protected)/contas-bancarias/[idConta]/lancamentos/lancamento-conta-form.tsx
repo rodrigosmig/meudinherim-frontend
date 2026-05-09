@@ -21,7 +21,7 @@ import { useTags } from "@/hooks/use-tags";
 
 import { catalogoErros } from "@/helpers/erros-helper";
 import {
-  keysToInvalidateForConta
+  keysToInvalidateForLancamentoConta,
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toUsDate } from "@/helpers/string-helper";
@@ -119,7 +119,7 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
       handleOpenChange(false);
 
       void Promise.all(
-        keysToInvalidateForConta.map((key) =>
+        keysToInvalidateForLancamentoConta.map((key) =>
           queryClient.invalidateQueries({ queryKey: [key] }),
         ),
       );

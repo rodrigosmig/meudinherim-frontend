@@ -6,7 +6,7 @@ import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
 import { toast } from "@/components/toast";
-import { CONTAS_A_PAGAR_QUERY_KEY, keysToInvalidateForConta } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForConta, keysToInvalidateForContaAgendada } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { cn, toBrDate, toCurrency } from "@/helpers/string-helper";
 import { contasAPagarService } from "@/services/contas-a-pagar-service";
@@ -59,9 +59,11 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
 
       setContaParaDeletar(null);
 
-      void Promise.all([
-        queryClient.invalidateQueries({ queryKey: [CONTAS_A_PAGAR_QUERY_KEY] }),
-      ]);
+      void Promise.all(
+        keysToInvalidateForContaAgendada.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: handleMutationError,
   });
