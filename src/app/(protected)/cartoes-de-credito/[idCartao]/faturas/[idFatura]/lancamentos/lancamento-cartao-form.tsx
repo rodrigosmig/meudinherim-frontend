@@ -38,6 +38,8 @@ import type { LancamentoCartao } from "@/types/lancamento-cartao";
 type Props = Readonly<{
   lancamentoCartao?: LancamentoCartao;
   children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }>;
 
 function getDefaultValues(
@@ -65,13 +67,13 @@ function getDefaultValues(
   };
 }
 
-export default function LancamentoCartaoForm({ lancamentoCartao, children }: Props) {
-  const params = useParams<{ idCartao: string; idFatura: string }>();
-  const idCartao = params.idCartao;
-  const idFatura = params.idFatura;
+export default function LancamentoCartaoForm({ lancamentoCartao, children, open: controlledOpen, onOpenChange: controlledOnOpenChange }: Props) {
+  const params = useParams<{ idCartao: string }>();
+  const idCartaoFromParams = (params.idCartao as string | undefined) ?? "";
 
   const isEditMode = Boolean(lancamentoCartao?.uuid);
   const [isOpen, setIsOpen] = useState(false);
+  const resolvedIsOpen = controlledOpen !== undefined ? controlledOpen : isOpen;
   const queryClient = useQueryClient();
 
   const { data: configData } = useConfiguracaoInicial();
@@ -80,16 +82,21 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
 
   const isLoadingDependencies = isCategoriasLoading || isTagsLoading;
 
-  const fatura = configData?.faturas.find(
-    (f) => f.uuid === idFatura && f.cartao.uuid === idCartao,
-  );
-  const cartaoOptions = fatura
-    ? [{ value: fatura.cartao.uuid, label: fatura.cartao.descricao }]
-    : [];
+  const cartaoOptions = useMemo(() => {
+    if (!configData?.faturas) return [];
+    const seen = new Set<string>();
+    return configData.faturas
+      .filter((f) => {
+        if (seen.has(f.cartao.uuid)) return false;
+        seen.add(f.cartao.uuid);
+        return true;
+      })
+      .map((f) => ({ value: f.cartao.uuid, label: f.cartao.descricao }));
+  }, [configData?.faturas]);
 
   const defaultValues = useMemo(
-    () => getDefaultValues(idCartao, lancamentoCartao),
-    [idCartao, lancamentoCartao],
+    () => getDefaultValues(idCartaoFromParams, lancamentoCartao),
+    [idCartaoFromParams, lancamentoCartao],
   );
 
   const form = useForm<LancamentoCartaoFormValue>({
@@ -105,7 +112,7 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
     mutationFn: async (data: LancamentoCartaoFormValue) => {
       if (isEditMode && lancamentoCartao?.uuid) {
         return lancamentoCartaoService.alterar(lancamentoCartao.uuid, {
-          idConta: idCartao,
+          idConta: data.idCartao,
           idCategoria: data.idCategoria,
           descricao: data.descricao.trim(),
           valor: data.valor,
@@ -114,7 +121,7 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
       }
 
       return lancamentoCartaoService.cadastrar({
-        idConta: idCartao,
+        idConta: data.idCartao,
         idCategoria: data.idCategoria,
         dataLancamento: toUsDate(data.dataLancamento),
         descricao: data.descricao.trim(),
@@ -163,9 +170,8 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
 
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
-    if (!open) {
-      form.reset(defaultValues);
-    }
+    controlledOnOpenChange?.(open);
+    if (!open) form.reset(defaultValues);
   }
 
   function onSubmit(data: LancamentoCartaoFormValue) {
@@ -176,7 +182,7 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
     <Modal
       title={isEditMode ? "Editar lançamento" : "Adicionar lançamento"}
       trigger={children}
-      open={isOpen}
+      open={resolvedIsOpen}
       onOpenChange={handleOpenChange}
     >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -188,8 +194,8 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children }: Pro
               icon={CreditCard}
               label="Cartão"
               options={cartaoOptions}
-              placeholder="Cartão"
-              disabled
+              placeholder="Selecione um cartão"
+              disabled={isEditMode}
               {...field}
               error={form.formState.errors.idCartao}
             />

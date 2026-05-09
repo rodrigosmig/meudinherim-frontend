@@ -40,6 +40,8 @@ const PERIODICIDADE_OPTIONS = [
 type Props = Readonly<{
   contaAReceber?: ContaAgendada;
   children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }>;
 
 function getDefaultValues(contaAReceber?: ContaAgendada): DefaultValues<ContaAReceberFormValue> {
@@ -67,9 +69,10 @@ function getDefaultValues(contaAReceber?: ContaAgendada): DefaultValues<ContaARe
   };
 }
 
-export default function ContaAReceberForm({ contaAReceber, children }: Props) {
+export default function ContaAReceberForm({ contaAReceber, children, open: controlledOpen, onOpenChange: controlledOnOpenChange }: Props) {
   const isEditMode = Boolean(contaAReceber?.uuid);
   const [isOpen, setIsOpen] = useState(false);
+  const resolvedIsOpen = controlledOpen !== undefined ? controlledOpen : isOpen;
   const queryClient = useQueryClient();
 
   const { categoriasEntrada, isLoading: isCategoriasLoading } = useCategorias();
@@ -166,6 +169,7 @@ export default function ContaAReceberForm({ contaAReceber, children }: Props) {
 
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
+    controlledOnOpenChange?.(open);
     if (!open) form.reset(defaultValues);
   }
 
@@ -177,7 +181,7 @@ export default function ContaAReceberForm({ contaAReceber, children }: Props) {
     <Modal
       title={isEditMode ? "Editar conta a receber" : "Adicionar conta a receber"}
       trigger={children}
-      open={isOpen}
+      open={resolvedIsOpen}
       onOpenChange={handleOpenChange}
     >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

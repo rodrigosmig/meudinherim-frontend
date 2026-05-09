@@ -32,6 +32,8 @@ const TIPO_OPTIONS = [
 type Props = Readonly<{
   categoria?: Categoria;
   children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }>;
 
 function getDefaultValues(categoria?: Categoria): DefaultValues<CategoriaFormValue> {
@@ -46,9 +48,10 @@ function getDefaultValues(categoria?: Categoria): DefaultValues<CategoriaFormVal
   };
 }
 
-export default function CategoriaForm({ categoria, children }: Props) {
+export default function CategoriaForm({ categoria, children, open: controlledOpen, onOpenChange: controlledOnOpenChange }: Props) {
   const isEditMode = Boolean(categoria?.uuid);
   const [isOpen, setIsOpen] = useState(false);
+  const resolvedIsOpen = controlledOpen !== undefined ? controlledOpen : isOpen;
   const queryClient = useQueryClient();
 
   const defaultValues = useMemo(() => getDefaultValues(categoria), [categoria]);
@@ -111,9 +114,8 @@ export default function CategoriaForm({ categoria, children }: Props) {
 
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
-    if (!open) {
-      form.reset(defaultValues);
-    }
+    controlledOnOpenChange?.(open);
+    if (!open) form.reset(defaultValues);
   }
 
   function onSubmit(data: CategoriaFormValue) {
@@ -124,7 +126,7 @@ export default function CategoriaForm({ categoria, children }: Props) {
     <Modal
       title={isEditMode ? "Editar categoria" : "Adicionar categoria"}
       trigger={children}
-      open={isOpen}
+      open={resolvedIsOpen}
       onOpenChange={handleOpenChange}
     >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

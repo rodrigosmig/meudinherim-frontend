@@ -28,6 +28,8 @@ import type { Orcamento } from "@/types/orcamento";
 type Props = Readonly<{
   orcamento?: Orcamento;
   children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }>;
 
 function getDefaultValues(orcamento?: Orcamento): DefaultValues<OrcamentoFormValue> {
@@ -37,9 +39,10 @@ function getDefaultValues(orcamento?: Orcamento): DefaultValues<OrcamentoFormVal
   };
 }
 
-export default function OrcamentoForm({ orcamento, children }: Props) {
+export default function OrcamentoForm({ orcamento, children, open: controlledOpen, onOpenChange: controlledOnOpenChange }: Props) {
   const isEditMode = Boolean(orcamento?.uuid);
   const [isOpen, setIsOpen] = useState(false);
+  const resolvedIsOpen = controlledOpen !== undefined ? controlledOpen : isOpen;
   const queryClient = useQueryClient();
 
   const { categoriasSaida, isLoading: isCategoriasLoading } = useCategorias();
@@ -110,6 +113,7 @@ export default function OrcamentoForm({ orcamento, children }: Props) {
 
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
+    controlledOnOpenChange?.(open);
     if (!open) form.reset(defaultValues);
   }
 
@@ -121,7 +125,7 @@ export default function OrcamentoForm({ orcamento, children }: Props) {
     <Modal
       title={isEditMode ? "Editar orçamento" : "Adicionar orçamento"}
       trigger={children}
-      open={isOpen}
+      open={resolvedIsOpen}
       onOpenChange={handleOpenChange}
     >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

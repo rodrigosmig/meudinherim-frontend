@@ -38,6 +38,8 @@ import type { LancamentoConta } from "@/types/lancamento-conta";
 type Props = Readonly<{
   lancamentoConta?: LancamentoConta;
   children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }>;
 
 function getDefaultValues(
@@ -65,12 +67,13 @@ function getDefaultValues(
   };
 }
 
-export default function LancamentoContaForm({ lancamentoConta, children }: Props) {
+export default function LancamentoContaForm({ lancamentoConta, children, open: controlledOpen, onOpenChange: controlledOnOpenChange }: Props) {
   const params = useParams<{ idConta: string }>();
-  const idContaRota = params.idConta;
+  const idContaRota = (params.idConta as string | undefined) ?? "";
 
   const isEditMode = Boolean(lancamentoConta?.uuid);
   const [isOpen, setIsOpen] = useState(false);
+  const resolvedIsOpen = controlledOpen !== undefined ? controlledOpen : isOpen;
   const queryClient = useQueryClient();
 
   const { contasOptions, isLoading: isContasLoading } = useContas();
@@ -96,7 +99,7 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
   const cadastrarLancamentoContaMutation = useMutation({
     mutationFn: async (data: LancamentoContaFormValue) => {
       const payload = {
-        idConta: idContaRota,
+        idConta: data.idConta,
         idCategoria: data.idCategoria,
         dataLancamento: toUsDate(data.dataLancamento),
         descricao: data.descricao.trim(),
@@ -147,9 +150,8 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
 
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
-    if (!open) {
-      form.reset(defaultValues);
-    }
+    controlledOnOpenChange?.(open);
+    if (!open) form.reset(defaultValues);
   }
 
   function onSubmit(data: LancamentoContaFormValue) {
@@ -160,7 +162,7 @@ export default function LancamentoContaForm({ lancamentoConta, children }: Props
     <Modal
       title={isEditMode ? "Editar lançamento" : "Adicionar lançamento"}
       trigger={children}
-      open={isOpen}
+      open={resolvedIsOpen}
       onOpenChange={handleOpenChange}
     >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
