@@ -25,7 +25,7 @@ const faturaAberta: Fatura = {
   dataFechamento: "2026-05-03",
   valorTotal: 1500,
   status: StatusFatura.ABERTO,
-  isFechada: false,
+  permiteFecharFatura: true,
   cartao: { uuid: idCartao, descricao: "Nubank" },
 };
 
@@ -35,7 +35,7 @@ const faturaPaga: Fatura = {
   dataFechamento: "2026-04-03",
   valorTotal: 800,
   status: StatusFatura.PAGO,
-  isFechada: true,
+  permiteFecharFatura: false,
   cartao: { uuid: idCartao, descricao: "Nubank" },
 };
 
@@ -45,7 +45,7 @@ const faturaAntecipada: Fatura = {
   dataFechamento: "2026-03-03",
   valorTotal: 200,
   status: StatusFatura.FECHADO,
-  isFechada: true,
+  permiteFecharFatura: false,
   cartao: { uuid: idCartao, descricao: "Nubank" },
 };
 
@@ -105,7 +105,7 @@ describe("TabelaFaturas", () => {
       const link = screen.getByRole("link");
       expect(link).toHaveAttribute(
         "href",
-        `/cartoes-de-credito/${idCartao}/faturas/fatura-1`,
+        `/cartoes-de-credito/${idCartao}/faturas/fatura-1/lancamentos`,
       );
     });
   });

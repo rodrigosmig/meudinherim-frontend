@@ -92,8 +92,8 @@ export function AdicionarNav() {
           <div className="my-1.5 h-px bg-divider mx-2" />
 
           <SectionLabel label="Agendamentos" />
-          <AdicionarItem icon={BanknoteArrowDown} label="Conta a Pagar" onClick={() => setFormAberto("conta-a-pagar")} />
-          <AdicionarItem icon={BanknoteArrowUp} label="Conta a Receber" onClick={() => setFormAberto("conta-a-receber")} />
+          <AdicionarItem icon={BanknoteArrowDown} label="Contas a Pagar" onClick={() => setFormAberto("conta-a-pagar")} />
+          <AdicionarItem icon={BanknoteArrowUp} label="Contas a Receber" onClick={() => setFormAberto("conta-a-receber")} />
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 

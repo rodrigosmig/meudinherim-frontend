@@ -3,6 +3,31 @@ import userEvent from "@testing-library/user-event";
 
 import { AdicionarNav } from "../header/adicionar-nav";
 
+jest.mock(
+  "@/app/(protected)/cartoes-de-credito/[idCartao]/faturas/[idFatura]/lancamentos/lancamento-cartao-form",
+  () => ({ __esModule: true, default: ({ open }: { open?: boolean }) => open ? <div role="dialog">Form Cartão</div> : null }),
+);
+jest.mock(
+  "@/app/(protected)/contas-bancarias/[idConta]/lancamentos/lancamento-conta-form",
+  () => ({ __esModule: true, default: ({ open }: { open?: boolean }) => open ? <div role="dialog">Form Conta</div> : null }),
+);
+jest.mock(
+  "@/app/(protected)/categorias/categoria-form",
+  () => ({ __esModule: true, default: ({ open }: { open?: boolean }) => open ? <div role="dialog">Form Categoria</div> : null }),
+);
+jest.mock(
+  "@/app/(protected)/orcamentos/orcamento-form",
+  () => ({ __esModule: true, default: ({ open }: { open?: boolean }) => open ? <div role="dialog">Form Orçamento</div> : null }),
+);
+jest.mock(
+  "@/app/(protected)/contas-a-pagar/conta-a-pagar-form",
+  () => ({ __esModule: true, default: ({ open }: { open?: boolean }) => open ? <div role="dialog">Form Conta a Pagar</div> : null }),
+);
+jest.mock(
+  "@/app/(protected)/contas-a-receber/conta-a-receber-form",
+  () => ({ __esModule: true, default: ({ open }: { open?: boolean }) => open ? <div role="dialog">Form Conta a Receber</div> : null }),
+);
+
 const mockedUseMobile = jest.fn();
 jest.mock("@/hooks/use-is-mobile", () => ({
   useMobile: () => mockedUseMobile(),
@@ -44,6 +69,7 @@ describe("Componente AdicionarNav", () => {
     expect(screen.getByText("Lançamento no cartão")).toBeVisible();
     expect(screen.getByText("Lançamento na conta")).toBeVisible();
     expect(screen.getByText("Categoria")).toBeVisible();
+    expect(screen.getByText("Orçamento")).toBeVisible();
     expect(screen.getByText("Contas a Pagar")).toBeVisible();
     expect(screen.getByText("Contas a Receber")).toBeVisible();
   });
@@ -59,31 +85,23 @@ describe("Componente AdicionarNav", () => {
     expect(screen.getByText("Agendamentos")).toBeVisible();
   });
 
-  it("deve renderizar os links com os hrefs corretos", async () => {
+  it("deve abrir o formulário de lançamento no cartão ao clicar no item", async () => {
     const user = userEvent.setup();
     render(<AdicionarNav />);
 
     await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Lançamento no cartão"));
 
-    expect(screen.getByRole("menuitem", { name: /Lançamento no cartão/ })).toHaveAttribute(
-      "href",
-      "/cartoes-de-credito",
-    );
-    expect(screen.getByRole("menuitem", { name: /Lançamento na conta/ })).toHaveAttribute(
-      "href",
-      "/contas-bancarias",
-    );
-    expect(screen.getByRole("menuitem", { name: /Categoria/ })).toHaveAttribute(
-      "href",
-      "/categorias",
-    );
-    expect(screen.getByRole("menuitem", { name: /Contas a Pagar/ })).toHaveAttribute(
-      "href",
-      "/contas-a-pagar",
-    );
-    expect(screen.getByRole("menuitem", { name: /Contas a Receber/ })).toHaveAttribute(
-      "href",
-      "/contas-a-receber",
-    );
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("deve abrir o formulário de lançamento na conta ao clicar no item", async () => {
+    const user = userEvent.setup();
+    render(<AdicionarNav />);
+
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Lançamento na conta"));
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 });
