@@ -260,6 +260,7 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children, open:
           render={({ field }) => (
             <Select
               isMulti
+              isCreatable
               icon={Tags}
               label="Tags"
               options={tagsOptions}

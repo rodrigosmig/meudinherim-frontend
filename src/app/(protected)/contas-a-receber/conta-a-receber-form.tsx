@@ -246,6 +246,7 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
           render={({ field }) => (
             <Select
               isMulti
+              isCreatable
               icon={Tags}
               label="Tags"
               options={tagsOptions}

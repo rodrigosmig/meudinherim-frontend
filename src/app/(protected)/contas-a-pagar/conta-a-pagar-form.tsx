@@ -248,6 +248,7 @@ export default function ContaAPagarForm({ contaAPagar, children, open: controlle
           render={({ field }) => (
             <Select
               isMulti
+              isCreatable
               icon={Tags}
               label="Tags"
               options={tagsOptions}

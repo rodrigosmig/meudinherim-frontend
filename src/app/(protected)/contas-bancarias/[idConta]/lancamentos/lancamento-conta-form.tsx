@@ -238,6 +238,7 @@ export default function LancamentoContaForm({ lancamentoConta, children, open: c
           render={({ field }) => (
             <Select
               isMulti
+              isCreatable
               icon={Tags}
               label="Tags"
               options={tagsOptions}
