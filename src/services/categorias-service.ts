@@ -12,7 +12,7 @@ import {
   Categoria,
   ListarCategoriaRequest,
   ObterCategoriaResponse,
-} from "@/types/categoria";
+} from "@/types/categorias";
 import { Pagina } from "@/types/pagina";
 
 export type CategoryType = "entrada" | "saida";

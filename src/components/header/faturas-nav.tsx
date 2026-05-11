@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Urls } from "@/helpers/urls";
-import { Avatar } from "../avatar";
+import { BankIcon } from "../bank-icon";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
 import Icon from "../primitives/icon";
@@ -61,7 +61,7 @@ export function FaturasNav() {
                   href={`${Urls.CARTOES_DE_CREDITO}/${fatura.cartao.uuid}/faturas/${fatura.uuid}/lancamentos`}
                   className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-hover rounded-lg transition-colors duration-150 group"
                 >
-                  <Avatar name={fatura.cartao.descricao} size={avatarSize} />
+                  <BankIcon icon={fatura.cartao.icon} name={fatura.cartao.descricao} size={avatarSize} />
                   <div className="flex-1 min-w-0">
                     <Text className="block font-medium text-gray-200 group-hover:text-white truncate">{fatura.cartao.descricao}</Text>
                     <Text variant="paragraph-small" className="block text-gray-500">

@@ -21,6 +21,7 @@ import { ObterFaturaData } from "@/types/faturas";
 import { StatusFatura } from "@/types/enum/status-fatura";
 import { LancamentoCartao } from "@/types/lancamento-cartao";
 import { useQuery } from "@tanstack/react-query";
+import { BankIcon } from "@/components/bank-icon";
 import { BanknoteArrowDown, CreditCard, Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -157,6 +158,7 @@ export default function FaturaPage() {
       <ResponsivePageTitle
         title={faturaData.cartao.descricao}
         subtitle={`Vencimento: ${toBrDate(faturaData.dataVencimento)}`}
+        icon={<BankIcon icon={faturaData.cartao.icon} name={faturaData.cartao.descricao} size={36} />}
         badge={
           faturaData.status !== StatusFatura.ABERTO ? (
             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${faturaData.status === StatusFatura.PAGO ? "bg-green-900/40 text-green-400" : "bg-amber-900/40 text-amber-400"}`}>

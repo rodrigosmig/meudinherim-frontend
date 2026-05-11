@@ -104,7 +104,7 @@ export default function TabelaContas({ contas }: Readonly<TabelaContasProps>) {
           <Table.Tr key={conta.uuid} className="text-sm md:text-base font-semibold">
             <Table.Td>
               <div className="flex items-center gap-2">
-                <BankIcon icon={conta.icon} name={conta.nome} size={28} />
+                <BankIcon icon={conta.icon} name={conta.nome} size={28} className="rounded-lg" />
                 {conta.nome}
               </div>
             </Table.Td>

@@ -1,6 +1,6 @@
 import { Notificacao } from "@/types/notificacoes";
 
-import { Categoria } from "./categoria";
+import { Categoria } from "./categorias";
 import { Conta } from "./contas";
 import { Fatura } from "./faturas";
 

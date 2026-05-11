@@ -10,6 +10,7 @@ export const BANK_ICONS: BankIconMeta[] = [
   { key: "bradesco", name: "Bradesco" },
   { key: "santander", name: "Santander" },
   { key: "caixa", name: "Caixa" },
+  { key: "fgts", name: "FGTS" },
   { key: "bb", name: "Banco do Brasil" },
   { key: "btg", name: "BTG Pactual" },
   { key: "xp", name: "XP" },

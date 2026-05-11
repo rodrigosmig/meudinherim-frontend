@@ -1,7 +1,7 @@
 "use client";
 
 import { GroupedOption } from "@/components/primitives/select";
-import { Categoria } from "@/types/categoria";
+import { Categoria } from "@/types/categorias";
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { useEffect, useState } from "react";
 import { useConfiguracaoInicial } from "./use-configuracao-inicial";

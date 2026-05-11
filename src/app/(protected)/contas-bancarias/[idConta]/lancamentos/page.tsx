@@ -18,6 +18,7 @@ import { useDateFilter } from "@/hooks/use-date-filter";
 import { useLancamentosContaPaginacao } from "@/hooks/use-lancamentos-conta-paginacao";
 import ApiError from "@/types/application-error";
 import { LancamentoConta } from "@/types/lancamento-conta";
+import { BankIcon } from "@/components/bank-icon";
 import { Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -146,6 +147,7 @@ export default function LancamentosPage() {
     <>
       <ResponsivePageTitle
         title={conta?.nome || ""}
+        icon={conta && <BankIcon icon={conta.icon} name={conta.nome} size={36} />}
         isLoading={isFetching}
         metricLabel="Saldo:"
         metricValue={toCurrency(conta?.saldo || 0)}

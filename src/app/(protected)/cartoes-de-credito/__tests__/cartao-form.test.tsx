@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toast } from "@/components/toast";
 import ApiError from "@/types/application-error";
 import { catalogoErros } from "@/helpers/erros-helper";
-import { Cartao } from "@/types/cartao";
+import { Cartao } from "@/types/cartoes";
 import { Status } from "@/types/enum/status";
 
 import CartaoForm from "../cartao-form";

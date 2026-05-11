@@ -9,7 +9,7 @@ import { keysToInvalidateForCategoria } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { categoriasService } from "@/services/categorias-service";
 import ApiError from "@/types/application-error";
-import { Categoria } from "@/types/categoria";
+import { Categoria } from "@/types/categorias";
 import { Status } from "@/types/enum/status";
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

@@ -8,7 +8,7 @@ import ApiError from "@/types/application-error";
 import { catalogoErros } from "@/helpers/erros-helper";
 
 import CategoriaForm from "../categoria-form";
-import type { Categoria } from "@/types/categoria";
+import type { Categoria } from "@/types/categorias";
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { Status } from "@/types/enum/status";
 

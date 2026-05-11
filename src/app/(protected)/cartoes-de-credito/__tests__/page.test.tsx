@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { Cartao } from "@/types/cartao";
+import { Cartao } from "@/types/cartoes";
 import { Status } from "@/types/enum/status";
 
 import CartoesDeCreditoPage from "../page";

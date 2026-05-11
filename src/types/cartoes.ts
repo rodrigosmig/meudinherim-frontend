@@ -10,6 +10,7 @@ export type Cartao = {
   limiteCredito: number;
   saldo: number;
   status: Status;
+  icon: string;
 };
 
 export interface CartoesRequest extends PaginaRequest {
@@ -21,6 +22,7 @@ export interface CadastrarCartaoRequest {
   diaVencimento: number;
   diaFechamento: number;
   limiteCredito: number;
+  icon: string;
 }
 
 export interface CadastrarCartaoData {

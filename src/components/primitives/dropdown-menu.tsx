@@ -60,13 +60,14 @@ function DropdownContent({ className, align = "center", children }: DropdownCont
 
 interface DropdownItemProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-function DropdownItem({ children }: DropdownItemProps) {
+function DropdownItem({ children, className }: DropdownItemProps) {
   return (
     <DropdownPrimitive.Item
       asChild
-      className="focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0"
+      className={cn("focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0", className)}
     >
       {children}
     </DropdownPrimitive.Item>

@@ -12,7 +12,7 @@ import {
   Cartao,
   CartoesRequest,
   ObterCartaoResponse,
-} from "@/types/cartao";
+} from "@/types/cartoes";
 import { Pagina } from "@/types/pagina";
 
 export const cartoesService = {

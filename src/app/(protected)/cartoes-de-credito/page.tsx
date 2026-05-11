@@ -13,7 +13,7 @@ import Skeleton from "@/components/primitives/skeleton";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { useCartoesPaginacao } from "@/hooks/use-cartoes-paginacao";
 import ApiError from "@/types/application-error";
-import { Cartao } from "@/types/cartao";
+import { Cartao } from "@/types/cartoes";
 import { Status } from "@/types/enum/status";
 import { Plus, Search } from "lucide-react";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";

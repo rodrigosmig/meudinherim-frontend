@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { toast } from "@/components/toast";
 import ApiError from "@/types/application-error";
-import { Categoria } from "@/types/categoria";
+import { Categoria } from "@/types/categorias";
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { Status } from "@/types/enum/status";
 

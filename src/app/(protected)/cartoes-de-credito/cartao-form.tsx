@@ -6,6 +6,7 @@ import { CreditCard } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useForm, type DefaultValues } from "react-hook-form";
 
+import { CardIconPicker } from "@/components/card-icon-picker";
 import Modal from "@/components/modal";
 import { Button } from "@/components/primitives/button";
 import { Input } from "@/components/primitives/input";
@@ -20,7 +21,7 @@ import { cartaoSchema, type CartaoFormValue } from "@/schema-validation/cartao";
 import { cartoesService } from "@/services/cartoes-service";
 import type { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
-import type { Cartao } from "@/types/cartao";
+import type { Cartao } from "@/types/cartoes";
 
 type Props = Readonly<{
   cartao?: Cartao;
@@ -34,6 +35,7 @@ function getDefaultValues(cartao?: Cartao): DefaultValues<CartaoFormValue> {
       diaVencimento: undefined,
       diaFechamento: undefined,
       limiteCredito: undefined,
+      icon: "",
     };
   }
   return {
@@ -41,6 +43,7 @@ function getDefaultValues(cartao?: Cartao): DefaultValues<CartaoFormValue> {
     diaVencimento: cartao.diaVencimento,
     diaFechamento: cartao.diaFechamento,
     limiteCredito: cartao.limiteCredito,
+    icon: cartao.icon ?? "",
   };
 }
 
@@ -67,6 +70,7 @@ export default function CartaoForm({ cartao, children }: Props) {
         diaVencimento: data.diaVencimento,
         diaFechamento: data.diaFechamento,
         limiteCredito: data.limiteCredito,
+        icon: data.icon ?? "",
       };
       if (isEditMode && cartao?.uuid) {
         return cartoesService.alterar(cartao.uuid, payload);
@@ -159,6 +163,12 @@ export default function CartaoForm({ cartao, children }: Props) {
           onChange={(value) => form.setValue("limiteCredito", value ?? 0)}
           onBlur={() => form.trigger("limiteCredito")}
           error={form.formState.errors.limiteCredito}
+        />
+
+        <CardIconPicker
+          label="Ícone do cartão"
+          value={form.watch("icon") ?? ""}
+          onChange={(key) => form.setValue("icon", key)}
         />
 
         <div className="flex justify-end gap-2">

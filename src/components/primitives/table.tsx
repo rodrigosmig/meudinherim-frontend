@@ -8,7 +8,7 @@ interface TableProps {
 
 export function TableRoot({ theadData, children }: TableProps) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border-muted">
+    <div className="overflow-x-auto border border-border-muted">
       <table className="w-full">
         <Header theadData={theadData} />
         <tbody className="divide-y divide-divider">

@@ -1,5 +1,6 @@
 "use client";
 
+import { BankIcon } from "@/components/bank-icon";
 import Modal from "@/components/modal";
 import { Button } from "@/components/primitives/button";
 import { Table } from "@/components/primitives/table";
@@ -11,7 +12,7 @@ import { toCurrency } from "@/helpers/string-helper";
 import { Urls } from "@/helpers/urls";
 import { cartoesService } from "@/services/cartoes-service";
 import ApiError from "@/types/application-error";
-import { Cartao } from "@/types/cartao";
+import { Cartao } from "@/types/cartoes";
 import { Status } from "@/types/enum/status";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CircleCheck, CircleX, FileText, Pencil } from "lucide-react";
@@ -82,7 +83,12 @@ export default function TabelaCartoes({ cartoes }: Readonly<TabelaCartoesProps>)
         const isAtivo = cartao.status === Status.ATIVO;
         return (
           <Table.Tr key={cartao.uuid} className="text-sm md:text-base font-semibold">
-            <Table.Td>{cartao.nome}</Table.Td>
+            <Table.Td>
+              <div className="flex items-center gap-2">
+                <BankIcon icon={cartao.icon} name={cartao.nome} size={28} className="rounded-lg" />
+                {cartao.nome}
+              </div>
+            </Table.Td>
             <Table.Td>Dia {cartao.diaVencimento}</Table.Td>
             <Table.Td>Dia {cartao.diaFechamento}</Table.Td>
             <Table.Td>{toCurrency(cartao.limiteCredito)}</Table.Td>

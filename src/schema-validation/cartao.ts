@@ -19,6 +19,7 @@ export const cartaoSchema = z.object({
   limiteCredito: z
     .number({ error: "O campo limite de crédito é obrigatório" })
     .gt(0, "O limite deve ser maior que zero"),
+  icon: z.string(),
 });
 
 export type CartaoFormValue = z.infer<typeof cartaoSchema>;

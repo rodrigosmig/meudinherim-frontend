@@ -21,7 +21,7 @@ import { categoriaSchema, type CategoriaFormValue } from "@/schema-validation/ca
 import { categoriasService } from "@/services/categorias-service";
 import type { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
-import type { Categoria } from "@/types/categoria";
+import type { Categoria } from "@/types/categorias";
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 
 const TIPO_OPTIONS = [

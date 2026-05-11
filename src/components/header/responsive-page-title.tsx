@@ -10,6 +10,7 @@ type ResponsivePageTitleProps = {
   title: string;
   subtitle?: string;
   badge?: ReactNode;
+  icon?: ReactNode;
   isLoading?: boolean;
   metricLabel?: string;
   metricValue?: string;
@@ -21,6 +22,7 @@ export default function ResponsivePageTitle({
   title,
   subtitle,
   badge,
+  icon,
   isLoading,
   metricLabel,
   metricValue,
@@ -34,6 +36,7 @@ export default function ResponsivePageTitle({
       <Header.Title>
         <div className={cn("flex flex-col justify-center", className)}>
           <div className="flex gap-2 items-center">
+            {icon}
             <Heading variant="heading2">{title}</Heading>
             {badge}
             {isLoading && <Loading />}
@@ -54,6 +57,7 @@ export default function ResponsivePageTitle({
       <div className="flex justify-between md:hidden mb-2 px-1">
         <div className="flex flex-col">
           <div className="flex gap-2 items-center">
+            {icon}
             <Heading variant="heading2">{title}</Heading>
             {badge}
           </div>

@@ -12,6 +12,7 @@ export interface Fatura {
   cartao: {
     uuid: string;
     descricao: string;
+    icon: string;
   };
 }
 
