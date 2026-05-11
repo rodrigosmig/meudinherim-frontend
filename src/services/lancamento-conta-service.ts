@@ -12,6 +12,7 @@ import {
   LancamentoConta,
   ListarLancamentosContaRequest,
   ObterLancamentoContaResponse,
+  TransferirEntreContasRequest,
 } from "@/types/lancamento-conta";
 import { Pagina } from "@/types/pagina";
 
@@ -96,6 +97,21 @@ export const lancamentoContaService = {
 
     const response = await fetch(url, {
       method: "DELETE",
+      credentials: "same-origin",
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<void>>(response);
+  },
+
+  transferirEntreContas: async (request: TransferirEntreContasRequest): Promise<ApiResponse<void>> => {
+    const url = `/api/proxy/v1/contas/lancamentos/transferencia-entre-contas`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
       credentials: "same-origin",
     });
 

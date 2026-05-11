@@ -9,6 +9,7 @@ import { AdicionarNav } from './adicionar-nav';
 import { ContasNav } from './contas-nav';
 import { FaturasNav } from './faturas-nav';
 import NotificacoesNav from './notificacoes-nav';
+import { TransferenciaNav } from './transfer-nav';
 
 interface HeaderProps {
   title?: string;
@@ -48,6 +49,8 @@ function HeaderContent({ className, ...props }: HeaderContentProps) {
   return (
     <div className={cn("flex items-center gap-2", className)} {...props}>
       <AdicionarNav />
+
+      <TransferenciaNav />
 
       <NotificacoesNav />
 

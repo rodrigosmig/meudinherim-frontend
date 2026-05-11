@@ -55,6 +55,16 @@ export type CadastrarLancamentoContaRequest = {
   tags?: string[];
 };
 
+export type TransferirEntreContasRequest = {
+  idContaOrigem: string;
+  idCategoriaOrigem: string;
+  idContaDestino: string;
+  idCategoriaDestino: string;
+  data: string;
+  descricao: string;
+  valor: number;
+};
+
 export interface CadastrarLancamentoContaData {
   idLancamento: string;
 }
