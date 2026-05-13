@@ -2,7 +2,7 @@
 
 
 import { useAuth } from "@/contexts/auth-context";
-import { logout } from "@/services/auth-service";
+import { authService } from "@/services/auth-service";
 import { LogOut, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar } from "./avatar";
@@ -13,7 +13,7 @@ export default function UserProfile() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await logout();
+    await authService.logout();
     router.push("/login");
     router.refresh();
   };

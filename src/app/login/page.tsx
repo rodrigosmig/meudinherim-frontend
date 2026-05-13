@@ -1,5 +1,4 @@
-import { Card } from "@/components/primitives/card";
-import Text from "@/components/primitives/text";
+import { AuthLayout } from "@/components/auth-layout";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -7,29 +6,23 @@ import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
   title: "Login",
-}
+};
 
 export default function LoginPage() {
   return (
-    <div className="flex flex-col w-screen h-screen">
-      <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
-        <Text variant="heading-large">MEU DINHEIRIM</Text>
-        <Card.Root className="w-87.5 md:w-90">
-          <LoginForm />
-
-          <Card.Footer>
-            <div className="flex flex-col gap-1">
-              <Link href="/recuperar-senha">
-                <Text className="hover:text-primary">Esqueci minha senha</Text>
-              </Link>
-
-              <Text>
-                Não tem uma conta? <Link href="/cadastrar-usuario" className="hover:text-primary">Cadastre-se</Link>
-              </Text>
-            </div>
-          </Card.Footer>
-        </Card.Root>
+    <AuthLayout title="Bem-vindo de volta" subtitle="Entre na sua conta para continuar">
+      <LoginForm />
+      <div className="mt-5 flex flex-col gap-2 border-t border-gray-700 pt-4">
+        <Link href="/recuperar-senha" className="text-sm text-gray-400 hover:text-primary transition-colors">
+          Esqueci minha senha
+        </Link>
+        <p className="text-sm text-gray-400">
+          Não tem uma conta?{" "}
+          <Link href="/cadastrar-usuario" className="text-primary hover:text-purple-400 transition-colors font-medium">
+            Cadastre-se
+          </Link>
+        </p>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

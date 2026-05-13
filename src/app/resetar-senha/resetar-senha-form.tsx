@@ -1,7 +1,7 @@
 import { ResetarSenhaFormValue, resetarSenhaSchema } from "@/schema-validation/auth";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { Button } from "@/components/primitives/button";
-import { resetarSenha } from "@/services/auth-service";
+import { authService } from "@/services/auth-service";
 import { catalogoErros } from "@/helpers/erros-helper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/primitives/input";
@@ -35,7 +35,7 @@ export function ResetarSenhaForm({ token }: ResetarSenhaFormProps) {
     };
 
     try {
-      await resetarSenha(formData);
+      await authService.resetarSenha(formData);
 
       toast.success("Senha resetada com sucesso!");
 

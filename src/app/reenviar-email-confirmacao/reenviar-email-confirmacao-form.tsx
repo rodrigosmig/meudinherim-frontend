@@ -8,7 +8,7 @@ import { catalogoErros } from "@/helpers/erros-helper";
 import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
 import { capitalize } from "@/helpers/string-helper";
 import { ReenviarEmailConfirmacaoFormValue, reenviarEmailConfirmacaoSchema } from "@/schema-validation/auth";
-import { reenviarEmailConfirmacao } from "@/services/auth-service";
+import { authService } from "@/services/auth-service";
 import { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +28,7 @@ export default function ReenviarEmailConfirmacaoForm() {
   const onSubmit = async (data: ReenviarEmailConfirmacaoFormValue) => {
 
     try {
-      await reenviarEmailConfirmacao(data);
+      await authService.reenviarEmailConfirmacao(data);
 
       form.reset()
 
@@ -84,7 +84,7 @@ export default function ReenviarEmailConfirmacaoForm() {
         isLoading={form.formState.isSubmitting}
         disabled={form.formState.isSubmitting}
       >
-        Reenviar e-mail de confirmação
+        Reenviar e-mail
       </Button>
     </Form>
   )

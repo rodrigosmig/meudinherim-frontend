@@ -9,7 +9,7 @@ import { catalogoErros } from '@/helpers/erros-helper';
 import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
 import { capitalize } from '@/helpers/string-helper';
 import { CadastrarUsuarioFormValue, cadastrarUsuarioSchema } from '@/schema-validation/auth';
-import { cadastrarUsuario } from '@/services/auth-service';
+import { authService } from '@/services/auth-service';
 import { ApiFormError } from '@/types/api';
 import ApiError from '@/types/application-error';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,7 +35,7 @@ export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
 
   const onSubmit = async (data: CadastrarUsuarioFormValue) => {
     try {
-      await cadastrarUsuario(data);
+      await authService.cadastrarUsuario(data);
 
       toast.success("Usuário cadastrado com sucesso!");
 

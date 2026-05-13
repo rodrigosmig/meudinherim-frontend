@@ -27,7 +27,7 @@ export default function ReenviarEmailConfirmacao() {
                 <ChevronLeft className="w-5 h-5" />
               </Button>
             </Link>
-            <Text className="text-center" variant="heading-medium">Reenviar e-mail</Text>
+            <Text className="text-center" variant="heading-medium">Reenviar e-mail de confirmação</Text>
           </Card.Header>
 
           <ReenviarEmailConfirmacaoForm />

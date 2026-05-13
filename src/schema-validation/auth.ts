@@ -51,6 +51,15 @@ export const resetarSenhaSchema = z
 
 export type ResetarSenhaFormValue = z.infer<typeof resetarSenhaSchema>;
 
+export const validarCodigoSchema = z.object({
+  codigo: z
+    .string()
+    .length(6, "O código deve ter exatamente 6 dígitos")
+    .regex(/^\d{6}$/, "O código deve conter apenas números"),
+});
+
+export type ValidarCodigoFormValue = z.infer<typeof validarCodigoSchema>;
+
 const TokenPayloadSchema = z.object({
   user: z.object({
     id: z.string(),

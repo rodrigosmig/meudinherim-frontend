@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/primitives/button";
 import Form from "@/components/primitives/form";
@@ -7,7 +7,7 @@ import { toast } from "@/components/toast";
 import { catalogoErros } from "@/helpers/erros-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { RecuperarSenhaFormValue, recuperarSenhaSchema } from "@/schema-validation/auth";
-import { recuperarSenha } from "@/services/auth-service";
+import { authService } from "@/services/auth-service";
 import { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,42 +20,28 @@ export function RecuperarSenhaForm() {
 
   const form = useForm<RecuperarSenhaFormValue>({
     resolver: zodResolver(recuperarSenhaSchema),
-    defaultValues: {
-      email: "",
-    },
+    defaultValues: { email: "" },
   });
 
   const onSubmit = async (data: RecuperarSenhaFormValue) => {
     try {
-      await recuperarSenha(data);
-
-      toast.success("Email de recuperação enviado com sucesso!");
-
-      router.push("/login");
-
-      return;
-
+      await authService.recuperarSenha(data);
+      toast.success("Código enviado! Verifique seu e-mail.");
+      router.push(`/validar-codigo?email=${encodeURIComponent(data.email)}`);
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
           const formError = error.data as ApiFormError;
-
           formError.fields.forEach((fieldError) => {
-            if (["email"].includes(fieldError.field)) {
-              form.setError(fieldError.field as keyof RecuperarSenhaFormValue, {
-                type: "server",
-                message: fieldError.message,
-              });
+            if (fieldError.field === "email") {
+              form.setError("email", { type: "server", message: fieldError.message });
             }
           });
         }
-
         toast.error(error.apiMessage.descricao);
         return;
       }
-
       toast.error(DEFAULT_ERROR_MESSAGE);
-      return;
     }
   };
 
@@ -68,15 +54,14 @@ export function RecuperarSenhaForm() {
         error={form.formState.errors.email}
         {...form.register("email")}
       />
-
       <Button
         type="submit"
-        className="w-full mt-8"
+        className="w-full mt-6"
         isLoading={form.formState.isSubmitting}
         disabled={form.formState.isSubmitting}
       >
-        Enviar e-mail de recuperação
+        Enviar código
       </Button>
     </Form>
-  )
+  );
 }

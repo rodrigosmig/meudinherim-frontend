@@ -3,7 +3,7 @@
 import Text from '@/components/primitives/text';
 import { toast } from '@/components/toast';
 import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
-import { confirmarEmail } from '@/services/auth-service';
+import { authService } from '@/services/auth-service';
 import ApiError from '@/types/application-error';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -31,7 +31,7 @@ export default function ConfirmarEmail() {
 
 
       try {
-        await confirmarEmail({ token });
+        await authService.confirmarEmail({ token });
         setIsLoading(false);
 
         toast.success("Conta confirmada com sucesso!");

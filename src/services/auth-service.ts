@@ -1,5 +1,4 @@
-import {handleApiResponse} from "@/helpers/response-helper";
-import {ApiResponse} from "@/types/api";
+import { handleApiResponse } from "@/helpers/response-helper";
 import {
   CadastrarUsuarioRequest,
   CadastrarUsuarioResponse,
@@ -8,84 +7,87 @@ import {
   LoginResponse,
   RecuperarSenhaRequest,
   RecuperarSenhaResponse,
-  ReenviarEmailConfirmacaoBody,
+  ReenviarEmailConfirmacaoRequest,
   ResetarSenhaRequest,
+  ValidarCodigoRecuperacaoRequest,
 } from "@/types/auth";
+import { ApiResponse } from "@/types/api";
 
-export async function cadastrarUsuario(
-  cadastrarUsuarioBody: CadastrarUsuarioRequest,
-): Promise<CadastrarUsuarioResponse> {
-  const response = await fetch("/api/auth/cadastrar-usuario", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(cadastrarUsuarioBody),
-  });
+export const authService = {
+  cadastrarUsuario: async (
+    body: CadastrarUsuarioRequest,
+  ): Promise<CadastrarUsuarioResponse> => {
+    const response = await fetch("/api/auth/cadastrar-usuario", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    return handleApiResponse<CadastrarUsuarioResponse>(response);
+  },
 
-  return await handleApiResponse<CadastrarUsuarioResponse>(response);
-}
+  autenticar: async (body: LoginRequest): Promise<LoginResponse> => {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    return handleApiResponse<LoginResponse>(response);
+  },
 
-export async function autenticar(
-  loginBody: LoginRequest,
-): Promise<LoginResponse> {
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(loginBody),
-  });
+  recuperarSenha: async (
+    body: RecuperarSenhaRequest,
+  ): Promise<RecuperarSenhaResponse> => {
+    const response = await fetch("/api/auth/recuperar-senha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    return handleApiResponse<RecuperarSenhaResponse>(response);
+  },
 
-  return await handleApiResponse<LoginResponse>(response);
-}
+  validarCodigoRecuperacao: async (
+    body: ValidarCodigoRecuperacaoRequest,
+  ): Promise<ApiResponse<string>> => {
+    const response = await fetch("/api/auth/validar-codigo-recuperacao", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    return handleApiResponse<ApiResponse<string>>(response);
+  },
 
-export async function recuperarSenha(
-  recuperarSenhaBody: RecuperarSenhaRequest,
-): Promise<RecuperarSenhaResponse> {
-  const response = await fetch("/api/auth/recuperar-senha", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(recuperarSenhaBody),
-  });
+  resetarSenha: async (body: ResetarSenhaRequest): Promise<ApiResponse<void>> => {
+    const response = await fetch("/api/auth/resetar-senha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    return handleApiResponse<ApiResponse<void>>(response);
+  },
 
-  return await handleApiResponse<RecuperarSenhaResponse>(response);
-}
+  logout: async (): Promise<void> => {
+    await fetch("/api/auth/logout", { method: "POST" });
+  },
 
-export async function logout() {
-  await fetch("/api/auth/logout", {
-    method: "POST",
-  });
-}
+  confirmarEmail: async (
+    body: ConfirmarUsuarioParam,
+  ): Promise<ApiResponse<void>> => {
+    const response = await fetch("/api/auth/confirmar-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    return handleApiResponse<ApiResponse<void>>(response);
+  },
 
-export async function confirmarEmail(
-  confirmarEmailParam: ConfirmarUsuarioParam,
-): Promise<ApiResponse<void>> {
-  const response = await fetch("/api/auth/confirmar-email", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(confirmarEmailParam),
-  });
-
-  return await handleApiResponse<ApiResponse<void>>(response);
-}
-
-export async function reenviarEmailConfirmacao(
-  reenviarEmailConfirmacaoBody: ReenviarEmailConfirmacaoBody,
-): Promise<ApiResponse<void>> {
-  const response = await fetch("/api/auth/reenviar-email-confirmacao", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(reenviarEmailConfirmacaoBody),
-  });
-
-  return await handleApiResponse<ApiResponse<void>>(response);
-}
-
-export async function resetarSenha(
-  resetarSenhaBody: ResetarSenhaRequest,
-): Promise<ApiResponse<void>> {
-  const response = await fetch("/api/auth/resetar-senha", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(resetarSenhaBody),
-  });
-
-  return await handleApiResponse<ApiResponse<void>>(response);
-}
+  reenviarEmailConfirmacao: async (
+    body: ReenviarEmailConfirmacaoRequest,
+  ): Promise<ApiResponse<void>> => {
+    const response = await fetch("/api/auth/reenviar-email-confirmacao", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    return handleApiResponse<ApiResponse<void>>(response);
+  },
+};

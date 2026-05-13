@@ -38,7 +38,7 @@ export interface ConfirmarUsuarioParam {
   token: string;
 }
 
-export interface ReenviarEmailConfirmacaoBody {
+export interface ReenviarEmailConfirmacaoRequest {
   email: string;
 }
 
@@ -51,6 +51,15 @@ export interface ResetarSenhaRequest {
   password: string;
   passwordConfirmation: string;
 }
+
+export interface ValidarCodigoRecuperacaoRequest {
+  email: string;
+  codigo: string;
+}
+
+export type ValidarCodigoRecuperacaoResponse =
+  | ApiResponse<string>
+  | ApiFormErrorResponse;
 
 export type VerificationResult<T = unknown> =
   | { valido: true; payload: T }

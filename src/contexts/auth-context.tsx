@@ -1,6 +1,6 @@
 'use client'
 
-import { autenticar } from '@/services/auth-service'
+import { authService } from '@/services/auth-service'
 import { LoginRequest } from '@/types/auth'
 import { Usuario } from '@/types/usuario'
 import { createContext, useContext, useEffect, useState } from 'react'
@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (loginBody: LoginRequest) => {
     setIsLoading(true)
-    await autenticar(loginBody);
+    await authService.autenticar(loginBody);
 
     await fetchUserData();
 

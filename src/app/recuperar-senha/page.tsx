@@ -1,39 +1,20 @@
-import { Button } from "@/components/primitives/button";
-import { Card } from "@/components/primitives/card";
-import Text from "@/components/primitives/text";
-import Icon from "@/components/primitives/icon";
-import { ChevronLeft } from "lucide-react";
+import { AuthLayout } from "@/components/auth-layout";
 import { Metadata } from "next";
-import Link from "next/link";
 
 import { RecuperarSenhaForm } from "./recuperar-senha-form";
 
 export const metadata: Metadata = {
-  title: "Recuperar Senha",
-}
+  title: "Esqueci minha senha",
+};
 
-export default function RecuperarSenha() {
+export default function RecuperarSenhaPage() {
   return (
-    <div className="flex flex-col w-screen h-screen">
-      <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
-        <Text variant="heading-large">MEU DINHEIRIM</Text>
-        <Card.Root className="w-87.5 md:w-90">
-          <Card.Header className="relative">
-            <Link href="/login">
-              <Button
-                variant="back"
-                tooltip="Voltar"
-                aria-label="Voltar"
-              >
-                <Icon icon={ChevronLeft} />
-              </Button>
-            </Link>
-            <Text className="text-center" variant="heading-medium">Recuperar senha</Text>
-          </Card.Header>
-
-          <RecuperarSenhaForm />
-        </Card.Root>
-      </div>
-    </div>
-  )
+    <AuthLayout
+      title="Esqueci minha senha"
+      subtitle="Informe seu e-mail e enviaremos um código de verificação"
+      backHref="/login"
+    >
+      <RecuperarSenhaForm />
+    </AuthLayout>
+  );
 }

@@ -6,6 +6,7 @@ export const AUTH_PUBLIC_ROUTES = [
   "/login",
   "/cadastrar-usuario",
   "/recuperar-senha",
+  "/validar-codigo",
   "/confirmar-email",
   "/reenviar-email-confirmacao",
   "/resetar-senha",

@@ -1,49 +1,33 @@
 "use client";
 
-import { Button } from "@/components/primitives/button";
-import { Card } from "@/components/primitives/card";
-import Text from "@/components/primitives/text";
+import { AuthLayout } from "@/components/auth-layout";
 import { toast } from "@/components/toast";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from 'react';
+import { useEffect } from "react";
+
 import { ResetarSenhaForm } from "./resetar-senha-form";
 
 export function ResetarSenha() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get('token') ?? "";
+  const token = searchParams.get("token") ?? "";
 
   useEffect(() => {
     if (!token) {
       toast.error("Token inválido. Não é possível resetar a senha");
-      router.push('/');
-      return;
+      router.push("/login");
     }
   }, [token, router]);
 
-  return (
-    <div className="flex flex-col w-screen h-screen">
-      <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
-        <Text variant="heading-large">MEU DINHEIRIM</Text>
-        <Card.Root className="w-96 max-w-md">
-          <Card.Header className="relative">
-            <Link href="/login">
-              <Button
-                className="bg-gray-900 border-0 w-6 h-6 text-gray-400 hidden md:flex absolute z-50 hover:text-white hover:bg-transparent rounded-md transition-all"
-                tooltip="Voltar"
-                aria-label="Voltar"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <Text className="text-center" variant="heading-medium">Resetar Senha</Text>
-          </Card.Header>
+  if (!token) return null;
 
-          <ResetarSenhaForm token={token} />
-        </Card.Root>
-      </div>
-    </div>
-  )
+  return (
+    <AuthLayout
+      title="Nova senha"
+      subtitle="Escolha uma senha forte para sua conta"
+      backHref="/login"
+    >
+      <ResetarSenhaForm token={token} />
+    </AuthLayout>
+  );
 }
