@@ -77,6 +77,7 @@ export function AuthLayout({ children, title, subtitle, backHref }: AuthLayoutPr
             {backHref && (
               <Link
                 href={backHref}
+                aria-label="Voltar"
                 className="flex items-center justify-center w-8 h-8 rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 transition-colors shrink-0"
               >
                 <ChevronLeft className="w-4 h-4" />

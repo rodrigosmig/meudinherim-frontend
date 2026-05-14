@@ -10,7 +10,9 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("@/services/auth-service", () => ({
-  logout: jest.fn()
+  authService: {
+    logout: jest.fn(),
+  },
 }));
 
 const nome = "João Silva";
@@ -66,8 +68,8 @@ describe("Componente UserProfile", () => {
     await user.click(screen.getByRole("button", { name: /abrir menu do usuário/i }));
     await user.click(screen.getByText("Sair"));
 
-    const { logout } = require("@/services/auth-service")
-    expect(logout).toHaveBeenCalled();
+    const { authService } = require("@/services/auth-service")
+    expect(authService.logout).toHaveBeenCalled();
     expect(mockedPush).toHaveBeenCalledWith("/login");
     expect(mockedRefresh).toHaveBeenCalled();
   });

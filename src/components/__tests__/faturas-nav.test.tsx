@@ -4,6 +4,12 @@ import userEvent from "@testing-library/user-event";
 
 import { FaturasNav } from "../header/faturas-nav";
 
+jest.mock("@/components/bank-icon", () => ({
+  BankIcon: ({ name, size }: { name: string; size: number }) => (
+    <img alt={`Avatar de ${name}`} style={{ width: `${size}px`, height: `${size}px` }} />
+  ),
+}));
+
 const hasCurrencyText = (value: number) => (_: string, element: Element | null) => {
   if (!element?.textContent) return false;
 

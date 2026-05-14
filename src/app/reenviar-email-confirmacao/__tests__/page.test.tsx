@@ -12,7 +12,7 @@ describe("Page ReenviarEmailConfirmacao", () => {
     render(<ReenviarEmailConfirmacao />);
     expect(screen.getByText("MEU DINHEIRIM")).toBeInTheDocument();
     expect(screen.getByText("Reenviar e-mail")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Reenviar e-mail" })).toBeInTheDocument();
     expect(screen.getByLabelText("E-mail")).toBeInTheDocument();
   });
 

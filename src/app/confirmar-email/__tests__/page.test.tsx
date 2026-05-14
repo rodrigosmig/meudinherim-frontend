@@ -1,5 +1,5 @@
 import { toast } from '@/components/toast';
-import * as authService from '@/services/auth-service';
+import { authService } from '@/services/auth-service';
 import ApiError from '@/types/application-error';
 import { render, waitFor } from '@testing-library/react';
 
@@ -7,7 +7,11 @@ import ConfirmarEmail from '../page';
 
 const mockedPush = jest.fn();
 
-jest.mock('@/services/auth-service');
+jest.mock('@/services/auth-service', () => ({
+  authService: {
+    confirmarEmail: jest.fn(),
+  },
+}));
 const mockConfirmarEmail = authService.confirmarEmail as jest.Mock;
 
 jest.mock('next/navigation', () => ({

@@ -1,7 +1,6 @@
-import { reenviarEmailConfirmacao } from "@/services/auth-service";
+import { authService } from "@/services/auth-service";
 import { DEFAULT_ERROR_MESSAGE } from '@/helpers/route-helpers';
 import { render, screen } from "@/helpers/test/test-helper";
-import * as authService from "@/services/auth-service";
 import { catalogoErros } from '@/helpers/erros-helper';
 import userEvent from "@testing-library/user-event";
 import ApiError from '@/types/application-error';
@@ -22,8 +21,12 @@ jest.mock("@/components/toast", () => ({
   },
 }));
 
-jest.mock("@/services/auth-service");
-const mockReenviarEmailConfirmacao = reenviarEmailConfirmacao as jest.Mock;
+jest.mock("@/services/auth-service", () => ({
+  authService: {
+    reenviarEmailConfirmacao: jest.fn(),
+  },
+}));
+const mockReenviarEmailConfirmacao = authService.reenviarEmailConfirmacao as jest.Mock;
 
 describe("Componente ReenviarEmailConfirmacaoForm", () => {
   beforeEach(() => {
@@ -33,7 +36,7 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
   it("deve renderizar corretamente", () => {
     render(<ReenviarEmailConfirmacaoForm />);
 
-    expect(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Reenviar e-mail" })).toBeVisible();
     expect(screen.getByLabelText("E-mail")).toBeVisible();
   });
 
@@ -52,7 +55,7 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
     const user = userEvent.setup();
 
     await user.type(screen.getByLabelText("E-mail"), email);
-    await user.click(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" }));
+    await user.click(screen.getByRole("button", { name: "Reenviar e-mail" }));
 
     expect(authService.reenviarEmailConfirmacao).toHaveBeenCalledWith({ email });
     expect(toast.success).toHaveBeenCalledWith(mensagemSucesso);
@@ -67,7 +70,7 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
     const user = userEvent.setup();
 
     await user.type(screen.getByLabelText("E-mail"), emailInvalido);
-    await user.click(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" }));
+    await user.click(screen.getByRole("button", { name: "Reenviar e-mail" }));
 
     expect(screen.getByText("E-mail inválido")).toBeInTheDocument();
   });
@@ -93,7 +96,7 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
     const user = userEvent.setup();
 
     await user.type(screen.getByLabelText("E-mail"), emailInvalido);
-    await user.click(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" }));
+    await user.click(screen.getByRole("button", { name: "Reenviar e-mail" }));
 
     expect(authService.reenviarEmailConfirmacao).toHaveBeenCalledWith({ email: emailInvalido });
     expect(toast.error).toHaveBeenCalledWith("Erro de campo");
@@ -110,7 +113,7 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
     const user = userEvent.setup();
 
     await user.type(screen.getByLabelText("E-mail"), "test@email.com");
-    await user.click(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" }));
+    await user.click(screen.getByRole("button", { name: "Reenviar e-mail" }));
 
     expect(toast.error).toHaveBeenCalled();
   });
@@ -123,7 +126,7 @@ describe("Componente ReenviarEmailConfirmacaoForm", () => {
     const user = userEvent.setup();
 
     await user.type(screen.getByLabelText("E-mail"), "teste@teste.com");
-    await user.click(screen.getByRole("button", { name: "Reenviar e-mail de confirmação" }));
+    await user.click(screen.getByRole("button", { name: "Reenviar e-mail" }));
 
     expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
   });

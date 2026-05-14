@@ -1,11 +1,11 @@
-import { render, waitFor } from '@/helpers/test/test-helper';
-import { toast } from '@/components/toast';
+import { render, screen, waitFor } from "@/helpers/test/test-helper";
+import { toast } from "@/components/toast";
 
-import { ResetarSenha } from '../resetar-senha';
+import { ResetarSenha } from "../resetar-senha";
 
 const mockedPush = jest.fn();
 
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockedPush }),
   useSearchParams: () => ({
     get: (key: string) => {
@@ -15,40 +15,44 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-jest.mock('@/components/toast', () => ({
-  toast: {
-    error: jest.fn(),
-    success: jest.fn(),
-    warning: jest.fn(),
-    promise: jest.fn(),
-  },
+jest.mock("@/components/toast", () => ({
+  toast: { error: jest.fn(), success: jest.fn() },
 }));
 
-function setSearchParams(token?: string) {
-  const searchParams = new URLSearchParams();
-  if (token) searchParams.set('token', token);
-  window.history.replaceState({}, '', `/resetar-senha?${searchParams.toString()}`);
+jest.mock("@/services/auth-service", () => ({
+  authService: { resetarSenha: jest.fn() },
+}));
+
+function setToken(token?: string) {
+  const search = token ? `?token=${token}` : "";
+  window.history.replaceState({}, "", `/resetar-senha${search}`);
 }
 
-describe('ResetarSenhaPage', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+describe("ResetarSenha", () => {
+  beforeEach(() => jest.clearAllMocks());
 
-  it('exibe toast de erro e redireciona se não houver token', async () => {
-    setSearchParams(undefined);
+  it("exibe toast de erro e redireciona para login quando não há token", async () => {
+    setToken(undefined);
     render(<ResetarSenha />);
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith("Token inválido. Não é possível resetar a senha");
-      expect(mockedPush).toHaveBeenCalledWith('/');
+      expect(mockedPush).toHaveBeenCalledWith("/login");
     });
   });
 
-  it('renderiza o formulário se houver token', async () => {
-    setSearchParams('valid-token');
+  it("renderiza o formulário quando há token válido", async () => {
+    setToken("valid-token");
     render(<ResetarSenha />);
     await waitFor(() => {
-      expect(document.body.textContent).toContain('Resetar Senha');
+      expect(screen.getByText("Resetar Senha")).toBeInTheDocument();
+    });
+  });
+
+  it("renderiza o título 'Nova senha' no layout", async () => {
+    setToken("valid-token");
+    render(<ResetarSenha />);
+    await waitFor(() => {
+      expect(screen.getByText("Nova senha")).toBeInTheDocument();
     });
   });
 });

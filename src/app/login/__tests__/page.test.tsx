@@ -2,25 +2,25 @@ import { render, screen } from "@/helpers/test/test-helper";
 
 import LoginPage from "../page";
 
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn() }),
 }));
 
-describe("Componente LoginPage", () => {
-  it("renderiza corretamente o título e o formulário", () => {
+describe("LoginPage", () => {
+  it("renderiza o formulário de login", () => {
     render(<LoginPage />);
-    expect(screen.getByText("MEU DINHEIRIM")).toBeVisible();
     expect(screen.getByLabelText("E-mail")).toBeVisible();
     expect(screen.getByLabelText("Senha")).toBeVisible();
     expect(screen.getByRole("button", { name: "Entrar" })).toBeVisible();
   });
 
+  it("renderiza o título do layout", () => {
+    render(<LoginPage />);
+    expect(screen.getByText("Bem-vindo de volta")).toBeInTheDocument();
+  });
+
   it("renderiza links de navegação", () => {
     render(<LoginPage />);
-    expect(screen.getByText("Esqueci minha senha")).toBeVisible();
-    expect(screen.getByText("Cadastre-se")).toBeVisible();
-
-    // Verifica se os links têm os href corretos
     expect(screen.getByRole("link", { name: "Esqueci minha senha" })).toHaveAttribute("href", "/recuperar-senha");
     expect(screen.getByRole("link", { name: "Cadastre-se" })).toHaveAttribute("href", "/cadastrar-usuario");
   });
