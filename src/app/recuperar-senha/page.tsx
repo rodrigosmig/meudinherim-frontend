@@ -1,5 +1,6 @@
 import { AuthLayout } from "@/components/auth-layout";
 import { Metadata } from "next";
+import RecaptchaProvider from "@/providers/recaptcha-provider";
 
 import { RecuperarSenhaForm } from "./recuperar-senha-form";
 
@@ -14,7 +15,9 @@ export default function RecuperarSenhaPage() {
       subtitle="Informe seu e-mail e enviaremos um código de verificação"
       backHref="/login"
     >
-      <RecuperarSenhaForm />
+      <RecaptchaProvider>
+        <RecuperarSenhaForm />
+      </RecaptchaProvider>
     </AuthLayout>
   );
 }

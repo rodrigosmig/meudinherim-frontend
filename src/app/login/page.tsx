@@ -1,6 +1,7 @@
 import { AuthLayout } from "@/components/auth-layout";
 import { Metadata } from "next";
 import Link from "next/link";
+import RecaptchaProvider from "@/providers/recaptcha-provider";
 
 import { LoginForm } from "./login-form";
 
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <AuthLayout title="Bem-vindo de volta" subtitle="Entre na sua conta para continuar">
-      <LoginForm />
+      <RecaptchaProvider>
+        <LoginForm />
+      </RecaptchaProvider>
       <div className="mt-5 flex flex-col gap-2 border-t border-gray-700 pt-4">
         <Link href="/recuperar-senha" className="text-sm text-gray-400 hover:text-primary transition-colors">
           Esqueci minha senha

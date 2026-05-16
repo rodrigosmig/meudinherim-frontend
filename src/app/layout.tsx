@@ -3,7 +3,6 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/auth-context";
 import { Metadata } from "next";
 import localFont from "next/font/local";
-import RecaptchaProvider from "@/providers/recaptcha-provider";
 import { Toaster } from "sonner";
 
 const pretendard = localFont({
@@ -32,13 +31,11 @@ export default function RootLayout({
     <html lang="pt-BR" className={pretendard.variable}>
       <body className={`antialiased text-default-text`}>
         <Toaster richColors closeButton position="top-right" />
-        <RecaptchaProvider>
-          <BProgressProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </BProgressProvider>
-        </RecaptchaProvider>
+        <BProgressProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </BProgressProvider>
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
 import { AuthLayout } from "@/components/auth-layout";
 import { Metadata } from "next";
+import RecaptchaProvider from "@/providers/recaptcha-provider";
 
 import CadastrarUsuarioForm from "./cadastrar-usuario-form";
 
@@ -14,7 +15,9 @@ export default function CadastrarUsuarioPage() {
       subtitle="Preencha seus dados para começar"
       backHref="/login"
     >
-      <CadastrarUsuarioForm />
+      <RecaptchaProvider>
+        <CadastrarUsuarioForm />
+      </RecaptchaProvider>
     </AuthLayout>
   );
 }
