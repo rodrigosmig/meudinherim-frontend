@@ -15,12 +15,12 @@ import { ApiResponse } from "@/types/api";
 
 export const authService = {
   cadastrarUsuario: async (
-    body: CadastrarUsuarioRequest,
+    request: CadastrarUsuarioRequest,
   ): Promise<CadastrarUsuarioResponse> => {
     const response = await fetch("/api/auth/cadastrar-usuario", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(request),
     });
     return handleApiResponse<CadastrarUsuarioResponse>(response);
   },
@@ -35,12 +35,12 @@ export const authService = {
   },
 
   recuperarSenha: async (
-    body: RecuperarSenhaRequest,
+    request: RecuperarSenhaRequest,
   ): Promise<RecuperarSenhaResponse> => {
     const response = await fetch("/api/auth/recuperar-senha", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(request),
     });
     return handleApiResponse<RecuperarSenhaResponse>(response);
   },
@@ -56,11 +56,11 @@ export const authService = {
     return handleApiResponse<ApiResponse<string>>(response);
   },
 
-  resetarSenha: async (body: ResetarSenhaRequest): Promise<ApiResponse<void>> => {
+  resetarSenha: async (request: ResetarSenhaRequest): Promise<ApiResponse<void>> => {
     const response = await fetch("/api/auth/resetar-senha", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(request),
     });
     return handleApiResponse<ApiResponse<void>>(response);
   },

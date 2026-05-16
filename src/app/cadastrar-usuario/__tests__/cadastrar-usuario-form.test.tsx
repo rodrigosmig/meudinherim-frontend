@@ -14,19 +14,38 @@ jest.mock("@/components/toast", () => ({
   toast: { success: jest.fn(), error: jest.fn() },
 }));
 
+jest.mock("react-google-recaptcha-v3", () => ({
+  useGoogleReCaptcha: jest.fn(),
+}));
+
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { authService } from "@/services/auth-service";
+
+const mockUseGoogleReCaptcha = useGoogleReCaptcha as jest.Mock;
+const mockExecuteRecaptcha = jest.fn();
 const mockCadastrarUsuario = authService.cadastrarUsuario as jest.Mock;
+
+const dadosFormulario = {
+  nome: "Teste Silva",
+  email: "teste@exemplo.com",
+  password: "12345678",
+  passwordConfirmation: "12345678",
+};
 
 function preencherFormulario() {
   const [senhaInput, confirmaSenhaInput] = screen.getAllByLabelText(/Senha/i);
-  fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: "Teste Silva" } });
-  fireEvent.change(screen.getByLabelText(/E-mail/i), { target: { value: "teste@exemplo.com" } });
-  fireEvent.change(senhaInput, { target: { value: "12345678" } });
-  fireEvent.change(confirmaSenhaInput, { target: { value: "12345678" } });
+  fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: dadosFormulario.nome } });
+  fireEvent.change(screen.getByLabelText(/E-mail/i), { target: { value: dadosFormulario.email } });
+  fireEvent.change(senhaInput, { target: { value: dadosFormulario.password } });
+  fireEvent.change(confirmaSenhaInput, { target: { value: dadosFormulario.passwordConfirmation } });
 }
 
 describe("CadastrarUsuarioForm", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockExecuteRecaptcha.mockResolvedValue("mock-recaptcha-token");
+    mockUseGoogleReCaptcha.mockReturnValue({ executeRecaptcha: mockExecuteRecaptcha });
+  });
 
   it("renderiza todos os campos do formulário", () => {
     render(<CadastrarUsuarioForm />);
@@ -38,7 +57,7 @@ describe("CadastrarUsuarioForm", () => {
     expect(screen.getByRole("button", { name: /Cadastrar/i })).toBeInTheDocument();
   });
 
-  it("exibe mensagem de sucesso ao cadastrar", async () => {
+  it("exibe mensagem de sucesso e envia recaptchaToken ao cadastrar", async () => {
     mockCadastrarUsuario.mockResolvedValueOnce({
       message: { codigo: 0, descricao: "Sucesso" },
       data: { idUsuario: "123" },
@@ -46,8 +65,29 @@ describe("CadastrarUsuarioForm", () => {
     render(<CadastrarUsuarioForm />);
     preencherFormulario();
     fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+
     await waitFor(() => {
+      expect(mockExecuteRecaptcha).toHaveBeenCalledWith("cadastrar_usuario");
+      expect(mockCadastrarUsuario).toHaveBeenCalledWith({
+        ...dadosFormulario,
+        recaptchaToken: "mock-recaptcha-token",
+      });
       expect(toast.success).toHaveBeenCalledWith("Usuário cadastrado com sucesso!");
+    });
+  });
+
+  it("exibe erro quando reCAPTCHA não está disponível", async () => {
+    mockUseGoogleReCaptcha.mockReturnValue({ executeRecaptcha: undefined });
+
+    render(<CadastrarUsuarioForm />);
+    preencherFormulario();
+    fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        "reCAPTCHA não está disponível. Recarregue a página e tente novamente."
+      );
+      expect(mockCadastrarUsuario).not.toHaveBeenCalled();
     });
   });
 

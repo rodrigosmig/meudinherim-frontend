@@ -16,12 +16,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { LockKeyhole, Mail, User2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useForm } from 'react-hook-form';
 
 type CadastrarUsuarioFormProps = {}
 
 export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
   const [isCadastrado, setIsCadastrado] = useState(false);
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const form = useForm<CadastrarUsuarioFormValue>({
     resolver: zodResolver(cadastrarUsuarioSchema),
@@ -34,8 +36,13 @@ export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
   });
 
   const onSubmit = async (data: CadastrarUsuarioFormValue) => {
+    if (!executeRecaptcha) {
+      toast.error("reCAPTCHA não está disponível. Recarregue a página e tente novamente.");
+      return;
+    }
     try {
-      await authService.cadastrarUsuario(data);
+      const recaptchaToken = await executeRecaptcha("cadastrar_usuario");
+      await authService.cadastrarUsuario({ ...data, recaptchaToken });
 
       toast.success("Usuário cadastrado com sucesso!");
 

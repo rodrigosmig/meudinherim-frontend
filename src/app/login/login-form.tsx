@@ -13,11 +13,13 @@ import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LockKeyhole, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
 
 export function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const form = useForm<LoginFormValue>({
     resolver: zodResolver(loginSchema),
@@ -28,8 +30,13 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormValue) => {
+    if (!executeRecaptcha) {
+      toast.error("reCAPTCHA não está disponível. Recarregue a página e tente novamente.");
+      return;
+    }
     try {
-      await login(data);
+      const recaptchaToken = await executeRecaptcha("login");
+      await login({ ...data, recaptchaToken });
       router.push('/');
 
       return;

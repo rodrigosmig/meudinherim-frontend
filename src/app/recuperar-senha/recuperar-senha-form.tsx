@@ -13,10 +13,12 @@ import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
 
 export function RecuperarSenhaForm() {
   const router = useRouter();
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const form = useForm<RecuperarSenhaFormValue>({
     resolver: zodResolver(recuperarSenhaSchema),
@@ -24,8 +26,13 @@ export function RecuperarSenhaForm() {
   });
 
   const onSubmit = async (data: RecuperarSenhaFormValue) => {
+    if (!executeRecaptcha) {
+      toast.error("reCAPTCHA não está disponível. Recarregue a página e tente novamente.");
+      return;
+    }
     try {
-      await authService.recuperarSenha(data);
+      const recaptchaToken = await executeRecaptcha("recuperar_senha");
+      await authService.recuperarSenha({ ...data, recaptchaToken });
       toast.success("Código enviado! Verifique seu e-mail.");
       router.push(`/validar-codigo?email=${encodeURIComponent(data.email)}`);
     } catch (error) {

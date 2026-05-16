@@ -4,6 +4,7 @@ import { Usuario } from "./usuario";
 export interface LoginRequest {
   email: string;
   password: string;
+  recaptchaToken: string;
 }
 
 export interface LoginData {
@@ -18,6 +19,7 @@ export interface CadastrarUsuarioRequest {
   email: string;
   password: string;
   passwordConfirmation: string;
+  recaptchaToken: string;
 }
 
 export interface CadastrarUsuarioData {
@@ -30,6 +32,7 @@ export type CadastrarUsuarioResponse =
 
 export interface RecuperarSenhaRequest {
   email: string;
+  recaptchaToken: string;
 }
 
 export type RecuperarSenhaResponse = ApiResponse<void> | ApiFormErrorResponse;

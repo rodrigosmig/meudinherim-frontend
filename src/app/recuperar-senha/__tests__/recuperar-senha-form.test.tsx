@@ -21,11 +21,23 @@ jest.mock("@/services/auth-service", () => ({
   authService: { recuperarSenha: jest.fn() },
 }));
 
+jest.mock("react-google-recaptcha-v3", () => ({
+  useGoogleReCaptcha: jest.fn(),
+}));
+
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { authService } from "@/services/auth-service";
+
+const mockUseGoogleReCaptcha = useGoogleReCaptcha as jest.Mock;
+const mockExecuteRecaptcha = jest.fn();
 const mockRecuperarSenha = authService.recuperarSenha as jest.Mock;
 
 describe("RecuperarSenhaForm", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockExecuteRecaptcha.mockResolvedValue("mock-recaptcha-token");
+    mockUseGoogleReCaptcha.mockReturnValue({ executeRecaptcha: mockExecuteRecaptcha });
+  });
 
   it("renderiza o campo de email e o botão", () => {
     render(<RecuperarSenhaForm />);
@@ -33,7 +45,7 @@ describe("RecuperarSenhaForm", () => {
     expect(screen.getByRole("button", { name: "Enviar código" })).toBeVisible();
   });
 
-  it("envia com sucesso e redireciona para validar-codigo", async () => {
+  it("envia com sucesso incluindo o recaptchaToken e redireciona para validar-codigo", async () => {
     mockRecuperarSenha.mockResolvedValueOnce({ message: { codigo: 0, descricao: "Sucesso" }, data: {} });
     const email = "test@test.com";
 
@@ -43,9 +55,25 @@ describe("RecuperarSenhaForm", () => {
     await user.type(screen.getByLabelText("E-mail"), email);
     await user.click(screen.getByRole("button", { name: "Enviar código" }));
 
-    expect(mockRecuperarSenha).toHaveBeenCalledWith({ email });
+    expect(mockExecuteRecaptcha).toHaveBeenCalledWith("recuperar_senha");
+    expect(mockRecuperarSenha).toHaveBeenCalledWith({ email, recaptchaToken: "mock-recaptcha-token" });
     expect(toast.success).toHaveBeenCalledWith("Código enviado! Verifique seu e-mail.");
     expect(mockedPush).toHaveBeenCalledWith(`/validar-codigo?email=${encodeURIComponent(email)}`);
+  });
+
+  it("exibe erro quando reCAPTCHA não está disponível", async () => {
+    mockUseGoogleReCaptcha.mockReturnValue({ executeRecaptcha: undefined });
+
+    render(<RecuperarSenhaForm />);
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText("E-mail"), "test@test.com");
+    await user.click(screen.getByRole("button", { name: "Enviar código" }));
+
+    expect(toast.error).toHaveBeenCalledWith(
+      "reCAPTCHA não está disponível. Recarregue a página e tente novamente."
+    );
+    expect(mockRecuperarSenha).not.toHaveBeenCalled();
   });
 
   it("exibe erro de validação local para e-mail inválido", async () => {
