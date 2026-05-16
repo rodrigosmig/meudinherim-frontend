@@ -1,7 +1,7 @@
 import { NextResponse } from "next/dist/server/web/spec-extension/response";
 import { ApiFormErrorResponse, ApiResponse } from "@/types/api";
 import { httpClient } from "@/services/api/axios-client";
-import { ResetarSenhaBody } from "@/types/auth";
+import { ResetarSenhaRequest as ResetarSenhaBody } from "@/types/auth";
 import { AxiosError } from "axios";
 
 export async function POST(request: Request) {

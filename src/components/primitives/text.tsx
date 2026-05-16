@@ -5,6 +5,8 @@ export const textVariants = tv({
   base: "text-gray-300",
   variants: {
     variant: {
+      "heading-large": "text-3xl font-bold",
+      "heading-medium": "text-xl font-semibold",
       "paragraph-large": "text-lg font-regular", //18px
       "paragraph-medium": "text-base font-regular", //16px
       "paragraph-small": "text-sm font-regular", //14px

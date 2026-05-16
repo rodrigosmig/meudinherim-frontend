@@ -1,13 +1,8 @@
-"use client";
-
-import { cn } from "@/helpers/string-helper";
-import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { ReactNode } from "react";
 
-function HorizontalLogo({ className }: { className?: string }) {
+function HorizontalLogo() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 235.35" className={className}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 235.35" className="w-40 h-auto">
       <g>
         <path fill="#f8f8fa" d="M476.18,17.69c5.85,5.86,8.78,14.03,8.78,24.53v45.68h-19.68v-43.01c0-6.09-1.54-10.75-4.64-13.99-3.09-3.23-7.31-4.85-12.65-4.85s-9.58,1.62-12.72,4.85c-3.14,3.23-4.71,7.9-4.71,13.99v43.01h-19.68v-43.01c0-6.09-1.55-10.75-4.64-13.99-3.09-3.23-7.31-4.85-12.65-4.85s-9.72,1.62-12.86,4.85c-3.14,3.23-4.71,7.9-4.71,13.99v43.01h-19.68V10.03h19.68v9.42c2.53-3.28,5.78-5.85,9.77-7.73,3.98-1.87,8.36-2.81,13.14-2.81,6.09,0,11.53,1.29,16.3,3.86,4.78,2.58,8.48,6.26,11.1,11.03,2.53-4.5,6.21-8.1,11.03-10.82,4.82-2.72,10.05-4.08,15.67-4.08,9.56,0,17.26,2.93,23.12,8.78Z" />
         <path fill="#f8f8fa" d="M575.48,54.86h-56.92c.47,5.62,2.44,10.03,5.9,13.21,3.47,3.19,7.73,4.78,12.79,4.78,7.31,0,12.51-3.14,15.6-9.42h21.22c-2.25,7.5-6.56,13.66-12.93,18.48-6.37,4.83-14.2,7.24-23.47,7.24-7.5,0-14.22-1.66-20.17-4.99-5.95-3.32-10.59-8.03-13.92-14.13-3.33-6.09-4.99-13.12-4.99-21.08s1.64-15.13,4.92-21.22c3.28-6.09,7.87-10.77,13.77-14.06,5.9-3.28,12.7-4.92,20.38-4.92s14.03,1.59,19.89,4.78c5.85,3.19,10.4,7.71,13.63,13.56,3.23,5.86,4.85,12.58,4.85,20.17,0,2.81-.19,5.34-.56,7.59ZM555.66,41.65c-.09-5.06-1.92-9.11-5.48-12.16-3.56-3.04-7.92-4.57-13.07-4.57-4.87,0-8.97,1.48-12.3,4.43-3.33,2.95-5.37,7.05-6.11,12.3h36.97Z" />
@@ -26,92 +21,39 @@ function HorizontalLogo({ className }: { className?: string }) {
   );
 }
 
-interface AuthLayoutProps {
-  children: ReactNode;
-  title: string;
-  subtitle?: string;
-  backHref?: string;
-}
-
-export function AuthLayout({ children, title, subtitle, backHref }: AuthLayoutProps) {
+export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gray-900 flex">
-      {/* Left branding panel — desktop only */}
-      <div className="hidden lg:flex lg:w-[420px] xl:w-[460px] flex-col justify-between p-10 relative overflow-hidden border-r border-gray-800">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/25 via-gray-900 to-gray-900" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-500/8 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-600/5 rounded-full blur-2xl pointer-events-none" />
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      {/* Background glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/6 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10">
-          <HorizontalLogo className="w-40 h-auto" />
+      <div className="relative z-10 flex flex-col items-center text-center max-w-md">
+        <HorizontalLogo />
+
+        <div className="mt-14 mb-6">
+          <p className="text-8xl font-bold text-gray-800 leading-none select-none">404</p>
+          <div className="h-px w-16 mx-auto mt-6 bg-gradient-to-r from-purple-500 to-cyan-500" />
         </div>
 
-        <div className="relative z-10 space-y-5">
-          <div className="space-y-1">
-            <p className="text-xs font-semibold tracking-widest text-purple-400 uppercase">Finanças pessoais</p>
-            <h1 className="text-3xl xl:text-4xl font-bold text-white leading-snug">
-              Controle seu<br />
-              <span className="text-primary">dinheiro</span>{" "}
-              com<br />
-              inteligência.
-            </h1>
-          </div>
-          <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
-            Gerencie contas, cartões, faturas e lançamentos em um só lugar — de forma simples e visual.
-          </p>
+        <h1 className="text-xl font-semibold text-gray-50 mt-2">
+          Página não encontrada
+        </h1>
+        <p className="text-gray-500 text-sm mt-3 leading-relaxed">
+          A página que você está procurando não existe ou foi movida para outro endereço.
+        </p>
 
-          <div className="flex items-center gap-4 pt-2">
-            {[
-              { label: "Contas", value: "bancárias" },
-              { label: "Cartões", value: "de crédito" },
-              { label: "Relatórios", value: "detalhados" },
-            ].map((item) => (
-              <div key={item.label} className="text-center">
-                <p className="text-white text-xs font-semibold">{item.label}</p>
-                <p className="text-gray-600 text-[10px]">{item.value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative z-10">
-          <p className="text-gray-700 text-xs">© {new Date().getFullYear()} Meu Dinheirim</p>
-        </div>
+        <Link
+          href="/"
+          className="mt-10 inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition-colors"
+        >
+          Voltar para o início
+        </Link>
       </div>
 
-      {/* Right form panel */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-[420px]">
-          {/* Mobile brand mark */}
-          <div className="lg:hidden flex items-center justify-center mb-8">
-            <HorizontalLogo className="w-36 h-auto" />
-          </div>
-
-          {/* Header */}
-          <div className={cn("mb-6", backHref ? "flex items-center gap-3" : "")}>
-            {backHref && (
-              <Link
-                href={backHref}
-                aria-label="Voltar"
-                className="flex items-center justify-center w-8 h-8 rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 transition-colors shrink-0"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Link>
-            )}
-            <div>
-              <h2 className="text-xl font-semibold text-white">{title}</h2>
-              {subtitle && (
-                <p className="text-gray-500 text-sm mt-0.5">{subtitle}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Card */}
-          <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-xl shadow-black/30">
-            {children}
-          </div>
-        </div>
-      </div>
+      <p className="absolute bottom-6 text-gray-700 text-xs">
+        © {new Date().getFullYear()} MeuDinherim.
+      </p>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { toCurrency } from "@/helpers/string-helper";
 import { cn } from "@/helpers/string-helper";
-import { ProgressoCategoria } from "@/helpers/dashboard-mock-data";
+import { ProgressoCategoria } from "@/types/dashboard";
 
 interface ProgressoCategoriaCardProps {
   dado: ProgressoCategoria;
