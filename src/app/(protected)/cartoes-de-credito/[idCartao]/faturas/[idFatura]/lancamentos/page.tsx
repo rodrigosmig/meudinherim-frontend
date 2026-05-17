@@ -22,7 +22,7 @@ import { StatusFatura } from "@/types/enum/status-fatura";
 import { LancamentoCartao } from "@/types/lancamento-cartao";
 import { useQuery } from "@tanstack/react-query";
 import { BankIcon } from "@/components/bank-icon";
-import { BanknoteArrowDown, CreditCard, Plus, Search } from "lucide-react";
+import { BanknoteArrowUp, CreditCard, Plus, Search } from "lucide-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import FecharFaturaForm from "./fechar-fatura-form";
@@ -188,7 +188,7 @@ export default function FaturaPage() {
 
             {faturaData.permiteFecharFatura && (
               <FecharFaturaForm fatura={faturaData}>
-                <Button icon={BanknoteArrowDown} variant="primary">
+                <Button icon={BanknoteArrowUp} variant="primary">
                   Fechar Fatura
                 </Button>
               </FecharFaturaForm>

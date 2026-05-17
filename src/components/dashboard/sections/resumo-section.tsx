@@ -12,13 +12,13 @@ export function ResumoSection({ resumo }: ResumoSectionProps) {
       <MetricCard
         titulo="Entradas"
         valor={resumo.totalEntradas}
-        icone={ArrowUpCircle}
+        icone={ArrowDownCircle}
         variante="entradas"
       />
       <MetricCard
         titulo="Saídas"
         valor={resumo.totalSaidas}
-        icone={ArrowDownCircle}
+        icone={ArrowUpCircle}
         variante="saidas"
       />
       <MetricCard

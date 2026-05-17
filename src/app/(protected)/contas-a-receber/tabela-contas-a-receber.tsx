@@ -15,7 +15,7 @@ import { ContaAgendada } from "@/types/conta-agendada";
 import { Periodicidade } from "@/types/enum/periodicidade";
 import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BanknoteArrowUp, BanknoteX, Pencil, Trash2 } from "lucide-react";
+import { BanknoteArrowDown, BanknoteX, Pencil, Trash2 } from "lucide-react";
 import { ReactNode, useState } from "react";
 import ContaAReceberForm from "./conta-a-receber-form";
 import ReceberContaAReceberForm from "./receber-conta-a-receber-form";
@@ -140,7 +140,7 @@ export default function TabelaContasAReceber({ contas }: Readonly<TabelaContasAR
 
               {isAberto ? (
                 <ReceberContaAReceberForm contaAReceber={contaAReceber}>
-                  <Button icon={BanknoteArrowUp} tooltip="Receber" />
+                  <Button icon={BanknoteArrowDown} tooltip="Receber" />
                 </ReceberContaAReceberForm>
               ) : (
                 <Button
