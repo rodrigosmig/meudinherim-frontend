@@ -5,7 +5,7 @@ import UserProfile from "../user-profile";
 
 const mockedPush = jest.fn();
 const mockedRefresh = jest.fn();
-jest.mock("next/navigation", () => ({
+jest.mock("@bprogress/next/app", () => ({
   useRouter: () => ({ push: mockedPush, refresh: mockedRefresh }),
 }));
 
@@ -36,7 +36,6 @@ describe("Componente UserProfile", () => {
     await user.click(btnAvatar);
 
     expect(screen.getByText("Perfil")).toBeVisible();
-    expect(screen.getByText("Configurações")).toBeVisible();
     expect(screen.getByText("Sair")).toBeVisible();
 
     await user.keyboard("{Escape}");
@@ -46,20 +45,11 @@ describe("Componente UserProfile", () => {
     });
   });
 
-  it("deve navegar para perfil ao clicar em Perfil", async () => {
+  it("deve exibir link para perfil no menu", async () => {
     const user = userEvent.setup();
     render(<UserProfile />);
     await user.click(screen.getByRole("button", { name: /abrir menu do usuário/i }));
-    await user.click(screen.getByText("Perfil"));
-    expect(mockedPush).toHaveBeenCalledWith("/perfil");
-  });
-
-  it("deve navegar para configurações ao clicar em Configurações", async () => {
-    const user = userEvent.setup();
-    render(<UserProfile />);
-    await user.click(screen.getByRole("button", { name: /abrir menu do usuário/i }));
-    await user.click(screen.getByText("Configurações"));
-    expect(mockedPush).toHaveBeenCalledWith("/configuracoes");
+    expect(screen.getByRole("menuitem", { name: /perfil/i })).toHaveAttribute("href", "/perfil");
   });
 
   it("deve fazer logout e redirecionar ao clicar em Sair", async () => {

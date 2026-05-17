@@ -1,10 +1,10 @@
 "use client";
 
-
 import { useAuth } from "@/contexts/auth-context";
 import { authService } from "@/services/auth-service";
-import { LogOut, Settings, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@bprogress/next/app";
+import { LogOut, User } from "lucide-react";
+import Link from "next/link";
 import { Avatar } from "./avatar";
 import { DropdownMenu } from "./primitives/dropdown-menu";
 
@@ -16,14 +16,6 @@ export default function UserProfile() {
     await authService.logout();
     router.push("/login");
     router.refresh();
-  };
-
-  const handleGoToProfile = () => {
-    router.push("/perfil");
-  };
-
-  const handleGoToSettings = () => {
-    router.push("/configuracoes");
   };
 
   if (isLoading) {
@@ -59,14 +51,13 @@ export default function UserProfile() {
 
             <div className="mt-2">
               <DropdownMenu.Item>
-                <button
-                  type="button"
-                  onClick={handleGoToProfile}
+                <Link
+                  href="/perfil"
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-surface-hover hover:text-white rounded-lg transition-colors duration-150 cursor-pointer"
                 >
                   <User className="w-4 h-4" />
                   Perfil
-                </button>
+                </Link>
               </DropdownMenu.Item>
 
               <div className="my-1 h-px bg-line-separator" />

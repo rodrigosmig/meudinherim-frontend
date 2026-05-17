@@ -20,11 +20,6 @@ export const metadata: Metadata = {
     default: "Meu Dinheirim",
   },
   description: "Sistema de controle financeiro pessoal para ajudar você a organizar suas finanças, acompanhar seus gastos e alcançar seus objetivos financeiros.",
-  icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-    ],
-  },
 }
 
 export default function RootLayout({
