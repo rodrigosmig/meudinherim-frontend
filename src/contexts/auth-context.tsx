@@ -10,6 +10,7 @@ interface AuthContextData {
   isLoading: boolean
   login: (payload: LoginRequest) => Promise<void>
   logout: () => Promise<void>
+  updateUsuario: (updates: Partial<Usuario>) => void
 }
 
 const AuthContext = createContext({} as AuthContextData)
@@ -18,19 +19,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const login = async (loginBody: LoginRequest) => {
+  const login = async (request: LoginRequest) => {
     setIsLoading(true)
-    await authService.autenticar(loginBody);
+    await authService.autenticar(request);
 
     await fetchUserData();
 
     setIsLoading(false)
   }
 
-  // Função de logout
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
     setUsuario(null)
+  }
+
+  const updateUsuario = (updates: Partial<Usuario>) => {
+    setUsuario((prev) => prev ? { ...prev, ...updates } : prev)
   }
 
   async function fetchUserData() {
@@ -55,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ usuario, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ usuario, isLoading, login, logout, updateUsuario }}>
       {children}
     </AuthContext.Provider>
   )

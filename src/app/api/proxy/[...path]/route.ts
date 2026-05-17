@@ -23,6 +23,7 @@ const ALLOWED_RESOURCES = new Set([
   "dados-configuracao",
   "dashboard",
   "orcamentos",
+  "perfil",
 ]);
 
 async function proxy(request: Request, path: string[]) {
@@ -40,7 +41,6 @@ async function proxy(request: Request, path: string[]) {
 
     return NextResponse.json({ message: "Não autenticado." }, { status: 401 });
   }
-
   const url = new URL(request.url);
   // validate requested path against allowlist
   const normalized = path.map((p) => String(p).toLowerCase());
@@ -59,7 +59,6 @@ async function proxy(request: Request, path: string[]) {
   headers.set("Authorization", `Bearer ${token}`);
   headers.set("Accept-Language", "pt-BR");
   headers.delete("host");
-
   const method = request.method.toUpperCase();
   const hasBody = !["GET", "HEAD"].includes(method);
 
@@ -70,7 +69,6 @@ async function proxy(request: Request, path: string[]) {
     duplex: hasBody ? "half" : undefined,
     cache: "no-store",
   } as RequestInit);
-
   const contentType = response.headers.get("content-type") ?? "";
 
   if (contentType.includes("application/json")) {

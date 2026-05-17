@@ -64,8 +64,9 @@ const TokenPayloadSchema = z.object({
   user: z.object({
     id: z.string(),
     nome: z.string(),
-    email: z.string().email(),
+    email: z.email(),
     ativaNotificacao: z.boolean().optional(),
+    avatar: z.string().optional(),
   }),
   sub: z.string().optional(),
   iat: z.number().optional(),

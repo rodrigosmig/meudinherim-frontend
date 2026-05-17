@@ -43,14 +43,14 @@ export default function UserProfile() {
             aria-label="Abrir menu do usuário"
             className="rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            <Avatar name={usuario?.nome ?? ""} size={40} />
+            <Avatar name={usuario?.nome ?? ""} src={usuario?.avatar || undefined} size={40} />
           </button>
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content align="end" className="w-full">
           <div className="p-1">
             <div className="flex items-center gap-3 px-2 pb-2 border-b border-line-separator">
-              <Avatar name={usuario?.nome ?? ""} size={52} />
+              <Avatar name={usuario?.nome ?? ""} src={usuario?.avatar || undefined} size={52} />
               <div className="text-left">
                 <p className="text-sm font-medium text-white">{usuario?.nome}</p>
                 <p className="text-xs text-gray-400">{usuario?.email}</p>

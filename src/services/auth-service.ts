@@ -25,11 +25,11 @@ export const authService = {
     return handleApiResponse<CadastrarUsuarioResponse>(response);
   },
 
-  autenticar: async (body: LoginRequest): Promise<LoginResponse> => {
+  autenticar: async (request: LoginRequest): Promise<LoginResponse> => {
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(request),
     });
     return handleApiResponse<LoginResponse>(response);
   },
@@ -46,12 +46,12 @@ export const authService = {
   },
 
   validarCodigoRecuperacao: async (
-    body: ValidarCodigoRecuperacaoRequest,
+    request: ValidarCodigoRecuperacaoRequest,
   ): Promise<ApiResponse<string>> => {
     const response = await fetch("/api/auth/validar-codigo-recuperacao", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(request),
     });
     return handleApiResponse<ApiResponse<string>>(response);
   },
