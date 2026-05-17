@@ -30,7 +30,6 @@ describe("Componente Sidebar", () => {
 
     expect(screen.getByText("Dashboard")).toBeVisible();
     expect(screen.getByText("Categorias")).toBeVisible();
-    expect(screen.getByText("Tags")).toBeVisible();
     expect(screen.getByText("Contas Bancárias")).toBeVisible();
     expect(screen.getByText("Cartões de Crédito")).toBeVisible();
     expect(screen.getByText("Contas a Pagar")).toBeVisible();
@@ -48,7 +47,6 @@ describe("Componente Sidebar", () => {
     render(<Sidebar />);
     expect(screen.getByRole("link", { name: "Dashboard" })).toHaveAttribute("href", Urls.DASHBOARD);
     expect(screen.getByRole("link", { name: "Categorias" })).toHaveAttribute("href", Urls.CATEGORIAS);
-    expect(screen.getByRole("link", { name: "Tags" })).toHaveAttribute("href", Urls.TAGS);
     expect(screen.getByRole("link", { name: "Contas Bancárias" })).toHaveAttribute("href", Urls.CONTAS_BANCARIAS);
     expect(screen.getByRole("link", { name: "Cartões de Crédito" })).toHaveAttribute("href", Urls.CARTAO_DE_CREDITO);
     expect(screen.getByRole("link", { name: "Contas a Pagar" })).toHaveAttribute("href", Urls.CONTAS_A_PAGAR);
@@ -110,7 +108,6 @@ describe("Componente Sidebar", () => {
     const navItems = [
       "Dashboard",
       "Categorias",
-      "Tags",
       "Contas Bancárias",
       "Cartões de Crédito",
       "Contas a Pagar",

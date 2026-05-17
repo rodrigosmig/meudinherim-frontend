@@ -75,8 +75,8 @@ function SidebarRoot() {
                 <NavItem link={Urls.CARTOES_DE_CREDITO} title="Cartões de Crédito" icon={CreditCard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Agendamento" collapsed={collapsed}>
-                <NavItem link={Urls.CONTAS_A_PAGAR} title="Contas a Pagar" icon={BanknoteArrowDown} collapsed={collapsed} onNavigate={() => setOpen(false)} />
-                <NavItem link={Urls.CONTAS_A_RECEBER} title="Contas a Receber" icon={BanknoteArrowUp} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CONTAS_A_PAGAR} title="Contas a Pagar" icon={BanknoteArrowUp} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CONTAS_A_RECEBER} title="Contas a Receber" icon={BanknoteArrowDown} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Relatórios" collapsed={collapsed}>
                 <NavItem link={Urls.CONTAS_A_PAGAR_RECEBER} title="Contas a Pagar/Receber" icon={ChartNoAxesColumnIncreasing} collapsed={collapsed} onNavigate={() => setOpen(false)} />

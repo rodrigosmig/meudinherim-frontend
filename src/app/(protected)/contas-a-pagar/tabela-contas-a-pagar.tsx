@@ -15,7 +15,7 @@ import { ContaAgendada } from "@/types/conta-agendada";
 import { Periodicidade } from "@/types/enum/periodicidade";
 import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BanknoteArrowDown, BanknoteX, Pencil, Trash2 } from "lucide-react";
+import { BanknoteArrowUp, BanknoteX, Pencil, Trash2 } from "lucide-react";
 import { ReactNode, useState } from "react";
 import ContaAPagarForm from "./conta-a-pagar-form";
 import PagarContaAPagarForm from "./pagar-conta-a-pagar-form";
@@ -144,7 +144,7 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
 
               {isAberto ? (
                 <PagarContaAPagarForm contaAPagar={contaAPagar}>
-                  <Button icon={BanknoteArrowDown} tooltip="Pagar" />
+                  <Button icon={BanknoteArrowUp} tooltip="Pagar" />
                 </PagarContaAPagarForm>
               ) : (
                 <Button
