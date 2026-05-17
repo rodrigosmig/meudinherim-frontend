@@ -1,0 +1,7 @@
+export enum Periodicidade {
+  NENHUMA = "NENHUMA",
+  MENSAL = "MENSAL",
+  TRIMESTRAL = "TRIMESTRAL",
+  SEMESTRAL = "SEMESTRAL",
+  ANUAL = "ANUAL",
+}

@@ -1,0 +1,208 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+@import "react-day-picker/dist/style.css";
+
+:root {
+  --font-sans:
+    var(--font-pretendard), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@theme {
+  --color-purple-900: #29246a;
+  --color-purple-800: #312a80;
+  --color-purple-700: #3e35a6;
+  --color-purple-600: #4c40cd;
+  --color-purple-500: #6759f4;
+  --color-purple-400: #897efa;
+  --color-purple-300: #a49efb;
+  --color-purple-200: #c9c4fc;
+  --color-purple-100: #e8e7fe;
+  --color-purple-50: #f7f5ff;
+
+  --color-cyan-900: #23717b;
+  --color-cyan-800: #217e8c;
+  --color-cyan-700: #2096a7;
+  --color-cyan-600: #1ea8bc;
+  --color-cyan-500: #1ebad3;
+  --color-cyan-400: #52cce0;
+  --color-cyan-300: #7ed8e7;
+  --color-cyan-200: #a6e2ec;
+  --color-cyan-100: #d4f1f5;
+  --color-cyan-50: #f3fcfd;
+
+  --color-gray-900: #171a1e;
+  --color-gray-800: #242830;
+  --color-gray-700: #3e404d;
+  --color-gray-600: #525463;
+  --color-gray-500: #85899a;
+  --color-gray-400: #ababb7;
+  --color-gray-300: #cecfd7;
+  --color-gray-200: #e9e8ef;
+  --color-gray-100: #f1f0f5;
+  --color-gray-50: #f8f8fa;
+
+  --color-primary: var(--color-purple-500);
+  --color-secondary: var(--color-purple-400);
+
+  --color-card: var(--color-gray-800);
+
+  --color-default-text: var(--color-gray-50);
+  --color-default-border: var(--color-gray-700);
+  --color-input-text: var(--color-purple-500);
+  --color-default-placeholder: var(--color-gray-600);
+  --color-line-separator: var(--color-gray-600);
+
+  --color-button-hover: var(--color-purple-100);
+
+  --color-error: #f87171;
+  --color-positive: var(--color-cyan-400);
+  --color-negative: #fca5a5;
+
+  /* --- Surfaces --- */
+  --color-surface-raised: var(--color-gray-800);
+  --color-surface-muted: color-mix(in srgb, var(--color-gray-700) 30%, transparent);
+  --color-surface-hover: color-mix(in srgb, var(--color-primary) 8%, transparent);
+
+  /* --- Borders & Dividers --- */
+  --color-divider: color-mix(in srgb, var(--color-gray-700) 40%, transparent);
+  --color-border-muted: color-mix(in srgb, var(--color-gray-700) 50%, transparent);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@layer utilities {
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-gray-700) 0%,
+      rgba(255, 255, 255, 0.05) 40%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.05) 60%,
+      var(--color-gray-700) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+}
+
+.main-content-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rem;
+  background: linear-gradient(to bottom, rgba(23, 26, 30, 0.4), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Configuração de fonte padrão para todos os elementos */
+@layer base {
+  * {
+    font-family: var(--font-sans);
+  }
+
+  /* Estilo global de foco */
+  *:focus-visible {
+    outline: 2px solid var(--color-primary); /* primary color */
+    outline-offset: 2px;
+  }
+}
+
+body {
+  background: var(--color-gray-900);
+  color: var(--color-gray-50);
+  font-family: var(--font-sans);
+}
+
+.periodo-day-picker {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-accent-background-color: rgb(103 89 244 / 0.16);
+  --rdp-selected-border: 1px solid var(--color-purple-400);
+  --rdp-today-color: var(--color-purple-300);
+  --rdp-range_middle-background-color: rgb(103 89 244 / 0.3);
+  --rdp-range_middle-color: var(--color-gray-50);
+  --rdp-range_start-color: var(--color-gray-50);
+  --rdp-range_end-color: var(--color-gray-50);
+  --rdp-range_start-date-background-color: var(--color-purple-500);
+  --rdp-range_end-date-background-color: var(--color-purple-500);
+}
+
+.periodo-day-picker .rdp-chevron {
+  fill: var(--color-primary);
+}
+
+.periodo-day-picker .rdp-button_previous:hover,
+.periodo-day-picker .rdp-button_next:hover {
+  background-color: rgb(103 89 244 / 0.14);
+  border-radius: 0.5rem;
+}
+
+.periodo-day-picker .rdp-today:not(.rdp-outside) .rdp-day_button {
+  font-weight: 500;
+}
+
+.periodo-day-picker .rdp-day_button {
+  transition: background-color 120ms ease;
+}
+
+.periodo-day-picker
+  .rdp-day:not(.rdp-selected):not(.rdp-disabled):not(.rdp-outside)
+  .rdp-day_button:hover {
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.periodo-day-picker {
+  font-size: 0.78rem;
+}
+
+.periodo-day-picker .rdp-month_caption {
+  font-size: 0.78rem;
+}
+
+.periodo-day-picker .rdp-caption_label,
+.periodo-day-picker .rdp-dropdown,
+.periodo-day-picker .rdp-dropdown_root,
+.periodo-day-picker .rdp-dropdown option,
+.periodo-day-picker .rdp-weekday,
+.periodo-day-picker .rdp-day_button {
+  font-size: 1rem;
+}
+
+.periodo-day-picker .rdp-day_button {
+  width: 2.2rem;
+  height: 2.2rem;
+  text-align: center;
+}
+
+.periodo-day-picker .rdp-button_previous,
+.periodo-day-picker .rdp-button_next {
+  width: 1.9rem;
+  height: 1.9rem;
+}
+
+.periodo-day-picker .rdp-chevron {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.rdp-day.rdp-outside {
+  opacity: 0.4;
+  color: var(--color-gray-400);
+}
+
+.periodo-day-picker-input-date .rdp-selected .rdp-day_button,
+.periodo-day-picker-input-date .rdp-day_button.rdp-selected {
+  background-color: var(--color-primary) !important;
+  color: var(--color-gray-100) !important;
+  border: 1px solid var(--color-cyan-300) !important;
+}

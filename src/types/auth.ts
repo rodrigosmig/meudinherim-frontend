@@ -1,110 +1,69 @@
-import { GetServerSidePropsContext } from "next";
+import { ApiFormErrorResponse, ApiResponse } from "./api";
+import { Usuario } from "./usuario";
 
-export interface AuthState {
-  isLoading: boolean;
-  token: string;
-  user: IUser;
-  isAuthenticated: boolean;
-  isError: boolean,
-  error: {
-    statusCode: number,
-    message: string
-  }
-}
-
-interface UserFormData {
+export interface LoginRequest {
   email: string;
   password: string;
+  recaptchaToken: string;
 }
 
-export interface IUser {
-  id: number;
-  name: string;
+export interface LoginData {
+  //TODO verificar pq o response não retorna usuario completo
+  usuario: Usuario;
+}
+
+export type LoginResponse = ApiResponse<LoginData>; // | ApiFormErrorResponse;
+
+export interface CadastrarUsuarioRequest {
+  nome: string;
   email: string;
-  avatar: string;
-  enable_notification: boolean;
-  hasEmailVerified: boolean;
-}
-
-export interface ISignInCredentials extends UserFormData {
-  device?: string;
-  reCaptchaToken: string;
-}
-
-export interface IAuthContextData {
-  signIn: (credentials: ISignInCredentials) => Promise<void>;
-  signOut: () => void;
-  setUser: (user: IUser) => void,
-  user: IUser;
-  isAuthenticated: boolean;
-}
-
-export interface IRegisterData extends UserFormData {
-  name: string
-  password_confirmation: string;
-  enable_notification: boolean;
-  reCaptchaToken: string;
-}
-
-export interface IResetPasswordData extends Omit<IRegisterData, "name" | "enable_notification"> {}
-
-export interface IProfileUpdateData {
-  name: string
-  email: string;
-  enable_notification: boolean;
-}
-
-export interface IProfileUpdateDataError {
-  name: string[]
-  email: string[];
-  enable_notification: string[];
-}
-
-export type IProfileUpdateDataErrorKey = keyof IProfileUpdateDataError;
-
-export interface IPasswordUpdateData {
-  current_password: string
   password: string;
-  password_confirmation: string;
+  passwordConfirmation: string;
+  recaptchaToken: string;
 }
 
-export interface IForgotPasswordData {
-  email: string
+export interface CadastrarUsuarioData {
+  idUsuario: string;
 }
 
-export interface IForgotPasswordResponse {
-  message: string;
-  errors?: {
-    email: string[]
-  }
+export type CadastrarUsuarioResponse =
+  | ApiResponse<CadastrarUsuarioData>
+  | ApiFormErrorResponse;
+
+export interface RecuperarSenhaRequest {
+  email: string;
+  recaptchaToken: string;
 }
 
-export interface ISignInResponse {
+export type RecuperarSenhaResponse = ApiResponse<void> | ApiFormErrorResponse;
+
+export interface ConfirmarUsuarioParam {
   token: string;
-  user: IUser
 }
 
-export interface IAvatarUpdateResponse {
-  message: string;
-  avatar: string
+export interface ReenviarEmailConfirmacaoRequest {
+  email: string;
 }
 
-export interface IResetPasswordResponseError {
-  token: string[];
-  email: string[];
-  password: string[];
+export type ReenviarEmailConfirmacaoResponse =
+  | ApiResponse<void>
+  | ApiFormErrorResponse;
+
+export interface ResetarSenhaRequest {
+  token: string;
+  password: string;
+  passwordConfirmation: string;
 }
 
-export type IResetPaaswordErrorKey = keyof IResetPasswordResponseError;
-
-export interface IVerifyEmail {
-  expires: string;
-  hash: string;
-  signature: string;
+export interface ValidarCodigoRecuperacaoRequest {
+  email: string;
+  codigo: string;
 }
 
-export interface IResendVerificationEmailData {
-  email: string
-}
+export type ValidarCodigoRecuperacaoResponse =
+  | ApiResponse<string>
+  | ApiFormErrorResponse;
 
-export type ITokenContext = GetServerSidePropsContext | null | undefined;
+export type VerificationResult<T = unknown> =
+  | { valido: true; payload: T }
+  | { valido: false; erro: string };
