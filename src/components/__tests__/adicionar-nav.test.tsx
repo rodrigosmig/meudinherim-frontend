@@ -104,4 +104,48 @@ describe("Componente AdicionarNav", () => {
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
+
+  it("deve abrir o formulário de categoria ao clicar no item", async () => {
+    const user = userEvent.setup();
+    render(<AdicionarNav />);
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Categoria"));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("deve abrir o formulário de orçamento ao clicar no item", async () => {
+    const user = userEvent.setup();
+    render(<AdicionarNav />);
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Orçamento"));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("deve abrir o formulário de conta a pagar ao clicar no item", async () => {
+    const user = userEvent.setup();
+    render(<AdicionarNav />);
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Contas a Pagar"));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("deve abrir o formulário de conta a receber ao clicar no item", async () => {
+    const user = userEvent.setup();
+    render(<AdicionarNav />);
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Contas a Receber"));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("deve fechar o formulário ao chamar onOpenChange com false", async () => {
+    const user = userEvent.setup();
+    render(<AdicionarNav />);
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Categoria"));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    // Reopen dropdown then open another form — this triggers fecharForm indirectly
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Orçamento"));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
 });

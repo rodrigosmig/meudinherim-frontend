@@ -39,6 +39,6 @@ describe("AuthLayout", () => {
 
   it("renderiza a marca 'Meu Dinheirim'", () => {
     render(<AuthLayout title="Título"><p>filho</p></AuthLayout>);
-    expect(screen.getAllByText("Meu Dinheirim").length).toBeGreaterThan(0);
+    expect(screen.getByText(/Meu Dinheirim/i)).toBeInTheDocument();
   });
 });

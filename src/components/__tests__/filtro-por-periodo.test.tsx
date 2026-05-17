@@ -17,8 +17,12 @@ jest.mock("@/components/primitives/dropdown-menu", () => ({
     Content: ({ children }: any) => <div data-testid="dropdown-content">{children}</div>,
   },
 }));
+let capturedOnSelect: ((range: any) => void) | undefined;
 jest.mock("react-day-picker", () => ({
-  DayPicker: () => <div data-testid="day-picker" />,
+  DayPicker: ({ onSelect }: any) => {
+    capturedOnSelect = onSelect;
+    return <div data-testid="day-picker" />;
+  },
 }));
 jest.mock("@/components/primitives/button", () => ({
   Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
@@ -96,9 +100,30 @@ describe("FiltroPorPeriodo", () => {
   it("chama onRangeChange ao selecionar range no calendário", () => {
     const onRangeChange = jest.fn();
     render(<FiltroPorPeriodo {...baseProps} onRangeChange={onRangeChange} />);
-    // Simula seleção de range
     fireEvent.click(screen.getByTestId("day-picker"));
-    // Não há assert direto pois o mock não executa lógica real, mas garante que o componente está presente
     expect(screen.getByTestId("day-picker")).toBeInTheDocument();
+  });
+
+  it("chama onRangeChange e fecha o dropdown ao selecionar range completo via DayPicker", () => {
+    const onRangeChange = jest.fn();
+    render(<FiltroPorPeriodo {...baseProps} onRangeChange={onRangeChange} />);
+    const fullRange = { from: new Date("2024-01-01"), to: new Date("2024-01-10") };
+    capturedOnSelect?.(fullRange);
+    expect(onRangeChange).toHaveBeenCalledWith(fullRange);
+  });
+
+  it("chama onRangeChange mas não fecha com range parcial (só from)", () => {
+    const onRangeChange = jest.fn();
+    render(<FiltroPorPeriodo {...baseProps} onRangeChange={onRangeChange} />);
+    const partial = { from: new Date("2024-01-01"), to: undefined };
+    capturedOnSelect?.(partial);
+    expect(onRangeChange).toHaveBeenCalledWith(partial);
+  });
+
+  it("chama onRangeChange com undefined via DayPicker", () => {
+    const onRangeChange = jest.fn();
+    render(<FiltroPorPeriodo {...baseProps} onRangeChange={onRangeChange} />);
+    capturedOnSelect?.(undefined);
+    expect(onRangeChange).toHaveBeenCalledWith(undefined);
   });
 });

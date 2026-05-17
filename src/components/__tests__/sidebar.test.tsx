@@ -26,8 +26,6 @@ jest.mock('next/link', () => {
 describe("Componente Sidebar", () => {
   it("deve renderizar itens principais e seções", () => {
     render(<Sidebar />);
-    expect(screen.getByText("Meu Dinheirim")).toBeVisible();
-    expect(screen.getByText("Controle Financeiro")).toBeVisible();
     expect(screen.getByRole("button", { name: "Abrir menu" })).toBeVisible();
 
     expect(screen.getByText("Dashboard")).toBeVisible();

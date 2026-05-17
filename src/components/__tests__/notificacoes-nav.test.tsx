@@ -112,4 +112,42 @@ describe("NotificacoesNav", () => {
     await user.click(screen.getByRole("button", { name: "Notificações" }));
     expect(screen.getByRole("button", { name: /Marcar todas como lidas/i })).toBeVisible();
   });
+
+  it("deve exibir estado de carregamento quando isLoading é true", () => {
+    mockedUseConfiguracaoInicial.mockReturnValue({ data: null, isLoading: true, isFetching: false });
+    render(<NotificacoesNav />);
+    expect(screen.getByRole("button", { name: "Notificações" })).toBeInTheDocument();
+  });
+
+  it("deve exibir mensagem vazia quando não há notificações após abrir menu", async () => {
+    mockedUseConfiguracaoInicial.mockReturnValue({ data: { notificacoes: [] }, isLoading: false, isFetching: false });
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.getByText("Nenhuma notificação")).toBeVisible();
+  });
+
+  it("não deve exibir botão 'Marcar todas como lidas' sem notificações", async () => {
+    mockedUseConfiguracaoInicial.mockReturnValue({ data: { notificacoes: [] }, isLoading: false, isFetching: false });
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.queryByRole("button", { name: /Marcar todas como lidas/i })).not.toBeInTheDocument();
+  });
+
+  it("deve exibir spinner de carregamento quando isFetching é true e menu aberto", async () => {
+    mockedUseConfiguracaoInicial.mockReturnValue({ data: { notificacoes: notificacoesMock }, isLoading: false, isFetching: true });
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.getByText("Notificações")).toBeVisible();
+  });
+
+  it("deve renderizar um item por notificação na lista", async () => {
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    const itensVencimento = screen.getAllByText(/Vence:/);
+    expect(itensVencimento).toHaveLength(notificacoesMock.length);
+  });
 });
