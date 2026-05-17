@@ -52,18 +52,18 @@ export function MetricCard({ titulo, valor, icone: Icon, variante }: MetricCardP
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
 
-      <div className={cn("absolute top-4 right-4 w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center", styles.icon)}>
-        <Icon className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.75} />
-      </div>
-
-      <div>
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-2 truncate pr-10">
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-widest truncate">
           {titulo}
         </p>
-        <p className={cn("text-xl sm:text-2xl font-bold tabular-nums leading-none", styles.value)}>
-          {toCurrency(valor)}
-        </p>
+        <div className={cn("shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center", styles.icon)}>
+          <Icon className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.75} />
+        </div>
       </div>
+
+      <p className={cn("text-xl sm:text-2xl font-bold tabular-nums leading-none", styles.value)}>
+        {toCurrency(valor)}
+      </p>
     </div>
   );
 }
