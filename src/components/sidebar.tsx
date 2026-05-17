@@ -66,7 +66,7 @@ function SidebarRoot() {
                 <NavItem link={Urls.DASHBOARD} title="Dashboard" icon={LayoutDashboard} collapsed={collapsed} onNavigate={() => setOpen(false)} />
                 <NavItem link={Urls.CATEGORIAS} title="Categorias" icon={Bookmark} collapsed={collapsed} onNavigate={() => setOpen(false)} />
                 <NavItem link={Urls.ORCAMENTOS} title="Orçamentos" icon={PiggyBank} collapsed={collapsed} onNavigate={() => setOpen(false)} />
-                <NavItem link={Urls.TAGS} title="Tags" icon={Tags} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                {/* <NavItem link={Urls.TAGS} title="Tags" icon={Tags} collapsed={collapsed} onNavigate={() => setOpen(false)} /> */}
               </NavSection>
               <NavSection title="Contas" collapsed={collapsed}>
                 <NavItem link={Urls.CONTAS_BANCARIAS} title="Contas Bancárias" icon={Landmark} collapsed={collapsed} onNavigate={() => setOpen(false)} />

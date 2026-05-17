@@ -69,17 +69,6 @@ export default function UserProfile() {
                 </button>
               </DropdownMenu.Item>
 
-              <DropdownMenu.Item>
-                <button
-                  type="button"
-                  onClick={handleGoToSettings}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-surface-hover hover:text-white rounded-lg transition-colors duration-150 cursor-pointer"
-                >
-                  <Settings className="w-4 h-4" />
-                  Configurações
-                </button>
-              </DropdownMenu.Item>
-
               <div className="my-1 h-px bg-line-separator" />
 
               <DropdownMenu.Item>
