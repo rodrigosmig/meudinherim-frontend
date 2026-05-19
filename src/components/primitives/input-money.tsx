@@ -34,7 +34,6 @@ export function InputMoney({ label, error, className, onChange, value: externalV
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace") {
       e.preventDefault();
-
       const next = digits.slice(0, -1);
       setDigits(next);
       onChange?.(next ? parseInt(next, 10) / 100 : undefined);
@@ -44,10 +43,23 @@ export function InputMoney({ label, error, className, onChange, value: externalV
     if (!/^\d$/.test(e.key)) return;
 
     e.preventDefault();
-
     const next = digits + e.key;
     setDigits(next);
     onChange?.(parseInt(next, 10) / 100);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nativeEvent = e.nativeEvent as InputEvent;
+
+    if (nativeEvent.inputType === 'deleteContentBackward') {
+      const next = digits.slice(0, -1);
+      setDigits(next);
+      onChange?.(next ? parseInt(next, 10) / 100 : undefined);
+    } else if (nativeEvent.data && /^\d$/.test(nativeEvent.data)) {
+      const next = digits + nativeEvent.data;
+      setDigits(next);
+      onChange?.(parseInt(next, 10) / 100);
+    }
   };
 
   return (
@@ -59,7 +71,7 @@ export function InputMoney({ label, error, className, onChange, value: externalV
         placeholder="R$ 0,00"
         value={formatDisplay(digits)}
         onKeyDown={handleKeyDown}
-        readOnly
+        onChange={handleChange}
         error={error}
         {...props}
       />
