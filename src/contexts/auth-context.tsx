@@ -22,10 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (request: LoginRequest) => {
     setIsLoading(true)
     await authService.autenticar(request);
-
     await fetchUserData();
-
-    setIsLoading(false)
   }
 
   const logout = async () => {

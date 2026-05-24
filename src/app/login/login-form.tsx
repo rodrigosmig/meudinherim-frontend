@@ -15,11 +15,13 @@ import { LockKeyhole, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 export function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const form = useForm<LoginFormValue>({
     resolver: zodResolver(loginSchema),
@@ -37,6 +39,7 @@ export function LoginForm() {
     try {
       const recaptchaToken = await executeRecaptcha("login");
       await login({ ...data, recaptchaToken });
+      setIsRedirecting(true);
       router.push('/');
 
       return;
@@ -86,7 +89,8 @@ export function LoginForm() {
       <div>
         <Button
           type="submit"
-          isLoading={form.formState.isSubmitting}
+          isLoading={form.formState.isSubmitting || isRedirecting}
+          disabled={form.formState.isSubmitting || isRedirecting}
           className="w-full mt-8"
         >
           Entrar
