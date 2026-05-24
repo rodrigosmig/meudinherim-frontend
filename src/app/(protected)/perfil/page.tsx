@@ -143,6 +143,7 @@ function PerfilForm() {
         return;
       }
 
+      form.reset(data);
       toast.success("Perfil atualizado com sucesso!");
     } catch (error) {
       if (error instanceof ApiError) {
@@ -259,7 +260,7 @@ function PerfilForm() {
           <Switch
             label="Receber notificações"
             checked={form.watch("ativaNotificacao")}
-            onCheckedChange={(checked) => form.setValue("ativaNotificacao", checked)}
+            onCheckedChange={(checked) => form.setValue("ativaNotificacao", checked, { shouldDirty: true })}
           />
         </div>
 
@@ -268,7 +269,7 @@ function PerfilForm() {
             type="submit"
             className="w-full"
             isLoading={form.formState.isSubmitting}
-            disabled={form.formState.isSubmitting}
+            disabled={!form.formState.isDirty || form.formState.isSubmitting}
           >
             Salvar alterações
           </Button>

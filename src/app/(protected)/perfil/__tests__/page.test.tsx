@@ -114,10 +114,13 @@ describe("PerfilPage", () => {
   it("salva perfil com sucesso", async () => {
     const user = userEvent.setup();
     render(<PerfilPage />);
+    const nomeInput = screen.getByDisplayValue("Rodrigo Miguel");
+    await user.clear(nomeInput);
+    await user.type(nomeInput, "Rodrigo Editado");
     await user.click(screen.getByRole("button", { name: /Salvar alterações/i }));
     await waitFor(() => {
       expect(mockAlterarPerfil).toHaveBeenCalledWith(
-        expect.objectContaining({ nome: "Rodrigo Miguel", email: "rodrigo@email.com" }),
+        expect.objectContaining({ nome: "Rodrigo Editado", email: "rodrigo@email.com" }),
       );
     });
   });
@@ -125,9 +128,50 @@ describe("PerfilPage", () => {
   it("atualiza contexto após salvar perfil", async () => {
     const user = userEvent.setup();
     render(<PerfilPage />);
+    const nomeInput = screen.getByDisplayValue("Rodrigo Miguel");
+    await user.clear(nomeInput);
+    await user.type(nomeInput, "Rodrigo Editado");
     await user.click(screen.getByRole("button", { name: /Salvar alterações/i }));
     await waitFor(() => {
       expect(mockUpdateUsuario).toHaveBeenCalled();
+    });
+  });
+
+  describe("botão Salvar alterações", () => {
+    it("começa desabilitado", () => {
+      render(<PerfilPage />);
+      expect(screen.getByRole("button", { name: /Salvar alterações/i })).toBeDisabled();
+    });
+
+    it("é habilitado ao alterar o nome", async () => {
+      const user = userEvent.setup();
+      render(<PerfilPage />);
+      const nomeInput = screen.getByDisplayValue("Rodrigo Miguel");
+      await user.clear(nomeInput);
+      await user.type(nomeInput, "Novo Nome");
+      expect(screen.getByRole("button", { name: /Salvar alterações/i })).not.toBeDisabled();
+    });
+
+    it("é habilitado ao alterar o e-mail desbloqueado", async () => {
+      const user = userEvent.setup();
+      render(<PerfilPage />);
+      await user.click(screen.getByText("Alterar e-mail"));
+      const emailInput = screen.getByDisplayValue("rodrigo@email.com");
+      await user.clear(emailInput);
+      await user.type(emailInput, "novo@email.com");
+      expect(screen.getByRole("button", { name: /Salvar alterações/i })).not.toBeDisabled();
+    });
+
+    it("volta a ser desabilitado após salvar com sucesso", async () => {
+      const user = userEvent.setup();
+      render(<PerfilPage />);
+      const nomeInput = screen.getByDisplayValue("Rodrigo Miguel");
+      await user.clear(nomeInput);
+      await user.type(nomeInput, "Rodrigo Editado");
+      await user.click(screen.getByRole("button", { name: /Salvar alterações/i }));
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /Salvar alterações/i })).toBeDisabled();
+      });
     });
   });
 
