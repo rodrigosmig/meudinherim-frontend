@@ -129,7 +129,7 @@ function PerfilForm() {
 
     try {
       const result = await usuarioService.alterarPerfil(data);
-      let updatedUsuario: Usuario | undefined;
+      let updatedUsuario;
       if ("data" in result && result.data) {
         const { usuario: responseUsuario } = result.data as AlterarPerfilData;
         if (responseUsuario) {

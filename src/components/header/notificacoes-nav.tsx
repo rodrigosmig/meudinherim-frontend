@@ -17,6 +17,7 @@ import { DropdownMenu } from "../primitives/dropdown-menu";
 import Icon from "../primitives/icon";
 import Loading from "../primitives/loading";
 import Text from "../primitives/text";
+import { toast } from "../toast";
 
 const tipoContasAgendadas = {
   [TipoContaAgendada.CONTA_A_RECEBER]: "Conta a Receber",
@@ -48,6 +49,9 @@ export default function NotificacoesNav() {
     onSuccess: (_, id) => {
       setNotificacoes((prev) => prev.filter((n) => n.id !== id));
       queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] });
+    },
+    onError: () => {
+      toast.error("Não foi possível marcar a notificação como lida.");
     },
   });
 
