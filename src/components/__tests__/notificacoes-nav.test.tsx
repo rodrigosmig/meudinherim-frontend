@@ -1,10 +1,25 @@
 // Importa o módulo original para manter a função cn antes de qualquer importação
 const originalStringHelper = jest.requireActual("@/helpers/string-helper");
 
-import { render, screen } from "@/helpers/test/test-helper";
+import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 import NotificacoesNav from "../header/notificacoes-nav";
 import { TipoContaAgendada } from "@/types/enum/tipo-conta-agendada";
+import { notificacaoService } from "@/services/notificacoes-service";
+
+jest.mock("next/link", () => ({
+  __esModule: true,
+  default: ({ href, onClick, children, className }: any) => (
+    <a href={href} onClick={onClick} className={className}>{children}</a>
+  ),
+}));
+
+jest.mock("@/services/notificacoes-service", () => ({
+  notificacaoService: {
+    marcarComoLida: jest.fn().mockResolvedValue({}),
+    marcarTodasComoLida: jest.fn().mockResolvedValue({}),
+  },
+}));
 
 // Mocks dos hooks
 const mockedUseConfiguracaoInicial = jest.fn();
@@ -149,5 +164,37 @@ describe("NotificacoesNav", () => {
     await user.click(screen.getByRole("button", { name: "Notificações" }));
     const itensVencimento = screen.getAllByText(/Vence:/);
     expect(itensVencimento).toHaveLength(notificacoesMock.length);
+  });
+
+  it("não deve exibir botão individual de marcar como lida nas notificações", async () => {
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.queryByRole("button", { name: /Marcar como lida/i })).not.toBeInTheDocument();
+  });
+
+  it("deve chamar marcarComoLida ao clicar em uma notificação", async () => {
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+
+    const links = screen.getAllByRole("link");
+    await user.click(links[0]);
+
+    await waitFor(() => {
+      expect(notificacaoService.marcarComoLida).toHaveBeenCalledWith(notificacoesMock[0].id);
+    });
+  });
+
+  it("deve fechar o menu ao clicar em uma notificação", async () => {
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.getByText("Conta de água")).toBeInTheDocument();
+
+    const links = screen.getAllByRole("link");
+    await user.click(links[0]);
+
+    expect(screen.queryByText("Conta de água")).not.toBeInTheDocument();
   });
 });
