@@ -129,9 +129,13 @@ function PerfilForm() {
 
     try {
       const result = await usuarioService.alterarPerfil(data);
+      let updatedUsuario: Usuario | undefined;
       if ("data" in result && result.data) {
-        const { usuario: updatedUsuario } = result.data as AlterarPerfilData;
-        if (updatedUsuario) updateUsuario(updatedUsuario);
+        const { usuario: responseUsuario } = result.data as AlterarPerfilData;
+        if (responseUsuario) {
+          updatedUsuario = responseUsuario;
+          updateUsuario(responseUsuario);
+        }
       }
 
       if (emailChanged) {
@@ -143,7 +147,11 @@ function PerfilForm() {
         return;
       }
 
-      form.reset(data);
+      form.reset(
+        updatedUsuario
+          ? { nome: updatedUsuario.nome, email: updatedUsuario.email, ativaNotificacao: updatedUsuario.ativaNotificacao }
+          : data
+      );
       toast.success("Perfil atualizado com sucesso!");
     } catch (error) {
       if (error instanceof ApiError) {

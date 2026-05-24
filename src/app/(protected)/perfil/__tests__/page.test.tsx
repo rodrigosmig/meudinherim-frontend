@@ -162,6 +162,13 @@ describe("PerfilPage", () => {
       expect(screen.getByRole("button", { name: /Salvar alterações/i })).not.toBeDisabled();
     });
 
+    it("é habilitado ao alternar a notificação", async () => {
+      const user = userEvent.setup();
+      render(<PerfilPage />);
+      await user.click(screen.getByRole("switch", { name: /Receber notificações/i }));
+      expect(screen.getByRole("button", { name: /Salvar alterações/i })).not.toBeDisabled();
+    });
+
     it("volta a ser desabilitado após salvar com sucesso", async () => {
       const user = userEvent.setup();
       render(<PerfilPage />);

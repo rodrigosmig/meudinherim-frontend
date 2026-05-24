@@ -21,8 +21,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (request: LoginRequest) => {
     setIsLoading(true)
-    await authService.autenticar(request);
-    await fetchUserData();
+    try {
+      await authService.autenticar(request);
+      await fetchUserData();
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const logout = async () => {

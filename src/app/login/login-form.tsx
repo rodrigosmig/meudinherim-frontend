@@ -12,10 +12,10 @@ import { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LockKeyhole, Mail } from "lucide-react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 
 export function LoginForm() {
   const router = useRouter();
