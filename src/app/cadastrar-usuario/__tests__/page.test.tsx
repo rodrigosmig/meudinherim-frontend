@@ -21,6 +21,6 @@ describe("CadastrarUsuario Page", () => {
     expect(screen.getByLabelText(/E-mail/i)).toBeInTheDocument();
     expect(senhaInput).toBeInTheDocument();
     expect(confirmaSenhaInput).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Cadastrar/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Salvar/i })).toBeInTheDocument();
   });
 });

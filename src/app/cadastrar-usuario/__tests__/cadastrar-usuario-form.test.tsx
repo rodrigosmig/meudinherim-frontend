@@ -54,7 +54,7 @@ describe("CadastrarUsuarioForm", () => {
     expect(screen.getByLabelText(/E-mail/i)).toBeInTheDocument();
     expect(senhaInput).toBeInTheDocument();
     expect(confirmaSenhaInput).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Cadastrar/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Salvar/i })).toBeInTheDocument();
   });
 
   it("exibe mensagem de sucesso e envia recaptchaToken ao cadastrar", async () => {
@@ -64,7 +64,7 @@ describe("CadastrarUsuarioForm", () => {
     });
     render(<CadastrarUsuarioForm />);
     preencherFormulario();
-    fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
 
     await waitFor(() => {
       expect(mockExecuteRecaptcha).toHaveBeenCalledWith("cadastrar_usuario");
@@ -81,7 +81,7 @@ describe("CadastrarUsuarioForm", () => {
 
     render(<CadastrarUsuarioForm />);
     preencherFormulario();
-    fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(
@@ -101,7 +101,7 @@ describe("CadastrarUsuarioForm", () => {
     );
     render(<CadastrarUsuarioForm />);
     preencherFormulario();
-    fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
     await waitFor(() => {
       expect(screen.getByText("E-mail já cadastrado")).toBeInTheDocument();
       expect(toast.error).toHaveBeenCalledWith("Campo inválido");
@@ -115,7 +115,7 @@ describe("CadastrarUsuarioForm", () => {
     );
     render(<CadastrarUsuarioForm />);
     preencherFormulario();
-    fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(mensagem);
     });
@@ -125,7 +125,7 @@ describe("CadastrarUsuarioForm", () => {
     mockCadastrarUsuario.mockRejectedValueOnce(new Error("unexpected"));
     render(<CadastrarUsuarioForm />);
     preencherFormulario();
-    fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
     });

@@ -257,7 +257,7 @@ export default function LancamentoContaForm({ lancamentoConta, children, open: c
             isLoading={cadastrarLancamentoContaMutation.isPending}
             disabled={isLoadingDependencies || cadastrarLancamentoContaMutation.isPending}
           >
-            Cadastrar
+            Salvar
           </Button>
         </div>
       </form>
