@@ -4,7 +4,7 @@ import { toBrDate, toCurrency } from "@/helpers/string-helper";
 import { useMobile } from "@/hooks/use-is-mobile";
 import { Notificacao } from "@/types/notificacoes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Bell, Check } from "lucide-react";
+import { Bell } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -17,6 +17,7 @@ import { DropdownMenu } from "../primitives/dropdown-menu";
 import Icon from "../primitives/icon";
 import Loading from "../primitives/loading";
 import Text from "../primitives/text";
+import { toast } from "../toast";
 
 const tipoContasAgendadas = {
   [TipoContaAgendada.CONTA_A_RECEBER]: "Conta a Receber",
@@ -43,11 +44,14 @@ export default function NotificacoesNav() {
     }
   }, [data]);
 
-  const { mutate: marcarComoLida, isPending: marcandoUma } = useMutation({
+  const { mutate: marcarComoLida } = useMutation({
     mutationFn: (id: string) => notificacaoService.marcarComoLida(id),
     onSuccess: (_, id) => {
       setNotificacoes((prev) => prev.filter((n) => n.id !== id));
       queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] });
+    },
+    onError: () => {
+      toast.error("Não foi possível marcar a notificação como lida.");
     },
   });
 
@@ -102,33 +106,26 @@ export default function NotificacoesNav() {
               ) : (
                 notificacoes.map((notificacao) => (
                   <DropdownMenu.Item key={notificacao.id} className="p-0 focus:bg-transparent">
-                    <div className="w-full flex items-center gap-1 px-1 py-1">
+                    <div className="w-full px-1 py-1">
                       <Link
                         href={tipoRotas[notificacao.tipo]}
-                        className="flex-1 min-w-0 flex flex-col gap-0.5 px-2 py-2 hover:bg-surface-hover rounded-lg transition-colors duration-150"
-                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 px-2 py-2 hover:bg-surface-hover rounded-lg transition-colors duration-150"
+                        onClick={() => {
+                          marcarComoLida(notificacao.id);
+                          setOpen(false);
+                        }}
                       >
-                        <Text className="font-semibold text-gray-200 truncate">{tipoContasAgendadas[notificacao.tipo]}</Text>
-                        <Text variant="paragraph-small" className="text-gray-400 truncate">{notificacao.descricao}</Text>
-                        <Text variant="paragraph-small" className="text-gray-500">
-                          Vence: {toBrDate(notificacao.dataVencimento)}
-                        </Text>
+                        <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                          <Text className="font-semibold text-gray-200 truncate">{tipoContasAgendadas[notificacao.tipo]}</Text>
+                          <Text variant="paragraph-small" className="text-gray-400 truncate">{notificacao.descricao}</Text>
+                          <Text variant="paragraph-small" className="text-gray-500">
+                            Vence: {toBrDate(notificacao.dataVencimento)}
+                          </Text>
+                        </div>
+                        <div className="shrink-0">
+                          <Text className="font-bold text-gray-200 text-sm">{toCurrency(notificacao.valor)}</Text>
+                        </div>
                       </Link>
-                      <div className="shrink-0 flex flex-col items-end gap-1 px-1">
-                        <Text className="font-bold text-gray-200 text-sm">{toCurrency(notificacao.valor)}</Text>
-                        <Button
-                          variant="icon"
-                          tooltip="Marcar como lida"
-                          className="w-7 h-7 text-gray-500 hover:text-green-400"
-                          disabled={marcandoUma}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            marcarComoLida(notificacao.id);
-                          }}
-                        >
-                          <Check className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
                     </div>
                   </DropdownMenu.Item>
                 ))

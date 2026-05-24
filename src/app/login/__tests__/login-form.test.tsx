@@ -47,6 +47,21 @@ describe("Componente LoginForm", () => {
     expect(screen.getByRole("button", { name: "Entrar" })).toBeVisible();
   });
 
+  it("deve manter o botão desabilitado após autenticação bem-sucedida", async () => {
+    mockedLogin.mockResolvedValueOnce({});
+    render(<LoginForm />);
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText("E-mail"), "test@test.com");
+    await user.type(screen.getByLabelText("Senha"), "senhaValida");
+    await user.click(screen.getByRole("button", { name: "Entrar" }));
+
+    await waitFor(() => {
+      expect(mockedPush).toHaveBeenCalledWith("/");
+    });
+    expect(screen.getByRole("button", { name: "Entrar" })).toBeDisabled();
+  });
+
   it("deve fazer login com sucesso incluindo o recaptchaToken", async () => {
     const email = "test@test.com";
     const senha = "senhaValida";

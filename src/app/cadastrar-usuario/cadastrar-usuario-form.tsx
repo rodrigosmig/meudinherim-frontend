@@ -128,7 +128,7 @@ export default function CadastrarUsuarioForm({ }: CadastrarUsuarioFormProps) {
                 isLoading={form.formState.isSubmitting}
                 className="w-full mt-8"
               >
-                Cadastrar
+                Salvar
               </Button>
             </div>
           </Form>

@@ -129,9 +129,13 @@ function PerfilForm() {
 
     try {
       const result = await usuarioService.alterarPerfil(data);
+      let updatedUsuario;
       if ("data" in result && result.data) {
-        const { usuario: updatedUsuario } = result.data as AlterarPerfilData;
-        if (updatedUsuario) updateUsuario(updatedUsuario);
+        const { usuario: responseUsuario } = result.data as AlterarPerfilData;
+        if (responseUsuario) {
+          updatedUsuario = responseUsuario;
+          updateUsuario(responseUsuario);
+        }
       }
 
       if (emailChanged) {
@@ -143,6 +147,11 @@ function PerfilForm() {
         return;
       }
 
+      form.reset(
+        updatedUsuario
+          ? { nome: updatedUsuario.nome, email: updatedUsuario.email, ativaNotificacao: updatedUsuario.ativaNotificacao }
+          : data
+      );
       toast.success("Perfil atualizado com sucesso!");
     } catch (error) {
       if (error instanceof ApiError) {
@@ -259,7 +268,7 @@ function PerfilForm() {
           <Switch
             label="Receber notificações"
             checked={form.watch("ativaNotificacao")}
-            onCheckedChange={(checked) => form.setValue("ativaNotificacao", checked)}
+            onCheckedChange={(checked) => form.setValue("ativaNotificacao", checked, { shouldDirty: true })}
           />
         </div>
 
@@ -268,7 +277,7 @@ function PerfilForm() {
             type="submit"
             className="w-full"
             isLoading={form.formState.isSubmitting}
-            disabled={form.formState.isSubmitting}
+            disabled={!form.formState.isDirty || form.formState.isSubmitting}
           >
             Salvar alterações
           </Button>
