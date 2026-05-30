@@ -36,10 +36,8 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Toolti
 }
 
 export function BarTopCategorias({ top10 }: BarTopCategoriasProps) {
-  const height = top10.length * 32 + 24;
-
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height="100%">
       <BarChart
         layout="vertical"
         data={top10}

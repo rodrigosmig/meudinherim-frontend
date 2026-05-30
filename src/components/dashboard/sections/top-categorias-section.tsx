@@ -7,7 +7,7 @@ interface TopCategoriasSectionProps {
 
 export function TopCategoriasSection({ top10 }: TopCategoriasSectionProps) {
   return (
-    <div className="bg-gray-800/70 border border-gray-700/40 rounded-2xl p-5 backdrop-blur-sm">
+    <div className="bg-gray-800/70 border border-gray-700/40 rounded-2xl p-5 backdrop-blur-sm h-full flex flex-col">
       <div className="flex items-center gap-2 mb-5">
         <div className="w-1 h-4 rounded-full bg-purple-500" />
         <h3 className="text-sm font-semibold text-gray-200">Top 10 Gastos</h3>
@@ -17,7 +17,9 @@ export function TopCategoriasSection({ top10 }: TopCategoriasSectionProps) {
           Nenhum gasto registrado no período selecionado.
         </p>
       ) : (
-        <BarTopCategorias top10={top10} />
+        <div className="flex-1 min-h-[320px]">
+          <BarTopCategorias top10={top10} />
+        </div>
       )}
     </div>
   );

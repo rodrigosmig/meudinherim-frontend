@@ -60,11 +60,11 @@ export default function Home() {
           <div className="space-y-6">
             <ResumoSection resumo={data.resumoMes} />
             <DonutsSection categorias={data.categorias} />
-            <TendenciaSection pontos={data.tendencia.pontos} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <TopCategoriasSection top10={data.topCategorias.top10Saidas} />
               <ProgressoSection progressoCategorias={data.progressoCategorias} />
             </div>
+            <TendenciaSection pontos={data.tendencia.pontos} />
           </div>
         )}
       </QueryListState>
