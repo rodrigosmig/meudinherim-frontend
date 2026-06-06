@@ -62,10 +62,10 @@ export default function ConexoesTab({ onBuscarContatos }: ConexoesTabProps) {
             >
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-medium text-gray-200 truncate">
-                  {c.destinatario.nome}
+                  {c.usuarioConexao.nome}
                 </span>
                 <span className="text-xs text-gray-500 truncate">
-                  {c.destinatario.email}
+                  {c.usuarioConexao.email}
                 </span>
               </div>
 
@@ -73,7 +73,7 @@ export default function ConexoesTab({ onBuscarContatos }: ConexoesTabProps) {
                 icon={UserMinus}
                 variant="cancel"
                 disabled={mutation.isPending}
-                onClick={() => handleRemover(c.uuid, c.destinatario.nome)}
+                onClick={() => handleRemover(c.uuid, c.usuarioConexao.nome)}
               >
                 Remover
               </Button>

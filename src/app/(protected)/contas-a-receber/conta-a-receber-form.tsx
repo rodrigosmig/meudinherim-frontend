@@ -30,6 +30,7 @@ import type { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
 import type { ContaAgendada } from "@/types/conta-agendada";
 import { Periodicidade } from "@/types/enum/periodicidade";
+import { StatusConexao } from "@/types/enum/status-conexao";
 
 const PERIODICIDADE_OPTIONS = [
   { value: Periodicidade.MENSAL, label: "Mensal" },
@@ -98,10 +99,10 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
   const periodicidadeAtiva = periodicidade !== Periodicidade.NENHUMA;
   const valorPreenchido = !!valor && valor > 0;
 
-  const conexoesAtivas = (conexoesData ?? []).filter((c) => c.status === "ACEITA");
+  const conexoesAtivas = (conexoesData ?? []).filter((c) => c.status === StatusConexao.ACEITA);
   const devedoresOptions = conexoesAtivas.map((c) => ({
-    value: c.destinatario.id,
-    label: `${c.destinatario.nome} (${c.destinatario.email})`,
+    value: c.usuarioConexao.id,
+    label: c.usuarioConexao.nome,
   }));
 
   useEffect(() => {

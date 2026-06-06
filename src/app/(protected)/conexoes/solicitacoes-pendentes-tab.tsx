@@ -58,10 +58,10 @@ export default function SolicitacoesPendentesTab() {
           >
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-medium text-gray-200 truncate">
-                {c.solicitante.nome}
+                {c.usuarioConexao.nome}
               </span>
               <span className="text-xs text-gray-500 truncate">
-                {c.solicitante.email}
+                {c.usuarioConexao.email}
               </span>
             </div>
 

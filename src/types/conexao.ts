@@ -8,10 +8,15 @@ export interface Usuario {
   avatar?: string;
 }
 
+export interface UsuarioConexao {
+  id: string;
+  nome: string;
+  email: string;
+}
+
 export interface Conexao {
   uuid: string;
-  solicitante: Usuario;
-  destinatario: Usuario;
+  usuarioConexao: UsuarioConexao;
   status: StatusConexao;
   criadoEm: string;
   atualizadoEm: string;
