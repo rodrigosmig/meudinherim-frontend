@@ -7,7 +7,9 @@ import QueryListState from "@/components/primitives/query-list-state";
 import { toast } from "@/components/toast";
 import { useConexoes } from "@/hooks/use-conexoes";
 import { CONEXOES_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { conexoesService } from "@/services/conexoes-service";
+import ApiError from "@/types/application-error";
 import { StatusConexao } from "@/types/enum/status-conexao";
 
 interface ConexoesTabProps {
@@ -28,8 +30,12 @@ export default function ConexoesTab({ onBuscarContatos }: ConexoesTabProps) {
       toast.success("Conexão removida");
       queryClient.invalidateQueries({ queryKey: [CONEXOES_QUERY_KEY] });
     },
-    onError: () => {
-      toast.error("Erro ao remover conexão");
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
 

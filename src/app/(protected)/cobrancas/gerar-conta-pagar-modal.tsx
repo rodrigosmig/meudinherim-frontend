@@ -24,6 +24,7 @@ import {
   type GerarContaAPagarFormValue,
 } from "@/schema-validation/gerar-conta-pagar";
 import { cobrancasService } from "@/services/cobrancas-service";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import ApiError from "@/types/application-error";
 
 type Props = {
@@ -67,11 +68,11 @@ export default function GerarContaAPagarModal({ cobrancaUuid, open, onOpenChange
       ]);
     },
     onError: (error) => {
-      if (error instanceof ApiError && error.status === 422) {
-        toast.error("Esta cobrança já tem uma conta a pagar gerada");
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
         return;
       }
-      toast.error("Erro ao gerar conta a pagar");
+      toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
 

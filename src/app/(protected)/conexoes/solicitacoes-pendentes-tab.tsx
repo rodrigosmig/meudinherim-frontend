@@ -10,7 +10,9 @@ import {
   CONEXOES_QUERY_KEY,
   CONEXOES_PENDENTES_QUERY_KEY,
 } from "@/helpers/query-keys-helper";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { conexoesService } from "@/services/conexoes-service";
+import ApiError from "@/types/application-error";
 
 export default function SolicitacoesPendentesTab() {
   const queryClient = useQueryClient();
@@ -25,8 +27,12 @@ export default function SolicitacoesPendentesTab() {
       queryClient.invalidateQueries({ queryKey: [CONEXOES_QUERY_KEY] });
       queryClient.invalidateQueries({ queryKey: [CONEXOES_PENDENTES_QUERY_KEY] });
     },
-    onError: () => {
-      toast.error("Erro ao aceitar conexão");
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
 
@@ -37,8 +43,12 @@ export default function SolicitacoesPendentesTab() {
       queryClient.invalidateQueries({ queryKey: [CONEXOES_QUERY_KEY] });
       queryClient.invalidateQueries({ queryKey: [CONEXOES_PENDENTES_QUERY_KEY] });
     },
-    onError: () => {
-      toast.error("Erro ao recusar solicitação");
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
 

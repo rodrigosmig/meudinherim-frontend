@@ -9,7 +9,9 @@ import { Input } from "@/components/primitives/input";
 import { toast } from "@/components/toast";
 import { useBuscarUsuarios } from "@/hooks/use-buscar-usuarios";
 import { CONEXOES_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { conexoesService } from "@/services/conexoes-service";
+import ApiError from "@/types/application-error";
 import { Usuario } from "@/types/conexao";
 
 interface BuscarEConectarModalProps {
@@ -47,8 +49,12 @@ export default function BuscarEConectarModal({ open, onOpenChange }: BuscarECone
       toast.success("Solicitação enviada!");
       queryClient.invalidateQueries({ queryKey: [CONEXOES_QUERY_KEY] });
     },
-    onError: () => {
-      toast.error("Erro ao enviar solicitação");
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
 

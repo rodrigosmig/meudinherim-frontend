@@ -11,7 +11,9 @@ import { useCobrancasEmitidas } from "@/hooks/use-cobrancas-emitidas";
 import { COBRANCAS_EMITIDAS_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { toCurrency, toBrDate } from "@/helpers/string-helper";
 
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { cobrancasService } from "@/services/cobrancas-service";
+import ApiError from "@/types/application-error";
 import { StatusCobranca } from "@/types/enum/status-cobranca";
 import { StatusBadge } from "./status-badge";
 
@@ -26,8 +28,12 @@ export default function CobrancasEmitidasTab() {
       toast.success("Cobrança cancelada");
       void queryClient.invalidateQueries({ queryKey: [COBRANCAS_EMITIDAS_QUERY_KEY] });
     },
-    onError: () => {
-      toast.error("Erro ao cancelar cobrança");
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
 

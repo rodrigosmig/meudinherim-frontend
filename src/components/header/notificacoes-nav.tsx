@@ -10,7 +10,9 @@ import { useEffect, useState } from "react";
 
 import { DADOS_CONFIGURACAO_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { notificacaoService } from "@/services/notificacoes-service";
+import ApiError from "@/types/application-error";
 import { TipoNotificacao } from "@/types/enum/tipo-notificacao";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
@@ -62,8 +64,12 @@ export default function NotificacoesNav() {
       setNotificacoes((prev) => prev.filter((n) => n.id !== id));
       queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] });
     },
-    onError: () => {
-      toast.error("Não foi possível marcar a notificação como lida.");
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
 
