@@ -67,6 +67,17 @@ export const keysToInvalidateForCancelarLancamentoConta = [
   RELATORIO_LANCAMENTOS_POR_CATEGORIA_QUERY_KEY,
 ];
 
+export const CONEXOES_QUERY_KEY = "conexoes" as const;
+export const CONEXOES_PENDENTES_QUERY_KEY = "conexoes_pendentes" as const;
+export const COBRANCAS_EMITIDAS_QUERY_KEY = "cobrancas_emitidas" as const;
+export const COBRANCAS_RECEBIDAS_QUERY_KEY = "cobrancas_recebidas" as const;
+
+export const keysToInvalidateForCobranca = [
+  COBRANCAS_EMITIDAS_QUERY_KEY,
+  COBRANCAS_RECEBIDAS_QUERY_KEY,
+  DASHBOARD_QUERY_KEY,
+];
+
 export const keysToInvalidateForContaAgendada = [
   CONTAS_A_PAGAR_QUERY_KEY,
   CONTAS_A_RECEBER_QUERY_KEY,

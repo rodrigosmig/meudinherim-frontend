@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Bookmark, BookType, Tags } from "lucide-react";
+import { Bookmark, BookType, Tags, Users } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Controller, useForm, type DefaultValues } from "react-hook-form";
 
@@ -16,6 +16,7 @@ import Switch from "@/components/primitives/switch";
 import { toast } from "@/components/toast";
 
 import { useCategorias } from "@/hooks/use-categorias";
+import { useConexoes } from "@/hooks/use-conexoes";
 import { useTags } from "@/hooks/use-tags";
 
 import { catalogoErros } from "@/helpers/erros-helper";
@@ -55,6 +56,8 @@ function getDefaultValues(contaAReceber?: ContaAgendada): DefaultValues<ContaARe
       parcelado: false,
       quantidadeParcelas: undefined,
       tags: [],
+      isCobranca: false,
+      idDevedor: undefined,
     };
   }
   return {
@@ -77,6 +80,7 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
 
   const { categoriasEntrada, isLoading: isCategoriasLoading } = useCategorias();
   const { tagsOptions, isLoading: isTagsLoading } = useTags();
+  const { data: conexoesData } = useConexoes();
 
   const defaultValues = useMemo(() => getDefaultValues(contaAReceber), [contaAReceber]);
 
@@ -88,10 +92,17 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
   const valor = form.watch("valor");
   const parcelado = form.watch("parcelado");
   const periodicidade = form.watch("periodicidade");
+  const isCobranca = form.watch("isCobranca");
   const categoriasEntradaOptions = categoriasEntrada.map(categoria => ({ value: categoria.uuid, label: categoria.nome }));
 
   const periodicidadeAtiva = periodicidade !== Periodicidade.NENHUMA;
   const valorPreenchido = !!valor && valor > 0;
+
+  const conexoesAtivas = (conexoesData ?? []).filter((c) => c.status === "ACEITA");
+  const devedoresOptions = conexoesAtivas.map((c) => ({
+    value: c.destinatario.id,
+    label: `${c.destinatario.nome} (${c.destinatario.email})`,
+  }));
 
   useEffect(() => {
     form.reset(defaultValues);
@@ -124,6 +135,7 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
         parcelado: data.parcelado,
         quantidadeParcelas: data.parcelado ? (data.quantidadeParcelas ?? 2) : 1,
         tags: data.tags?.length ? data.tags : undefined,
+        ...(!isEditMode && data.isCobranca ? { isCobranca: true, idDevedor: data.idDevedor } : {}),
       };
 
       if (isEditMode && contaAReceber?.uuid) {
@@ -318,6 +330,44 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
             </>
           )}
         </div>
+
+        {!isEditMode && (
+          <div className="space-y-3">
+            <Switch
+              label="Criar como cobrança"
+              checked={isCobranca ?? false}
+              onCheckedChange={(checked) => {
+                form.setValue("isCobranca", checked);
+                if (!checked) form.setValue("idDevedor", undefined);
+              }}
+              disabled={conexoesAtivas.length === 0}
+            />
+
+            {conexoesAtivas.length === 0 && (
+              <p className="text-xs text-gray-500">Você não tem conexões ativas. Adicione contatos primeiro.</p>
+            )}
+
+            {isCobranca && conexoesAtivas.length > 0 && (
+              <Controller
+                control={form.control}
+                name="idDevedor"
+                render={({ field }) => (
+                  <Select
+                    icon={Users}
+                    label="Devedor"
+                    options={devedoresOptions}
+                    placeholder="Selecione o devedor"
+                    value={field.value ?? ""}
+                    onChange={(value) => field.onChange(value)}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    error={form.formState.errors.idDevedor}
+                  />
+                )}
+              />
+            )}
+          </div>
+        )}
 
         <div className="flex justify-end gap-2">
           <Button type="button" variant="cancel" onClick={() => handleOpenChange(false)}>

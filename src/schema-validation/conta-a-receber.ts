@@ -18,6 +18,16 @@ export const contaAReceberSchema = z.object({
   parcelado: z.boolean(),
   quantidadeParcelas: z.number().int().min(2, "Mínimo 2 parcelas").optional(),
   tags: z.array(z.string()).optional(),
+  isCobranca: z.boolean(),
+  idDevedor: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.isCobranca && !data.idDevedor) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Selecione um devedor",
+      path: ["idDevedor"],
+    });
+  }
 });
 
 export type ContaAReceberFormValue = z.infer<typeof contaAReceberSchema>;

@@ -10,4 +10,6 @@ export enum Urls {
   CONTAS_A_PAGAR_RECEBER = "/relatorios/contas-a-pagar-receber",
   LANCAMENTOS_POR_CATEGORIA = "/relatorios/lancamentos-por-categoria",
   ORCAMENTOS = "/orcamentos",
+  CONEXOES = "/conexoes",
+  COBRANCAS = "/cobrancas",
 }
