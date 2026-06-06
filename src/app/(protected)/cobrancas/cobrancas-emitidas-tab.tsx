@@ -1,9 +1,11 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { ReactNode, useState } from "react";
+import Modal from "@/components/modal";
 import { Button } from "@/components/primitives/button";
 import QueryListState from "@/components/primitives/query-list-state";
+import Text from "@/components/primitives/text";
 import { toast } from "@/components/toast";
 
 import { useCobrancasEmitidas } from "@/hooks/use-cobrancas-emitidas";
@@ -21,11 +23,13 @@ export default function CobrancasEmitidasTab() {
   const queryClient = useQueryClient();
   const { data, isLoading, isError, refetch } = useCobrancasEmitidas();
   const emitidas = data ?? [];
+  const [cobrancaParaCancelar, setCobrancaParaCancelar] = useState<{ uuid: string; nomeDevedor: string } | null>(null);
 
   const cancelarMutation = useMutation({
     mutationFn: (uuid: string) => cobrancasService.cancelar(uuid),
     onSuccess: () => {
       toast.success("Cobrança cancelada");
+      setCobrancaParaCancelar(null);
       void queryClient.invalidateQueries({ queryKey: [COBRANCAS_EMITIDAS_QUERY_KEY] });
     },
     onError: (error) => {
@@ -36,11 +40,6 @@ export default function CobrancasEmitidasTab() {
       toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
-
-  function handleCancelar(uuid: string, nomeDevedor: string) {
-    if (!window.confirm(`Cancelar cobrança para ${nomeDevedor}?`)) return;
-    cancelarMutation.mutate(uuid);
-  }
 
   return (
     <QueryListState
@@ -81,9 +80,8 @@ export default function CobrancasEmitidasTab() {
               {c.status === StatusCobranca.ABERTO && (
                 <Button
                   variant="cancel"
-                  onClick={() => handleCancelar(c.uuid, c.devedor.nome)}
                   disabled={cancelarMutation.isPending}
-                  isLoading={cancelarMutation.isPending && cancelarMutation.variables === c.uuid}
+                  onClick={() => setCobrancaParaCancelar({ uuid: c.uuid, nomeDevedor: c.devedor.nome })}
                 >
                   Cancelar
                 </Button>
@@ -92,6 +90,54 @@ export default function CobrancasEmitidasTab() {
           </div>
         ))}
       </div>
+
+      {cobrancaParaCancelar && (
+        <ModalConfirmacao
+          isOpen={true}
+          title="Cancelar Cobrança"
+          message={`Tem certeza que deseja cancelar a cobrança para ${cobrancaParaCancelar.nomeDevedor}?`}
+          isLoading={cancelarMutation.isPending}
+          onOpenChange={(open) => { if (!open) setCobrancaParaCancelar(null); }}
+          onConfirmar={() => cancelarMutation.mutate(cobrancaParaCancelar.uuid)}
+        />
+      )}
     </QueryListState>
+  );
+}
+
+interface ModalConfirmacaoProps {
+  title: string;
+  message: string;
+  trigger?: ReactNode;
+  isOpen: boolean;
+  isLoading: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirmar: () => void;
+}
+
+function ModalConfirmacao({
+  title,
+  message,
+  trigger,
+  isOpen,
+  isLoading,
+  onOpenChange,
+  onConfirmar,
+}: ModalConfirmacaoProps) {
+  return (
+    <Modal open={isOpen} onOpenChange={onOpenChange} title={title} trigger={trigger}>
+      <div className="flex flex-col gap-3">
+        <Text variant="paragraph-medium">{message}</Text>
+
+        <div className="flex justify-end gap-2">
+          <Button variant="cancel" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button isLoading={isLoading} onClick={onConfirmar}>
+            Confirmar
+          </Button>
+        </div>
+      </div>
+    </Modal>
   );
 }
