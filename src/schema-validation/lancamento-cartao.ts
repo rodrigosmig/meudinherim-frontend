@@ -12,6 +12,8 @@ export const lancamentoCartaoSchema = z.object({
   valor: z
     .number({ error: "O campo valor é obrigatório" })
     .gt(0, "O valor deve ser maior que zero"),
+  parcelado: z.boolean(),
+  quantidadeParcelas: z.number({ error: "Informe o número de parcelas" }).int().min(2, "Mínimo 2 parcelas").optional(),
   tags: z.array(z.string()).optional(),
 });
 

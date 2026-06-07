@@ -13,6 +13,7 @@ import { Input } from "@/components/primitives/input";
 import InputDate from "@/components/primitives/input-date";
 import { InputMoney } from "@/components/primitives/input-money";
 import { Select } from "@/components/primitives/select";
+import Switch from "@/components/primitives/switch";
 import { toast } from "@/components/toast";
 
 import { useCategorias } from "@/hooks/use-categorias";
@@ -53,6 +54,8 @@ function getDefaultValues(
       dataLancamento: new Date(),
       descricao: "",
       valor: undefined,
+      parcelado: false,
+      quantidadeParcelas: undefined,
       tags: [],
     };
   }
@@ -63,6 +66,8 @@ function getDefaultValues(
     dataLancamento: new Date(`${lancamentoCartao.data}T00:00:00`),
     descricao: lancamentoCartao.descricao,
     valor: lancamentoCartao.valor,
+    parcelado: lancamentoCartao.isParcelado,
+    quantidadeParcelas: lancamentoCartao.parcelas?.length,
     tags: lancamentoCartao.tags ?? [],
   };
 }
@@ -104,9 +109,20 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children, open:
     defaultValues,
   });
 
+  const valor = form.watch("valor");
+  const parcelado = form.watch("parcelado");
+  const valorPreenchido = !!valor && valor > 0;
+
   useEffect(() => {
     form.reset(defaultValues);
   }, [defaultValues, form]);
+
+  function handleParceladoSwitch(checked: boolean) {
+    form.setValue("parcelado", checked);
+    if (!checked) {
+      form.setValue("quantidadeParcelas", undefined);
+    }
+  }
 
   const cadastrarLancamentoCartaoMutation = useMutation({
     mutationFn: async (data: LancamentoCartaoFormValue) => {
@@ -126,8 +142,8 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children, open:
         dataLancamento: toUsDate(data.dataLancamento),
         descricao: data.descricao.trim(),
         valor: data.valor,
-        parcelado: false,
-        quantidadeParcelas: 1,
+        parcelado: data.parcelado,
+        quantidadeParcelas: data.parcelado ? (data.quantidadeParcelas ?? 2) : 1,
         tags: data.tags?.length ? data.tags : undefined,
       });
     },
@@ -149,7 +165,7 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children, open:
           const formError = error.data as ApiFormError;
           formError.fields.forEach((fieldError) => {
             if (
-              ["idCartao", "idCategoria", "dataLancamento", "descricao", "valor", "tags"].includes(
+              ["idCartao", "idCategoria", "dataLancamento", "descricao", "valor", "parcelado", "quantidadeParcelas", "tags"].includes(
                 fieldError.field,
               )
             ) {
@@ -269,6 +285,38 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children, open:
             />
           )}
         />
+
+        {!isEditMode && (
+          <div className="space-y-3">
+            <Switch
+              label="Parcelado"
+              checked={parcelado}
+              disabled={!valorPreenchido}
+              onCheckedChange={handleParceladoSwitch}
+            />
+
+            {parcelado && (
+              <Input
+                placeholder="Informe o número de parcelas"
+                type="number"
+                inputMode="numeric"
+                min={2}
+                step={1}
+                onKeyDown={(e) => {
+                  if (!/^[0-9]$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onInput={(e) => {
+                  const input = e.currentTarget as HTMLInputElement;
+                  input.value = input.value.replace(/[^0-9]/g, "");
+                }}
+                {...form.register("quantidadeParcelas", { valueAsNumber: true })}
+                error={form.formState.errors.quantidadeParcelas}
+              />
+            )}
+          </div>
+        )}
 
         <div className="flex justify-end gap-2">
           <Button type="button" variant="cancel" onClick={() => handleOpenChange(false)}>
