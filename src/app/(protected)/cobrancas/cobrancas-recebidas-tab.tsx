@@ -67,18 +67,13 @@ export default function CobrancasRecebidasTab() {
                   {toCurrency(c.valor)}
                 </span>
 
-                {c.status === StatusCobranca.ABERTO && c.contaAgendadaDevedorUuid && (
-                  <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-500/15 text-green-400">
-                    Conta gerada
-                  </span>
-                )}
-
-                {c.status === StatusCobranca.ABERTO && !c.contaAgendadaDevedorUuid && (
+                {c.status === StatusCobranca.ABERTO && (
                   <Button
                     variant="primary"
+                    disabled={c.gerouContaAPagar}
                     onClick={() => handleGerarContaAPagar(c.uuid)}
                   >
-                    Gerar conta a pagar
+                    {c.gerouContaAPagar ? "Conta gerada" : "Gerar conta a pagar"}
                   </Button>
                 )}
               </div>

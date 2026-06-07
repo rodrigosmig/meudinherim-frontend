@@ -3,6 +3,7 @@ import { StatusCobranca } from "./enum/status-cobranca";
 export interface UsuarioResumo {
   id: string;
   nome: string;
+  email: string;
 }
 
 export interface CobrancaEmitida {
@@ -23,7 +24,7 @@ export interface CobrancaRecebida {
   status: StatusCobranca;
   criadoEm: string;
   pagoEm?: string;
-  contaAgendadaDevedorUuid?: string | null;
+  gerouContaAPagar: boolean;
 }
 
 export interface GerarContaAPagarRequest {
