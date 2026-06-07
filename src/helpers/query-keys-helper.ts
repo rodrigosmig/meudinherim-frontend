@@ -13,6 +13,10 @@ export const RELATORIO_CONTAS_AGENDADAS_QUERY_KEY =
   "relatorio_contas_agendadas" as const;
 export const RELATORIO_LANCAMENTOS_POR_CATEGORIA_QUERY_KEY =
   "relatorio_lancamentos_por_categoria" as const;
+export const COBRANCAS_RECEBIDAS_QUERY_KEY = "cobrancas_recebidas" as const;
+export const CONEXOES_QUERY_KEY = "conexoes" as const;
+export const CONEXOES_PENDENTES_QUERY_KEY = "conexoes_pendentes" as const;
+export const COBRANCAS_EMITIDAS_QUERY_KEY = "cobrancas_emitidas" as const;
 
 export const keysToInvalidateForConta = [
   CONTAS_QUERY_KEY,
@@ -26,6 +30,7 @@ export const keysToInvalidateForConta = [
   FATURAS_QUERY_KEY,
   RELATORIO_CONTAS_AGENDADAS_QUERY_KEY,
   RELATORIO_LANCAMENTOS_POR_CATEGORIA_QUERY_KEY,
+  COBRANCAS_RECEBIDAS_QUERY_KEY,
 ];
 
 export const keysToInvalidateForCategoria = [
@@ -65,6 +70,13 @@ export const keysToInvalidateForCancelarLancamentoConta = [
   CONTAS_A_RECEBER_QUERY_KEY,
   RELATORIO_CONTAS_AGENDADAS_QUERY_KEY,
   RELATORIO_LANCAMENTOS_POR_CATEGORIA_QUERY_KEY,
+  COBRANCAS_RECEBIDAS_QUERY_KEY,
+];
+
+export const keysToInvalidateForCobranca = [
+  COBRANCAS_EMITIDAS_QUERY_KEY,
+  COBRANCAS_RECEBIDAS_QUERY_KEY,
+  DASHBOARD_QUERY_KEY,
 ];
 
 export const keysToInvalidateForContaAgendada = [

@@ -10,8 +10,10 @@ import { useEffect, useState } from "react";
 
 import { DADOS_CONFIGURACAO_QUERY_KEY } from "@/helpers/query-keys-helper";
 import { useConfiguracaoInicial } from "@/hooks/use-configuracao-inicial";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { notificacaoService } from "@/services/notificacoes-service";
-import { TipoContaAgendada } from "@/types/enum/tipo-conta-agendada";
+import ApiError from "@/types/application-error";
+import { TipoNotificacao } from "@/types/enum/tipo-notificacao";
 import { Button } from "../primitives/button";
 import { DropdownMenu } from "../primitives/dropdown-menu";
 import Icon from "../primitives/icon";
@@ -19,15 +21,27 @@ import Loading from "../primitives/loading";
 import Text from "../primitives/text";
 import { toast } from "../toast";
 
-const tipoContasAgendadas = {
-  [TipoContaAgendada.CONTA_A_RECEBER]: "Conta a Receber",
-  [TipoContaAgendada.CONTA_A_PAGAR]: "Conta a Pagar",
-};
+function getNotificacaoLabel(tipo: TipoNotificacao): string {
+  switch (tipo) {
+    case TipoNotificacao.CONTA_A_PAGAR: return "Conta a Pagar";
+    case TipoNotificacao.CONTA_A_RECEBER: return "Conta a Receber";
+    case TipoNotificacao.COBRANCA_RECEBIDA: return "Cobrança recebida";
+    case TipoNotificacao.COBRANCA_PAGA: return "Cobrança paga";
+    case TipoNotificacao.SOLICITACAO_CONEXAO_ENVIADA: return "Nova solicitação de conexão";
+    default: return "Notificação";
+  }
+}
 
-const tipoRotas = {
-  [TipoContaAgendada.CONTA_A_RECEBER]: "/contas-a-receber",
-  [TipoContaAgendada.CONTA_A_PAGAR]: "/contas-a-pagar",
-};
+function getNotificacaoRota(tipo: TipoNotificacao): string {
+  switch (tipo) {
+    case TipoNotificacao.CONTA_A_PAGAR: return "/contas-a-pagar";
+    case TipoNotificacao.CONTA_A_RECEBER: return "/contas-a-receber";
+    case TipoNotificacao.COBRANCA_RECEBIDA:
+    case TipoNotificacao.COBRANCA_PAGA: return "/cobrancas";
+    case TipoNotificacao.SOLICITACAO_CONEXAO_ENVIADA: return "/conexoes";
+    default: return "/";
+  }
+}
 
 export default function NotificacoesNav() {
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
@@ -50,8 +64,12 @@ export default function NotificacoesNav() {
       setNotificacoes((prev) => prev.filter((n) => n.id !== id));
       queryClient.invalidateQueries({ queryKey: [DADOS_CONFIGURACAO_QUERY_KEY] });
     },
-    onError: () => {
-      toast.error("Não foi possível marcar a notificação como lida.");
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
     },
   });
 
@@ -108,7 +126,7 @@ export default function NotificacoesNav() {
                   <DropdownMenu.Item key={notificacao.id} className="p-0 focus:bg-transparent">
                     <div className="w-full px-1 py-1">
                       <Link
-                        href={tipoRotas[notificacao.tipo]}
+                        href={getNotificacaoRota(notificacao.tipo)}
                         className="flex items-center gap-2 px-2 py-2 hover:bg-surface-hover rounded-lg transition-colors duration-150"
                         onClick={() => {
                           marcarComoLida(notificacao.id);
@@ -116,15 +134,21 @@ export default function NotificacoesNav() {
                         }}
                       >
                         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                          <Text className="font-semibold text-gray-200 truncate">{tipoContasAgendadas[notificacao.tipo]}</Text>
-                          <Text variant="paragraph-small" className="text-gray-400 truncate">{notificacao.descricao}</Text>
-                          <Text variant="paragraph-small" className="text-gray-500">
-                            Vence: {toBrDate(notificacao.dataVencimento)}
-                          </Text>
+                          <Text className="font-semibold text-gray-200 truncate">{getNotificacaoLabel(notificacao.tipo)}</Text>
+                          {notificacao.descricao && (
+                            <Text variant="paragraph-small" className="text-gray-400 truncate">{notificacao.descricao}</Text>
+                          )}
+                          {notificacao.dataVencimento && (
+                            <Text variant="paragraph-small" className="text-gray-500">
+                              Vence: {toBrDate(notificacao.dataVencimento)}
+                            </Text>
+                          )}
                         </div>
-                        <div className="shrink-0">
-                          <Text className="font-bold text-gray-200 text-sm">{toCurrency(notificacao.valor)}</Text>
-                        </div>
+                        {notificacao.valor != null && (
+                          <div className="shrink-0">
+                            <Text className="font-bold text-gray-200 text-sm">{toCurrency(notificacao.valor)}</Text>
+                          </div>
+                        )}
                       </Link>
                     </div>
                   </DropdownMenu.Item>

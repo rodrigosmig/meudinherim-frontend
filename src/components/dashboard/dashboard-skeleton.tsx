@@ -21,6 +21,8 @@ export function DashboardSkeleton() {
         <Skeleton className="h-64" />
         <Skeleton className="h-64" />
       </div>
+
+      <Skeleton className="h-48 w-full" />
     </div>
   );
 }

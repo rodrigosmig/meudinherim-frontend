@@ -4,7 +4,7 @@ const originalStringHelper = jest.requireActual("@/helpers/string-helper");
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 import NotificacoesNav from "../header/notificacoes-nav";
-import { TipoContaAgendada } from "@/types/enum/tipo-conta-agendada";
+import { TipoNotificacao } from "@/types/enum/tipo-notificacao";
 import { notificacaoService } from "@/services/notificacoes-service";
 
 jest.mock("next/link", () => ({
@@ -44,7 +44,7 @@ describe("NotificacoesNav", () => {
     {
       id: "1",
       idContaAgendada: "ca-1",
-      tipo: TipoContaAgendada.CONTA_A_RECEBER,
+      tipo: TipoNotificacao.CONTA_A_RECEBER,
       descricao: "Conta de água",
       dataVencimento: "2024-07-01",
       valor: 100,
@@ -53,7 +53,7 @@ describe("NotificacoesNav", () => {
     {
       id: "2",
       idContaAgendada: "ca-2",
-      tipo: TipoContaAgendada.CONTA_A_PAGAR,
+      tipo: TipoNotificacao.CONTA_A_PAGAR,
       descricao: "Conta de luz",
       dataVencimento: "2024-07-02",
       valor: 200,
@@ -196,5 +196,57 @@ describe("NotificacoesNav", () => {
     await user.click(links[0]);
 
     expect(screen.queryByText("Conta de água")).not.toBeInTheDocument();
+  });
+
+  it("renderiza label e rota corretos para COBRANCA_RECEBIDA", async () => {
+    mockedUseConfiguracaoInicial.mockReturnValue({
+      data: { notificacoes: [{ id: "3", tipo: TipoNotificacao.COBRANCA_RECEBIDA, descricao: "Cobrança recebida teste", valor: null }] },
+      isLoading: false,
+      isFetching: false,
+    });
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.getByText("Cobrança recebida")).toBeVisible();
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/cobrancas");
+  });
+
+  it("renderiza label e rota corretos para COBRANCA_PAGA", async () => {
+    mockedUseConfiguracaoInicial.mockReturnValue({
+      data: { notificacoes: [{ id: "4", tipo: TipoNotificacao.COBRANCA_PAGA, descricao: "Cobrança paga teste", valor: null }] },
+      isLoading: false,
+      isFetching: false,
+    });
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.getByText("Cobrança paga")).toBeVisible();
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/cobrancas");
+  });
+
+  it("renderiza label e rota corretos para SOLICITACAO_CONEXAO_ENVIADA", async () => {
+    mockedUseConfiguracaoInicial.mockReturnValue({
+      data: { notificacoes: [{ id: "5", tipo: TipoNotificacao.SOLICITACAO_CONEXAO_ENVIADA, descricao: "Nova conexão", valor: null }] },
+      isLoading: false,
+      isFetching: false,
+    });
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.getByText("Nova solicitação de conexão")).toBeVisible();
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/conexoes");
+  });
+
+  it("renderiza label e rota fallback para tipo desconhecido", async () => {
+    mockedUseConfiguracaoInicial.mockReturnValue({
+      data: { notificacoes: [{ id: "6", tipo: "TIPO_INEXISTENTE" as TipoNotificacao, descricao: "Genérica", valor: null }] },
+      isLoading: false,
+      isFetching: false,
+    });
+    const user = userEvent.setup();
+    render(<NotificacoesNav />);
+    await user.click(screen.getByRole("button", { name: "Notificações" }));
+    expect(screen.getByText("Notificação")).toBeVisible();
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/");
   });
 });

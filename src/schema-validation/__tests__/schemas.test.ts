@@ -79,6 +79,7 @@ describe("contaAReceberSchema", () => {
     dataVencimento: new Date(),
     periodicidade: Periodicidade.MENSAL,
     parcelado: false,
+    isCobranca: false,
     tags: [],
   };
 
@@ -98,6 +99,32 @@ describe("contaAReceberSchema", () => {
     expect(
       contaAReceberSchema.safeParse({ ...valid, periodicidade: Periodicidade.TRIMESTRAL }).success,
     ).toBe(true);
+  });
+
+  it("valida isCobranca=true com idDevedor preenchido", () => {
+    expect(
+      contaAReceberSchema.safeParse({ ...valid, isCobranca: true, idDevedor: "user-1" }).success,
+    ).toBe(true);
+  });
+
+  it("falha isCobranca=true sem idDevedor (superRefine)", () => {
+    const result = contaAReceberSchema.safeParse({ ...valid, isCobranca: true });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].path[0]).toBe("idDevedor");
+    }
+  });
+
+  it("falha isCobranca=true com idDevedor vazio (superRefine)", () => {
+    const result = contaAReceberSchema.safeParse({ ...valid, isCobranca: true, idDevedor: "" });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].path[0]).toBe("idDevedor");
+    }
+  });
+
+  it("valida isCobranca=false sem idDevedor", () => {
+    expect(contaAReceberSchema.safeParse({ ...valid, isCobranca: false }).success).toBe(true);
   });
 });
 

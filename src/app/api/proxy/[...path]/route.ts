@@ -23,6 +23,8 @@ const ALLOWED_RESOURCES = new Set([
   "dados-configuracao",
   "dashboard",
   "orcamentos",
+  "cobrancas",
+  "conexoes",
   "perfil",
 ]);
 
