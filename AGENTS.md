@@ -50,3 +50,20 @@
 - Path alias `@/` is mapped for tests and TS.
 - Coverage/test ignores include `src/services/`, `src/hooks/`, `src/providers/`, `src/contexts/`, `src/components/primitives/`, `src/lib/`, and `legacy/` (tests); plus coverage collection ignores `src/helpers/**`, `src/app/**/route.ts`, `src/app/**/layout.tsx`, and `src/proxy.ts`.
 
+## Error handling in mutations (React Query)
+
+Always prioritize the server message. The mandatory pattern for every `onError` in `useMutation` is:
+
+```typescript
+onError: (error) => {
+  if (error instanceof ApiError) {
+    toast.error(error.apiMessage.descricao);
+    return;
+  }
+  toast.error(DEFAULT_ERROR_MESSAGE);
+},
+
+- `ApiError` → `import ApiError from "@/types/application-error"`
+- `DEFAULT_ERROR_MESSAGE` → `import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers"`
+- Never use hardcoded strings like `"Erro ao salvar"` — the backend already provides the appropriate message via `error.apiMessage.descricao`.
+- Reference: `src/app/(protected)/cartoes-de-credito/[idCartao]/faturas/[idFatura]/lancamentos/pagamento-parcial-form.tsx`
