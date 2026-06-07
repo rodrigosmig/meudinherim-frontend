@@ -4,6 +4,7 @@ import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { DonutsSection } from "@/components/dashboard/sections/donuts-section";
 import { ProgressoSection } from "@/components/dashboard/sections/progresso-section";
 import { ResumoSection } from "@/components/dashboard/sections/resumo-section";
+import { CobrancasRecebidasSection } from "@/components/dashboard/sections/cobrancas-recebidas-section";
 import { TendenciaSection } from "@/components/dashboard/sections/tendencia-section";
 import { TopCategoriasSection } from "@/components/dashboard/sections/top-categorias-section";
 import { Header } from "@/components/header/header";
@@ -60,6 +61,7 @@ export default function Home() {
           <div className="space-y-6">
             <ResumoSection resumo={data.resumoMes} />
             <DonutsSection categorias={data.categorias} />
+            <CobrancasRecebidasSection />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <TopCategoriasSection top10={data.topCategorias.top10Saidas} />
               <ProgressoSection progressoCategorias={data.progressoCategorias} />

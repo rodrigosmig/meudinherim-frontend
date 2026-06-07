@@ -37,7 +37,7 @@ function TabButton({
 }
 
 export default function CobrancasPage() {
-  const [activeTab, setActiveTab] = useState<Tab>("emitidas");
+  const [activeTab, setActiveTab] = useState<Tab>("recebidas");
 
   return (
     <>
@@ -46,21 +46,21 @@ export default function CobrancasPage() {
       <Card.Root>
         <div className="flex border-b border-default-border">
           <TabButton
-            active={activeTab === "emitidas"}
-            onClick={() => setActiveTab("emitidas")}
-          >
-            Emitidas
-          </TabButton>
-          <TabButton
             active={activeTab === "recebidas"}
             onClick={() => setActiveTab("recebidas")}
           >
             Recebidas
           </TabButton>
+          <TabButton
+            active={activeTab === "emitidas"}
+            onClick={() => setActiveTab("emitidas")}
+          >
+            Emitidas
+          </TabButton>
         </div>
 
-        {activeTab === "emitidas" && <CobrancasEmitidasTab />}
         {activeTab === "recebidas" && <CobrancasRecebidasTab />}
+        {activeTab === "emitidas" && <CobrancasEmitidasTab />}
       </Card.Root>
     </>
   );
