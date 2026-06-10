@@ -60,9 +60,24 @@ async function proxy(request: Request, path: string[]) {
   const headers = new Headers(request.headers);
   headers.set("Authorization", `Bearer ${token}`);
   headers.set("Accept-Language", "pt-BR");
+
+  // Remove hop-by-hop headers that must NOT be forwarded.
+  // Undici (Node.js fetch) owns Transfer-Encoding and rejects
+  // any attempt to set it manually with UND_ERR_INVALID_ARG.
+  // Vercel's infrastructure may expose it on incoming requests;
+  // forwarding it breaks all body-less requests (DELETE, POST
+  // without body, PATCH) that go through this proxy.
   headers.delete("host");
+  headers.delete("transfer-encoding");
+  headers.delete("connection");
+  headers.delete("keep-alive");
+  headers.delete("te");
+  headers.delete("trailer");
+  headers.delete("upgrade");
+
   const method = request.method.toUpperCase();
-  const hasBody = !["GET", "HEAD"].includes(method);
+  const hasBody =
+    !["GET", "HEAD"].includes(method) && request.body !== null;
 
   const response = await fetch(upstreamUrl, {
     method,
