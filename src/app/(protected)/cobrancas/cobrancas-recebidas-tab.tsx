@@ -1,24 +1,54 @@
 "use client";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { Button } from "@/components/primitives/button";
 import QueryListState from "@/components/primitives/query-list-state";
+import { toast } from "@/components/toast";
 
 import { useCobrancasRecebidas } from "@/hooks/use-cobrancas-recebidas";
 
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toCurrency, toBrDate } from "@/helpers/string-helper";
 
+import { keysToInvalidateForCobranca } from "@/helpers/query-keys-helper";
+import { cobrancasService } from "@/services/cobrancas-service";
+import ApiError from "@/types/application-error";
 import { StatusCobranca } from "@/types/enum/status-cobranca";
 import GerarContaAPagarModal from "./gerar-conta-pagar-modal";
 import { StatusBadge } from "./status-badge";
+import { ModalConfirmacao } from "./modal-confirmacao";
+import { COBRANCA_MESSAGES } from "./constants";
 
 export default function CobrancasRecebidasTab() {
+  const queryClient = useQueryClient();
   const [cobrancaSelecionada, setCobrancaSelecionada] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [cobrancaParaMarcarPaga, setCobrancaParaMarcarPaga] = useState<{ uuid: string; nomeCobrador: string } | null>(null);
 
   const { data, isLoading, isError, refetch } = useCobrancasRecebidas();
   const recebidas = data ?? [];
+
+  const marcarComoPagaMutation = useMutation({
+    mutationFn: (uuid: string) => cobrancasService.marcarComoPaga(uuid),
+    onSuccess: () => {
+      toast.success(COBRANCA_MESSAGES.marcadaComoPaga);
+      setCobrancaParaMarcarPaga(null);
+      void Promise.all(
+        keysToInvalidateForCobranca.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
+    },
+  });
 
   function handleGerarContaAPagar(uuid: string) {
     setCobrancaSelecionada(uuid);
@@ -68,13 +98,24 @@ export default function CobrancasRecebidasTab() {
                 </span>
 
                 {c.status === StatusCobranca.ABERTO && (
-                  <Button
-                    variant="primary"
-                    disabled={c.gerouContaAPagar}
-                    onClick={() => handleGerarContaAPagar(c.uuid)}
-                  >
-                    {c.gerouContaAPagar ? "Conta gerada" : "Gerar conta a pagar"}
-                  </Button>
+                  <>
+                    <Button
+                      variant="primary"
+                      disabled={c.gerouContaAPagar}
+                      onClick={() => handleGerarContaAPagar(c.uuid)}
+                    >
+                      {c.gerouContaAPagar ? "Conta gerada" : "Gerar conta a pagar"}
+                    </Button>
+                    <Button
+                      variant="primary"
+                      disabled={marcarComoPagaMutation.isPending}
+                      onClick={() =>
+                        setCobrancaParaMarcarPaga({ uuid: c.uuid, nomeCobrador: c.cobrador.nome })
+                      }
+                    >
+                      {COBRANCA_MESSAGES.buttonLabel}
+                    </Button>
+                  </>
                 )}
               </div>
             </div>
@@ -87,6 +128,20 @@ export default function CobrancasRecebidasTab() {
         open={modalOpen}
         onOpenChange={handleModalOpenChange}
       />
+
+      {cobrancaParaMarcarPaga && (
+        <ModalConfirmacao
+          isOpen={true}
+          title={COBRANCA_MESSAGES.modalTitle}
+          message={`Tem certeza que deseja marcar como paga a cobrança de ${cobrancaParaMarcarPaga.nomeCobrador}?`}
+          isLoading={marcarComoPagaMutation.isPending}
+          onOpenChange={(open) => {
+            if (!open) setCobrancaParaMarcarPaga(null);
+          }}
+          onConfirmar={() => marcarComoPagaMutation.mutate(cobrancaParaMarcarPaga.uuid)}
+        />
+      )}
     </>
   );
 }
+

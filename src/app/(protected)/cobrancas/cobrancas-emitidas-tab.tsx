@@ -1,16 +1,14 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ReactNode, useState } from "react";
-import Modal from "@/components/modal";
+import { useState } from "react";
 import { Button } from "@/components/primitives/button";
 import QueryListState from "@/components/primitives/query-list-state";
-import Text from "@/components/primitives/text";
 import { toast } from "@/components/toast";
 
 import { useCobrancasEmitidas } from "@/hooks/use-cobrancas-emitidas";
 
-import { COBRANCAS_EMITIDAS_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForCobranca } from "@/helpers/query-keys-helper";
 import { toCurrency, toBrDate } from "@/helpers/string-helper";
 
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
@@ -18,19 +16,46 @@ import { cobrancasService } from "@/services/cobrancas-service";
 import ApiError from "@/types/application-error";
 import { StatusCobranca } from "@/types/enum/status-cobranca";
 import { StatusBadge } from "./status-badge";
+import { ModalConfirmacao } from "./modal-confirmacao";
+import { COBRANCA_MESSAGES } from "./constants";
 
 export default function CobrancasEmitidasTab() {
   const queryClient = useQueryClient();
   const { data, isLoading, isError, refetch } = useCobrancasEmitidas();
   const emitidas = data ?? [];
   const [cobrancaParaCancelar, setCobrancaParaCancelar] = useState<{ uuid: string; nomeDevedor: string } | null>(null);
+  const [cobrancaParaMarcarPaga, setCobrancaParaMarcarPaga] = useState<{ uuid: string; nomeDevedor: string } | null>(null);
 
   const cancelarMutation = useMutation({
     mutationFn: (uuid: string) => cobrancasService.cancelar(uuid),
     onSuccess: () => {
       toast.success("Cobrança cancelada");
       setCobrancaParaCancelar(null);
-      void queryClient.invalidateQueries({ queryKey: [COBRANCAS_EMITIDAS_QUERY_KEY] });
+      void Promise.all(
+        keysToInvalidateForCobranca.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
+    },
+  });
+
+  const marcarComoPagaMutation = useMutation({
+    mutationFn: (uuid: string) => cobrancasService.marcarComoPaga(uuid),
+    onSuccess: () => {
+      toast.success(COBRANCA_MESSAGES.marcadaComoPaga);
+      setCobrancaParaMarcarPaga(null);
+      void Promise.all(
+        keysToInvalidateForCobranca.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {
@@ -78,13 +103,22 @@ export default function CobrancasEmitidasTab() {
                 {toCurrency(c.valor)}
               </span>
               {c.status === StatusCobranca.ABERTO && (
-                <Button
-                  variant="cancel"
-                  disabled={cancelarMutation.isPending}
-                  onClick={() => setCobrancaParaCancelar({ uuid: c.uuid, nomeDevedor: c.devedor.nome })}
-                >
-                  Cancelar
-                </Button>
+                <>
+                  <Button
+                    variant="primary"
+                    disabled={cancelarMutation.isPending || marcarComoPagaMutation.isPending}
+                    onClick={() => setCobrancaParaMarcarPaga({ uuid: c.uuid, nomeDevedor: c.devedor.nome })}
+                  >
+                    {COBRANCA_MESSAGES.buttonLabel}
+                  </Button>
+                  <Button
+                    variant="cancel"
+                    disabled={cancelarMutation.isPending || marcarComoPagaMutation.isPending}
+                    onClick={() => setCobrancaParaCancelar({ uuid: c.uuid, nomeDevedor: c.devedor.nome })}
+                  >
+                    Cancelar
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -101,43 +135,18 @@ export default function CobrancasEmitidasTab() {
           onConfirmar={() => cancelarMutation.mutate(cobrancaParaCancelar.uuid)}
         />
       )}
+
+      {cobrancaParaMarcarPaga && (
+        <ModalConfirmacao
+          isOpen={true}
+          title={COBRANCA_MESSAGES.modalTitle}
+          message={`Tem certeza que deseja marcar como paga a cobrança de ${cobrancaParaMarcarPaga.nomeDevedor}?`}
+          isLoading={marcarComoPagaMutation.isPending}
+          onOpenChange={(open) => { if (!open) setCobrancaParaMarcarPaga(null); }}
+          onConfirmar={() => marcarComoPagaMutation.mutate(cobrancaParaMarcarPaga.uuid)}
+        />
+      )}
     </QueryListState>
   );
 }
 
-interface ModalConfirmacaoProps {
-  title: string;
-  message: string;
-  trigger?: ReactNode;
-  isOpen: boolean;
-  isLoading: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirmar: () => void;
-}
-
-function ModalConfirmacao({
-  title,
-  message,
-  trigger,
-  isOpen,
-  isLoading,
-  onOpenChange,
-  onConfirmar,
-}: ModalConfirmacaoProps) {
-  return (
-    <Modal open={isOpen} onOpenChange={onOpenChange} title={title} trigger={trigger}>
-      <div className="flex flex-col gap-3">
-        <Text variant="paragraph-medium">{message}</Text>
-
-        <div className="flex justify-end gap-2">
-          <Button variant="cancel" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button isLoading={isLoading} onClick={onConfirmar}>
-            Confirmar
-          </Button>
-        </div>
-      </div>
-    </Modal>
-  );
-}
