@@ -1,12 +1,10 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 
-import Modal from "@/components/modal";
 import { Button } from "@/components/primitives/button";
 import QueryListState from "@/components/primitives/query-list-state";
-import Text from "@/components/primitives/text";
 import { toast } from "@/components/toast";
 
 import { useCobrancasRecebidas } from "@/hooks/use-cobrancas-recebidas";
@@ -20,6 +18,8 @@ import ApiError from "@/types/application-error";
 import { StatusCobranca } from "@/types/enum/status-cobranca";
 import GerarContaAPagarModal from "./gerar-conta-pagar-modal";
 import { StatusBadge } from "./status-badge";
+import { ModalConfirmacao } from "./modal-confirmacao";
+import { COBRANCA_MESSAGES } from "./constants";
 
 export default function CobrancasRecebidasTab() {
   const queryClient = useQueryClient();
@@ -33,7 +33,7 @@ export default function CobrancasRecebidasTab() {
   const marcarComoPagaMutation = useMutation({
     mutationFn: (uuid: string) => cobrancasService.marcarComoPaga(uuid),
     onSuccess: () => {
-      toast.success("Cobrança marcada como paga");
+      toast.success(COBRANCA_MESSAGES.marcadaComoPaga);
       setCobrancaParaMarcarPaga(null);
       void Promise.all(
         keysToInvalidateForCobranca.map((key) =>
@@ -113,7 +113,7 @@ export default function CobrancasRecebidasTab() {
                         setCobrancaParaMarcarPaga({ uuid: c.uuid, nomeCobrador: c.cobrador.nome })
                       }
                     >
-                      Marcar como pago
+                      {COBRANCA_MESSAGES.buttonLabel}
                     </Button>
                   </>
                 )}
@@ -132,7 +132,7 @@ export default function CobrancasRecebidasTab() {
       {cobrancaParaMarcarPaga && (
         <ModalConfirmacao
           isOpen={true}
-          title="Marcar como paga"
+          title={COBRANCA_MESSAGES.modalTitle}
           message={`Tem certeza que deseja marcar como paga a cobrança de ${cobrancaParaMarcarPaga.nomeCobrador}?`}
           isLoading={marcarComoPagaMutation.isPending}
           onOpenChange={(open) => {
@@ -145,39 +145,3 @@ export default function CobrancasRecebidasTab() {
   );
 }
 
-interface ModalConfirmacaoProps {
-  title: string;
-  message: string;
-  trigger?: ReactNode;
-  isOpen: boolean;
-  isLoading: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirmar: () => void;
-}
-
-function ModalConfirmacao({
-  title,
-  message,
-  trigger,
-  isOpen,
-  isLoading,
-  onOpenChange,
-  onConfirmar,
-}: ModalConfirmacaoProps) {
-  return (
-    <Modal open={isOpen} onOpenChange={onOpenChange} title={title} trigger={trigger}>
-      <div className="flex flex-col gap-3">
-        <Text variant="paragraph-medium">{message}</Text>
-
-        <div className="flex justify-end gap-2">
-          <Button variant="cancel" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button isLoading={isLoading} onClick={onConfirmar}>
-            Confirmar
-          </Button>
-        </div>
-      </div>
-    </Modal>
-  );
-}

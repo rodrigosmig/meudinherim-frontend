@@ -106,6 +106,16 @@ const cobrancaPaga: CobrancaRecebida = {
   gerouContaAPagar: true,
 };
 
+const cobrancaCancelada: CobrancaRecebida = {
+  uuid: "cob-rec-4",
+  cobrador: { id: "user-4", nome: "Fernanda Costa", email: "fernanda@email.com" },
+  descricao: "Projeto de design",
+  valor: 3000,
+  status: StatusCobranca.CANCELADA,
+  criadoEm: "2025-03-10T11:00:00",
+  gerouContaAPagar: false,
+};
+
 function mockQueryReturn(data: CobrancaRecebida[], overrides: Record<string, unknown> = {}) {
   mockUseCobrancasRecebidas.mockReturnValue({
     data,
@@ -282,6 +292,22 @@ describe("CobrancasRecebidasTab", () => {
       render(<CobrancasRecebidasTab />);
 
       expect(screen.queryByRole("button", { name: "Marcar como pago" })).not.toBeInTheDocument();
+    });
+
+    it("não deve exibir botão Marcar como pago para cobrança cancelada", () => {
+      mockQueryReturn([cobrancaCancelada]);
+
+      render(<CobrancasRecebidasTab />);
+
+      expect(screen.queryByRole("button", { name: "Marcar como pago" })).not.toBeInTheDocument();
+    });
+
+    it("deve exibir botão Marcar como pago mesmo quando gerouContaAPagar é true", () => {
+      mockQueryReturn([cobrancaComContaGerada]);
+
+      render(<CobrancasRecebidasTab />);
+
+      expect(screen.getByRole("button", { name: "Marcar como pago" })).toBeVisible();
     });
 
     it("deve abrir modal de confirmação ao clicar em Marcar como pago", async () => {
