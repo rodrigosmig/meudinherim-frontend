@@ -10,7 +10,7 @@ import { toast } from "@/components/toast";
 
 import { useCobrancasEmitidas } from "@/hooks/use-cobrancas-emitidas";
 
-import { COBRANCAS_EMITIDAS_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { COBRANCAS_EMITIDAS_QUERY_KEY, keysToInvalidateForCobranca } from "@/helpers/query-keys-helper";
 import { toCurrency, toBrDate } from "@/helpers/string-helper";
 
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
@@ -24,13 +24,38 @@ export default function CobrancasEmitidasTab() {
   const { data, isLoading, isError, refetch } = useCobrancasEmitidas();
   const emitidas = data ?? [];
   const [cobrancaParaCancelar, setCobrancaParaCancelar] = useState<{ uuid: string; nomeDevedor: string } | null>(null);
+  const [cobrancaParaPagar, setCobrancaParaPagar] = useState<{ uuid: string; nomeDevedor: string } | null>(null);
 
   const cancelarMutation = useMutation({
     mutationFn: (uuid: string) => cobrancasService.cancelar(uuid),
     onSuccess: () => {
       toast.success("Cobrança cancelada");
       setCobrancaParaCancelar(null);
-      void queryClient.invalidateQueries({ queryKey: [COBRANCAS_EMITIDAS_QUERY_KEY] });
+      void Promise.all(
+        keysToInvalidateForCobranca.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+      toast.error(DEFAULT_ERROR_MESSAGE);
+    },
+  });
+
+  const marcarComoPagaMutation = useMutation({
+    mutationFn: (uuid: string) => cobrancasService.marcarComoPaga(uuid),
+    onSuccess: () => {
+      toast.success("Cobrança marcada como paga");
+      setCobrancaParaPagar(null);
+      void Promise.all(
+        keysToInvalidateForCobranca.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {
@@ -78,13 +103,22 @@ export default function CobrancasEmitidasTab() {
                 {toCurrency(c.valor)}
               </span>
               {c.status === StatusCobranca.ABERTO && (
-                <Button
-                  variant="cancel"
-                  disabled={cancelarMutation.isPending}
-                  onClick={() => setCobrancaParaCancelar({ uuid: c.uuid, nomeDevedor: c.devedor.nome })}
-                >
-                  Cancelar
-                </Button>
+                <>
+                  <Button
+                    variant="primary"
+                    disabled={cancelarMutation.isPending || marcarComoPagaMutation.isPending}
+                    onClick={() => setCobrancaParaPagar({ uuid: c.uuid, nomeDevedor: c.devedor.nome })}
+                  >
+                    Marcar como pago
+                  </Button>
+                  <Button
+                    variant="cancel"
+                    disabled={cancelarMutation.isPending || marcarComoPagaMutation.isPending}
+                    onClick={() => setCobrancaParaCancelar({ uuid: c.uuid, nomeDevedor: c.devedor.nome })}
+                  >
+                    Cancelar
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -99,6 +133,17 @@ export default function CobrancasEmitidasTab() {
           isLoading={cancelarMutation.isPending}
           onOpenChange={(open) => { if (!open) setCobrancaParaCancelar(null); }}
           onConfirmar={() => cancelarMutation.mutate(cobrancaParaCancelar.uuid)}
+        />
+      )}
+
+      {cobrancaParaPagar && (
+        <ModalConfirmacao
+          isOpen={true}
+          title="Marcar como paga"
+          message={`Tem certeza que deseja marcar como paga a cobrança de ${cobrancaParaPagar.nomeDevedor}?`}
+          isLoading={marcarComoPagaMutation.isPending}
+          onOpenChange={(open) => { if (!open) setCobrancaParaPagar(null); }}
+          onConfirmar={() => marcarComoPagaMutation.mutate(cobrancaParaPagar.uuid)}
         />
       )}
     </QueryListState>

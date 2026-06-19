@@ -4,6 +4,9 @@ import userEvent from "@testing-library/user-event";
 
 import type { CobrancaRecebida } from "@/types/cobranca";
 import { StatusCobranca } from "@/types/enum/status-cobranca";
+import { toast } from "@/components/toast";
+import ApiError from "@/types/application-error";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 
 import CobrancasRecebidasTab from "../cobrancas-recebidas-tab";
 
@@ -61,6 +64,14 @@ jest.mock("../gerar-conta-pagar-modal", () => ({
       </div>
     ) : null,
 }));
+
+jest.mock("@/services/cobrancas-service", () => ({
+  cobrancasService: {
+    marcarComoPaga: jest.fn(),
+  },
+}));
+
+const { cobrancasService } = jest.requireMock("@/services/cobrancas-service");
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -252,6 +263,85 @@ describe("CobrancasRecebidasTab", () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId("gerar-conta-pagar-modal")).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("botao marcar como pago", () => {
+    it("deve exibir botão Marcar como pago para cobrança aberta", () => {
+      mockQueryReturn([cobrancaAberta]);
+
+      render(<CobrancasRecebidasTab />);
+
+      expect(screen.getByRole("button", { name: "Marcar como pago" })).toBeVisible();
+    });
+
+    it("não deve exibir botão Marcar como pago para cobrança paga", () => {
+      mockQueryReturn([cobrancaPaga]);
+
+      render(<CobrancasRecebidasTab />);
+
+      expect(screen.queryByRole("button", { name: "Marcar como pago" })).not.toBeInTheDocument();
+    });
+
+    it("deve abrir modal de confirmação ao clicar em Marcar como pago", async () => {
+      const user = userEvent.setup();
+      mockQueryReturn([cobrancaAberta]);
+
+      render(<CobrancasRecebidasTab />);
+
+      await user.click(screen.getByRole("button", { name: "Marcar como pago" }));
+
+      expect(screen.getByRole("dialog", { name: "Marcar como paga" })).toBeVisible();
+      expect(
+        screen.getByText("Tem certeza que deseja marcar como paga a cobrança de Carlos Oliveira?"),
+      ).toBeVisible();
+    });
+
+    it("deve chamar marcarComoPaga e exibir toast de sucesso ao confirmar", async () => {
+      cobrancasService.marcarComoPaga.mockResolvedValueOnce(undefined);
+      const user = userEvent.setup();
+      mockQueryReturn([cobrancaAberta]);
+
+      render(<CobrancasRecebidasTab />);
+
+      await user.click(screen.getByRole("button", { name: "Marcar como pago" }));
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(cobrancasService.marcarComoPaga).toHaveBeenCalledWith("cob-rec-1");
+        expect(toast.success).toHaveBeenCalledWith("Cobrança marcada como paga");
+      });
+    });
+
+    it("deve exibir toast de erro quando API retorna ApiError", async () => {
+      const apiError = new ApiError({ codigo: 400, descricao: "Erro de validação" }, 400);
+      cobrancasService.marcarComoPaga.mockRejectedValueOnce(apiError);
+      const user = userEvent.setup();
+      mockQueryReturn([cobrancaAberta]);
+
+      render(<CobrancasRecebidasTab />);
+
+      await user.click(screen.getByRole("button", { name: "Marcar como pago" }));
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith("Erro de validação");
+      });
+    });
+
+    it("deve exibir mensagem de erro padrão para erro genérico", async () => {
+      cobrancasService.marcarComoPaga.mockRejectedValueOnce(new Error("Erro genérico"));
+      const user = userEvent.setup();
+      mockQueryReturn([cobrancaAberta]);
+
+      render(<CobrancasRecebidasTab />);
+
+      await user.click(screen.getByRole("button", { name: "Marcar como pago" }));
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
       });
     });
   });

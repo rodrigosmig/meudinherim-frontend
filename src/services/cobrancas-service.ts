@@ -63,4 +63,17 @@ export const cobrancasService = {
 
     return handleApiResponse<ApiResponse<void>>(response);
   },
+
+  marcarComoPaga: async (uuid: string): Promise<ApiResponse<void>> => {
+    const url = `/api/proxy/v1/cobrancas/${uuid}/pagar`;
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      credentials: "same-origin",
+    });
+
+    validarAutenticacao(response);
+
+    return handleApiResponse<ApiResponse<void>>(response);
+  },
 };
