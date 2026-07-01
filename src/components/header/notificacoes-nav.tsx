@@ -73,7 +73,7 @@ export default function NotificacoesNav() {
     },
   });
 
-  const { mutate: marcarTodasComoLida, isPending: marcandoTodas } = useMutation({
+  const { mutate: marcarTodasComoLida, isPending: marcandoTodasComoLidas } = useMutation({
     mutationFn: () => notificacaoService.marcarTodasComoLida(),
     onSuccess: () => {
       setNotificacoes([]);
@@ -164,11 +164,13 @@ export default function NotificacoesNav() {
             <Button
               className="w-full"
               variant="cancel"
-              disabled={marcandoTodas}
+              disabled={marcandoTodasComoLidas}
               onClick={() => marcarTodasComoLida()}
             >
-              {marcandoTodas && <Loading className="w-3.5 h-3.5 mr-1" />}
+              <span className="flex items-center gap-1">
+              {true && <Loading className="w-3.5 h-3.5 mr-1" />}
               Marcar todas como lidas
+              </span>
             </Button>
           </div>
         )}

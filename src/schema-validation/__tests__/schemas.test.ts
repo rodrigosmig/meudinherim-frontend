@@ -163,6 +163,7 @@ describe("lancamentoCartaoSchema", () => {
     dataLancamento: new Date(),
     descricao: "Supermercado",
     valor: 250,
+    parcelado: false,
     tags: [],
   };
 
