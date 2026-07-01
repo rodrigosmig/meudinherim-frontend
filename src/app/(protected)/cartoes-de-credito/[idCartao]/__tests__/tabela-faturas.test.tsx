@@ -26,7 +26,7 @@ const faturaAberta: Fatura = {
   valorTotal: 1500,
   status: StatusFatura.ABERTO,
   permiteFecharFatura: true,
-  cartao: { uuid: idCartao, descricao: "Nubank" },
+  cartao: { uuid: idCartao, descricao: "Nubank", icon: "nubank" },
 };
 
 const faturaPaga: Fatura = {
@@ -36,7 +36,7 @@ const faturaPaga: Fatura = {
   valorTotal: 800,
   status: StatusFatura.PAGO,
   permiteFecharFatura: false,
-  cartao: { uuid: idCartao, descricao: "Nubank" },
+  cartao: { uuid: idCartao, descricao: "Nubank", icon: "nubank" },
 };
 
 const faturaAntecipada: Fatura = {
@@ -46,7 +46,7 @@ const faturaAntecipada: Fatura = {
   valorTotal: 200,
   status: StatusFatura.FECHADO,
   permiteFecharFatura: false,
-  cartao: { uuid: idCartao, descricao: "Nubank" },
+  cartao: { uuid: idCartao, descricao: "Nubank", icon: "nubank" },
 };
 
 // ── testes ─────────────────────────────────────────────────────────────────

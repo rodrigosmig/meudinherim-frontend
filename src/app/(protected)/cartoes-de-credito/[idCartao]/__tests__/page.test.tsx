@@ -157,8 +157,8 @@ const makeFatura = (overrides: Partial<Fatura> & { uuid: string }): Fatura => ({
   dataFechamento: "2026-05-03",
   valorTotal: 1500,
   status: StatusFatura.ABERTO,
-  isFechada: false,
-  cartao: { uuid: "cartao-123", descricao: "Nubank" },
+  permiteFecharFatura: false,
+  cartao: { uuid: "cartao-123", descricao: "Nubank", icon: "nubank" },
   ...overrides,
 });
 
