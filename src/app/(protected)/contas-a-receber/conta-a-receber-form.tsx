@@ -70,6 +70,7 @@ function getDefaultValues(contaAReceber?: ContaAgendada): DefaultValues<ContaARe
     parcelado: contaAReceber.parcelado,
     quantidadeParcelas: contaAReceber.dadosParcela?.totalDeParcelas,
     tags: contaAReceber.tags ?? [],
+    isCobranca: false,
   };
 }
 

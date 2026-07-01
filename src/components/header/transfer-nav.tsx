@@ -128,7 +128,7 @@ function TransferForm({ onClose }: { onClose: () => void }) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-      <SectionHeading label="Origem" className="text-primary" />
+      <SectionHeading label="Origem" className="text-negative" />
 
       <Controller
         control={form.control}
@@ -160,7 +160,7 @@ function TransferForm({ onClose }: { onClose: () => void }) {
         )}
       />
 
-      <SectionHeading label="Destino" className="text-negative" />
+      <SectionHeading label="Destino" className="text-primary" />
 
       <Controller
         control={form.control}

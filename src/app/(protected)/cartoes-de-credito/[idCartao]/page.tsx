@@ -21,6 +21,7 @@ import TabelaFaturas from "./tabela-faturas";
 
 const STATUS_OPTIONS = [
   { value: StatusFatura.ABERTO, label: "Abertas" },
+  { value: StatusFatura.FECHADO, label: "Fechadas" },
   { value: StatusFatura.PAGO, label: "Pagas" },
 ];
 
