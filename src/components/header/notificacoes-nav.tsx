@@ -168,7 +168,7 @@ export default function NotificacoesNav() {
               onClick={() => marcarTodasComoLida()}
             >
               <span className="flex items-center gap-1">
-              {true && <Loading className="w-3.5 h-3.5 mr-1" />}
+              {marcandoTodasComoLidas && <Loading className="w-3.5 h-3.5 mr-1" />}
               Marcar todas como lidas
               </span>
             </Button>

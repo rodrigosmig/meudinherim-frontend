@@ -14,6 +14,7 @@ import InputDate from "@/components/primitives/input-date";
 import { InputMoney } from "@/components/primitives/input-money";
 import { Select } from "@/components/primitives/select";
 import Switch from "@/components/primitives/switch";
+import Text from "@/components/primitives/text";
 import { toast } from "@/components/toast";
 
 import { useCategorias } from "@/hooks/use-categorias";
@@ -25,7 +26,7 @@ import {
   keysToInvalidateForCartao
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
-import { toUsDate } from "@/helpers/string-helper";
+import { toCurrency, toUsDate } from "@/helpers/string-helper";
 
 import {
   lancamentoCartaoSchema,
@@ -111,7 +112,11 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children, open:
 
   const valor = form.watch("valor");
   const parcelado = form.watch("parcelado");
+  const quantidadeParcelas = form.watch("quantidadeParcelas");
   const valorPreenchido = !!valor && valor > 0;
+  const valorParcela = valor && quantidadeParcelas && quantidadeParcelas > 0
+    ? valor / quantidadeParcelas
+    : 0;
 
   useEffect(() => {
     form.reset(defaultValues);
@@ -296,24 +301,29 @@ export default function LancamentoCartaoForm({ lancamentoCartao, children, open:
             />
 
             {parcelado && (
-              <Input
-                placeholder="Informe o número de parcelas"
-                type="number"
-                inputMode="numeric"
-                min={2}
-                step={1}
-                onKeyDown={(e) => {
-                  if (!/^[0-9]$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
-                    e.preventDefault();
-                  }
-                }}
-                onInput={(e) => {
-                  const input = e.currentTarget as HTMLInputElement;
-                  input.value = input.value.replace(/[^0-9]/g, "");
-                }}
-                {...form.register("quantidadeParcelas", { valueAsNumber: true })}
-                error={form.formState.errors.quantidadeParcelas}
-              />
+              <>
+                <Input
+                  placeholder="Informe o número de parcelas"
+                  type="number"
+                  inputMode="numeric"
+                  min={2}
+                  step={1}
+                  onKeyDown={(e) => {
+                    if (!/^[0-9]$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onInput={(e) => {
+                    const input = e.currentTarget as HTMLInputElement;
+                    input.value = input.value.replace(/[^0-9]/g, "");
+                  }}
+                  {...form.register("quantidadeParcelas", { valueAsNumber: true })}
+                  error={form.formState.errors.quantidadeParcelas}
+                />
+                <Text variant="caption" className="text-gray-400">
+                  Valor de cada parcela: {toCurrency(valorParcela)}
+                </Text>
+              </>
             )}
           </div>
         )}

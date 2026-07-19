@@ -270,6 +270,64 @@ describe("LancamentoCartaoForm", () => {
     });
   });
 
+  describe("parcelamento", () => {
+    it("não deve exibir label de valor da parcela quando parcelado está desativado", async () => {
+      const user = userEvent.setup();
+      render(
+        <LancamentoCartaoForm>
+          <button type="button">Adicionar</button>
+        </LancamentoCartaoForm>,
+        { wrapper: createWrapper() },
+      );
+
+      await user.click(screen.getByRole("button", { name: "Adicionar" }));
+      await user.type(screen.getByRole("spinbutton", { name: "Valor" }), "350");
+
+      expect(
+        screen.queryByText(/Valor de cada parcela/),
+      ).not.toBeInTheDocument();
+    });
+
+    it("deve exibir R$ 0,00 quando parcelado está ativo sem quantidade de parcelas", async () => {
+      const user = userEvent.setup();
+      render(
+        <LancamentoCartaoForm>
+          <button type="button">Adicionar</button>
+        </LancamentoCartaoForm>,
+        { wrapper: createWrapper() },
+      );
+
+      await user.click(screen.getByRole("button", { name: "Adicionar" }));
+      await user.type(screen.getByRole("spinbutton", { name: "Valor" }), "350");
+      await user.click(screen.getByText("Parcelado"));
+
+      expect(
+        screen.getByText("Valor de cada parcela: R$ 0,00"),
+      ).toBeVisible();
+    });
+
+    it("deve exibir o valor correto da parcela quando valor e quantidade são preenchidos", async () => {
+      const user = userEvent.setup();
+      render(
+        <LancamentoCartaoForm>
+          <button type="button">Adicionar</button>
+        </LancamentoCartaoForm>,
+        { wrapper: createWrapper() },
+      );
+
+      await user.click(screen.getByRole("button", { name: "Adicionar" }));
+      await user.type(screen.getByRole("spinbutton", { name: "Valor" }), "600");
+      await user.click(screen.getByText("Parcelado"));
+
+      const parcelasInput = screen.getByPlaceholderText("Informe o número de parcelas");
+      await user.type(parcelasInput, "3");
+
+      expect(
+        screen.getByText("Valor de cada parcela: R$ 200,00"),
+      ).toBeVisible();
+    });
+  });
+
   describe("modo controlado (open/onOpenChange)", () => {
     it("deve abrir quando open=true sem trigger", () => {
       render(<LancamentoCartaoForm open={true} onOpenChange={jest.fn()} />, {
