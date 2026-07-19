@@ -13,6 +13,7 @@ import InputDate from "@/components/primitives/input-date";
 import { InputMoney } from "@/components/primitives/input-money";
 import { Select } from "@/components/primitives/select";
 import Switch from "@/components/primitives/switch";
+import Text from "@/components/primitives/text";
 import { toast } from "@/components/toast";
 
 import { useCategorias } from "@/hooks/use-categorias";
@@ -21,7 +22,7 @@ import { useTags } from "@/hooks/use-tags";
 import { catalogoErros } from "@/helpers/erros-helper";
 import { keysToInvalidateForContaAgendada } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
-import { toUsDate } from "@/helpers/string-helper";
+import { toCurrency, toUsDate } from "@/helpers/string-helper";
 
 import { contaAPagarSchema, type ContaAPagarFormValue } from "@/schema-validation/conta-a-pagar";
 import { contasAPagarService } from "@/services/contas-a-pagar-service";
@@ -88,12 +89,16 @@ export default function ContaAPagarForm({ contaAPagar, children, open: controlle
   const valor = form.watch("valor");
   const parcelado = form.watch("parcelado");
   const periodicidade = form.watch("periodicidade");
+  const quantidadeParcelas = form.watch("quantidadeParcelas");
   const categoriasSaidaOptions = useMemo(
     () => categoriasSaida.map((c) => ({ value: c.uuid, label: c.nome })),
     [categoriasSaida],
   );
   const periodicidadeAtiva = periodicidade !== Periodicidade.NENHUMA;
   const valorPreenchido = !!valor && valor > 0;
+  const valorParcela = valor && quantidadeParcelas && quantidadeParcelas > 0
+    ? valor / quantidadeParcelas
+    : 0;
 
   useEffect(() => {
     form.reset(defaultValues);
@@ -298,24 +303,29 @@ export default function ContaAPagarForm({ contaAPagar, children, open: controlle
               />
 
               {parcelado && (
-                <Input
-                  placeholder="Informe o número de parcelas"
-                  type="number"
-                  inputMode="numeric"
-                  min={2}
-                  step={1}
-                  onKeyDown={(e) => {
-                    if (!/^[0-9]$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
-                  onInput={(e) => {
-                    const input = e.currentTarget as HTMLInputElement;
-                    input.value = input.value.replace(/[^0-9]/g, "");
-                  }}
-                  {...form.register("quantidadeParcelas", { valueAsNumber: true })}
-                  error={form.formState.errors.quantidadeParcelas}
-                />
+                <>
+                  <Input
+                    placeholder="Informe o número de parcelas"
+                    type="number"
+                    inputMode="numeric"
+                    min={2}
+                    step={1}
+                    onKeyDown={(e) => {
+                      if (!/^[0-9]$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onInput={(e) => {
+                      const input = e.currentTarget as HTMLInputElement;
+                      input.value = input.value.replace(/[^0-9]/g, "");
+                    }}
+                    {...form.register("quantidadeParcelas", { valueAsNumber: true })}
+                    error={form.formState.errors.quantidadeParcelas}
+                  />
+                  <Text variant="caption" className="text-gray-400">
+                    Valor de cada parcela: {toCurrency(valorParcela)}
+                  </Text>
+                </>
               )}
             </>
           )}
