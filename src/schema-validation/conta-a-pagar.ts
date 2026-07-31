@@ -27,7 +27,10 @@ export const pagarContaSchema = z.object({
   valor: z
     .number({ error: "O campo valor é obrigatório" })
     .gt(0, "O valor deve ser maior que zero"),
-  idConta: z.string().nonempty("O campo conta é obrigatório"),
+  tipoPagamento: z.enum(["CONTA", "CARTAO"], {
+    error: "Selecione a forma de pagamento",
+  }),
+  idConta: z.string().nonempty("O campo é obrigatório"),
 });
 
 export type PagarContaFormValue = z.infer<typeof pagarContaSchema>;
