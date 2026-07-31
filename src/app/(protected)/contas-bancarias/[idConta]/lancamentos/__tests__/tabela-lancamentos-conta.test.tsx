@@ -399,6 +399,7 @@ describe("TabelaLancamentosConta", () => {
       await waitFor(() => {
         expect(contasAPagarService.cancelarPagamento).toHaveBeenCalledWith(
           "cta-pagar-1",
+          "CONTA",
           "",
         );
         expect(toast.success).toHaveBeenCalledWith(
@@ -423,6 +424,7 @@ describe("TabelaLancamentosConta", () => {
       await waitFor(() => {
         expect(contasAPagarService.cancelarPagamento).toHaveBeenCalledWith(
           "cta-pagar-2",
+          "CONTA",
           "parcela-abc",
         );
       });
@@ -486,6 +488,7 @@ describe("TabelaLancamentosConta", () => {
       await waitFor(() => {
         expect(contasAReceberService.cancelarRecebimento).toHaveBeenCalledWith(
           "cta-receber-1",
+          "CONTA",
           "",
         );
         expect(toast.success).toHaveBeenCalledWith(
@@ -510,6 +513,7 @@ describe("TabelaLancamentosConta", () => {
       await waitFor(() => {
         expect(contasAReceberService.cancelarRecebimento).toHaveBeenCalledWith(
           "cta-receber-2",
+          "CONTA",
           "parcela-xyz",
         );
       });

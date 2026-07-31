@@ -249,7 +249,7 @@ describe("TabelaContasAPagar", () => {
       expect(screen.getByRole("dialog", { name: "Cancelar Pagamento" })).toBeVisible();
     });
 
-    it("deve chamar cancelarPagamento e exibir toast ao confirmar", async () => {
+    it("deve chamar cancelarPagamento com tipoPagamento e exibir toast ao confirmar", async () => {
       contasAPagarService.cancelarPagamento.mockResolvedValueOnce(undefined);
       const user = userEvent.setup();
       render(<TabelaContasAPagar contas={[contaPaga]} />, { wrapper: createWrapper() });
@@ -260,7 +260,63 @@ describe("TabelaContasAPagar", () => {
       await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
       await waitFor(() => {
-        expect(contasAPagarService.cancelarPagamento).toHaveBeenCalled();
+        expect(contasAPagarService.cancelarPagamento).toHaveBeenCalledWith(
+          contaPaga.uuid,
+          "CONTA",
+          dadosParcela.idParcela,
+        );
+        expect(toast.success).toHaveBeenCalledWith("Pagamento cancelado com sucesso!");
+      });
+    });
+
+    it("deve usar tipoPagamento do backend quando disponivel na conta", async () => {
+      contasAPagarService.cancelarPagamento.mockResolvedValueOnce(undefined);
+      const user = userEvent.setup();
+      const contaPagaComCartao = {
+        ...contaPaga,
+        tipoPagamento: "CARTAO" as const,
+      };
+      render(<TabelaContasAPagar contas={[contaPagaComCartao]} />, { wrapper: createWrapper() });
+
+      const [, row] = screen.getAllByRole("row");
+      const buttons = within(row).getAllByRole("button");
+      await user.click(buttons[buttons.length - 1]);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(contasAPagarService.cancelarPagamento).toHaveBeenCalledWith(
+          contaPagaComCartao.uuid,
+          "CARTAO",
+          dadosParcela.idParcela,
+        );
+        expect(toast.success).toHaveBeenCalledWith("Pagamento cancelado com sucesso!");
+      });
+    });
+
+    it("deve priorizar dadosParcela.tipoPagamento sobre conta.tipoPagamento", async () => {
+      contasAPagarService.cancelarPagamento.mockResolvedValueOnce(undefined);
+      const user = userEvent.setup();
+      const contaComAmbosTipos = {
+        ...contaPaga,
+        tipoPagamento: "CONTA" as const,
+        dadosParcela: {
+          ...dadosParcela,
+          tipoPagamento: "CARTAO" as const,
+        },
+      };
+      render(<TabelaContasAPagar contas={[contaComAmbosTipos]} />, { wrapper: createWrapper() });
+
+      const [, row] = screen.getAllByRole("row");
+      const buttons = within(row).getAllByRole("button");
+      await user.click(buttons[buttons.length - 1]);
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(contasAPagarService.cancelarPagamento).toHaveBeenCalledWith(
+          contaComAmbosTipos.uuid,
+          "CARTAO",
+          dadosParcela.idParcela,
+        );
         expect(toast.success).toHaveBeenCalledWith("Pagamento cancelado com sucesso!");
       });
     });
