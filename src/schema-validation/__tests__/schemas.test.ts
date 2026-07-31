@@ -54,7 +54,7 @@ describe("contaAPagarSchema", () => {
 // ── pagarContaSchema ─────────────────────────────────────────────────────────
 
 describe("pagarContaSchema", () => {
-  const valid = { dataPagamento: new Date(), valor: 200, idConta: "conta-1" };
+  const valid = { dataPagamento: new Date(), valor: 200, tipoPagamento: "CONTA" as const, idConta: "conta-1" };
 
   it("valida dados corretos", () => {
     expect(pagarContaSchema.safeParse(valid).success).toBe(true);
