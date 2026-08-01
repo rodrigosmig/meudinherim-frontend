@@ -7,17 +7,20 @@ import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
 import { toast } from "@/components/toast";
 import {
-  keysToInvalidateForCartao
+  keysToInvalidateForCartao,
+  keysToInvalidateForConta,
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { toBrDate, toCurrency } from "@/helpers/string-helper";
 import { lancamentoCartaoService } from "@/services/lancamento-cartao-service";
+import { contasAPagarService } from "@/services/contas-a-pagar-service";
 import ApiError from "@/types/application-error";
 import { StatusParcela } from "@/types/enum/status-parcela";
 import { TipoCategoria } from "@/types/enum/tipo-categoria";
 import { LancamentoCartao } from "@/types/lancamento-cartao";
+import { DadosContaAgendada } from "@/types/lancamento-conta";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { History, Pencil, Trash2 } from "lucide-react";
+import { History, BanknoteX, Pencil, Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { ReactNode, useState } from "react";
 import LancamentoCartaoForm from "./lancamento-cartao-form";
@@ -30,6 +33,7 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
   const dadosCabecalho = ["Data", "Categoria", "Descrição", "Valor", "Ações"];
   const [lancamentoParaDeletar, setLancamentoParaDeletar] = useState<LancamentoCartao | null>(null);
   const [lancamentoParaAntecipar, setLancamentoParaAntecipar] = useState<LancamentoCartao | null>(null);
+  const [lancamentoParaCancelarPagamento, setLancamentoParaCancelarPagamento] = useState<LancamentoCartao | null>(null);
   const queryClient = useQueryClient();
 
   const deleteLancamentoMutation = useMutation({
@@ -43,6 +47,30 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
 
       void Promise.all(
         keysToInvalidateForCartao.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        toast.error(error.apiMessage.descricao);
+        return;
+      }
+
+      toast.error(DEFAULT_ERROR_MESSAGE);
+    },
+  });
+
+  const cancelarPagamentoMutation = useMutation({
+    mutationFn: (contaAgendada: DadosContaAgendada) =>
+      contasAPagarService.cancelarPagamento(contaAgendada.uuid, "CARTAO"),
+    onSuccess: () => {
+      toast.success("Pagamento cancelado com sucesso!");
+
+      setLancamentoParaCancelarPagamento(null);
+
+      void Promise.all(
+        keysToInvalidateForConta.map((key) =>
           queryClient.invalidateQueries({ queryKey: [key] }),
         ),
       );
@@ -114,7 +142,7 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
           <Table.Td className="flex items-center gap-2">
             <LancamentoCartaoForm lancamentoCartao={lancamento}>
               <Button
-                disabled={lancamento.isParcelado}
+                disabled={lancamento.isParcelado || !!lancamento.contaAgendada}
                 icon={Pencil}
                 tooltip="Editar"
               />
@@ -123,7 +151,7 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
             <Button
               icon={Trash2}
               tooltip="Excluir"
-              disabled={!canDeleteLancamento(lancamento)}
+              disabled={!canDeleteLancamento(lancamento) || !!lancamento.contaAgendada}
               onClick={() => setLancamentoParaDeletar(lancamento)}
             />
 
@@ -133,6 +161,14 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
               disabled={!canAnteciparParcelas(lancamento)}
               onClick={() => setLancamentoParaAntecipar(lancamento)}
             />
+
+            {lancamento.contaAgendada && (
+              <Button
+                icon={BanknoteX}
+                tooltip="Cancelar pagamento"
+                onClick={() => setLancamentoParaCancelarPagamento(lancamento)}
+              />
+            )}
           </Table.Td>
         </Table.Tr>
       ))}
@@ -152,6 +188,19 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
           isOpen={true}
           lancamento={lancamentoParaAntecipar}
           onOpenChange={(open) => { if (!open) setLancamentoParaAntecipar(null); }}
+        />
+      )}
+
+      {lancamentoParaCancelarPagamento?.contaAgendada && (
+        <ModalCancelarPagamento
+          isOpen={true}
+          lancamento={lancamentoParaCancelarPagamento}
+          isLoading={cancelarPagamentoMutation.isPending}
+          onOpenChange={(open) => { if (!open) setLancamentoParaCancelarPagamento(null); }}
+          onConfirmar={() => {
+            const contaAgendada = lancamentoParaCancelarPagamento.contaAgendada;
+            if (contaAgendada) cancelarPagamentoMutation.mutate(contaAgendada);
+          }}
         />
       )}
     </Table.Root>
@@ -294,6 +343,46 @@ function ModalConfirmacaoDelete({
             Cancelar
           </Button>
           <Button isLoading={isLoading} onClick={onClickConfirmacao}>
+            Confirmar
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+interface ModalCancelarPagamentoProps {
+  lancamento: LancamentoCartao;
+  isOpen: boolean;
+  isLoading: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirmar: () => void;
+}
+
+function ModalCancelarPagamento({
+  lancamento,
+  isOpen,
+  isLoading,
+  onOpenChange,
+  onConfirmar,
+}: ModalCancelarPagamentoProps) {
+  return (
+    <Modal open={isOpen} onOpenChange={onOpenChange} title="Cancelar Pagamento">
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <Text variant="paragraph-medium">
+            Tem certeza que deseja cancelar o pagamento de "{lancamento.descricao}"?
+          </Text>
+          <div className="flex flex-col gap-0.5 mt-1">
+            <Text><strong>Valor:</strong> {toCurrency(lancamento.valor)}</Text>
+            <Text><strong>Data:</strong> {toBrDate(lancamento.data)}</Text>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="cancel" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button isLoading={isLoading} onClick={onConfirmar}>
             Confirmar
           </Button>
         </div>

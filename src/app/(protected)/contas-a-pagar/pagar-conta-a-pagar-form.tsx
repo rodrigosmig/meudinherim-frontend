@@ -49,16 +49,19 @@ export default function PagarContaAPagarForm({ contaAPagar, children }: Props) {
 
   const cartoesOptions = useMemo(() => {
     if (!configData?.faturas) return [];
-    return configData.faturas.map((fatura) => ({
-      value: fatura.cartao.uuid,
-      label: fatura.cartao.descricao,
-    }));
+    return configData.faturas
+      .filter((fatura) => fatura.cartao != null)
+      .map((fatura) => ({
+        value: fatura.cartao.uuid,
+        label: fatura.cartao.descricao,
+      }));
   }, [configData]);
 
   const isParcelada = contaAPagar.parcelado;
   const isConfiguracaoLoading = isContasLoading || isConfigLoading;
   const hasNoCartoes = cartoesOptions.length === 0;
-  const isCartaoDisabled = isParcelada || hasNoCartoes;
+  const hasIdFatura = !!contaAPagar.idFatura;
+  const isCartaoDisabled = isParcelada || hasNoCartoes || hasIdFatura;
 
   const defaultValues = useMemo(() => getDefaultValues(contaAPagar), [contaAPagar]);
 
@@ -163,7 +166,9 @@ export default function PagarContaAPagarForm({ contaAPagar, children }: Props) {
                       ? "Pagamento com cartão não disponível para contas parceladas"
                       : hasNoCartoes
                         ? "Nenhum cartão disponível"
-                        : undefined
+                        : hasIdFatura
+                          ? "Pagamento com cartão não disponível para contas geradas pelo fechamento de fatura"
+                          : undefined
                   }
                 >
                   <CreditCard className="size-3.5" />
