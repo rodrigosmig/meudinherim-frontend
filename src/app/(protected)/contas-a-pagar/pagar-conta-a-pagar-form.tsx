@@ -57,6 +57,8 @@ export default function PagarContaAPagarForm({ contaAPagar, children }: Props) {
 
   const isParcelada = contaAPagar.parcelado;
   const isConfiguracaoLoading = isContasLoading || isConfigLoading;
+  const hasNoCartoes = cartoesOptions.length === 0;
+  const isCartaoDisabled = isParcelada || hasNoCartoes;
 
   const defaultValues = useMemo(() => getDefaultValues(contaAPagar), [contaAPagar]);
 
@@ -145,18 +147,24 @@ export default function PagarContaAPagarForm({ contaAPagar, children }: Props) {
                   type="button"
                   className={cn(
                     "flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors",
-                    isParcelada && "opacity-40 cursor-not-allowed",
+                    isCartaoDisabled && "opacity-40 cursor-not-allowed",
                     field.value === "CARTAO"
                       ? "bg-primary/20 text-primary"
                       : "bg-transparent text-gray-400 hover:text-gray-200",
                   )}
                   onClick={() => {
-                    if (isParcelada) return;
+                    if (isCartaoDisabled) return;
                     field.onChange("CARTAO");
                     form.setValue("idConta", "");
                   }}
-                  disabled={isParcelada}
-                  title={isParcelada ? "Pagamento com cartão não disponível para contas parceladas" : undefined}
+                  disabled={isCartaoDisabled}
+                  title={
+                    isParcelada
+                      ? "Pagamento com cartão não disponível para contas parceladas"
+                      : hasNoCartoes
+                        ? "Nenhum cartão disponível"
+                        : undefined
+                  }
                 >
                   <CreditCard className="size-3.5" />
                   Cartão

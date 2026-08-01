@@ -30,7 +30,16 @@ export const pagarContaSchema = z.object({
   tipoPagamento: z.enum(["CONTA", "CARTAO"], {
     error: "Selecione a forma de pagamento",
   }),
-  idConta: z.string().nonempty("O campo é obrigatório"),
+  idConta: z.string(),
+}).superRefine((data, ctx) => {
+  if (!data.idConta) {
+    const label = data.tipoPagamento === "CONTA" ? "conta" : "cartão";
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `O campo ${label} é obrigatório`,
+      path: ["idConta"],
+    });
+  }
 });
 
 export type PagarContaFormValue = z.infer<typeof pagarContaSchema>;
