@@ -52,3 +52,5 @@ next-env.d.ts
 
 #IA
 .claude
+.specs/
+.reviews/
