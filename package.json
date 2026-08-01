@@ -2,6 +2,9 @@
   "name": "my-project",
   "version": "0.1.0",
   "private": true,
+  "pnpm": {
+    "onlyBuiltDependencies": ["sharp", "unrs-resolver"]
+  },
   "scripts": {
     "dev": "NODE_ENV=development next dev",
     "dev:inspect": "NODE_OPTIONS=--inspect next dev",
