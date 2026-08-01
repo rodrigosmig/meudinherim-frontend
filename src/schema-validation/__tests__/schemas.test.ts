@@ -54,7 +54,7 @@ describe("contaAPagarSchema", () => {
 // ── pagarContaSchema ─────────────────────────────────────────────────────────
 
 describe("pagarContaSchema", () => {
-  const valid = { dataPagamento: new Date(), valor: 200, idConta: "conta-1" };
+  const valid = { dataPagamento: new Date(), valor: 200, tipoPagamento: "CONTA" as const, idConta: "conta-1" };
 
   it("valida dados corretos", () => {
     expect(pagarContaSchema.safeParse(valid).success).toBe(true);
@@ -66,6 +66,14 @@ describe("pagarContaSchema", () => {
 
   it("falha sem idConta", () => {
     expect(pagarContaSchema.safeParse({ ...valid, idConta: "" }).success).toBe(false);
+  });
+
+  it("falha sem idConta com CARTAO e exibe mensagem correta", () => {
+    const result = pagarContaSchema.safeParse({ ...valid, tipoPagamento: "CARTAO", idConta: "" });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe("O campo cartão é obrigatório");
+    }
   });
 });
 

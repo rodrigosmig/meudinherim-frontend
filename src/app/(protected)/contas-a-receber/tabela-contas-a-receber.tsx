@@ -68,7 +68,7 @@ export default function TabelaContasAReceber({ contas }: Readonly<TabelaContasAR
 
   const cancelarRecebimentoMutation = useMutation({
     mutationFn: (conta: ContaAgendada) =>
-      contasAReceberService.cancelarRecebimento(conta.uuid, conta.dadosParcela?.idParcela),
+      contasAReceberService.cancelarRecebimento(conta.uuid, "CONTA", conta.dadosParcela?.idParcela),
     onSuccess: () => {
       toast.success("Recebimento cancelado com sucesso!");
       setContaParaCancelarRecebimento(null);

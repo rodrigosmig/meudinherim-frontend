@@ -62,6 +62,7 @@ export default function ReceberContaAReceberForm({ contaAReceber, children }: Pr
         valor: data.valor,
         idParcela: contaAReceber.dadosParcela?.idParcela ?? "",
         idConta: data.idConta,
+        tipoPagamento: "CONTA",
       });
     },
     onSuccess: () => {

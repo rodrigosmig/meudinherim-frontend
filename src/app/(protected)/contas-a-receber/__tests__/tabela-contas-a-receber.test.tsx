@@ -238,7 +238,11 @@ describe("TabelaContasAReceber", () => {
       await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
       await waitFor(() => {
-        expect(contasAReceberService.cancelarRecebimento).toHaveBeenCalled();
+        expect(contasAReceberService.cancelarRecebimento).toHaveBeenCalledWith(
+          contaRecebida.uuid,
+          "CONTA",
+          dadosParcela.idParcela,
+        );
         expect(toast.success).toHaveBeenCalledWith("Recebimento cancelado com sucesso!");
       });
     });

@@ -1,5 +1,6 @@
 import { ApiFormErrorResponse, ApiResponse } from "./api";
 import { TipoCategoria } from "./enum/tipo-categoria";
+import { DadosContaAgendada } from "./lancamento-conta";
 import { PaginaRequest } from "./pagina";
 import { Parcela } from "./parcela";
 
@@ -17,6 +18,7 @@ export type LancamentoCartao = {
   parcelas: Parcela[];
   idFatura: string;
   tags: string[];
+  contaAgendada?: DadosContaAgendada | null;
 };
 
 export interface ListarLancamentosCartaoRequest extends PaginaRequest {

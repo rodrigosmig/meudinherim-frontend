@@ -5,7 +5,6 @@
 /.pnp
 .pnp.*
 .yarn/*
-pnpm-workspace.yaml
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
@@ -52,3 +51,5 @@ next-env.d.ts
 
 #IA
 .claude
+.specs/
+.reviews/

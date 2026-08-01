@@ -70,7 +70,11 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
 
   const cancelarPagamentoMutation = useMutation({
     mutationFn: (conta: ContaAgendada) =>
-      contasAPagarService.cancelarPagamento(conta.uuid, conta.dadosParcela?.idParcela),
+      contasAPagarService.cancelarPagamento(
+        conta.uuid,
+        conta.dadosParcela?.tipoPagamento ?? conta.tipoPagamento ?? "CONTA",
+        conta.dadosParcela?.idParcela,
+      ),
     onSuccess: () => {
       toast.success("Pagamento cancelado com sucesso!");
 

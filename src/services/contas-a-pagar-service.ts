@@ -13,6 +13,7 @@ import {
   ListarContaAgendadaRequest,
   ObterContaAPagarResponse,
   PagarContaAgendadaRequest,
+  TipoPagamento,
 } from "@/types/conta-agendada";
 import { Pagina } from "@/types/pagina";
 
@@ -126,6 +127,7 @@ export const contasAPagarService = {
 
   cancelarPagamento: async (
     idContaAPagar: string,
+    tipoPagamento: TipoPagamento,
     idParcela?: string,
   ): Promise<ApiResponse<void>> => {
     const params = new URLSearchParams();
@@ -133,6 +135,8 @@ export const contasAPagarService = {
     if (idParcela) {
       params.append("idParcela", idParcela);
     }
+
+    params.append("tipoPagamento", tipoPagamento);
 
     const url = `/api/proxy/v1/contas-a-pagar/pagamento/cancelar/${idContaAPagar}?${params.toString()}`;
 

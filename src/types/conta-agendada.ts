@@ -4,6 +4,8 @@ import { StatusContaAgendada } from "./enum/status-conta-agendada";
 import { TipoContaAgendada } from "./enum/tipo-conta-agendada";
 import { PaginaRequest } from "./pagina";
 
+export type TipoPagamento = "CONTA" | "CARTAO";
+
 export interface ContaAgendada {
   uuid: string;
   dataVencimento: string;
@@ -18,6 +20,7 @@ export interface ContaAgendada {
   periodicidade: Periodicidade;
   status: StatusContaAgendada;
   parcelado: boolean;
+  tipoPagamento?: TipoPagamento;
   dadosParcela: {
     idParcela: string;
     numeroDaParcela: number;
@@ -25,6 +28,7 @@ export interface ContaAgendada {
     valorTotal: number;
     idLancamento: string;
     pago: boolean;
+    tipoPagamento?: TipoPagamento;
   };
   tags: string[];
 }
@@ -52,6 +56,7 @@ export type PagarContaAgendadaRequest = {
   valor: number;
   idParcela: string;
   idConta: string;
+  tipoPagamento: TipoPagamento;
 };
 
 export interface CadastrarContaAReceberData {
