@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { StatusCobranca } from "@/types/enum/status-cobranca";
 import { toast } from "@/components/toast";
+import ApiError from "@/types/application-error";
+import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 
 import CobrancasRecebidasTab from "../cobrancas-recebidas-tab";
 
@@ -337,6 +339,43 @@ describe("CobrancasRecebidasTab", () => {
 
       await waitFor(() => {
         expect(cobrancasService.marcarComoPaga).toHaveBeenCalledWith("cob-rec-1");
+      });
+    });
+
+    it("deve exibir toast de erro quando API retorna ApiError", async () => {
+      const apiError = new ApiError({ codigo: 400, descricao: "Erro de validação" }, 400);
+      cobrancasService.marcarComoPaga.mockRejectedValueOnce(apiError);
+      const user = userEvent.setup();
+
+      render(<CobrancasRecebidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
+
+      await user.click(screen.getByTestId("marcar-paga-cob-rec-1"));
+
+      const confirmarBtn = screen.getByRole("button", { name: "Confirmar" });
+      await user.click(confirmarBtn);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith("Erro de validação");
+      });
+    });
+
+    it("deve exibir mensagem de erro padrão para erro genérico", async () => {
+      cobrancasService.marcarComoPaga.mockRejectedValueOnce(new Error("Erro genérico"));
+      const user = userEvent.setup();
+
+      render(<CobrancasRecebidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
+
+      await user.click(screen.getByTestId("marcar-paga-cob-rec-1"));
+
+      const confirmarBtn = screen.getByRole("button", { name: "Confirmar" });
+      await user.click(confirmarBtn);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
       });
     });
   });

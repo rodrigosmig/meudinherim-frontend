@@ -12,6 +12,7 @@ import { useCobrancasEmitidasPaginacao } from "@/hooks/use-cobrancas-emitidas-pa
 
 import { keysToInvalidateForCobranca } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
+import { extrairPaginacaoSegura } from "@/helpers/paginacao-helper";
 
 import { cobrancasService } from "@/services/cobrancas-service";
 import ApiError from "@/types/application-error";
@@ -49,14 +50,7 @@ export default function CobrancasEmitidasTab({
 
   const cobrancas = data?.pagina?.conteudo ?? [];
 
-  const paginacao = {
-    paginaAtual: data?.pagina?.paginacao?.paginaAtual ?? 1,
-    ultimaPagina: data?.pagina?.paginacao?.ultimaPagina ?? 1,
-    tamanhoPagina: data?.pagina?.paginacao?.tamanhoPagina ?? perPage,
-    totalElementos: data?.pagina?.paginacao?.totalElementos ?? 0,
-    doElemento: data?.pagina?.paginacao?.doElemento ?? 0,
-    paraElemento: data?.pagina?.paginacao?.paraElemento ?? 0,
-  };
+  const paginacao = extrairPaginacaoSegura(data, perPage);
 
   const cancelarMutation = useMutation({
     mutationFn: (uuid: string) => cobrancasService.cancelar(uuid),

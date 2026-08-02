@@ -42,6 +42,31 @@ export function normalizarPaginaBackendParaFrontend<T>(
   };
 }
 
+interface DadosPaginados {
+  pagina?: {
+    paginacao?: Paginacao;
+  };
+}
+
+/**
+ * Extrai um objeto {@link Paginacao} seguro com fallbacks a partir dos dados paginados.
+ * Útil para componentes que precisam de valores padrão quando os dados ainda não foram carregados.
+ */
+export function extrairPaginacaoSegura(
+  data: DadosPaginados | undefined,
+  perPage: number,
+): Paginacao {
+  const p = data?.pagina?.paginacao;
+  return {
+    paginaAtual: p?.paginaAtual ?? 1,
+    ultimaPagina: p?.ultimaPagina ?? 1,
+    tamanhoPagina: p?.tamanhoPagina ?? perPage,
+    totalElementos: p?.totalElementos ?? 0,
+    doElemento: p?.doElemento ?? 0,
+    paraElemento: p?.paraElemento ?? 0,
+  };
+}
+
 export function normalizarApiResponsePaginadaBackendParaFrontend<T>(
   response: ApiResponse<Pagina<T>>,
 ): ApiResponse<Pagina<T>> {

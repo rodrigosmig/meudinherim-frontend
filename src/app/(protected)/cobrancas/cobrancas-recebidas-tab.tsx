@@ -12,6 +12,7 @@ import { useCobrancasRecebidasPaginacao } from "@/hooks/use-cobrancas-recebidas-
 
 import { keysToInvalidateForCobranca } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
+import { extrairPaginacaoSegura } from "@/helpers/paginacao-helper";
 
 import { cobrancasService } from "@/services/cobrancas-service";
 import ApiError from "@/types/application-error";
@@ -49,14 +50,7 @@ export default function CobrancasRecebidasTab({
 
   const cobrancas = data?.pagina?.conteudo ?? [];
 
-  const paginacao = {
-    paginaAtual: data?.pagina?.paginacao?.paginaAtual ?? 1,
-    ultimaPagina: data?.pagina?.paginacao?.ultimaPagina ?? 1,
-    tamanhoPagina: data?.pagina?.paginacao?.tamanhoPagina ?? perPage,
-    totalElementos: data?.pagina?.paginacao?.totalElementos ?? 0,
-    doElemento: data?.pagina?.paginacao?.doElemento ?? 0,
-    paraElemento: data?.pagina?.paginacao?.paraElemento ?? 0,
-  };
+  const paginacao = extrairPaginacaoSegura(data, perPage);
 
   const marcarComoPagaMutation = useMutation({
     mutationFn: (uuid: string) => cobrancasService.marcarComoPaga(uuid),
@@ -106,7 +100,14 @@ export default function CobrancasRecebidasTab({
           cobrancas={cobrancas}
           onGerarContaAPagar={(uuid) => {
             const cobranca = cobrancas.find((c) => c.uuid === uuid);
-            if (cobranca) handleGerarContaAPagar(cobranca);
+            if (cobranca) {
+              handleGerarContaAPagar(cobranca);
+            } else {
+              console.warn(
+                "GerarContaAPagar: cobranca não encontrada para uuid",
+                uuid,
+              );
+            }
           }}
           onMarcarComoPaga={setCobrancaParaMarcarPaga}
           isMutating={marcarComoPagaMutation.isPending}
