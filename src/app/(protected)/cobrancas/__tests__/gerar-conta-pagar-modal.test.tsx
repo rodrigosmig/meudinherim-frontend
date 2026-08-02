@@ -107,6 +107,7 @@ beforeEach(() => {
 describe("GerarContaAPagarModal", () => {
   const defaultProps = {
     cobrancaUuid: "cob-rec-1",
+    valorCobranca: 2500,
     open: true,
     onOpenChange: jest.fn(),
   };

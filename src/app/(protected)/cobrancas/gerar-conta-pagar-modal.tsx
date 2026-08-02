@@ -29,11 +29,12 @@ import ApiError from "@/types/application-error";
 
 type Props = {
   cobrancaUuid: string;
+  valorCobranca: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export default function GerarContaAPagarModal({ cobrancaUuid, open, onOpenChange }: Readonly<Props>) {
+export default function GerarContaAPagarModal({ cobrancaUuid, valorCobranca, open, onOpenChange }: Readonly<Props>) {
   const queryClient = useQueryClient();
   const { categoriasSaida, isLoading: isCategoriasLoading } = useCategorias();
 
