@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import Pagination from "@/components/pagination";
-import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import QueryListState from "@/components/primitives/query-list-state";
 import { toast } from "@/components/toast";
@@ -13,7 +12,6 @@ import { useCobrancasRecebidasPaginacao } from "@/hooks/use-cobrancas-recebidas-
 
 import { keysToInvalidateForCobranca } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
-import { toCurrency } from "@/helpers/string-helper";
 
 import { cobrancasService } from "@/services/cobrancas-service";
 import ApiError from "@/types/application-error";
@@ -60,11 +58,6 @@ export default function CobrancasRecebidasTab({
     paraElemento: data?.pagina?.paginacao?.paraElemento ?? 0,
   };
 
-  const errorMessage =
-    isError && data === undefined
-      ? DEFAULT_ERROR_MESSAGE
-      : DEFAULT_ERROR_MESSAGE;
-
   const marcarComoPagaMutation = useMutation({
     mutationFn: (uuid: string) => cobrancasService.marcarComoPaga(uuid),
     onSuccess: () => {
@@ -104,7 +97,7 @@ export default function CobrancasRecebidasTab({
         isError={isError}
         isEmpty={!isLoading && cobrancas.length === 0}
         emptyMessage="Nenhuma cobrança recebida"
-        errorMessage={errorMessage}
+        errorMessage={DEFAULT_ERROR_MESSAGE}
         onRetry={() => void refetch()}
         isRetrying={isFetching}
         containerClassName="border-t border-default-border"

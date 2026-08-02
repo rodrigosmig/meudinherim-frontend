@@ -58,8 +58,6 @@ export default function CobrancasEmitidasTab({
     paraElemento: data?.pagina?.paginacao?.paraElemento ?? 0,
   };
 
-  const errorMessage = DEFAULT_ERROR_MESSAGE;
-
   const cancelarMutation = useMutation({
     mutationFn: (uuid: string) => cobrancasService.cancelar(uuid),
     onSuccess: () => {
@@ -110,7 +108,7 @@ export default function CobrancasEmitidasTab({
         isError={isError}
         isEmpty={!isLoading && cobrancas.length === 0}
         emptyMessage="Nenhuma cobrança emitida"
-        errorMessage={errorMessage}
+        errorMessage={DEFAULT_ERROR_MESSAGE}
         onRetry={() => void refetch()}
         isRetrying={isFetching}
         containerClassName="border-t border-default-border"

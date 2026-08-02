@@ -7,7 +7,6 @@ import FiltroPorPeriodo from "@/components/filtro-por-periodo";
 import ResponsivePageTitle from "@/components/header/responsive-page-title";
 import { Card } from "@/components/primitives/card";
 import { Select } from "@/components/primitives/select";
-import Skeleton from "@/components/primitives/skeleton";
 
 import { useDateFilter } from "@/hooks/use-date-filter";
 
@@ -112,6 +111,7 @@ export default function CobrancasPage() {
 
         {activeTab === "recebidas" && (
           <CobrancasRecebidasTab
+            key={`recebidas-${stringDateUS.from ?? ""}-${stringDateUS.to ?? ""}-${statusFilter}-${perPage}`}
             inicio={stringDateUS.from}
             fim={stringDateUS.to}
             status={statusFilter}
@@ -120,6 +120,7 @@ export default function CobrancasPage() {
         )}
         {activeTab === "emitidas" && (
           <CobrancasEmitidasTab
+            key={`emitidas-${stringDateUS.from ?? ""}-${stringDateUS.to ?? ""}-${statusFilter}-${perPage}`}
             inicio={stringDateUS.from}
             fim={stringDateUS.to}
             status={statusFilter}
