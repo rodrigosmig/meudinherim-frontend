@@ -7,8 +7,12 @@ export function useCobrancasEmitidas() {
   return useQuery({
     queryKey: [COBRANCAS_EMITIDAS_QUERY_KEY],
     queryFn: async () => {
-      const response = await cobrancasService.listarEmitidas();
-      return response.data as CobrancaEmitida[];
+      const response = await cobrancasService.listarEmitidas({
+        comPaginacao: true,
+        pagina: 1,
+        size: 50,
+      });
+      return (response.data?.pagina?.conteudo ?? []) as CobrancaEmitida[];
     },
     staleTime: 1000 * 60 * 5,
   });
