@@ -68,6 +68,8 @@ const cobrancaAberta: CobrancaEmitida = {
   valor: 1500,
   status: StatusCobranca.ABERTO,
   criadoEm: "2025-01-15T10:30:00",
+  data: "2025-01-15",
+  isParcelado: false,
 };
 
 const cobrancaPaga: CobrancaEmitida = {
@@ -78,6 +80,8 @@ const cobrancaPaga: CobrancaEmitida = {
   status: StatusCobranca.PAGO,
   criadoEm: "2025-01-10T08:00:00",
   pagoEm: "2025-01-11T14:00:00",
+  data: "2025-01-10",
+  isParcelado: false,
 };
 
 const cobrancaCancelada: CobrancaEmitida = {
@@ -87,6 +91,8 @@ const cobrancaCancelada: CobrancaEmitida = {
   valor: 800,
   status: StatusCobranca.CANCELADA,
   criadoEm: "2025-01-05T09:00:00",
+  data: "2025-01-05",
+  isParcelado: false,
 };
 
 function mockQueryReturn(data: CobrancaEmitida[], overrides: Record<string, unknown> = {}) {

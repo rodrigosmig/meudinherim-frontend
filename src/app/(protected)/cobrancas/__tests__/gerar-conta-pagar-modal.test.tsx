@@ -169,6 +169,8 @@ describe("GerarContaAPagarModal", () => {
       await waitFor(() => {
         expect(cobrancasService.gerarContaAPagar).toHaveBeenCalledWith("cob-rec-1", {
           idCategoria: "cat-1",
+          isParcelado: false,
+          quantidadeParcelas: undefined,
         });
       });
     });

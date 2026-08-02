@@ -83,6 +83,8 @@ const cobrancaAberta: CobrancaRecebida = {
   status: StatusCobranca.ABERTO,
   criadoEm: "2025-02-01T10:00:00",
   gerouContaAPagar: false,
+  data: "2025-02-01",
+  isParcelado: false,
 };
 
 const cobrancaComContaGerada: CobrancaRecebida = {
@@ -93,6 +95,8 @@ const cobrancaComContaGerada: CobrancaRecebida = {
   status: StatusCobranca.ABERTO,
   criadoEm: "2025-01-20T08:30:00",
   gerouContaAPagar: true,
+  data: "2025-01-20",
+  isParcelado: false,
 };
 
 const cobrancaPaga: CobrancaRecebida = {
@@ -104,6 +108,8 @@ const cobrancaPaga: CobrancaRecebida = {
   criadoEm: "2025-01-05T09:00:00",
   pagoEm: "2025-01-06T14:00:00",
   gerouContaAPagar: true,
+  data: "2025-01-05",
+  isParcelado: false,
 };
 
 const cobrancaCancelada: CobrancaRecebida = {
@@ -114,6 +120,8 @@ const cobrancaCancelada: CobrancaRecebida = {
   status: StatusCobranca.CANCELADA,
   criadoEm: "2025-03-10T11:00:00",
   gerouContaAPagar: false,
+  data: "2025-03-10",
+  isParcelado: false,
 };
 
 function mockQueryReturn(data: CobrancaRecebida[], overrides: Record<string, unknown> = {}) {

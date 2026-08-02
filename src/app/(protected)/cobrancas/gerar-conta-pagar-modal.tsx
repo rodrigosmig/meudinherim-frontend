@@ -46,18 +46,20 @@ export default function GerarContaAPagarModal({ cobrancaUuid, open, onOpenChange
     resolver: zodResolver(gerarContaAPagarSchema),
     defaultValues: {
       idCategoria: "",
+      isParcelado: false,
+      quantidadeParcelas: undefined,
     },
   });
 
   useEffect(() => {
     if (!open) {
-      form.reset({ idCategoria: "" });
+      form.reset({ idCategoria: "", isParcelado: false, quantidadeParcelas: undefined });
     }
   }, [open, form]);
 
   const mutation = useMutation({
-    mutationFn: ({ idCategoria }: GerarContaAPagarFormValue) =>
-      cobrancasService.gerarContaAPagar(cobrancaUuid, { idCategoria }),
+    mutationFn: ({ idCategoria, isParcelado, quantidadeParcelas }: GerarContaAPagarFormValue) =>
+      cobrancasService.gerarContaAPagar(cobrancaUuid, { idCategoria, isParcelado, quantidadeParcelas }),
     onSuccess: () => {
       toast.success("Conta a pagar gerada!");
       onOpenChange(false);
