@@ -58,6 +58,67 @@ jest.mock("@/components/primitives/select", () => ({
   ),
 }));
 
+jest.mock("@/components/primitives/switch", () => ({
+  __esModule: true,
+  default: ({
+    label,
+    checked,
+    onCheckedChange,
+  }: {
+    label: string;
+    checked: boolean;
+    onCheckedChange: (checked: boolean) => void;
+  }) => (
+    <label>
+      <input
+        type="checkbox"
+        data-testid="switch-parcelado"
+        checked={checked}
+        onChange={(e) => onCheckedChange(e.target.checked)}
+      />
+      {label}
+    </label>
+  ),
+}));
+
+jest.mock("@/components/primitives/input", () => ({
+  Input: React.forwardRef(
+    (
+      props: {
+        placeholder?: string;
+        error?: { message?: string };
+        [key: string]: unknown;
+      },
+      ref: React.Ref<HTMLInputElement>,
+    ) => (
+      <div>
+        <input
+          ref={ref}
+          data-testid="input-parcelas"
+          placeholder={props.placeholder}
+          {...props}
+        />
+        {props.error && (
+          <span data-testid="input-error">{props.error.message}</span>
+        )}
+      </div>
+    ),
+  ),
+}));
+
+jest.mock("@/components/primitives/text", () => ({
+  __esModule: true,
+  default: ({
+    children,
+    className,
+    variant,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    variant?: string;
+  }) => <span className={className}>{children}</span>,
+}));
+
 jest.mock("@/services/cobrancas-service", () => ({
   cobrancasService: {
     gerarContaAPagar: jest.fn(),
@@ -219,6 +280,96 @@ describe("GerarContaAPagarModal", () => {
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
       });
+    });
+  });
+
+  describe("parcelamento", () => {
+    it("deve exibir o valor da cobrança", () => {
+      render(<GerarContaAPagarModal {...defaultProps} />);
+
+      expect(screen.getByText(/Valor da cobrança: R\$ 2.500,00/)).toBeVisible();
+    });
+
+    it("deve exibir switch Parcelado desmarcado por padrão", () => {
+      render(<GerarContaAPagarModal {...defaultProps} />);
+
+      const switchEl = screen.getByTestId("switch-parcelado");
+      expect(switchEl).not.toBeChecked();
+    });
+
+    it("não deve exibir campo de parcelas quando switch está desmarcado", () => {
+      render(<GerarContaAPagarModal {...defaultProps} />);
+
+      expect(screen.queryByTestId("input-parcelas")).not.toBeInTheDocument();
+    });
+
+    it("deve exibir campo de parcelas quando switch é ativado", async () => {
+      const user = userEvent.setup();
+
+      render(<GerarContaAPagarModal {...defaultProps} />);
+
+      await user.click(screen.getByTestId("switch-parcelado"));
+
+      expect(screen.getByTestId("input-parcelas")).toBeVisible();
+    });
+
+    it("deve exibir valor da parcela calculado", async () => {
+      const user = userEvent.setup();
+
+      render(<GerarContaAPagarModal {...defaultProps} />);
+
+      // Ativa o switch
+      await user.click(screen.getByTestId("switch-parcelado"));
+
+      // Digita 5 no campo de parcelas
+      const input = screen.getByTestId("input-parcelas");
+      await user.clear(input);
+      await user.type(input, "5");
+
+      // O valor exibido é calculado pelo componente (2500 / 5 = 500)
+      expect(screen.getByText(/Valor de cada parcela: R\$ 500,00/)).toBeVisible();
+    });
+
+    it("deve enviar isParcelado e quantidadeParcelas ao submeter com parcelamento", async () => {
+      cobrancasService.gerarContaAPagar.mockResolvedValueOnce(undefined);
+      const user = userEvent.setup();
+      const onOpenChange = jest.fn();
+
+      render(<GerarContaAPagarModal {...defaultProps} onOpenChange={onOpenChange} />);
+
+      await user.selectOptions(screen.getByTestId("categoria-select"), "cat-1");
+      await user.click(screen.getByTestId("switch-parcelado"));
+
+      const input = screen.getByTestId("input-parcelas");
+      await user.clear(input);
+      await user.type(input, "3");
+
+      await user.click(screen.getByRole("button", { name: "Gerar conta a pagar" }));
+
+      await waitFor(() => {
+        expect(cobrancasService.gerarContaAPagar).toHaveBeenCalledWith(
+          "cob-rec-1",
+          {
+            idCategoria: "cat-1",
+            isParcelado: true,
+            quantidadeParcelas: 3,
+          },
+        );
+      });
+    });
+
+    it("deve esconder campo de parcelas ao desativar o switch", async () => {
+      const user = userEvent.setup();
+
+      render(<GerarContaAPagarModal {...defaultProps} />);
+
+      // Ativa
+      await user.click(screen.getByTestId("switch-parcelado"));
+      expect(screen.getByTestId("input-parcelas")).toBeVisible();
+
+      // Desativa
+      await user.click(screen.getByTestId("switch-parcelado"));
+      expect(screen.queryByTestId("input-parcelas")).not.toBeInTheDocument();
     });
   });
 });
