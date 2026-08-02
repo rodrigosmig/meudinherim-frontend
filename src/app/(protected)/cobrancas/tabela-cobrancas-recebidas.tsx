@@ -35,7 +35,7 @@ export default function TabelaCobrancasRecebidas({
             <Table.Td>{toBrDate(c.data)}</Table.Td>
             <Table.Td className="text-negative">{toCurrency(c.valor)}</Table.Td>
             <Table.Td>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col items-start gap-1">
                 <StatusBadge status={c.status} />
                 {c.pagoEm && (
                   <span className="text-xs text-green-400">
