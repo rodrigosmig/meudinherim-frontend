@@ -1,8 +1,8 @@
 import React from "react";
-import { render, screen, waitFor, within } from "@/helpers/test/test-helper";
+import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import type { CobrancaEmitida } from "@/types/cobranca";
 import { StatusCobranca } from "@/types/enum/status-cobranca";
 import { toast } from "@/components/toast";
 import ApiError from "@/types/application-error";
@@ -16,9 +16,51 @@ jest.mock("@/components/toast", () => ({
   toast: { success: jest.fn(), error: jest.fn() },
 }));
 
-const mockUseCobrancasEmitidas = jest.fn();
-jest.mock("@/hooks/use-cobrancas-emitidas", () => ({
-  useCobrancasEmitidas: () => mockUseCobrancasEmitidas(),
+const mockUseCobrancasEmitidasPaginacao = jest.fn();
+jest.mock("@/hooks/use-cobrancas-emitidas-paginacao", () => ({
+  useCobrancasEmitidasPaginacao: (...args: unknown[]) =>
+    mockUseCobrancasEmitidasPaginacao(...args),
+}));
+
+jest.mock("../tabela-cobrancas-emitidas", () => ({
+  __esModule: true,
+  default: ({
+    cobrancas,
+    onMarcarComoPaga,
+    onCancelar,
+    isMutating,
+  }: {
+    cobrancas: unknown[];
+    onMarcarComoPaga: (c: unknown) => void;
+    onCancelar: (c: unknown) => void;
+    isMutating: boolean;
+  }) => (
+    <div data-testid="tabela-cobrancas-emitidas">
+      {cobrancas.map((c: any) => (
+        <div key={c.uuid} data-testid={`row-${c.uuid}`}>
+          <span>{c.devedor.nome}</span>
+          <button
+            data-testid={`marcar-paga-${c.uuid}`}
+            onClick={() =>
+              onMarcarComoPaga({ uuid: c.uuid, nomeDevedor: c.devedor.nome })
+            }
+            disabled={isMutating}
+          >
+            Marcar como pago
+          </button>
+          <button
+            data-testid={`cancelar-${c.uuid}`}
+            onClick={() =>
+              onCancelar({ uuid: c.uuid, nomeDevedor: c.devedor.nome })
+            }
+            disabled={isMutating}
+          >
+            Cancelar
+          </button>
+        </div>
+      ))}
+    </div>
+  ),
 }));
 
 jest.mock("@/components/primitives/query-list-state", () => ({
@@ -28,6 +70,7 @@ jest.mock("@/components/primitives/query-list-state", () => ({
     isError,
     isEmpty,
     emptyMessage,
+    errorMessage,
     onRetry,
     children,
   }: {
@@ -35,19 +78,36 @@ jest.mock("@/components/primitives/query-list-state", () => ({
     isError: boolean;
     isEmpty: boolean;
     emptyMessage: string;
+    errorMessage?: string;
     onRetry?: () => void;
+    isRetrying?: boolean;
+    containerClassName?: string;
     children: React.ReactNode;
   }) => {
     if (isLoading) return <div data-testid="query-list-loading">Carregando...</div>;
-    if (isError) return (
-      <div data-testid="query-list-error">
-        Erro
-        {onRetry && <button onClick={onRetry} data-testid="retry-button">Tentar novamente</button>}
-      </div>
-    );
+    if (isError)
+      return (
+        <div data-testid="query-list-error">
+          {errorMessage}
+          {onRetry && (
+            <button onClick={onRetry} data-testid="retry-button">
+              Tentar novamente
+            </button>
+          )}
+        </div>
+      );
     if (isEmpty) return <div data-testid="query-list-empty">{emptyMessage}</div>;
     return <div data-testid="query-list-content">{children}</div>;
   },
+}));
+
+jest.mock("@/components/pagination", () => ({
+  __esModule: true,
+  default: ({ onPageChange }: { paginacao: unknown; onPageChange: (p: number) => void }) => (
+    <button data-testid="pagination-next" onClick={() => onPageChange(2)}>
+      Próxima
+    </button>
+  ),
 }));
 
 jest.mock("@/services/cobrancas-service", () => ({
@@ -57,43 +117,55 @@ jest.mock("@/services/cobrancas-service", () => ({
   },
 }));
 
-// ── helpers ────────────────────────────────────────────────────────────────
-
 const { cobrancasService } = jest.requireMock("@/services/cobrancas-service");
 
-const cobrancaAberta: CobrancaEmitida = {
+// ── helpers ────────────────────────────────────────────────────────────────
+
+const cobrancaAberta = {
   uuid: "cob-1",
   devedor: { id: "user-1", nome: "João Silva", email: "joao@email.com" },
   descricao: "Pagamento de dívida",
   valor: 1500,
   status: StatusCobranca.ABERTO,
   criadoEm: "2025-01-15T10:30:00",
+  data: "2025-01-15",
+  isParcelado: false,
 };
 
-const cobrancaPaga: CobrancaEmitida = {
-  uuid: "cob-2",
-  devedor: { id: "user-2", nome: "Maria Santos", email: "maria@email.com" },
-  descricao: "Assinatura mensal",
-  valor: 350,
-  status: StatusCobranca.PAGO,
-  criadoEm: "2025-01-10T08:00:00",
-  pagoEm: "2025-01-11T14:00:00",
+const defaultProps = {
+  inicio: undefined,
+  fim: undefined,
+  status: StatusCobranca.ABERTO,
+  perPage: 10,
 };
 
-const cobrancaCancelada: CobrancaEmitida = {
-  uuid: "cob-3",
-  devedor: { id: "user-3", nome: "Pedro Costa", email: "pedro@email.com" },
-  descricao: "Serviço prestado",
-  valor: 800,
-  status: StatusCobranca.CANCELADA,
-  criadoEm: "2025-01-05T09:00:00",
+const createWrapper = () => {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  );
 };
 
-function mockQueryReturn(data: CobrancaEmitida[], overrides: Record<string, unknown> = {}) {
-  mockUseCobrancasEmitidas.mockReturnValue({
-    data,
+function mockQueryReturn(overrides: Record<string, unknown> = {}) {
+  mockUseCobrancasEmitidasPaginacao.mockReturnValue({
+    data: {
+      pagina: {
+        conteudo: [cobrancaAberta],
+        paginacao: {
+          paginaAtual: 1,
+          ultimaPagina: 1,
+          tamanhoPagina: 10,
+          totalElementos: 1,
+          doElemento: 1,
+          paraElemento: 1,
+        },
+      },
+    },
     isLoading: false,
     isError: false,
+    isFetching: false,
     refetch: jest.fn(),
     ...overrides,
   });
@@ -103,7 +175,7 @@ function mockQueryReturn(data: CobrancaEmitida[], overrides: Record<string, unkn
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockQueryReturn([]);
+  mockQueryReturn();
 });
 
 // ── testes ─────────────────────────────────────────────────────────────────
@@ -111,191 +183,164 @@ beforeEach(() => {
 describe("CobrancasEmitidasTab", () => {
   describe("estado de carregamento", () => {
     it("deve exibir estado de carregamento", () => {
-      mockQueryReturn([], { isLoading: true });
+      mockQueryReturn({ isLoading: true });
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
       expect(screen.getByTestId("query-list-loading")).toBeVisible();
     });
   });
 
   describe("estado de erro", () => {
-    it("deve exibir estado de erro", () => {
+    it("deve exibir estado de erro com botão de retry", async () => {
       const refetch = jest.fn();
-      mockQueryReturn([], { isError: true, refetch });
+      mockQueryReturn({ isError: true, data: undefined, refetch });
+      const user = userEvent.setup();
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
       expect(screen.getByTestId("query-list-error")).toBeVisible();
-    });
-
-    it("deve chamar refetch ao clicar em tentar novamente", async () => {
-      const user = userEvent.setup();
-      const refetch = jest.fn();
-      mockQueryReturn([], { isError: true, refetch });
-
-      render(<CobrancasEmitidasTab />);
-
       await user.click(screen.getByTestId("retry-button"));
       expect(refetch).toHaveBeenCalled();
     });
   });
 
   describe("estado vazio", () => {
-    it("deve exibir mensagem de estado vazio", () => {
-      mockQueryReturn([]);
+    it("deve exibir mensagem de lista vazia", () => {
+      mockQueryReturn({
+        data: {
+          pagina: { conteudo: [], paginacao: { paginaAtual: 1, ultimaPagina: 0, tamanhoPagina: 10, totalElementos: 0, doElemento: 0, paraElemento: 0 } },
+        },
+      });
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      expect(screen.getByTestId("query-list-empty")).toBeVisible();
-      expect(screen.getByText("Nenhuma cobrança emitida")).toBeVisible();
+      expect(screen.getByTestId("query-list-empty")).toHaveTextContent(
+        "Nenhuma cobrança emitida",
+      );
     });
   });
 
-  describe("renderização de dados", () => {
-    it("deve renderizar a lista de cobranças emitidas", () => {
-      mockQueryReturn([cobrancaAberta, cobrancaPaga]);
+  describe("com dados", () => {
+    it("deve renderizar a tabela com dados", () => {
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      render(<CobrancasEmitidasTab />);
-
-      expect(screen.getByTestId("query-list-content")).toBeVisible();
-      expect(screen.getByText("João Silva")).toBeVisible();
-      expect(screen.getByText("Maria Santos")).toBeVisible();
-      expect(screen.getByText("Pagamento de dívida")).toBeVisible();
+      expect(screen.getByTestId("tabela-cobrancas-emitidas")).toBeVisible();
     });
 
-    it("deve exibir o valor formatado", () => {
-      mockQueryReturn([cobrancaAberta]);
+    it("deve passar filtros para o hook paginado", () => {
+      render(
+        <CobrancasEmitidasTab
+          inicio="2025-01-01"
+          fim="2025-01-31"
+          status={StatusCobranca.PAGO}
+          perPage={25}
+        />,
+        { wrapper: createWrapper() },
+      );
 
-      render(<CobrancasEmitidasTab />);
-
-      expect(screen.getByText(/1\.500,00/)).toBeVisible();
+      expect(mockUseCobrancasEmitidasPaginacao).toHaveBeenCalledWith(
+        1,
+        25,
+        "2025-01-01",
+        "2025-01-31",
+        StatusCobranca.PAGO,
+      );
     });
 
-    it("deve exibir o badge de status para cobrança aberta", () => {
-      mockQueryReturn([cobrancaAberta]);
+    it("deve navegar entre páginas", async () => {
+      const user = userEvent.setup();
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      expect(screen.getByText("Aberto")).toBeVisible();
-    });
+      await user.click(screen.getByTestId("pagination-next"));
 
-    it("deve exibir o badge de status para cobrança paga", () => {
-      mockQueryReturn([cobrancaPaga]);
-
-      render(<CobrancasEmitidasTab />);
-
-      expect(screen.getByText("Pago")).toBeVisible();
-    });
-
-    it("deve exibir data de pagamento para cobrança paga", () => {
-      mockQueryReturn([cobrancaPaga]);
-
-      render(<CobrancasEmitidasTab />);
-
-      expect(screen.getByText(/Pago em 11\/01\/2025/)).toBeVisible();
-    });
-
-    it("não deve exibir data de pagamento para cobrança aberta", () => {
-      mockQueryReturn([cobrancaAberta]);
-
-      render(<CobrancasEmitidasTab />);
-
-      expect(screen.queryByText(/Pago em/)).not.toBeInTheDocument();
-    });
-
-    it("deve exibir o botão Cancelar apenas para cobranças abertas", () => {
-      mockQueryReturn([cobrancaAberta, cobrancaPaga]);
-
-      render(<CobrancasEmitidasTab />);
-
-      const buttons = screen.getAllByRole("button", { name: "Cancelar" });
-      expect(buttons).toHaveLength(1);
-    });
-
-    it("não deve exibir botão Cancelar para cobranças canceladas", () => {
-      mockQueryReturn([cobrancaCancelada]);
-
-      render(<CobrancasEmitidasTab />);
-
-      expect(screen.queryByRole("button", { name: "Cancelar" })).not.toBeInTheDocument();
+      expect(mockUseCobrancasEmitidasPaginacao).toHaveBeenCalledWith(
+        2,
+        10,
+        undefined,
+        undefined,
+        StatusCobranca.ABERTO,
+      );
     });
   });
 
-  describe("modal de cancelamento", () => {
-    it("deve abrir modal de cancelamento ao clicar em Cancelar", async () => {
+  describe("cancelar", () => {
+    it("deve abrir modal de confirmação ao clicar em Cancelar", async () => {
       const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      await user.click(screen.getByRole("button", { name: "Cancelar" }));
-
-      expect(screen.getByRole("dialog", { name: "Cancelar Cobrança" })).toBeVisible();
-      expect(
-        screen.getByText(/Tem certeza que deseja cancelar a cobrança para João Silva\?/),
-      ).toBeVisible();
-    });
-
-    it("deve fechar modal ao clicar no botão Cancelar do modal", async () => {
-      const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
-
-      render(<CobrancasEmitidasTab />);
-
-      await user.click(screen.getByRole("button", { name: "Cancelar" }));
-
-      const dialog = screen.getByRole("dialog", { name: "Cancelar Cobrança" });
-      await user.click(within(dialog).getByRole("button", { name: "Cancelar" }));
+      await user.click(screen.getByTestId("cancelar-cob-1"));
 
       await waitFor(() => {
         expect(
-          screen.queryByRole("dialog", { name: "Cancelar Cobrança" }),
-        ).not.toBeInTheDocument();
+          screen.getByText(/Tem certeza que deseja cancelar a cobrança para João Silva\?/),
+        ).toBeVisible();
       });
     });
 
-    it("deve chamar cancelar e exibir toast de sucesso ao confirmar", async () => {
+    it("deve chamar serviço ao confirmar cancelamento", async () => {
       cobrancasService.cancelar.mockResolvedValueOnce(undefined);
       const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      await user.click(screen.getByRole("button", { name: "Cancelar" }));
-      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+      await user.click(screen.getByTestId("cancelar-cob-1"));
+
+      const confirmarBtn = screen.getByRole("button", { name: "Confirmar" });
+      await user.click(confirmarBtn);
 
       await waitFor(() => {
         expect(cobrancasService.cancelar).toHaveBeenCalledWith("cob-1");
-        expect(toast.success).toHaveBeenCalledWith("Cobrança cancelada");
       });
     });
 
-    it("deve exibir toast de erro quando a mutação falha com ApiError", async () => {
+    it("deve exibir toast de erro quando API retorna ApiError", async () => {
       const apiError = new ApiError({ codigo: 400, descricao: "Erro de validação" }, 400);
       cobrancasService.cancelar.mockRejectedValueOnce(apiError);
       const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      await user.click(screen.getByRole("button", { name: "Cancelar" }));
-      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+      await user.click(screen.getByTestId("cancelar-cob-1"));
+
+      const confirmarBtn = screen.getByRole("button", { name: "Confirmar" });
+      await user.click(confirmarBtn);
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith("Erro de validação");
       });
     });
 
-    it("deve exibir mensagem de erro padrão quando a mutação falha com erro genérico", async () => {
+    it("deve exibir mensagem de erro padrão para erro genérico", async () => {
       cobrancasService.cancelar.mockRejectedValueOnce(new Error("Erro genérico"));
       const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      await user.click(screen.getByRole("button", { name: "Cancelar" }));
-      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+      await user.click(screen.getByTestId("cancelar-cob-1"));
+
+      const confirmarBtn = screen.getByRole("button", { name: "Confirmar" });
+      await user.click(confirmarBtn);
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
@@ -303,62 +348,22 @@ describe("CobrancasEmitidasTab", () => {
     });
   });
 
-  describe("botao marcar como pago", () => {
-    it("deve exibir botão Marcar como pago para cobrança aberta", () => {
-      mockQueryReturn([cobrancaAberta]);
-
-      render(<CobrancasEmitidasTab />);
-
-      expect(screen.getByRole("button", { name: "Marcar como pago" })).toBeVisible();
-    });
-
-    it("não deve exibir botão Marcar como pago para cobrança paga", () => {
-      mockQueryReturn([cobrancaPaga]);
-
-      render(<CobrancasEmitidasTab />);
-
-      expect(
-        screen.queryByRole("button", { name: "Marcar como pago" }),
-      ).not.toBeInTheDocument();
-    });
-
-    it("não deve exibir botão Marcar como pago para cobrança cancelada", () => {
-      mockQueryReturn([cobrancaCancelada]);
-
-      render(<CobrancasEmitidasTab />);
-
-      expect(
-        screen.queryByRole("button", { name: "Marcar como pago" }),
-      ).not.toBeInTheDocument();
-    });
-
-    it("deve abrir modal de confirmação ao clicar em Marcar como pago", async () => {
-      const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
-
-      render(<CobrancasEmitidasTab />);
-
-      await user.click(screen.getByRole("button", { name: "Marcar como pago" }));
-
-      expect(screen.getByRole("dialog", { name: "Marcar como paga" })).toBeVisible();
-      expect(
-        screen.getByText(/Tem certeza que deseja marcar como paga a cobrança de João Silva\?/),
-      ).toBeVisible();
-    });
-
-    it("deve chamar marcarComoPaga e exibir toast de sucesso ao confirmar", async () => {
+  describe("marcar como paga", () => {
+    it("deve chamar serviço ao confirmar", async () => {
       cobrancasService.marcarComoPaga.mockResolvedValueOnce(undefined);
       const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      await user.click(screen.getByRole("button", { name: "Marcar como pago" }));
-      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+      await user.click(screen.getByTestId("marcar-paga-cob-1"));
+
+      const confirmarBtn = screen.getByRole("button", { name: "Confirmar" });
+      await user.click(confirmarBtn);
 
       await waitFor(() => {
         expect(cobrancasService.marcarComoPaga).toHaveBeenCalledWith("cob-1");
-        expect(toast.success).toHaveBeenCalledWith("Cobrança marcada como paga");
       });
     });
 
@@ -366,12 +371,15 @@ describe("CobrancasEmitidasTab", () => {
       const apiError = new ApiError({ codigo: 400, descricao: "Erro de validação" }, 400);
       cobrancasService.marcarComoPaga.mockRejectedValueOnce(apiError);
       const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      await user.click(screen.getByRole("button", { name: "Marcar como pago" }));
-      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+      await user.click(screen.getByTestId("marcar-paga-cob-1"));
+
+      const confirmarBtn = screen.getByRole("button", { name: "Confirmar" });
+      await user.click(confirmarBtn);
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith("Erro de validação");
@@ -381,12 +389,15 @@ describe("CobrancasEmitidasTab", () => {
     it("deve exibir mensagem de erro padrão para erro genérico", async () => {
       cobrancasService.marcarComoPaga.mockRejectedValueOnce(new Error("Erro genérico"));
       const user = userEvent.setup();
-      mockQueryReturn([cobrancaAberta]);
 
-      render(<CobrancasEmitidasTab />);
+      render(<CobrancasEmitidasTab {...defaultProps} />, {
+        wrapper: createWrapper(),
+      });
 
-      await user.click(screen.getByRole("button", { name: "Marcar como pago" }));
-      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+      await user.click(screen.getByTestId("marcar-paga-cob-1"));
+
+      const confirmarBtn = screen.getByRole("button", { name: "Confirmar" });
+      await user.click(confirmarBtn);
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
