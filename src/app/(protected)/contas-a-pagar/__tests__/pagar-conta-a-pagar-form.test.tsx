@@ -6,6 +6,7 @@ import { Periodicidade } from "@/types/enum/periodicidade";
 import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
 import { TipoContaAgendada } from "@/types/enum/tipo-conta-agendada";
 import type { ContaAgendada } from "@/types/conta-agendada";
+import { toUsDate } from "@/helpers/string-helper";
 
 // ── fixtures ────────────────────────────────────────────────────────────────
 
@@ -18,7 +19,7 @@ const contaBase: ContaAgendada = {
   categoria: { uuid: "cat-1", descricao: "Moradia" },
   tipo: TipoContaAgendada.CONTA_A_PAGAR,
   periodicidade: Periodicidade.NENHUMA,
-  status: StatusContaAgendada.A_VENCER,
+  status: StatusContaAgendada.ABERTO,
   parcelado: false,
   dadosParcela: {
     idParcela: "",
@@ -333,7 +334,7 @@ describe("PagarContaAPagarForm", () => {
       await user.click(screen.getByRole("button", { name: "Confirmar pagamento" }));
 
       expect(mockPagamento).toHaveBeenCalledWith("conta-a-pagar-1", {
-        dataPagamento: "2026-08-01",
+        dataPagamento: toUsDate(new Date()),
         valor: 1500,
         idParcela: "",
         idConta: "conta-1",
@@ -354,7 +355,7 @@ describe("PagarContaAPagarForm", () => {
       await user.click(screen.getByRole("button", { name: "Confirmar pagamento" }));
 
       expect(mockPagamento).toHaveBeenCalledWith("conta-a-pagar-1", {
-        dataPagamento: "2026-08-01",
+        dataPagamento: toUsDate(new Date()),
         valor: 1500,
         idParcela: "",
         idConta: "cartao-1",
