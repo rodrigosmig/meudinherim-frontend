@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
+import { QueryClient } from "@tanstack/react-query";
 
 import type { Conexao } from "@/types/conexao";
 import { StatusConexao } from "@/types/enum/status-conexao";
@@ -214,6 +215,27 @@ describe("SolicitacoesPendentesTab", () => {
         expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
       });
     });
+
+    it("deve invalidar cache de conexões, pendentes e configuração inicial ao aceitar", async () => {
+      conexoesService.aceitar.mockResolvedValueOnce(undefined);
+      const invalidateSpy = jest.spyOn(QueryClient.prototype, "invalidateQueries");
+      const user = userEvent.setup();
+      mockQueryReturn([solicitacao]);
+
+      render(<SolicitacoesPendentesTab />);
+
+      await user.click(screen.getByRole("button", { name: "Aceitar" }));
+
+      await waitFor(() => {
+        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["conexoes"] });
+        expect(invalidateSpy).toHaveBeenCalledWith({
+          queryKey: ["conexoes_pendentes"],
+        });
+        expect(invalidateSpy).toHaveBeenCalledWith({
+          queryKey: ["dados_configuracao"],
+        });
+      });
+    });
   });
 
   describe("mutação recusar", () => {
@@ -258,6 +280,27 @@ describe("SolicitacoesPendentesTab", () => {
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
+      });
+    });
+
+    it("deve invalidar cache de conexões, pendentes e configuração inicial ao recusar", async () => {
+      conexoesService.recusar.mockResolvedValueOnce(undefined);
+      const invalidateSpy = jest.spyOn(QueryClient.prototype, "invalidateQueries");
+      const user = userEvent.setup();
+      mockQueryReturn([solicitacao]);
+
+      render(<SolicitacoesPendentesTab />);
+
+      await user.click(screen.getByRole("button", { name: "Recusar" }));
+
+      await waitFor(() => {
+        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["conexoes"] });
+        expect(invalidateSpy).toHaveBeenCalledWith({
+          queryKey: ["conexoes_pendentes"],
+        });
+        expect(invalidateSpy).toHaveBeenCalledWith({
+          queryKey: ["dados_configuracao"],
+        });
       });
     });
   });
