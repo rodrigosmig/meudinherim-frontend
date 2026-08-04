@@ -1,14 +1,16 @@
 import Link from "next/link";
+import { format } from "date-fns";
 
-import Skeleton from "@/components/primitives/skeleton";
-import { useCobrancasRecebidas } from "@/hooks/use-cobrancas-recebidas";
 import { toCurrency } from "@/helpers/string-helper";
+import { CobrancaRecebida } from "@/types/cobranca";
 import { StatusCobranca } from "@/types/enum/status-cobranca";
 
-export function CobrancasRecebidasSection() {
-  const { data, isLoading, isError } = useCobrancasRecebidas();
+interface CobrancasRecebidasSectionProps {
+  cobrancas: CobrancaRecebida[];
+}
 
-  const abertas = (data ?? []).filter((c) => c.status === StatusCobranca.ABERTO);
+export function CobrancasRecebidasSection({ cobrancas }: CobrancasRecebidasSectionProps) {
+  const abertas = cobrancas.filter((c) => c.status === StatusCobranca.ABERTO);
 
   return (
     <div className="bg-gray-800/70 border border-gray-700/40 rounded-2xl p-5 backdrop-blur-sm">
@@ -25,33 +27,22 @@ export function CobrancasRecebidasSection() {
         </Link>
       </div>
 
-      {isLoading && (
-        <div className="flex flex-col gap-2">
-          {[...Array(3)].map((_, i) => (
-            <Skeleton key={i} className="h-8" />
-          ))}
-        </div>
-      )}
-
-      {isError && (
-        <p className="text-sm text-gray-500 text-center py-4">
-          Não foi possível carregar as cobranças.
-        </p>
-      )}
-
-      {!isLoading && !isError && abertas.length === 0 && (
+      {abertas.length === 0 && (
         <p className="text-sm text-gray-500 text-center py-4">
           Nenhuma cobrança recebida em aberto.
         </p>
       )}
 
-      {!isLoading && !isError && abertas.length > 0 && (
+      {abertas.length > 0 && (
         <ul className="divide-y divide-gray-700/40">
           {abertas.map((c) => (
             <li key={c.uuid} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-medium text-gray-200 truncate">{c.cobrador.nome}</span>
                 <span className="text-xs text-gray-500 truncate">{c.descricao}</span>
+                <span className="text-xs text-gray-400 mt-0.5">
+                  Vencimento: {format(new Date(c.data + "T00:00:00"), "dd/MM/yyyy")}
+                </span>
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 {c.gerouContaAPagar ? (

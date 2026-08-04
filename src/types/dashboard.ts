@@ -1,9 +1,12 @@
+import { CobrancaRecebida } from "./cobranca";
+
 export interface DashboardData {
   resumoMes: DashboardResumoMes;
   categorias: DashboardCategorias;
   tendencia: { pontos: PontoTendencia[] };
   topCategorias: { top10Saidas: TopCategoriaSaida[] };
   progressoCategorias: ProgressoCategoria[];
+  cobrancas: CobrancaRecebida[];
 }
 
 export interface DashboardResumoMes {
