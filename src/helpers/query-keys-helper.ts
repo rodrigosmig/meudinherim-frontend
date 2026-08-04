@@ -80,6 +80,11 @@ export const keysToInvalidateForCobranca = [
   DASHBOARD_QUERY_KEY,
 ];
 
+export const keysToInvalidateForConexao = [
+  CONEXOES_QUERY_KEY,
+  DADOS_CONFIGURACAO_QUERY_KEY,
+];
+
 export const keysToInvalidateForContaAgendada = [
   CONTAS_A_PAGAR_QUERY_KEY,
   CONTAS_A_RECEBER_QUERY_KEY,
