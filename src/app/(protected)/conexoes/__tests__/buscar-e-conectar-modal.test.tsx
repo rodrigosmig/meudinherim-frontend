@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
+import { QueryClient } from "@tanstack/react-query";
 
 import type { Usuario } from "@/types/conexao";
 import { toast } from "@/components/toast";
@@ -241,6 +242,33 @@ describe("BuscarEConectarModal", () => {
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
+      });
+    });
+
+    it("deve invalidar cache de conexões e configuração inicial ao enviar solicitação", async () => {
+      conexoesService.enviarSolicitacao.mockResolvedValueOnce(undefined);
+      const invalidateSpy = jest.spyOn(QueryClient.prototype, "invalidateQueries");
+      const user = userEvent.setup();
+      mockBuscarUsuarios([usuario1], false);
+      render(<BuscarEConectarModal {...defaultProps} />);
+
+      const input = screen.getByPlaceholderText("Buscar por nome ou email");
+      await user.type(input, "Jo");
+
+      await waitFor(
+        () => {
+          expect(screen.getByRole("button", { name: "Conectar" })).toBeVisible();
+        },
+        { timeout: 1000 },
+      );
+
+      await user.click(screen.getByRole("button", { name: "Conectar" }));
+
+      await waitFor(() => {
+        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["conexoes"] });
+        expect(invalidateSpy).toHaveBeenCalledWith({
+          queryKey: ["dados_configuracao"],
+        });
       });
     });
   });

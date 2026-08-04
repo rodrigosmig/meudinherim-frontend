@@ -7,8 +7,8 @@ import QueryListState from "@/components/primitives/query-list-state";
 import { toast } from "@/components/toast";
 import { useConexoesPendentes } from "@/hooks/use-conexoes-pendentes";
 import {
-  CONEXOES_QUERY_KEY,
   CONEXOES_PENDENTES_QUERY_KEY,
+  keysToInvalidateForConexao,
 } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { conexoesService } from "@/services/conexoes-service";
@@ -24,7 +24,11 @@ export default function SolicitacoesPendentesTab() {
     mutationFn: (uuid: string) => conexoesService.aceitar(uuid),
     onSuccess: () => {
       toast.success("Conexão aceita!");
-      queryClient.invalidateQueries({ queryKey: [CONEXOES_QUERY_KEY] });
+      void Promise.all(
+        keysToInvalidateForConexao.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
       queryClient.invalidateQueries({ queryKey: [CONEXOES_PENDENTES_QUERY_KEY] });
     },
     onError: (error) => {
@@ -40,7 +44,11 @@ export default function SolicitacoesPendentesTab() {
     mutationFn: (uuid: string) => conexoesService.recusar(uuid),
     onSuccess: () => {
       toast.success("Solicitação recusada");
-      queryClient.invalidateQueries({ queryKey: [CONEXOES_QUERY_KEY] });
+      void Promise.all(
+        keysToInvalidateForConexao.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
       queryClient.invalidateQueries({ queryKey: [CONEXOES_PENDENTES_QUERY_KEY] });
     },
     onError: (error) => {

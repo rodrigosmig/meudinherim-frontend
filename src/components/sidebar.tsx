@@ -6,7 +6,6 @@ import { ElementType, ReactNode, useState } from 'react';
 
 import { cn } from "@/helpers/string-helper";
 import { Urls } from "@/helpers/urls";
-import { useConexoesPendentes } from "@/hooks/use-conexoes-pendentes";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { Button } from "./primitives/button";
@@ -15,8 +14,6 @@ import Logo from "./primitives/logo";
 function SidebarRoot() {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const { data: conexoesPendentes } = useConexoesPendentes();
-  const pendentesCount = conexoesPendentes?.length ?? 0;
 
   return (
     <>
@@ -82,7 +79,7 @@ function SidebarRoot() {
                 <NavItem link={Urls.CONTAS_A_RECEBER} title="Contas a Receber" icon={BanknoteArrowDown} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Social" collapsed={collapsed}>
-                <NavItemWithBadge link={Urls.CONEXOES} title="Conexões" icon={Users} collapsed={collapsed} badge={pendentesCount} onNavigate={() => setOpen(false)} />
+                <NavItem link={Urls.CONEXOES} title="Conexões" icon={Users} collapsed={collapsed} onNavigate={() => setOpen(false)} />
                 <NavItem link={Urls.COBRANCAS} title="Cobranças" icon={Banknote} collapsed={collapsed} onNavigate={() => setOpen(false)} />
               </NavSection>
               <NavSection title="Relatórios" collapsed={collapsed}>
@@ -158,47 +155,6 @@ function NavItem({ title, link, icon: Icon, collapsed = false, onNavigate }: Nav
     >
       <Icon className={cn("w-5 h-5", isActive && "text-primary")} />
       {!collapsed && <span className="font-medium">{title}</span>}
-    </Link>
-  )
-}
-
-interface NavItemWithBadgeProps extends NavItemProps {
-  badge?: number;
-}
-
-function NavItemWithBadge({ title, link, icon: Icon, collapsed = false, onNavigate, badge = 0 }: NavItemWithBadgeProps) {
-  const pathname = usePathname();
-  const isActive = link === "/" ? pathname === link : pathname.startsWith(link);
-
-  return (
-    <Link
-      href={link}
-      title={collapsed ? title : undefined}
-      aria-label={collapsed ? title : undefined}
-      onClick={() => onNavigate?.()}
-      className={cn(
-        "flex items-center gap-3 px-3 py-2.5 rounded-lg relative",
-        "transition-all duration-200 ease-in-out",
-        isActive
-          ? "bg-primary/15 text-primary border-l-2 border-primary font-semibold"
-          : "text-gray-400 hover:bg-primary/8 hover:text-gray-200",
-        collapsed && "justify-center px-0 border-l-0",
-      )}
-    >
-      <span className="relative">
-        <Icon className={cn("w-5 h-5", isActive && "text-primary")} />
-        {badge > 0 && collapsed && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
-            {badge}
-          </span>
-        )}
-      </span>
-      {!collapsed && <span className="font-medium flex-1">{title}</span>}
-      {!collapsed && badge > 0 && (
-        <span className="ml-auto px-1.5 py-0.5 rounded-full bg-red-500/15 text-red-400 text-[10px] font-semibold">
-          {badge}
-        </span>
-      )}
     </Link>
   )
 }

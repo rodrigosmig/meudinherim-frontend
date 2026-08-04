@@ -8,7 +8,7 @@ import { Button } from "@/components/primitives/button";
 import { Input } from "@/components/primitives/input";
 import { toast } from "@/components/toast";
 import { useBuscarUsuarios } from "@/hooks/use-buscar-usuarios";
-import { CONEXOES_QUERY_KEY } from "@/helpers/query-keys-helper";
+import { keysToInvalidateForConexao } from "@/helpers/query-keys-helper";
 import { DEFAULT_ERROR_MESSAGE } from "@/helpers/route-helpers";
 import { conexoesService } from "@/services/conexoes-service";
 import ApiError from "@/types/application-error";
@@ -47,7 +47,11 @@ export default function BuscarEConectarModal({ open, onOpenChange }: BuscarECone
     mutationFn: (id: string) => conexoesService.enviarSolicitacao({ idDestinatario: id }),
     onSuccess: () => {
       toast.success("Solicitação enviada!");
-      queryClient.invalidateQueries({ queryKey: [CONEXOES_QUERY_KEY] });
+      void Promise.all(
+        keysToInvalidateForConexao.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] }),
+        ),
+      );
     },
     onError: (error) => {
       if (error instanceof ApiError) {

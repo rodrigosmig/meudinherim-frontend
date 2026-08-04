@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, waitFor, within } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
+import { QueryClient } from "@tanstack/react-query";
 
 import type { Conexao } from "@/types/conexao";
 import { StatusConexao } from "@/types/enum/status-conexao";
@@ -293,6 +294,27 @@ describe("ConexoesTab", () => {
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(DEFAULT_ERROR_MESSAGE);
+      });
+    });
+
+    it("deve invalidar cache de conexões e configuração inicial ao remover", async () => {
+      conexoesService.remover.mockResolvedValueOnce(undefined);
+      const invalidateSpy = jest.spyOn(QueryClient.prototype, "invalidateQueries");
+      const user = userEvent.setup();
+      mockQueryReturn([conexaoAceita]);
+
+      render(<ConexoesTab onBuscarContatos={mockOnBuscarContatos} />);
+
+      await user.click(screen.getByRole("button", { name: "Remover" }));
+      await user.click(screen.getByRole("button", { name: "Confirmar" }));
+
+      await waitFor(() => {
+        expect(invalidateSpy).toHaveBeenCalledWith({
+          queryKey: ["conexoes"],
+        });
+        expect(invalidateSpy).toHaveBeenCalledWith({
+          queryKey: ["dados_configuracao"],
+        });
       });
     });
   });
