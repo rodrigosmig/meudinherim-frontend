@@ -2,6 +2,10 @@ import React from "react";
 import { render, screen } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { ContaAgendada } from "@/types/conta-agendada";
+import { Periodicidade } from "@/types/enum/periodicidade";
+import { StatusContaAgendada } from "@/types/enum/status-conta-agendada";
+import { TipoContaAgendada } from "@/types/enum/tipo-conta-agendada";
 import ContaAReceberForm from "../conta-a-receber-form";
 
 // ── mocks ──────────────────────────────────────────────────────────────────
@@ -23,8 +27,13 @@ jest.mock("@/hooks/use-tags", () => ({
   useTags: () => ({ tagsOptions: [], isLoading: false }),
 }));
 
-jest.mock("@/hooks/use-conexoes", () => ({
-  useConexoes: () => ({ data: [] }),
+const mockUseConexoesConfiguracaoInicial = jest.fn();
+jest.mock("@/hooks/use-conexoes-configuracao-inicial", () => ({
+  useConexoesConfiguracaoInicial: () => mockUseConexoesConfiguracaoInicial(),
+}));
+
+jest.mock("@/services/conexoes-service", () => ({
+  conexoesService: { listar: jest.fn() },
 }));
 
 jest.mock("@/components/primitives/select", () => ({
@@ -84,10 +93,54 @@ const createWrapper = () => {
   );
 };
 
+const { conexoesService } = jest.requireMock("@/services/conexoes-service");
+
+const conexaoAceita = {
+  uuid: "conn-1",
+  usuarioConexao: { id: "user-1", nome: "João Silva", email: "joao@email.com" },
+  status: "ACEITA",
+  criadoEm: "2025-01-15T10:00:00",
+  atualizadoEm: "2025-01-15T10:00:00",
+};
+
+const contaAReceberEdit: ContaAgendada = {
+  uuid: "cr-1",
+  dataVencimento: "2026-05-10",
+  descricao: "Salário",
+  valor: 1000,
+  idFatura: "",
+  categoria: { uuid: "cat-1", descricao: "Salário" },
+  tipo: TipoContaAgendada.CONTA_A_RECEBER,
+  periodicidade: Periodicidade.NENHUMA,
+  status: StatusContaAgendada.ABERTO,
+  parcelado: false,
+  dadosParcela: {
+    idParcela: "",
+    numeroDaParcela: 1,
+    totalDeParcelas: 1,
+    valorTotal: 1000,
+    idLancamento: "",
+    pago: false,
+  },
+  tags: [],
+};
+
+function mockConexoesConfiguracao(
+  conexoesAtivas: Array<Record<string, unknown>> = [],
+  isLoading = false,
+) {
+  mockUseConexoesConfiguracaoInicial.mockReturnValue({
+    conexoesAtivas,
+    isLoading,
+    isFetching: false,
+  });
+}
+
 // ── setup ──────────────────────────────────────────────────────────────────
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockConexoesConfiguracao();
 });
 
 // ── testes ─────────────────────────────────────────────────────────────────
@@ -147,5 +200,96 @@ describe("ContaAReceberForm - valor da parcela", () => {
     expect(
       screen.getByText("Valor de cada parcela: R$ 200,00"),
     ).toBeVisible();
+  });
+});
+
+describe("ContaAReceberForm - cobrança", () => {
+  it("não deve fazer requisição própria de conexões ao abrir o form", async () => {
+    const user = userEvent.setup();
+    mockConexoesConfiguracao([conexaoAceita]);
+    render(
+      <ContaAReceberForm>
+        <button type="button">Adicionar</button>
+      </ContaAReceberForm>,
+      { wrapper: createWrapper() },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+
+    expect(conexoesService.listar).not.toHaveBeenCalled();
+  });
+
+  it("deve listar apenas conexões ativas no select Devedor ao ativar Criar como cobrança", async () => {
+    const user = userEvent.setup();
+    mockConexoesConfiguracao([conexaoAceita]);
+    render(
+      <ContaAReceberForm>
+        <button type="button">Adicionar</button>
+      </ContaAReceberForm>,
+      { wrapper: createWrapper() },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await user.click(screen.getByText("Criar como cobrança"));
+
+    const devedorSelect = screen.getByLabelText("Devedor") as HTMLSelectElement;
+    expect(devedorSelect).toBeVisible();
+    expect(
+      screen.getByRole("option", { name: "João Silva" }),
+    ).toBeInTheDocument();
+  });
+
+  it("deve desabilitar Criar como cobrança e exibir mensagem quando não há conexões ativas", async () => {
+    const user = userEvent.setup();
+    mockConexoesConfiguracao([]);
+    render(
+      <ContaAReceberForm>
+        <button type="button">Adicionar</button>
+      </ContaAReceberForm>,
+      { wrapper: createWrapper() },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+
+    expect(
+      screen.getByRole("switch", { name: "Criar como cobrança" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByText("Você não tem conexões ativas. Adicione contatos primeiro."),
+    ).toBeVisible();
+  });
+
+  it("não deve exibir mensagem de sem conexões enquanto a configuração inicial carrega", async () => {
+    const user = userEvent.setup();
+    mockConexoesConfiguracao([], true);
+    render(
+      <ContaAReceberForm>
+        <button type="button">Adicionar</button>
+      </ContaAReceberForm>,
+      { wrapper: createWrapper() },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+
+    expect(
+      screen.queryByText("Você não tem conexões ativas. Adicione contatos primeiro."),
+    ).not.toBeInTheDocument();
+  });
+
+  it("não deve exibir campos de cobrança em modo edição", async () => {
+    const user = userEvent.setup();
+    mockConexoesConfiguracao([conexaoAceita]);
+    render(
+      <ContaAReceberForm contaAReceber={contaAReceberEdit}>
+        <button type="button">Editar</button>
+      </ContaAReceberForm>,
+      { wrapper: createWrapper() },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Editar" }));
+
+    expect(
+      screen.queryByText("Criar como cobrança"),
+    ).not.toBeInTheDocument();
   });
 });

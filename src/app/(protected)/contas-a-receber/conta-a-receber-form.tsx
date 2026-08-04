@@ -17,7 +17,7 @@ import Text from "@/components/primitives/text";
 import { toast } from "@/components/toast";
 
 import { useCategorias } from "@/hooks/use-categorias";
-import { useConexoes } from "@/hooks/use-conexoes";
+import { useConexoesConfiguracaoInicial } from "@/hooks/use-conexoes-configuracao-inicial";
 import { useTags } from "@/hooks/use-tags";
 
 import { catalogoErros } from "@/helpers/erros-helper";
@@ -31,7 +31,6 @@ import type { ApiFormError } from "@/types/api";
 import ApiError from "@/types/application-error";
 import type { ContaAgendada } from "@/types/conta-agendada";
 import { Periodicidade } from "@/types/enum/periodicidade";
-import { StatusConexao } from "@/types/enum/status-conexao";
 
 const PERIODICIDADE_OPTIONS = [
   { value: Periodicidade.MENSAL, label: "Mensal" },
@@ -83,7 +82,10 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
 
   const { categoriasEntrada, isLoading: isCategoriasLoading } = useCategorias();
   const { tagsOptions, isLoading: isTagsLoading } = useTags();
-  const { data: conexoesData } = useConexoes();
+  const {
+    conexoesAtivas,
+    isLoading: isConexoesLoading,
+  } = useConexoesConfiguracaoInicial();
 
   const defaultValues = useMemo(() => getDefaultValues(contaAReceber), [contaAReceber]);
 
@@ -105,7 +107,6 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
     ? valor / quantidadeParcelas
     : 0;
 
-  const conexoesAtivas = (conexoesData ?? []).filter((c) => c.status === StatusConexao.ACEITA);
   const devedoresOptions = conexoesAtivas.map((c) => ({
     value: c.usuarioConexao.id,
     label: c.usuarioConexao.nome,
@@ -355,7 +356,7 @@ export default function ContaAReceberForm({ contaAReceber, children, open: contr
               disabled={conexoesAtivas.length === 0}
             />
 
-            {conexoesAtivas.length === 0 && (
+            {conexoesAtivas.length === 0 && !isConexoesLoading && (
               <p className="text-xs text-gray-500">Você não tem conexões ativas. Adicione contatos primeiro.</p>
             )}
 
