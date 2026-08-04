@@ -120,58 +120,71 @@ export default function TabelaLancamentosCartao({ lancamentos }: Readonly<Tabela
 
   return (
     <Table.Root theadData={dadosCabecalho}>
-      {lancamentos.map((lancamento) => (
-        <Table.Tr key={lancamento.uuid} className="text-sm md:text-base font-semibold">
-          <Table.Td>{toBrDate(lancamento.data)}</Table.Td>
+      {lancamentos.map((lancamento) => {
+        const parcelaAtual = lancamento.isParcelado
+          ? lancamento.parcelas.find((parcela) => parcela.idParcela === lancamento.uuid)
+          : null;
 
-          <Table.Td>{lancamento.categoria.descricao}</Table.Td>
+        return (
+          <Table.Tr key={lancamento.uuid} className="text-sm md:text-base font-semibold">
+            <Table.Td>{toBrDate(lancamento.data)}</Table.Td>
 
-          <Table.Td>
-            <span className="inline-flex items-center gap-1.5">
-              {lancamento.descricao}
-              <TagsPopover tags={lancamento.tags} />
-            </span>
-          </Table.Td>
+            <Table.Td>{lancamento.categoria.descricao}</Table.Td>
 
-          <Table.Td
-            className={lancamento.categoria.tipo === TipoCategoria.ENTRADA ? "text-positive" : "text-negative"}
-          >
-            {toCurrency(lancamento.valor)}
-          </Table.Td>
+            <Table.Td>
+              <span className="flex flex-col">
+                <span className="inline-flex items-center gap-1.5">
+                  {lancamento.descricao}
+                  <TagsPopover tags={lancamento.tags} />
+                </span>
+                {parcelaAtual && (
+                  <span className="text-xs text-gray-400 font-normal">
+                    Parcela {parcelaAtual.numeroDaParcela}/{parcelaAtual.totalDeParcelas} • Total: {toCurrency(parcelaAtual.valorLancamento)}
+                  </span>
+                )}
+              </span>
+            </Table.Td>
 
-          <Table.Td className="flex items-center gap-2">
-            <LancamentoCartaoForm lancamentoCartao={lancamento}>
+            <Table.Td
+              className={lancamento.categoria.tipo === TipoCategoria.ENTRADA ? "text-positive" : "text-negative"}
+            >
+              {toCurrency(lancamento.valor)}
+            </Table.Td>
+
+            <Table.Td className="flex items-center gap-2">
+              <LancamentoCartaoForm lancamentoCartao={lancamento}>
+                <Button
+                  disabled={lancamento.isParcelado || !!lancamento.contaAgendada}
+                  icon={Pencil}
+                  tooltip="Editar"
+                />
+              </LancamentoCartaoForm>
+
               <Button
-                disabled={lancamento.isParcelado || !!lancamento.contaAgendada}
-                icon={Pencil}
-                tooltip="Editar"
+                icon={Trash2}
+                tooltip="Excluir"
+                disabled={!canDeleteLancamento(lancamento) || !!lancamento.contaAgendada}
+                onClick={() => setLancamentoParaDeletar(lancamento)}
               />
-            </LancamentoCartaoForm>
 
-            <Button
-              icon={Trash2}
-              tooltip="Excluir"
-              disabled={!canDeleteLancamento(lancamento) || !!lancamento.contaAgendada}
-              onClick={() => setLancamentoParaDeletar(lancamento)}
-            />
-
-            <Button
-              icon={History}
-              tooltip="Antecipar parcelas"
-              disabled={!canAnteciparParcelas(lancamento)}
-              onClick={() => setLancamentoParaAntecipar(lancamento)}
-            />
-
-            {lancamento.contaAgendada && (
               <Button
-                icon={BanknoteX}
-                tooltip="Cancelar pagamento"
-                onClick={() => setLancamentoParaCancelarPagamento(lancamento)}
+                icon={History}
+                tooltip="Antecipar parcelas"
+                disabled={!canAnteciparParcelas(lancamento)}
+                onClick={() => setLancamentoParaAntecipar(lancamento)}
               />
-            )}
-          </Table.Td>
-        </Table.Tr>
-      ))}
+
+              {lancamento.contaAgendada && (
+                <Button
+                  icon={BanknoteX}
+                  tooltip="Cancelar pagamento"
+                  onClick={() => setLancamentoParaCancelarPagamento(lancamento)}
+                />
+              )}
+            </Table.Td>
+          </Table.Tr>
+        );
+      })}
 
       {lancamentoParaDeletar && (
         <ModalConfirmacaoDelete

@@ -107,7 +107,7 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
                 </span>
                 {contaAPagar.parcelado && contaAPagar.dadosParcela && (
                   <span className="text-xs text-gray-400 font-normal">
-                    Parcela {contaAPagar.dadosParcela.numeroDaParcela}/{contaAPagar.dadosParcela.totalDeParcelas}
+                    Parcela {contaAPagar.dadosParcela.numeroDaParcela}/{contaAPagar.dadosParcela.totalDeParcelas} • Total: {toCurrency(contaAPagar.dadosParcela.valorTotal)}
                   </span>
                 )}
               </span>

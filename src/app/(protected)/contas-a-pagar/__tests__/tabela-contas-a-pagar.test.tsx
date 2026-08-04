@@ -54,7 +54,7 @@ const dadosParcela = {
   idParcela: "",
   numeroDaParcela: 1,
   totalDeParcelas: 1,
-  valorTotal: 0,
+  valorTotal: 6000,
   idLancamento: "",
   pago: false,
 };
@@ -151,6 +151,14 @@ describe("TabelaContasAPagar", () => {
         wrapper: createWrapper(),
       });
       expect(screen.getByText("Parcelado")).toBeVisible();
+    });
+
+    it("deve exibir a parcela e o valor total da compra", () => {
+      render(<TabelaContasAPagar contas={[contaParcelada2aParcela]} />, {
+        wrapper: createWrapper(),
+      });
+      expect(screen.getByText(/Parcela 2\/12/)).toBeVisible();
+      expect(screen.getByText(/6\.000,00/)).toBeVisible();
     });
 
     it("deve renderizar múltiplas contas", () => {

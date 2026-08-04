@@ -99,7 +99,7 @@ export default function TabelaContasAReceber({ contas }: Readonly<TabelaContasAR
                 </span>
                 {contaAReceber.parcelado && contaAReceber.dadosParcela && (
                   <span className="text-xs text-gray-400 font-normal">
-                    Parcela {contaAReceber.dadosParcela.numeroDaParcela}/{contaAReceber.dadosParcela.totalDeParcelas}
+                    Parcela {contaAReceber.dadosParcela.numeroDaParcela}/{contaAReceber.dadosParcela.totalDeParcelas} • Total: {toCurrency(contaAReceber.dadosParcela.valorTotal)}
                   </span>
                 )}
               </span>

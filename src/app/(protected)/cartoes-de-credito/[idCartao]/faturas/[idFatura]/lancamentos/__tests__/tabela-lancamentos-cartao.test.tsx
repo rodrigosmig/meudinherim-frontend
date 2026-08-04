@@ -142,6 +142,24 @@ describe("TabelaLancamentosCartao", () => {
       const [, ...rows] = screen.getAllByRole("row");
       expect(rows).toHaveLength(2);
     });
+
+    it("deve exibir a parcela e o valor total da compra para lançamento parcelado", () => {
+      render(<TabelaLancamentosCartao lancamentos={[lancamentoParcelado1aParcela]} />, {
+        wrapper: createWrapper(),
+      });
+
+      expect(screen.getByText(/Parcela 1\/3/)).toBeVisible();
+      expect(screen.getByText(/3\.000,00/)).toBeVisible();
+    });
+
+    it("deve exibir a parcela correta para a 2ª parcela", () => {
+      render(<TabelaLancamentosCartao lancamentos={[lancamentoParcelado2aParcela]} />, {
+        wrapper: createWrapper(),
+      });
+
+      expect(screen.getByText(/Parcela 2\/3/)).toBeVisible();
+      expect(screen.getByText(/3\.000,00/)).toBeVisible();
+    });
   });
 
   describe("estados dos botões de ação", () => {
