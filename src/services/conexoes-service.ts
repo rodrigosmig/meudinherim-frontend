@@ -2,14 +2,14 @@ import { validarAutenticacao } from "@/helpers/session-client-helper";
 import { ApiResponse } from "@/types/api";
 import { handleApiResponse } from "@/helpers/response-helper";
 import {
-  Conexao,
+  ConexaoResponse,
   EnviarSolicitacaoConexaoRequest,
   EnviarSolicitacaoConexaoResponse,
   Usuario,
 } from "@/types/conexao";
 
 export const conexoesService = {
-  listar: async (): Promise<ApiResponse<Conexao[]>> => {
+  listar: async (): Promise<ApiResponse<ConexaoResponse>> => {
     const url = `/api/proxy/v1/conexoes`;
 
     const response = await fetch(url, {
@@ -24,7 +24,7 @@ export const conexoesService = {
     return response.json();
   },
 
-  listarPendentes: async (): Promise<ApiResponse<Conexao[]>> => {
+  listarPendentes: async (): Promise<ApiResponse<ConexaoResponse>> => {
     const url = `/api/proxy/v1/conexoes/pendentes`;
 
     const response = await fetch(url, {

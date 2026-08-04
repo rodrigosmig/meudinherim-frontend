@@ -22,6 +22,10 @@ export interface Conexao {
   atualizadoEm: string;
 }
 
+export interface ConexaoResponse {
+  conexoes: Conexao[];
+}
+
 export interface EnviarSolicitacaoConexaoRequest {
   idDestinatario: string;
 }
