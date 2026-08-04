@@ -219,9 +219,20 @@ describe("ContaAReceberForm - cobrança", () => {
     expect(conexoesService.listar).not.toHaveBeenCalled();
   });
 
-  it("deve listar apenas conexões ativas no select Devedor ao ativar Criar como cobrança", async () => {
+  it("deve listar as conexões ativas no select Devedor ao ativar Criar como cobrança", async () => {
     const user = userEvent.setup();
-    mockConexoesConfiguracao([conexaoAceita]);
+    const conexaoAceita2 = {
+      uuid: "conn-2",
+      usuarioConexao: {
+        id: "user-2",
+        nome: "Maria Santos",
+        email: "maria@email.com",
+      },
+      status: "ACEITA",
+      criadoEm: "2025-01-16T10:00:00",
+      atualizadoEm: "2025-01-16T10:00:00",
+    };
+    mockConexoesConfiguracao([conexaoAceita, conexaoAceita2]);
     render(
       <ContaAReceberForm>
         <button type="button">Adicionar</button>
@@ -234,9 +245,12 @@ describe("ContaAReceberForm - cobrança", () => {
 
     const devedorSelect = screen.getByLabelText("Devedor") as HTMLSelectElement;
     expect(devedorSelect).toBeVisible();
-    expect(
-      screen.getByRole("option", { name: "João Silva" }),
-    ).toBeInTheDocument();
+
+    const optionJoao = screen.getByRole("option", { name: "João Silva" });
+    expect(optionJoao).toHaveValue("user-1");
+
+    const optionMaria = screen.getByRole("option", { name: "Maria Santos" });
+    expect(optionMaria).toHaveValue("user-2");
   });
 
   it("deve desabilitar Criar como cobrança e exibir mensagem quando não há conexões ativas", async () => {
