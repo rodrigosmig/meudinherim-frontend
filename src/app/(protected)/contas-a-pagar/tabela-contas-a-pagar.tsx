@@ -135,7 +135,7 @@ export default function TabelaContasAPagar({ contas }: Readonly<TabelaContasAPag
                 <Button
                   icon={Pencil}
                   tooltip="Editar"
-                  disabled={(contaAPagar.parcelado && contaAPagar.dadosParcela?.numeroDaParcela !== 1) || !isAberto || !!contaAPagar.idFatura}
+                  disabled={contaAPagar.parcelado || !isAberto || !!contaAPagar.idFatura}
                 />
               </ContaAPagarForm>
 
