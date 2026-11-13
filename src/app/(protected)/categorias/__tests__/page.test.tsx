@@ -170,7 +170,7 @@ const categoriaAlimentacao: Categoria = {
   nome: "Alimentação",
   tipo: TipoCategoria.SAIDA,
   status: Status.ATIVO,
-  exibirNaDashboard: true,
+  exibirEmRelatorios: true,
 };
 
 const categoriaSalario: Categoria = {
@@ -178,7 +178,7 @@ const categoriaSalario: Categoria = {
   nome: "Salário",
   tipo: TipoCategoria.ENTRADA,
   status: Status.ATIVO,
-  exibirNaDashboard: false,
+  exibirEmRelatorios: false,
 };
 
 // ── setup ──────────────────────────────────────────────────────────────────

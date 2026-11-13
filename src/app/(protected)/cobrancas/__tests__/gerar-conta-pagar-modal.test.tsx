@@ -134,7 +134,7 @@ const categoriaAlimentacao: Categoria = {
   nome: "Alimentação",
   tipo: TipoCategoria.SAIDA,
   status: Status.ATIVO,
-  exibirNaDashboard: true,
+  exibirEmRelatorios: true,
 };
 
 const categoriaTransporte: Categoria = {
@@ -142,7 +142,7 @@ const categoriaTransporte: Categoria = {
   nome: "Transporte",
   tipo: TipoCategoria.SAIDA,
   status: Status.ATIVO,
-  exibirNaDashboard: false,
+  exibirEmRelatorios: false,
 };
 
 function mockCategorias(categoriasSaida: Categoria[] = [], isLoading = false) {

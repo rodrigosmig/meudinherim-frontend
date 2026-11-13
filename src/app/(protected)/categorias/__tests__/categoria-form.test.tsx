@@ -76,7 +76,7 @@ const categoriaMock: Categoria = {
   nome: "Salário",
   tipo: TipoCategoria.ENTRADA,
   status: Status.ATIVO,
-  exibirNaDashboard: true,
+  exibirEmRelatorios: false,
 };
 
 async function abrirModal(triggerLabel = "Adicionar") {
@@ -154,6 +154,16 @@ describe("CategoriaForm", () => {
       ).toBeVisible();
     });
 
+    it("deve iniciar o switch de exibição em relatórios marcado", async () => {
+      await abrirModal();
+
+      expect(
+        screen.getByRole("checkbox", {
+          name: "Exibir em Relatórios e Dashboard",
+        }),
+      ).toBeChecked();
+    });
+
     it("deve exibir erro de validação ao submeter sem nome", async () => {
       const user = userEvent.setup();
       await abrirModal();
@@ -182,7 +192,7 @@ describe("CategoriaForm", () => {
       });
     });
 
-    it("deve chamar cadastrar e exibir toast de sucesso", async () => {
+    it("deve enviar exibirEmRelatorios ao cadastrar e exibir toast de sucesso", async () => {
       categoriasService.cadastrar.mockResolvedValueOnce({
         message: { codigo: 0, descricao: "Sucesso" },
       });
@@ -194,8 +204,11 @@ describe("CategoriaForm", () => {
           expect.objectContaining({
             nome: "Alimentação",
             tipo: "SAIDA",
+            exibirEmRelatorios: true,
           }),
         );
+        const [payload] = categoriasService.cadastrar.mock.calls[0];
+        expect(payload).not.toHaveProperty("exibirNaDashboard");
         expect(toast.success).toHaveBeenCalledWith(
           "Categoria cadastrada com sucesso!",
         );
@@ -263,6 +276,34 @@ describe("CategoriaForm", () => {
         expect(toast.error).toHaveBeenCalledWith("Campo inválido");
       });
     });
+    it("deve mapear erro de exibirEmRelatorios no campo do switch", async () => {
+      categoriasService.cadastrar.mockRejectedValueOnce(
+        new ApiError(
+          {
+            codigo: catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO,
+            descricao: "Campo inválido",
+          },
+          422,
+          {
+            fields: [
+              {
+                field: "exibirEmRelatorios",
+                message: "Informe se a categoria deve aparecer em relatórios",
+              },
+            ],
+          },
+        ),
+      );
+
+      await preencherESubmeter();
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Informe se a categoria deve aparecer em relatórios"),
+        ).toBeVisible();
+        expect(toast.error).toHaveBeenCalledWith("Campo inválido");
+      });
+    });
   });
 
   describe("modo edição", () => {
@@ -281,7 +322,7 @@ describe("CategoriaForm", () => {
       ).toBeVisible();
     });
 
-    it("deve pré-preencher os campos com os dados da categoria", async () => {
+    it("deve pré-preencher o switch com o valor da categoria", async () => {
       const user = userEvent.setup();
       render(
         <CategoriaForm categoria={categoriaMock}>
@@ -293,9 +334,14 @@ describe("CategoriaForm", () => {
 
       const dialog = screen.getByRole("dialog");
       expect(within(dialog).getByLabelText("Nome")).toHaveValue("Salário");
+      expect(
+        within(dialog).getByRole("checkbox", {
+          name: "Exibir em Relatórios e Dashboard",
+        }),
+      ).not.toBeChecked();
     });
 
-    it("deve chamar alterar e exibir toast de sucesso", async () => {
+    it("deve enviar exibirEmRelatorios ao alterar e exibir toast de sucesso", async () => {
       categoriasService.alterar.mockResolvedValueOnce({
         message: { codigo: 0, descricao: "Sucesso" },
       });
@@ -314,8 +360,11 @@ describe("CategoriaForm", () => {
           "cat-1",
           expect.objectContaining({
             nome: "Salário",
+            exibirEmRelatorios: false,
           }),
         );
+        const [, payload] = categoriasService.alterar.mock.calls[0];
+        expect(payload).not.toHaveProperty("exibirNaDashboard");
         expect(toast.success).toHaveBeenCalledWith(
           "Categoria alterada com sucesso!",
         );

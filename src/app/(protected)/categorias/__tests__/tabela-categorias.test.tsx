@@ -51,7 +51,7 @@ const categoriaAtiva: Categoria = {
   nome: "Alimentação",
   tipo: TipoCategoria.SAIDA,
   status: Status.ATIVO,
-  exibirNaDashboard: true,
+  exibirEmRelatorios: true,
 };
 
 const categoriaInativa: Categoria = {
@@ -59,7 +59,7 @@ const categoriaInativa: Categoria = {
   nome: "Salário",
   tipo: TipoCategoria.ENTRADA,
   status: Status.INATIVO,
-  exibirNaDashboard: false,
+  exibirEmRelatorios: false,
 };
 
 // ── setup ──────────────────────────────────────────────────────────────────
@@ -79,8 +79,16 @@ describe("TabelaCategorias", () => {
 
       expect(screen.getByText("Nome")).toBeVisible();
       expect(screen.getByText("Tipo")).toBeVisible();
-      expect(screen.getByText("Exibir na Dashboard")).toBeVisible();
+      expect(screen.getByText("Exibir em Relatórios e Dashboard")).toBeVisible();
       expect(screen.getByText("Ações")).toBeVisible();
+    });
+
+    it("deve renderizar a coluna Exibir em Relatórios e Dashboard", () => {
+      render(<TabelaCategorias categorias={[categoriaAtiva]} />, {
+        wrapper: createWrapper(),
+      });
+
+      expect(screen.getByText("Exibir em Relatórios e Dashboard")).toBeVisible();
     });
 
     it("deve renderizar o nome da categoria", () => {
@@ -107,7 +115,7 @@ describe("TabelaCategorias", () => {
       expect(screen.getByText("Entrada")).toBeVisible();
     });
 
-    it("deve renderizar 'Sim' quando exibirNaDashboard é true", () => {
+    it("deve renderizar 'Sim' quando exibirEmRelatorios é true", () => {
       render(<TabelaCategorias categorias={[categoriaAtiva]} />, {
         wrapper: createWrapper(),
       });
@@ -115,7 +123,7 @@ describe("TabelaCategorias", () => {
       expect(screen.getByText("Sim")).toBeVisible();
     });
 
-    it("deve renderizar 'Não' quando exibirNaDashboard é false", () => {
+    it("deve renderizar 'Não' quando exibirEmRelatorios é false", () => {
       render(<TabelaCategorias categorias={[categoriaInativa]} />, {
         wrapper: createWrapper(),
       });

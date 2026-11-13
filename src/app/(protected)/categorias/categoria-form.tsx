@@ -38,13 +38,13 @@ type Props = Readonly<{
 
 function getDefaultValues(categoria?: Categoria): DefaultValues<CategoriaFormValue> {
   if (!categoria) {
-    return { nome: "", tipo: undefined, exibirNaDashboard: false };
+    return { nome: "", tipo: undefined, exibirEmRelatorios: true };
   }
 
   return {
     nome: categoria.nome,
     tipo: categoria.tipo,
-    exibirNaDashboard: categoria.exibirNaDashboard,
+    exibirEmRelatorios: categoria.exibirEmRelatorios,
   };
 }
 
@@ -70,7 +70,7 @@ export default function CategoriaForm({ categoria, children, open: controlledOpe
       const values = {
         nome: data.nome,
         tipo: data.tipo,
-        exibirNaDashboard: data.exibirNaDashboard,
+        exibirEmRelatorios: data.exibirEmRelatorios,
       };
 
       if (isEditMode && categoria?.uuid) {
@@ -96,7 +96,7 @@ export default function CategoriaForm({ categoria, children, open: controlledOpe
         if (error.apiMessage.codigo === catalogoErros.CAMPO_INVALIDO_OU_OBRIGATORIO) {
           const formError = error.data as ApiFormError;
           formError.fields.forEach((fieldError) => {
-            if (["nome", "tipo", "exibirNaDashboard"].includes(fieldError.field)) {
+            if (["nome", "tipo", "exibirEmRelatorios"].includes(fieldError.field)) {
               form.setError(fieldError.field as keyof CategoriaFormValue, {
                 type: "server",
                 message: fieldError.message,
@@ -157,13 +157,20 @@ export default function CategoriaForm({ categoria, children, open: controlledOpe
 
         <Controller
           control={form.control}
-          name="exibirNaDashboard"
+          name="exibirEmRelatorios"
           render={({ field }) => (
-            <Switch
-              label="Exibir na Dashboard"
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            />
+            <div className="flex flex-col gap-1">
+              <Switch
+                label="Exibir em Relatórios e Dashboard"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+              {form.formState.errors.exibirEmRelatorios?.message && (
+                <span className="text-sm text-error">
+                  {form.formState.errors.exibirEmRelatorios.message}
+                </span>
+              )}
+            </div>
           )}
         />
 
