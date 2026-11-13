@@ -97,8 +97,8 @@ export default function LancamentosPorCategoriaPage() {
       <ResponsivePageTitle title="Lançamentos por Categoria" isLoading={isFetching} />
 
       <Card.Root className="mb-4">
-        <Card.Header className="py-3 gap-3">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <Card.Header className="py-3">
+          <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-end">
             <div>
               <Text variant="paragraph-medium" className="hidden md:block font-bold">Período:</Text>
               <FiltroPorPeriodo
@@ -108,48 +108,38 @@ export default function LancamentosPorCategoriaPage() {
               />
             </div>
 
-            <div className="flex gap-3 items-end">
-              <div className="w-36">
-                <div>
-                  <Text variant="paragraph-medium" className="hidden md:block font-bold">Tipo relatório:</Text>
-                  <Select
-                    options={TIPO_OPTIONS}
-                    value={tipo}
-                    onChange={(v) => handleTipoChange(v as TipoRelatorioPorCategoria)}
-                  />
-                </div>
-              </div>
-
-              {tipo === TipoRelatorioPorCategoria.CONTA && (
-                <div className="w-52">
-                  <div>
-                    <Text variant="paragraph-medium" className="hidden md:block font-bold">Selecione a conta:</Text>
-                    <Select
-                      options={contasOptions}
-                      value={uuid}
-                      onChange={(v) => setUuid((v as string) ?? "")}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {tipo === TipoRelatorioPorCategoria.CARTAO && (
-                <div className="w-52">
-                  <div>
-                    <Text variant="paragraph-medium" className="hidden md:block font-bold">Selecione o cartão:</Text>
-                    <Select
-                      options={cartoesOptions}
-                      value={uuid}
-                      onChange={(v) => setUuid((v as string) ?? "")}
-                    />
-                  </div>
-                </div>
-              )}
+            <div className="w-full md:w-40">
+              <Text variant="paragraph-medium" className="hidden md:block font-bold">Tipo relatório:</Text>
+              <Select
+                options={TIPO_OPTIONS}
+                value={tipo}
+                onChange={(v) => handleTipoChange(v as TipoRelatorioPorCategoria)}
+              />
             </div>
-          </div>
 
-          <div className="mb-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex-1">
+            {tipo === TipoRelatorioPorCategoria.CONTA && (
+              <div className="w-full md:w-52">
+                <Text variant="paragraph-medium" className="hidden md:block font-bold">Selecione a conta:</Text>
+                <Select
+                  options={contasOptions}
+                  value={uuid}
+                  onChange={(v) => setUuid((v as string) ?? "")}
+                />
+              </div>
+            )}
+
+            {tipo === TipoRelatorioPorCategoria.CARTAO && (
+              <div className="w-full md:w-52">
+                <Text variant="paragraph-medium" className="hidden md:block font-bold">Selecione o cartão:</Text>
+                <Select
+                  options={cartoesOptions}
+                  value={uuid}
+                  onChange={(v) => setUuid((v as string) ?? "")}
+                />
+              </div>
+            )}
+
+            <div className="w-full md:min-w-52 md:flex-1">
               <Text variant="paragraph-medium" className="hidden md:block font-bold">Filtro por tags:</Text>
               <Select
                 options={tagsOptions}
@@ -160,12 +150,15 @@ export default function LancamentosPorCategoriaPage() {
               />
             </div>
 
-            <div className="sm:w-72">
-              <Switch
-                label="Apenas categorias dos relatórios"
-                checked={apenasCategoriasExibidasEmRelatorios}
-                onCheckedChange={setApenasCategoriasExibidasEmRelatorios}
-              />
+            <div className="w-full md:w-auto md:ml-auto">
+              <Text variant="paragraph-medium" className="hidden md:block font-bold">Exibição:</Text>
+              <div className="flex h-10 items-center">
+                <Switch
+                  label="Apenas categorias dos relatórios"
+                  checked={apenasCategoriasExibidasEmRelatorios}
+                  onCheckedChange={setApenasCategoriasExibidasEmRelatorios}
+                />
+              </div>
             </div>
           </div>
         </Card.Header>

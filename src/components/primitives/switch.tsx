@@ -19,7 +19,7 @@ export default function Switch({
   const switchId = id || (label ? `switch-${label.replace(/\s+/g, "-").toLowerCase()}` : undefined);
 
   return (
-    <div className={cn("flex items-center justify-between w-full", disabled && "cursor-not-allowed")}>
+    <div className={cn("flex items-center justify-between gap-3 w-full", disabled && "cursor-not-allowed")}>
       {label && (
         <label
           className={cn(
