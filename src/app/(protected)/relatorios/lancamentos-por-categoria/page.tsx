@@ -9,6 +9,7 @@ import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import { Select, SelectOption } from "@/components/primitives/select";
 import Skeleton from "@/components/primitives/skeleton";
+import Switch from "@/components/primitives/switch";
 import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
@@ -41,6 +42,7 @@ export default function LancamentosPorCategoriaPage() {
   const [uuid, setUuid] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [abaAtiva, setAbaAtiva] = useState<Aba>("entrada");
+  const [apenasCategoriasExibidasEmRelatorios, setApenasCategoriasExibidasEmRelatorios] = useState(true);
   const [categoriaModal, setCategoriaModal] = useState<CategoriaModal | null>(null);
 
   const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
@@ -76,6 +78,7 @@ export default function LancamentosPorCategoriaPage() {
     tipo,
     uuid,
     tags,
+    apenasCategoriasExibidasEmRelatorios,
   );
 
   const detalhesParams = categoriaModal
@@ -142,15 +145,25 @@ export default function LancamentosPorCategoriaPage() {
             </div>
           </div>
 
-          <div className="mb-2">
-            <Text variant="paragraph-medium" className="hidden md:block font-bold">Filtro por tags:</Text>
-            <Select
-              options={tagsOptions}
-              value={tags}
-              onChange={(v) => setTags((v as string[]) ?? [])}
-              placeholder="Tags..."
-              isMulti
-            />
+          <div className="mb-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex-1">
+              <Text variant="paragraph-medium" className="hidden md:block font-bold">Filtro por tags:</Text>
+              <Select
+                options={tagsOptions}
+                value={tags}
+                onChange={(v) => setTags((v as string[]) ?? [])}
+                placeholder="Tags..."
+                isMulti
+              />
+            </div>
+
+            <div className="sm:w-72">
+              <Switch
+                label="Apenas categorias dos relatórios"
+                checked={apenasCategoriasExibidasEmRelatorios}
+                onCheckedChange={setApenasCategoriasExibidasEmRelatorios}
+              />
+            </div>
           </div>
         </Card.Header>
       </Card.Root>

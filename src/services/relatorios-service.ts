@@ -39,6 +39,8 @@ export const relatorioService = {
       fim: request.fim,
       tipo: request.tipo,
       tags: request.tags.join(","),
+      apenasCategoriasExibidasEmRelatorios:
+        request.apenasCategoriasExibidasEmRelatorios.toString(),
     });
     if (request.uuid) params.append("uuid", request.uuid);
 
