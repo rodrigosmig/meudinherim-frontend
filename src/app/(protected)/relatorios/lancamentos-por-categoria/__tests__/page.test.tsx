@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor, within } from "@/helpers/test/test-helper";
+import { act, fireEvent, render, screen, waitFor, within } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -10,25 +10,45 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("@/hooks/use-configuracao-inicial", () => ({
-  useConfiguracaoInicial: () => ({ data: { faturas: [] } }),
+  useConfiguracaoInicial: () => ({
+    data: {
+      faturas: [{ cartao: { uuid: "cartao-1", descricao: "Cartão" } }],
+    },
+  }),
 }));
 
 jest.mock("@/hooks/use-contas", () => ({
-  useContas: () => ({ contas: [] }),
+  useContas: () => ({
+    contas: [{ uuid: "conta-1", nome: "Conta Corrente" }],
+  }),
 }));
 
 jest.mock("@/hooks/use-tags", () => ({
   useTags: () => ({ tagsOptions: [{ value: "tag-1", label: "tag-1" }] }),
 }));
 
-jest.mock("@/hooks/use-date-filter", () => ({
-  useDateFilter: () => ({
-    dateRange: undefined,
-    stringDateUS: { from: "2026-11-01", to: "2026-11-30" },
-    handleChangeDateFilter: jest.fn(),
-    handleOnClickFilter: jest.fn(),
-  }),
-}));
+jest.mock("@/hooks/use-date-filter", () => {
+  const React = require("react");
+  let updateDates: ((dates: { from: string; to: string }) => void) | null = null;
+
+  return {
+    useDateFilter: () => {
+      const [stringDateUS, setStringDateUS] = React.useState({
+        from: "2026-11-01",
+        to: "2026-11-30",
+      });
+      updateDates = setStringDateUS;
+
+      return {
+        dateRange: undefined,
+        stringDateUS,
+        handleChangeDateFilter: jest.fn(),
+        handleOnClickFilter: jest.fn(),
+      };
+    },
+    __updateDates: (dates: { from: string; to: string }) => updateDates?.(dates),
+  };
+});
 
 jest.mock("@/components/filtro-por-periodo", () => ({
   __esModule: true,
@@ -92,6 +112,8 @@ jest.mock("@/components/primitives/select", () => {
   return { Select: MockSelect };
 });
 
+const { __updateDates } = jest.requireMock("@/hooks/use-date-filter");
+
 const createReportResponse = (overrides: Record<string, unknown> = {}) => ({
   message: { codigo: 0, descricao: "Sucesso" },
   data: {
@@ -111,10 +133,15 @@ const createReportResponse = (overrides: Record<string, unknown> = {}) => ({
         total: 200,
       },
     ],
-    totalEntradas: 1000,
-    totalSaidas: 200,
+    totalEntradas: 1750,
+    totalSaidas: 2300,
     ...overrides,
   },
+});
+
+const createDetalhesResponse = () => ({
+  message: { codigo: 0, descricao: "Sucesso" },
+  data: { lancamentos: [] },
 });
 
 const fetchMock = jest.fn();
@@ -224,6 +251,105 @@ describe("LancamentosPorCategoriaPage - filtro de categorias", () => {
     renderPage();
     await waitForUrl("apenasCategoriasExibidasEmRelatorios=true");
 
+    await user.selectOptions(screen.getByDisplayValue("Todos"), "CONTA");
+
+    await waitFor(() => {
+      expect(
+        fetchedUrls().some(
+          (url) =>
+            url.includes("tipo=CONTA") &&
+            url.includes("apenasCategoriasExibidasEmRelatorios=true"),
+        ),
+      ).toBe(true);
+    });
+  });
+
+  it("deve manter o filtro ao alterar a conta", async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await waitForUrl("apenasCategoriasExibidasEmRelatorios=true");
+
+    await user.selectOptions(screen.getByDisplayValue("Todos"), "CONTA");
+    await user.selectOptions(
+      screen.getByDisplayValue("Todas as Contas"),
+      "conta-1",
+    );
+
+    await waitFor(() => {
+      expect(
+        fetchedUrls().some(
+          (url) =>
+            url.includes("uuid=conta-1") &&
+            url.includes("apenasCategoriasExibidasEmRelatorios=true"),
+        ),
+      ).toBe(true);
+    });
+  });
+
+  it("deve manter o filtro ao alterar o cartão", async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await waitForUrl("apenasCategoriasExibidasEmRelatorios=true");
+
+    await user.selectOptions(screen.getByDisplayValue("Todos"), "CARTAO");
+    await user.selectOptions(
+      screen.getByDisplayValue("Todos os Cartões"),
+      "cartao-1",
+    );
+
+    await waitFor(() => {
+      expect(
+        fetchedUrls().some(
+          (url) =>
+            url.includes("uuid=cartao-1") &&
+            url.includes("apenasCategoriasExibidasEmRelatorios=true"),
+        ),
+      ).toBe(true);
+    });
+  });
+
+  it("deve manter o filtro ao alterar os tags", async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await waitForUrl("apenasCategoriasExibidasEmRelatorios=true");
+
+    await user.selectOptions(screen.getByLabelText("Tags..."), "tag-1");
+
+    await waitFor(() => {
+      expect(
+        fetchedUrls().some(
+          (url) =>
+            url.includes("tags=tag-1") &&
+            url.includes("apenasCategoriasExibidasEmRelatorios=true"),
+        ),
+      ).toBe(true);
+    });
+  });
+
+  it("deve manter o filtro ao alterar o período", async () => {
+    renderPage();
+    await waitForUrl("apenasCategoriasExibidasEmRelatorios=true");
+
+    act(() => {
+      __updateDates({ from: "2026-12-01", to: "2026-12-31" });
+    });
+
+    await waitFor(() => {
+      expect(
+        fetchedUrls().some(
+          (url) =>
+            url.includes("inicio=2026-12-01") &&
+            url.includes("apenasCategoriasExibidasEmRelatorios=true"),
+        ),
+      ).toBe(true);
+    });
+  });
+
+  it("deve manter o filtro desligado ao alterar o tipo do relatório", async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await waitForUrl("apenasCategoriasExibidasEmRelatorios=true");
+
     await user.click(
       screen.getByRole("switch", {
         name: "Apenas categorias dos relatórios",
@@ -252,7 +378,7 @@ describe("LancamentosPorCategoriaPage - totais por aba", () => {
 
     const { row } = getTotalFooter();
 
-    expect(within(row).getByText(/1\.000,00/)).toBeVisible();
+    expect(within(row).getByText(/R\$\s*1\.750,00/)).toBeVisible();
   });
 
   it("deve exibir totalSaidas no rodapé da aba Saída", async () => {
@@ -264,7 +390,7 @@ describe("LancamentosPorCategoriaPage - totais por aba", () => {
 
     const { row } = getTotalFooter();
 
-    expect(within(row).getByText(/200,00/)).toBeVisible();
+    expect(within(row).getByText(/R\$\s*2\.300,00/)).toBeVisible();
   });
 
   it("deve renderizar o rodapé de total com destaque visual", async () => {
@@ -305,6 +431,82 @@ describe("LancamentosPorCategoriaPage - totais por aba", () => {
 
     const { row } = getTotalFooter();
 
-    expect(within(row).getByText(/0,00/)).toBeVisible();
+    expect(within(row).getByText(/R\$\s*0,00/)).toBeVisible();
+  });
+});
+
+describe("LancamentosPorCategoriaPage - estados e detalhes", () => {
+  it("deve exibir o skeleton e não renderizar rodapé durante o carregamento", () => {
+    fetchMock.mockReturnValueOnce(new Promise(() => {}));
+
+    renderPage();
+
+    expect(document.querySelector(".animate-shimmer")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Total", { selector: "tfoot td" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("não deve renderizar rodapé quando o relatório falha", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({
+        message: { codigo: 500, descricao: "Erro interno" },
+      }),
+    });
+
+    renderPage();
+
+    expect(
+      await screen.findByText("Falha ao carregar o relatório. Tente novamente."),
+    ).toBeVisible();
+    expect(
+      screen.queryByText("Total", { selector: "tfoot td" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("não deve enviar o filtro na requisição de detalhes", async () => {
+    const user = userEvent.setup();
+    fetchMock.mockImplementation((url: string) => {
+      if (String(url).includes("/detalhes")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => createDetalhesResponse(),
+        });
+      }
+
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => createReportResponse(),
+      });
+    });
+
+    renderPage();
+    await screen.findByText("Salário");
+
+    await user.click(screen.getByRole("button", { name: "1" }));
+    await waitFor(() => {
+      expect(fetchedUrls().some((url) => url.includes("/detalhes"))).toBe(true);
+    });
+
+    fireEvent.click(
+      screen.getByRole("switch", {
+        name: "Apenas categorias dos relatórios",
+        hidden: true,
+      }),
+    );
+    await waitForUrl("apenasCategoriasExibidasEmRelatorios=false");
+
+    const detalhesUrls = fetchedUrls().filter((url) =>
+      url.includes("/detalhes"),
+    );
+
+    expect(detalhesUrls.length).toBeGreaterThan(0);
+    detalhesUrls.forEach((url) => {
+      expect(url).not.toContain("apenasCategoriasExibidasEmRelatorios");
+    });
   });
 });

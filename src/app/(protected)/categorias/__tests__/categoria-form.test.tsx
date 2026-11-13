@@ -79,6 +79,12 @@ const categoriaMock: Categoria = {
   exibirEmRelatorios: false,
 };
 
+const categoriaVisivelMock: Categoria = {
+  ...categoriaMock,
+  uuid: "cat-2",
+  exibirEmRelatorios: true,
+};
+
 async function abrirModal(triggerLabel = "Adicionar") {
   const user = userEvent.setup();
   render(
@@ -339,6 +345,24 @@ describe("CategoriaForm", () => {
           name: "Exibir em Relatórios e Dashboard",
         }),
       ).not.toBeChecked();
+    });
+
+    it("deve pré-preencher o switch marcado quando exibirEmRelatorios é true", async () => {
+      const user = userEvent.setup();
+      render(
+        <CategoriaForm categoria={categoriaVisivelMock}>
+          <button>Editar</button>
+        </CategoriaForm>,
+        { wrapper: createWrapper() },
+      );
+      await user.click(screen.getByRole("button", { name: "Editar" }));
+
+      const dialog = screen.getByRole("dialog");
+      expect(
+        within(dialog).getByRole("checkbox", {
+          name: "Exibir em Relatórios e Dashboard",
+        }),
+      ).toBeChecked();
     });
 
     it("deve enviar exibirEmRelatorios ao alterar e exibir toast de sucesso", async () => {
