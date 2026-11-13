@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@/helpers/test/test-helper";
+import { render, screen, waitFor, within } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -153,6 +153,16 @@ async function waitForUrl(fragment: string) {
   });
 }
 
+function getTotalFooter() {
+  const label = screen.getByText("Total", { selector: "tfoot td" });
+
+  return {
+    label,
+    row: label.closest("tr") as HTMLElement,
+    tfoot: label.closest("tfoot") as HTMLElement,
+  };
+}
+
 describe("LancamentosPorCategoriaPage - filtro de categorias", () => {
   it("deve iniciar o switch Apenas categorias dos relatórios ligado", async () => {
     renderPage();
@@ -232,5 +242,69 @@ describe("LancamentosPorCategoriaPage - filtro de categorias", () => {
         ),
       ).toBe(true);
     });
+  });
+});
+
+describe("LancamentosPorCategoriaPage - totais por aba", () => {
+  it("deve exibir totalEntradas no rodapé da aba Entrada", async () => {
+    renderPage();
+    await screen.findByText("Salário");
+
+    const { row } = getTotalFooter();
+
+    expect(within(row).getByText(/1\.000,00/)).toBeVisible();
+  });
+
+  it("deve exibir totalSaidas no rodapé da aba Saída", async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText("Salário");
+
+    await user.click(screen.getByRole("button", { name: /Saída/ }));
+
+    const { row } = getTotalFooter();
+
+    expect(within(row).getByText(/200,00/)).toBeVisible();
+  });
+
+  it("deve renderizar o rodapé de total com destaque visual", async () => {
+    renderPage();
+    await screen.findByText("Salário");
+
+    const { label, row, tfoot } = getTotalFooter();
+
+    expect(tfoot).toHaveClass("bg-surface-muted", "border-t-2");
+    expect(row).toHaveClass("font-bold");
+    expect(label).toHaveClass("uppercase");
+  });
+
+  it("não deve renderizar rodapé quando a aba está vazia", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => createReportResponse({ entrada: [] }),
+    });
+
+    renderPage();
+
+    await screen.findByText("Nenhum item encontrado.");
+    expect(
+      screen.queryByText("Total", { selector: "tfoot td" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("deve exibir R$ 0,00 quando o total vier ausente", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => createReportResponse({ totalEntradas: undefined }),
+    });
+
+    renderPage();
+    await screen.findByText("Salário");
+
+    const { row } = getTotalFooter();
+
+    expect(within(row).getByText(/0,00/)).toBeVisible();
   });
 });

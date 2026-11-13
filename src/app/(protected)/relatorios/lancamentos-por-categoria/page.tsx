@@ -88,6 +88,9 @@ export default function LancamentosPorCategoriaPage() {
   const { data: detalhesData, isLoading: detalhesLoading } = useDetalhesLancamentosPorCategoria(detalhesParams);
 
   const itensAtivos = abaAtiva === "entrada" ? (data?.entrada ?? []) : (data?.saida ?? []);
+  const totalAtivo = abaAtiva === "entrada"
+    ? (data?.totalEntradas ?? 0)
+    : (data?.totalSaidas ?? 0);
 
   return (
     <>
@@ -192,7 +195,24 @@ export default function LancamentosPorCategoriaPage() {
           {itensAtivos.length === 0 ? (
             <p className="text-sm text-gray-500 text-center py-8">Nenhum item encontrado.</p>
           ) : (
-            <Table.Root theadData={["Categoria", "Quantidade", "Total"]}>
+            <Table.Root
+              theadData={["Categoria", "Quantidade", "Total"]}
+              footer={
+                <tfoot className="bg-surface-muted border-t-2 border-default-border">
+                  <Table.Tr className="text-sm md:text-base font-bold">
+                    <Table.Td
+                      colSpan={2}
+                      className="text-xs uppercase tracking-wider text-gray-400 font-semibold"
+                    >
+                      Total
+                    </Table.Td>
+                    <Table.Td className={abaAtiva === "entrada" ? "text-positive" : "text-negative"}>
+                      {toCurrency(totalAtivo)}
+                    </Table.Td>
+                  </Table.Tr>
+                </tfoot>
+              }
+            >
               {itensAtivos.map((item) => (
                 <Table.Tr key={item.idCategoria} className="text-sm md:text-base">
                   <Table.Td>{item.nomeCategoria}</Table.Td>

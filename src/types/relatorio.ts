@@ -40,6 +40,8 @@ export interface ItemRelatorioContasAgendadas {
 export interface RelatorioLancamentosPorCategoriaData {
   entrada: ItemLancamentoPorCategoria[];
   saida: ItemLancamentoPorCategoria[];
+  totalEntradas: number;
+  totalSaidas: number;
 }
 
 export type ItemLancamentoPorCategoria = {
