@@ -14,7 +14,7 @@ interface DonutChartProps {
 
 export function DonutChart({ dados, titulo, accentColor }: DonutChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const visiveis = dados.filter((d) => d.exibirNaDashboard);
+  const visiveis = dados.filter((d) => d.exibirEmRelatorios);
   const total = visiveis.reduce((sum, d) => sum + d.valor, 0);
   const sortedNames = [...visiveis]
     .sort((a, b) => a.categoriaNome.localeCompare(b.categoriaNome))

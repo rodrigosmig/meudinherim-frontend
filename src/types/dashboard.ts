@@ -22,7 +22,7 @@ export interface CategoriaValor {
   categoriaNome: string;
   valor: number;
   percentual: number;
-  exibirNaDashboard: boolean;
+  exibirEmRelatorios: boolean;
 }
 
 export interface DashboardCategorias {
