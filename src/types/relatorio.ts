@@ -16,9 +16,13 @@ export interface RelatorioLancamentosPorCategoriaRequest extends RelatorioReques
   tipo: TipoRelatorioPorCategoria;
   uuid: string;
   tags: string[];
+  apenasCategoriasExibidasEmRelatorios: boolean;
 }
 
-export interface RelatorioDetalhesLancamentosPorCategoriaRequest extends RelatorioLancamentosPorCategoriaRequest {
+export interface RelatorioDetalhesLancamentosPorCategoriaRequest extends RelatorioRequest {
+  tipo: TipoRelatorioPorCategoria;
+  uuid: string;
+  tags: string[];
   idCategoria: string;
 }
 
@@ -36,6 +40,8 @@ export interface ItemRelatorioContasAgendadas {
 export interface RelatorioLancamentosPorCategoriaData {
   entrada: ItemLancamentoPorCategoria[];
   saida: ItemLancamentoPorCategoria[];
+  totalEntradas: number;
+  totalSaidas: number;
 }
 
 export type ItemLancamentoPorCategoria = {

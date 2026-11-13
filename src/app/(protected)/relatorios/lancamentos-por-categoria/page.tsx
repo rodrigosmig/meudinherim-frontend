@@ -9,6 +9,7 @@ import { Button } from "@/components/primitives/button";
 import { Card } from "@/components/primitives/card";
 import { Select, SelectOption } from "@/components/primitives/select";
 import Skeleton from "@/components/primitives/skeleton";
+import Switch from "@/components/primitives/switch";
 import { Table } from "@/components/primitives/table";
 import Text from "@/components/primitives/text";
 import TagsPopover from "@/components/tags-popover";
@@ -41,6 +42,7 @@ export default function LancamentosPorCategoriaPage() {
   const [uuid, setUuid] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [abaAtiva, setAbaAtiva] = useState<Aba>("entrada");
+  const [apenasCategoriasExibidasEmRelatorios, setApenasCategoriasExibidasEmRelatorios] = useState(true);
   const [categoriaModal, setCategoriaModal] = useState<CategoriaModal | null>(null);
 
   const { dateRange, stringDateUS, handleChangeDateFilter, handleOnClickFilter } = useDateFilter();
@@ -76,6 +78,7 @@ export default function LancamentosPorCategoriaPage() {
     tipo,
     uuid,
     tags,
+    apenasCategoriasExibidasEmRelatorios,
   );
 
   const detalhesParams = categoriaModal
@@ -85,14 +88,17 @@ export default function LancamentosPorCategoriaPage() {
   const { data: detalhesData, isLoading: detalhesLoading } = useDetalhesLancamentosPorCategoria(detalhesParams);
 
   const itensAtivos = abaAtiva === "entrada" ? (data?.entrada ?? []) : (data?.saida ?? []);
+  const totalAtivo = abaAtiva === "entrada"
+    ? (data?.totalEntradas ?? 0)
+    : (data?.totalSaidas ?? 0);
 
   return (
     <>
       <ResponsivePageTitle title="Lançamentos por Categoria" isLoading={isFetching} />
 
       <Card.Root className="mb-4">
-        <Card.Header className="py-3 gap-3">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <Card.Header className="py-3">
+          <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-end">
             <div>
               <Text variant="paragraph-medium" className="hidden md:block font-bold">Período:</Text>
               <FiltroPorPeriodo
@@ -102,55 +108,58 @@ export default function LancamentosPorCategoriaPage() {
               />
             </div>
 
-            <div className="flex gap-3 items-end">
-              <div className="w-36">
-                <div>
-                  <Text variant="paragraph-medium" className="hidden md:block font-bold">Tipo relatório:</Text>
-                  <Select
-                    options={TIPO_OPTIONS}
-                    value={tipo}
-                    onChange={(v) => handleTipoChange(v as TipoRelatorioPorCategoria)}
-                  />
-                </div>
-              </div>
-
-              {tipo === TipoRelatorioPorCategoria.CONTA && (
-                <div className="w-52">
-                  <div>
-                    <Text variant="paragraph-medium" className="hidden md:block font-bold">Selecione a conta:</Text>
-                    <Select
-                      options={contasOptions}
-                      value={uuid}
-                      onChange={(v) => setUuid((v as string) ?? "")}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {tipo === TipoRelatorioPorCategoria.CARTAO && (
-                <div className="w-52">
-                  <div>
-                    <Text variant="paragraph-medium" className="hidden md:block font-bold">Selecione o cartão:</Text>
-                    <Select
-                      options={cartoesOptions}
-                      value={uuid}
-                      onChange={(v) => setUuid((v as string) ?? "")}
-                    />
-                  </div>
-                </div>
-              )}
+            <div className="w-full md:w-40">
+              <Text variant="paragraph-medium" className="hidden md:block font-bold">Tipo relatório:</Text>
+              <Select
+                options={TIPO_OPTIONS}
+                value={tipo}
+                onChange={(v) => handleTipoChange(v as TipoRelatorioPorCategoria)}
+              />
             </div>
-          </div>
 
-          <div className="mb-2">
-            <Text variant="paragraph-medium" className="hidden md:block font-bold">Filtro por tags:</Text>
-            <Select
-              options={tagsOptions}
-              value={tags}
-              onChange={(v) => setTags((v as string[]) ?? [])}
-              placeholder="Tags..."
-              isMulti
-            />
+            {tipo === TipoRelatorioPorCategoria.CONTA && (
+              <div className="w-full md:w-52">
+                <Text variant="paragraph-medium" className="hidden md:block font-bold">Selecione a conta:</Text>
+                <Select
+                  options={contasOptions}
+                  value={uuid}
+                  onChange={(v) => setUuid((v as string) ?? "")}
+                />
+              </div>
+            )}
+
+            {tipo === TipoRelatorioPorCategoria.CARTAO && (
+              <div className="w-full md:w-52">
+                <Text variant="paragraph-medium" className="hidden md:block font-bold">Selecione o cartão:</Text>
+                <Select
+                  options={cartoesOptions}
+                  value={uuid}
+                  onChange={(v) => setUuid((v as string) ?? "")}
+                />
+              </div>
+            )}
+
+            <div className="w-full md:min-w-52 md:flex-1">
+              <Text variant="paragraph-medium" className="hidden md:block font-bold">Filtro por tags:</Text>
+              <Select
+                options={tagsOptions}
+                value={tags}
+                onChange={(v) => setTags((v as string[]) ?? [])}
+                placeholder="Tags..."
+                isMulti
+              />
+            </div>
+
+            <div className="w-full md:w-auto md:ml-auto">
+              <Text variant="paragraph-medium" className="hidden md:block font-bold">Exibição:</Text>
+              <div className="flex h-10 items-center">
+                <Switch
+                  label="Apenas categorias dos relatórios"
+                  checked={apenasCategoriasExibidasEmRelatorios}
+                  onCheckedChange={setApenasCategoriasExibidasEmRelatorios}
+                />
+              </div>
+            </div>
           </div>
         </Card.Header>
       </Card.Root>
@@ -179,7 +188,24 @@ export default function LancamentosPorCategoriaPage() {
           {itensAtivos.length === 0 ? (
             <p className="text-sm text-gray-500 text-center py-8">Nenhum item encontrado.</p>
           ) : (
-            <Table.Root theadData={["Categoria", "Quantidade", "Total"]}>
+            <Table.Root
+              theadData={["Categoria", "Quantidade", "Total"]}
+              footer={
+                <tfoot className="bg-surface-muted border-t-2 border-default-border">
+                  <Table.Tr className="text-sm md:text-base font-bold">
+                    <Table.Td
+                      colSpan={2}
+                      className="text-xs uppercase tracking-wider text-gray-400 font-semibold"
+                    >
+                      Total
+                    </Table.Td>
+                    <Table.Td className={abaAtiva === "entrada" ? "text-positive" : "text-negative"}>
+                      {toCurrency(totalAtivo)}
+                    </Table.Td>
+                  </Table.Tr>
+                </tfoot>
+              }
+            >
               {itensAtivos.map((item) => (
                 <Table.Tr key={item.idCategoria} className="text-sm md:text-base">
                   <Table.Td>{item.nomeCategoria}</Table.Td>

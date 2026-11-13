@@ -10,7 +10,7 @@ export const categoriaSchema = z.object({
   tipo: z.nativeEnum(TipoCategoria, {
     error: "O campo tipo é obrigatório",
   }),
-  exibirNaDashboard: z.boolean(),
+  exibirEmRelatorios: z.boolean(),
 });
 
 export type CategoriaFormValue = z.infer<typeof categoriaSchema>;

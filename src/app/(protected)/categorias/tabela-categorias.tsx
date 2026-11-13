@@ -17,7 +17,7 @@ import { CircleCheck, CircleX, Pencil, Trash2 } from "lucide-react";
 import { ReactNode, useState } from "react";
 import CategoriaForm from "./categoria-form";
 
-const CABECALHO = ["Nome", "Tipo", "Exibir na Dashboard", "Ações"];
+const CABECALHO = ["Nome", "Tipo", "Exibir em Relatórios e Dashboard", "Ações"];
 
 type TabelaCategoriasProps = {
   categorias: Categoria[];
@@ -105,7 +105,7 @@ export default function TabelaCategorias({ categorias }: Readonly<TabelaCategori
               </span>
             </Table.Td>
 
-            <Table.Td>{categoria.exibirNaDashboard ? "Sim" : "Não"}</Table.Td>
+            <Table.Td>{categoria.exibirEmRelatorios ? "Sim" : "Não"}</Table.Td>
 
             <Table.Td className="flex items-center gap-2">
               <CategoriaForm categoria={categoria}>

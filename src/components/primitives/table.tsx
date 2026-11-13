@@ -4,9 +4,10 @@ import React, { ComponentProps } from 'react';
 interface TableProps {
   theadData: string[];
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
-export function TableRoot({ theadData, children }: TableProps) {
+export function TableRoot({ theadData, children, footer }: TableProps) {
   return (
     <div className="overflow-x-auto border border-border-muted">
       <table className="w-full">
@@ -14,6 +15,7 @@ export function TableRoot({ theadData, children }: TableProps) {
         <tbody className="divide-y divide-divider">
           {children}
         </tbody>
+        {footer}
       </table>
     </div>
   )

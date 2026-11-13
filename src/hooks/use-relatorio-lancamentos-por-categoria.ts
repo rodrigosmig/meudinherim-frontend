@@ -11,11 +11,27 @@ export function useRelatorioLancamentosPorCategoria(
   tipo: TipoRelatorioPorCategoria,
   uuid: string,
   tags: string[],
+  apenasCategoriasExibidasEmRelatorios: boolean,
 ) {
   return useQuery({
-    queryKey: [RELATORIO_LANCAMENTOS_POR_CATEGORIA_QUERY_KEY, inicio, fim, tipo, uuid, tags],
+    queryKey: [
+      RELATORIO_LANCAMENTOS_POR_CATEGORIA_QUERY_KEY,
+      inicio,
+      fim,
+      tipo,
+      uuid,
+      tags,
+      apenasCategoriasExibidasEmRelatorios,
+    ],
     queryFn: async () => {
-      const res = await relatorioService.lancamentosPorCategoria({ inicio, fim, tipo, uuid, tags });
+      const res = await relatorioService.lancamentosPorCategoria({
+        inicio,
+        fim,
+        tipo,
+        uuid,
+        tags,
+        apenasCategoriasExibidasEmRelatorios,
+      });
       return (res as ApiResponse<RelatorioLancamentosPorCategoriaData>).data;
     },
     enabled: !!(inicio && fim),

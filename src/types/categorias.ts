@@ -8,7 +8,7 @@ export interface Categoria {
   nome: string;
   tipo: TipoCategoria;
   status: Status;
-  exibirNaDashboard: boolean;
+  exibirEmRelatorios: boolean;
 }
 
 export interface ListarCategoriaRequest extends PaginaRequest {
@@ -19,7 +19,7 @@ export interface ListarCategoriaRequest extends PaginaRequest {
 export interface CadastrarCategoriaRequest {
   nome: string;
   tipo: TipoCategoria;
-  exibirNaDashboard: boolean;
+  exibirEmRelatorios: boolean;
 }
 
 export interface CadastrarCategoriaData {
