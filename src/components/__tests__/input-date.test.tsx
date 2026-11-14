@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import userEvent from "@testing-library/user-event";
 
 import InputDate from "@/components/primitives/input-date";
@@ -9,6 +12,14 @@ function dia(nome: RegExp) {
 
 function dias(nome: RegExp) {
   return screen.queryAllByRole("button", { name: nome });
+}
+
+function regrasCss() {
+  const css = fs.readFileSync(path.join(process.cwd(), "src/app/globals.css"), "utf8");
+  return [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([, seletor, corpo]) => ({
+    seletor: seletor.trim(),
+    corpo,
+  }));
 }
 
 describe("InputDate", () => {
@@ -79,6 +90,46 @@ describe("InputDate", () => {
 
       expect(screen.getAllByRole("combobox")[0]).toHaveValue(String(hoje.getMonth()));
       expect(screen.getAllByRole("combobox")[1]).toHaveValue(String(hoje.getFullYear()));
+    });
+  });
+
+  describe("pista do dia correspondente", () => {
+    it("destaca o mesmo dia do mês ao navegar", async () => {
+      const user = userEvent.setup();
+      render(<InputDate label="Data" dateSelected={new Date(2026, 10, 11)} onChange={jest.fn()} />);
+
+      await user.click(screen.getByDisplayValue("11/11/2026"));
+      await user.selectOptions(screen.getAllByRole("combobox")[0], "11");
+
+      expect(dia(/11 de dezembro de 2026/).closest("td")).toHaveClass("rdp-same-day-of-month");
+      expect(dia(/12 de dezembro de 2026/).closest("td")).not.toHaveClass("rdp-same-day-of-month");
+
+      const regra = regrasCss().find(({ seletor, corpo }) =>
+        seletor.includes(".rdp-same-day-of-month") && corpo.includes("box-shadow"),
+      );
+      expect(regra).toBeDefined();
+    });
+
+    it("não aplica a pista no mês da data selecionada", async () => {
+      const user = userEvent.setup();
+      render(<InputDate label="Data" dateSelected={new Date(2026, 10, 11)} onChange={jest.fn()} />);
+
+      await user.click(screen.getByDisplayValue("11/11/2026"));
+
+      const diaSelecionado = dia(/11 de novembro de 2026/).closest("td");
+      expect(diaSelecionado).toHaveClass("rdp-selected");
+      expect(diaSelecionado).not.toHaveClass("rdp-same-day-of-month");
+      expect(dia(/12 de novembro de 2026/).closest("td")).not.toHaveClass("rdp-same-day-of-month");
+    });
+
+    it("não destaca dia inexistente no mês exibido", async () => {
+      const user = userEvent.setup();
+      render(<InputDate label="Data" dateSelected={new Date(2026, 0, 31)} onChange={jest.fn()} />);
+
+      await user.click(screen.getByDisplayValue("31/01/2026"));
+      await user.selectOptions(screen.getAllByRole("combobox")[0], "1");
+
+      expect(document.querySelectorAll("td.rdp-same-day-of-month")).toHaveLength(0);
     });
   });
 });

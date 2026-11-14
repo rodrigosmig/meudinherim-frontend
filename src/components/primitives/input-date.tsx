@@ -18,6 +18,13 @@ export default function InputDate({ dateSelected, onChange, disabled, ...props }
   const [month, setMonth] = useState<Date>(new Date());
 
   const value = dateSelected ?? internalValue;
+  const destaqueDiaCorrespondente = value
+    ? (date: Date) =>
+        date.getFullYear() === month.getFullYear() &&
+        date.getMonth() === month.getMonth() &&
+        date.getDate() === value.getDate() &&
+        (date.getMonth() !== value.getMonth() || date.getFullYear() !== value.getFullYear())
+    : undefined;
 
   function handleSelect(date: Date | undefined) {
     if (dateSelected === undefined) setInternalValue(date);
@@ -55,6 +62,12 @@ export default function InputDate({ dateSelected, onChange, disabled, ...props }
               required
               selected={value}
               onSelect={handleSelect}
+              modifiers={
+                destaqueDiaCorrespondente
+                  ? { "same-day-of-month": destaqueDiaCorrespondente }
+                  : undefined
+              }
+              modifiersClassNames={{ "same-day-of-month": "rdp-same-day-of-month" }}
               month={month}
               onMonthChange={setMonth}
               captionLayout="dropdown"

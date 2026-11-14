@@ -200,6 +200,10 @@ body {
   color: var(--color-gray-400);
 }
 
+.periodo-day-picker .rdp-same-day-of-month .rdp-day_button {
+  box-shadow: inset 0 0 0 1px var(--color-purple-400);
+}
+
 .periodo-day-picker-input-date .rdp-selected .rdp-day_button,
 .periodo-day-picker-input-date .rdp-day_button.rdp-selected {
   background-color: var(--color-primary) !important;
