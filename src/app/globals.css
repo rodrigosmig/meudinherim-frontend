@@ -147,7 +147,9 @@ body {
   border-radius: 0.5rem;
 }
 
-.periodo-day-picker .rdp-today:not(.rdp-outside) .rdp-day_button {
+.periodo-day-picker .rdp-today:not(.rdp-outside):not(.rdp-selected) .rdp-day_button {
+  background-color: rgb(103 89 244 / 0.18);
+  color: var(--color-purple-200);
   font-weight: 500;
 }
 

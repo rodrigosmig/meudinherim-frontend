@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import userEvent from "@testing-library/user-event";
+import { format } from "date-fns";
 
 import InputDate from "@/components/primitives/input-date";
 import { render, screen, waitFor } from "@/helpers/test/test-helper";
@@ -130,6 +131,43 @@ describe("InputDate", () => {
       await user.selectOptions(screen.getAllByRole("combobox")[0], "1");
 
       expect(document.querySelectorAll("td.rdp-same-day-of-month")).toHaveLength(0);
+    });
+  });
+
+  describe("dia de hoje", () => {
+    it("destaca o dia de hoje com fundo circular", async () => {
+      const user = userEvent.setup();
+      render(<InputDate label="Data" onChange={jest.fn()} />);
+
+      await user.click(screen.getByPlaceholderText("Selecione uma data"));
+
+      expect(document.querySelector("td.rdp-today")).not.toBeNull();
+      const regra = regrasCss().find(({ seletor, corpo }) =>
+        seletor.includes(".rdp-today") && corpo.includes("background-color"),
+      );
+      expect(regra).toBeDefined();
+    });
+
+    it("mantém o estilo de selecionado quando hoje está selecionado", async () => {
+      const user = userEvent.setup();
+      const hoje = new Date();
+      render(<InputDate label="Data" dateSelected={hoje} onChange={jest.fn()} />);
+
+      await user.click(screen.getByDisplayValue(format(hoje, "dd/MM/yyyy")));
+
+      expect(document.querySelector("td.rdp-today")).toHaveClass("rdp-selected");
+      const regra = regrasCss().find(({ seletor, corpo }) =>
+        seletor.includes(".rdp-today") && corpo.includes("background-color"),
+      );
+      expect(regra?.seletor).toContain(":not(.rdp-selected)");
+    });
+
+    it("aplica o destaque de hoje no escopo compartilhado dos calendários", () => {
+      const regra = regrasCss().find(({ seletor, corpo }) =>
+        seletor.includes(".rdp-today") && corpo.includes("background-color"),
+      );
+      expect(regra?.seletor).toContain(".periodo-day-picker");
+      expect(regra?.seletor).not.toContain(".periodo-day-picker-input-date");
     });
   });
 });
