@@ -147,7 +147,9 @@ body {
   border-radius: 0.5rem;
 }
 
-.periodo-day-picker .rdp-today:not(.rdp-outside) .rdp-day_button {
+.periodo-day-picker .rdp-today:not(.rdp-outside):not(.rdp-selected) .rdp-day_button {
+  background-color: rgb(103 89 244 / 0.18);
+  color: var(--color-purple-200);
   font-weight: 500;
 }
 
@@ -156,9 +158,13 @@ body {
 }
 
 .periodo-day-picker
-  .rdp-day:not(.rdp-selected):not(.rdp-disabled):not(.rdp-outside)
+  .rdp-day:not(.rdp-selected):not(.rdp-disabled):not(.rdp-outside):not(.rdp-today)
   .rdp-day_button:hover {
   background-color: rgb(255 255 255 / 0.08);
+}
+
+.periodo-day-picker .rdp-today:not(.rdp-outside):not(.rdp-selected) .rdp-day_button:hover {
+  background-color: rgb(103 89 244 / 0.28);
 }
 
 .periodo-day-picker {
@@ -198,6 +204,10 @@ body {
 .rdp-day.rdp-outside {
   opacity: 0.4;
   color: var(--color-gray-400);
+}
+
+.periodo-day-picker .rdp-same-day-of-month .rdp-day_button {
+  box-shadow: inset 0 0 0 1px var(--color-purple-400);
 }
 
 .periodo-day-picker-input-date .rdp-selected .rdp-day_button,

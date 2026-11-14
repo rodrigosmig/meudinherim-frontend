@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { addYears, format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { Calendar } from "lucide-react";
 import { ComponentProps, useState } from "react";
@@ -15,8 +15,16 @@ interface InputDateProps extends Omit<ComponentProps<typeof Input>, "value" | "o
 export default function InputDate({ dateSelected, onChange, disabled, ...props }: InputDateProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<Date | undefined>(undefined);
+  const [month, setMonth] = useState<Date>(new Date());
 
   const value = dateSelected ?? internalValue;
+  const destaqueDiaCorrespondente = value
+    ? (date: Date) =>
+        date.getFullYear() === month.getFullYear() &&
+        date.getMonth() === month.getMonth() &&
+        date.getDate() === value.getDate() &&
+        (date.getMonth() !== value.getMonth() || date.getFullYear() !== value.getFullYear())
+    : undefined;
 
   function handleSelect(date: Date | undefined) {
     if (dateSelected === undefined) setInternalValue(date);
@@ -26,6 +34,7 @@ export default function InputDate({ dateSelected, onChange, disabled, ...props }
 
   function handleOpenChange(open: boolean) {
     if (disabled && open) return;
+    if (open) setMonth(value ?? new Date());
     setIsOpen(open);
   }
 
@@ -50,8 +59,18 @@ export default function InputDate({ dateSelected, onChange, disabled, ...props }
               animate
               showOutsideDays
               mode="single"
+              required
               selected={value}
               onSelect={handleSelect}
+              modifiers={
+                destaqueDiaCorrespondente
+                  ? { "same-day-of-month": destaqueDiaCorrespondente }
+                  : undefined
+              }
+              modifiersClassNames={{ "same-day-of-month": "rdp-same-day-of-month" }}
+              month={month}
+              onMonthChange={setMonth}
+              endMonth={addYears(new Date(), 10)}
               captionLayout="dropdown"
               navLayout="around"
               reverseYears
