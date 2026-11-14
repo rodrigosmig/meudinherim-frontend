@@ -186,5 +186,34 @@ describe("InputDate", () => {
       expect(regra?.seletor).toContain(".periodo-day-picker");
       expect(regra?.seletor).not.toContain(".periodo-day-picker-input-date");
     });
+
+    it("preserva o fundo de hoje no hover", () => {
+      const regras = regrasCss();
+      const hoverGenerico = regras.find(
+        ({ seletor }) =>
+          seletor.includes(".rdp-day:not") && seletor.includes(".rdp-day_button:hover"),
+      );
+      expect(hoverGenerico?.seletor).toContain(":not(.rdp-today)");
+
+      const hoverHoje = regras.find(
+        ({ seletor }) => seletor.includes(".rdp-today:not") && seletor.includes(":hover"),
+      );
+      expect(hoverHoje?.seletor).toContain(".periodo-day-picker");
+      expect(hoverHoje?.corpo).toContain("background-color: rgb(103 89 244 / 0.28)");
+    });
+  });
+
+  describe("campo desabilitado", () => {
+    it("não abre o calendário", async () => {
+      const user = userEvent.setup();
+      render(<InputDate label="Data" disabled onChange={jest.fn()} />);
+
+      const campo = screen.getByPlaceholderText("Selecione uma data");
+      expect(campo).toBeDisabled();
+
+      await user.click(campo);
+      expect(screen.queryAllByRole("combobox")).toHaveLength(0);
+      expect(document.querySelector(".periodo-day-picker")).toBeNull();
+    });
   });
 });

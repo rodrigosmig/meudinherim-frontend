@@ -158,9 +158,13 @@ body {
 }
 
 .periodo-day-picker
-  .rdp-day:not(.rdp-selected):not(.rdp-disabled):not(.rdp-outside)
+  .rdp-day:not(.rdp-selected):not(.rdp-disabled):not(.rdp-outside):not(.rdp-today)
   .rdp-day_button:hover {
   background-color: rgb(255 255 255 / 0.08);
+}
+
+.periodo-day-picker .rdp-today:not(.rdp-outside):not(.rdp-selected) .rdp-day_button:hover {
+  background-color: rgb(103 89 244 / 0.28);
 }
 
 .periodo-day-picker {
