@@ -116,10 +116,13 @@ describe("InputDate", () => {
       expect(dia(/11 de dezembro de 2026/).closest("td")).toHaveClass("rdp-same-day-of-month");
       expect(dia(/12 de dezembro de 2026/).closest("td")).not.toHaveClass("rdp-same-day-of-month");
 
-      const regra = regrasCss().find(({ seletor, corpo }) =>
-        seletor.includes(".rdp-same-day-of-month") && corpo.includes("box-shadow"),
+      const regra = regrasCss().find(({ seletor }) =>
+        seletor.includes(".rdp-same-day-of-month"),
       );
-      expect(regra).toBeDefined();
+      expect(regra?.seletor).toContain(".periodo-day-picker");
+      expect(regra?.seletor).not.toContain(".periodo-day-picker-input-date");
+      expect(regra?.corpo).toContain("box-shadow: inset 0 0 0 1px var(--color-purple-400)");
+      expect(regra?.corpo).not.toContain("background-color");
     });
 
     it("não aplica a pista no mês da data selecionada", async () => {
@@ -130,8 +133,7 @@ describe("InputDate", () => {
 
       const diaSelecionado = dia(/11 de novembro de 2026/).closest("td");
       expect(diaSelecionado).toHaveClass("rdp-selected");
-      expect(diaSelecionado).not.toHaveClass("rdp-same-day-of-month");
-      expect(dia(/12 de novembro de 2026/).closest("td")).not.toHaveClass("rdp-same-day-of-month");
+      expect(document.querySelectorAll("td.rdp-same-day-of-month")).toHaveLength(0);
     });
 
     it("não destaca dia inexistente no mês exibido", async () => {
@@ -141,6 +143,7 @@ describe("InputDate", () => {
       await user.click(screen.getByDisplayValue("31/01/2026"));
       await user.selectOptions(screen.getAllByRole("combobox")[0], "1");
 
+      expect(dias(/1 de fevereiro de 2026/).length).toBeGreaterThan(0);
       expect(document.querySelectorAll("td.rdp-same-day-of-month")).toHaveLength(0);
     });
   });
@@ -156,7 +159,10 @@ describe("InputDate", () => {
       const regra = regrasCss().find(({ seletor, corpo }) =>
         seletor.includes(".rdp-today") && corpo.includes("background-color"),
       );
-      expect(regra).toBeDefined();
+      expect(regra?.seletor).toContain(".periodo-day-picker");
+      expect(regra?.seletor).toContain(".rdp-day_button");
+      expect(regra?.corpo).toContain("background-color: rgb(103 89 244 / 0.18)");
+      expect(regra?.corpo).toContain("color: var(--color-purple-200)");
     });
 
     it("mantém o estilo de selecionado quando hoje está selecionado", async () => {
