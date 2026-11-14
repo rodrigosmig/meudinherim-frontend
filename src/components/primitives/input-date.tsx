@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { addYears, format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { Calendar } from "lucide-react";
 import { ComponentProps, useState } from "react";
@@ -70,6 +70,7 @@ export default function InputDate({ dateSelected, onChange, disabled, ...props }
               modifiersClassNames={{ "same-day-of-month": "rdp-same-day-of-month" }}
               month={month}
               onMonthChange={setMonth}
+              endMonth={addYears(new Date(), 10)}
               captionLayout="dropdown"
               navLayout="around"
               reverseYears

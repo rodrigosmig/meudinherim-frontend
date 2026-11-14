@@ -66,6 +66,17 @@ describe("InputDate", () => {
       expect(screen.getAllByRole("combobox")[1]).toHaveValue("2026");
     });
 
+    it("abre no mês da data selecionada em outro ano", async () => {
+      const user = userEvent.setup();
+      render(<InputDate label="Data" dateSelected={new Date(2027, 0, 11)} onChange={jest.fn()} />);
+
+      await user.click(screen.getByDisplayValue("11/01/2027"));
+
+      expect(dia(/11 de janeiro de 2027/)).toBeInTheDocument();
+      expect(screen.getAllByRole("combobox")[0]).toHaveValue("0");
+      expect(screen.getAllByRole("combobox")[1]).toHaveValue("2027");
+    });
+
     it("volta ao mês da data ao reabrir", async () => {
       const user = userEvent.setup();
       render(<InputDate label="Data" dateSelected={new Date(2026, 11, 30)} onChange={jest.fn()} />);
