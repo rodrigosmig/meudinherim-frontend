@@ -205,6 +205,80 @@ function SelectDeTagsCriavel({ onChange }: { onChange: jest.Mock }) {
   );
 }
 
+describe("Select - navegação por teclado", () => {
+  it("avança o foco para o próximo campo ao pressionar Tab", () => {
+    render(
+      <>
+        <Select options={TAGS} value="alimentacao" />
+        <input data-testid="proximo" />
+      </>,
+    );
+
+    const combobox = screen.getByRole("combobox");
+    const proximo = screen.getByTestId("proximo");
+
+    combobox.focus();
+    fireEvent.focusOut(combobox, { relatedTarget: proximo });
+
+    expect(proximo).toHaveFocus();
+  });
+
+  it("volta o foco para o campo anterior ao pressionar Shift+Tab", () => {
+    render(
+      <>
+        <input data-testid="anterior" />
+        <Select options={TAGS} value="alimentacao" />
+      </>,
+    );
+
+    const combobox = screen.getByRole("combobox");
+    const anterior = screen.getByTestId("anterior");
+
+    combobox.focus();
+    fireEvent.focusOut(combobox, { relatedTarget: anterior });
+
+    expect(anterior).toHaveFocus();
+  });
+
+  it("não move o foco quando o blur não tem relatedTarget", () => {
+    render(
+      <>
+        <Select options={TAGS} value="alimentacao" />
+        <input data-testid="proximo" />
+      </>,
+    );
+
+    const combobox = screen.getByRole("combobox");
+    const proximo = screen.getByTestId("proximo");
+
+    combobox.focus();
+    fireEvent.focusOut(combobox);
+
+    expect(combobox).toHaveFocus();
+    expect(proximo).not.toHaveFocus();
+  });
+
+  it("preserva a chamada de onBlur do consumidor", () => {
+    const onBlur = jest.fn();
+
+    render(
+      <>
+        <Select options={TAGS} value="alimentacao" onBlur={onBlur} />
+        <input data-testid="proximo" />
+      </>,
+    );
+
+    const combobox = screen.getByRole("combobox");
+
+    combobox.focus();
+    fireEvent.focusOut(combobox, {
+      relatedTarget: screen.getByTestId("proximo"),
+    });
+
+    expect(onBlur).toHaveBeenCalled();
+  });
+});
+
 describe("Select - fechamento do menu de tags", () => {
   it("fecha o menu ao selecionar uma opção com o mouse", async () => {
     const onChange = jest.fn();

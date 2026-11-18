@@ -1,7 +1,7 @@
 import ReactSelect, { MultiValue, SingleValue } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { FieldError } from "react-hook-form";
-import { ElementType, useEffect, useId, useRef, useState } from "react";
+import { ElementType, FocusEvent, useEffect, useId, useRef, useState } from "react";
 
 import Text from "./text";
 
@@ -90,6 +90,20 @@ export function Select({
     return () => cancelAnimationFrame(frame);
   }, [menuOpen, selectedOptionIndex]);
 
+  function handleBlur(event: FocusEvent<HTMLElement>) {
+    onBlur?.();
+
+    // O react-select remove seus live regions no blur enquanto o
+    // document.activeElement está momentaneamente no body. O MutationObserver
+    // do Radix FocusScope interpreta a remoção e foca o container do diálogo,
+    // pulando os campos seguintes. Focar o próximo elemento antes dessa
+    // mutação preserva a ordem de Tab.
+    const relatedTarget = event.relatedTarget;
+    if (relatedTarget instanceof HTMLElement) {
+      relatedTarget.focus({ preventScroll: true });
+    }
+  }
+
   function handleCreate(inputValue: string) {
     const newOption: SelectOption = { value: inputValue, label: inputValue };
     setCreatedOptions((prev) => [...prev, newOption]);
@@ -127,7 +141,7 @@ export function Select({
             onMenuClose={() => setMenuOpen(false)}
             name={name}
             value={selectedValue}
-            onBlur={onBlur}
+            onBlur={handleBlur}
             closeMenuOnSelect
             formatCreateLabel={(input) => `Criar "${input}"`}
             onCreateOption={handleCreate}
@@ -194,7 +208,7 @@ export function Select({
             onMenuClose={() => setMenuOpen(false)}
             name={name}
             value={selectedValue}
-            onBlur={onBlur}
+            onBlur={handleBlur}
             closeMenuOnSelect
             onChange={(selected: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
               if (isMulti) {
