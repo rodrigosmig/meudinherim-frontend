@@ -1,7 +1,7 @@
 import ReactSelect, { MultiValue, SingleValue } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { FieldError } from "react-hook-form";
-import { ElementType, useId, useState } from "react";
+import { ElementType, useEffect, useId, useRef, useState } from "react";
 
 import Text from "./text";
 
@@ -50,6 +50,8 @@ export function Select({
   const triggerId = id ?? generatedId;
   const isError = !!error;
   const [createdOptions, setCreatedOptions] = useState<SelectOption[]>([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const isGroupedOptions = (items: SelectOption[] | GroupedOption[]): items is GroupedOption[] => {
     const firstItem = items[0];
@@ -65,6 +67,28 @@ export function Select({
   const selectedValue = isMulti
     ? allOptions.filter((option) => Array.isArray(value) && value.includes(option.value))
     : allOptions.find((option) => option.value === value) ?? null;
+
+  const selectedOptionIndex =
+    !isMulti && typeof value === "string"
+      ? flatOptions.findIndex((option) => option.value === value)
+      : -1;
+
+  useEffect(() => {
+    if (!menuOpen || selectedOptionIndex < 0) return;
+
+    const frame = requestAnimationFrame(() => {
+      const list = containerRef.current?.querySelector<HTMLElement>('[role="listbox"]');
+      const option = list?.querySelectorAll<HTMLElement>('[role="option"]')[selectedOptionIndex];
+      if (!list || !option) return;
+
+      const centered =
+        option.offsetTop - list.clientHeight / 2 + option.clientHeight / 2;
+      const maxScrollTop = Math.max(0, list.scrollHeight - list.clientHeight);
+      list.scrollTop = Math.min(Math.max(0, centered), maxScrollTop);
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [menuOpen, selectedOptionIndex]);
 
   function handleCreate(inputValue: string) {
     const newOption: SelectOption = { value: inputValue, label: inputValue };
@@ -87,7 +111,7 @@ export function Select({
           {label}
         </label>
       )}
-      <div className="relative z-0 w-full focus-within:z-80">
+      <div ref={containerRef} className="relative z-0 w-full focus-within:z-80">
         {Icon && <Icon className="pointer-events-none absolute left-3 top-1/2 z-1 h-4 w-4 -translate-y-1/2 text-gray-500 md:h-5 md:w-5" />}
         {isCreatable ? (
           <CreatableSelect<SelectOption, boolean>
@@ -98,6 +122,9 @@ export function Select({
             unstyled
             menuPlacement="auto"
             menuPosition="fixed"
+            menuIsOpen={menuOpen}
+            onMenuOpen={() => setMenuOpen(true)}
+            onMenuClose={() => setMenuOpen(false)}
             name={name}
             value={selectedValue}
             onBlur={onBlur}
@@ -162,6 +189,9 @@ export function Select({
             unstyled
             menuPlacement="auto"
             menuPosition="fixed"
+            menuIsOpen={menuOpen}
+            onMenuOpen={() => setMenuOpen(true)}
+            onMenuClose={() => setMenuOpen(false)}
             name={name}
             value={selectedValue}
             onBlur={onBlur}
