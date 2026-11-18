@@ -159,7 +159,7 @@ export function Select({
               container: () => "w-full",
               control: ({ isFocused, isDisabled }) =>
                 [
-                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs md:text-base",
+                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-base",
                   Icon ? "pl-10" : "",
                   isDisabled
                     ? "bg-gray-800/40 border-gray-700/40 opacity-60 cursor-not-allowed"
@@ -224,7 +224,7 @@ export function Select({
               container: () => "w-full",
               control: ({ isFocused, isDisabled }) =>
                 [
-                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs md:text-base",
+                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-base",
                   Icon ? "pl-10" : "",
                   isDisabled
                     ? "bg-gray-800/40 border-gray-700/40 opacity-60 cursor-not-allowed"
