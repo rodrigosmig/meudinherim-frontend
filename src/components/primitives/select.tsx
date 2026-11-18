@@ -46,7 +46,8 @@ export function Select({
   name,
   disabled = false,
 }: MultiSelectProps) {
-  const triggerId = id ?? useId();
+  const generatedId = useId();
+  const triggerId = id ?? generatedId;
   const isError = !!error;
   const [createdOptions, setCreatedOptions] = useState<SelectOption[]>([]);
 
