@@ -44,9 +44,14 @@ const layoutDescriptors = {
   offsetTop: Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetTop"),
   clientHeight: Object.getOwnPropertyDescriptor(Element.prototype, "clientHeight"),
   scrollHeight: Object.getOwnPropertyDescriptor(Element.prototype, "scrollHeight"),
+  scrollTop: Object.getOwnPropertyDescriptor(Element.prototype, "scrollTop"),
 };
 
+let scrollTopEscritas: number[] = [];
+
 function instalarMetricasDeLayout() {
+  scrollTopEscritas = [];
+
   Object.defineProperty(HTMLElement.prototype, "offsetTop", {
     configurable: true,
     get() {
@@ -69,12 +74,35 @@ function instalarMetricasDeLayout() {
       return this.querySelectorAll('[role="option"]').length * OPTION_HEIGHT;
     },
   });
+
+  Object.defineProperty(Element.prototype, "scrollTop", {
+    configurable: true,
+    get: layoutDescriptors.scrollTop!.get,
+    set(value: number) {
+      if (this.getAttribute("role") === "listbox") {
+        scrollTopEscritas.push(value);
+      }
+      layoutDescriptors.scrollTop!.set!.call(this, value);
+    },
+  });
 }
 
 function restaurarMetricasDeLayout() {
   Object.defineProperty(HTMLElement.prototype, "offsetTop", layoutDescriptors.offsetTop!);
   Object.defineProperty(Element.prototype, "clientHeight", layoutDescriptors.clientHeight!);
   Object.defineProperty(Element.prototype, "scrollHeight", layoutDescriptors.scrollHeight!);
+  Object.defineProperty(Element.prototype, "scrollTop", layoutDescriptors.scrollTop!);
+}
+
+async function aguardarFrames() {
+  await act(async () => {
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve()),
+    );
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve()),
+    );
+  });
 }
 
 function scrollEsperado(numeroDaOpcao: number) {
@@ -110,8 +138,11 @@ describe("Select - abertura do menu", () => {
 
     const listbox = await abrirMenu(user);
 
-    await waitFor(() => expect(listbox).toBeInTheDocument());
+    await aguardarFrames();
+
+    expect(listbox).toBeInTheDocument();
     expect(listbox.scrollTop).toBe(0);
+    expect(scrollTopEscritas.filter((valor) => valor !== 0)).toEqual([]);
   });
 
   it("mantém a lista no início quando o valor não existe nas opções", async () => {
@@ -120,8 +151,11 @@ describe("Select - abertura do menu", () => {
 
     const listbox = await abrirMenu(user);
 
-    await waitFor(() => expect(listbox).toBeInTheDocument());
+    await aguardarFrames();
+
+    expect(listbox).toBeInTheDocument();
     expect(listbox.scrollTop).toBe(0);
+    expect(scrollTopEscritas.filter((valor) => valor !== 0)).toEqual([]);
   });
 
   it("exibe a nova opção selecionada ao reabrir o menu", async () => {

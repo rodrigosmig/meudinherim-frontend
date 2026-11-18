@@ -12,17 +12,37 @@ const layout = readFileSync(
 
 const mediaMobile = /@media\s*\(max-width:\s*767px\)\s*\{([\s\S]*?)\n\}/;
 
+type RegraCss = {
+  seletores: string[];
+  declaracoes: string;
+};
+
+function extrairRegras(bloco: string): RegraCss[] {
+  return [...bloco.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(
+    ([, seletores, declaracoes]) => ({
+      seletores: seletores
+        .split(",")
+        .map((seletor) => seletor.trim())
+        .filter(Boolean),
+      declaracoes,
+    }),
+  );
+}
+
 describe("fonte dos campos de formulário no mobile", () => {
   it("aplica font-size de 16px em input, select e textarea abaixo de 768px", () => {
     const media = globalsCss.match(mediaMobile);
 
     expect(media).not.toBeNull();
 
-    const bloco = media![1];
-    expect(bloco).toMatch(/\binput\b/);
-    expect(bloco).toMatch(/\bselect\b/);
-    expect(bloco).toMatch(/\btextarea\b/);
-    expect(bloco).toMatch(/font-size:\s*16px/);
+    const regraDosCampos = extrairRegras(media![1]).find((regra) =>
+      ["input", "select", "textarea"].every((campo) =>
+        regra.seletores.includes(campo),
+      ),
+    );
+
+    expect(regraDosCampos).toBeDefined();
+    expect(regraDosCampos!.declaracoes).toMatch(/font-size:\s*16px/);
   });
 
   it("mantém a regra de 16px restrita a viewports abaixo de 768px", () => {
@@ -36,5 +56,7 @@ describe("fonte dos campos de formulário no mobile", () => {
 
   it("não desativa o zoom do viewport no layout", () => {
     expect(layout).not.toMatch(/maximum-scale|user-scalable\s*[:=]\s*["']?no/i);
+    expect(layout).not.toMatch(/\bmaximumScale\b/);
+    expect(layout).not.toMatch(/\buserScalable\s*:\s*false\b/);
   });
 });
