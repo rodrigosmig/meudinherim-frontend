@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { fireEvent, render, screen, waitFor } from "@/helpers/test/test-helper";
+import { act, fireEvent, render, screen, waitFor } from "@/helpers/test/test-helper";
 import userEvent from "@testing-library/user-event";
 
 import { GroupedOption, Select } from "../primitives/select";
@@ -217,7 +217,7 @@ describe("Select - navegação por teclado", () => {
     const combobox = screen.getByRole("combobox");
     const proximo = screen.getByTestId("proximo");
 
-    combobox.focus();
+    act(() => combobox.focus());
     fireEvent.focusOut(combobox, { relatedTarget: proximo });
 
     expect(proximo).toHaveFocus();
@@ -234,7 +234,7 @@ describe("Select - navegação por teclado", () => {
     const combobox = screen.getByRole("combobox");
     const anterior = screen.getByTestId("anterior");
 
-    combobox.focus();
+    act(() => combobox.focus());
     fireEvent.focusOut(combobox, { relatedTarget: anterior });
 
     expect(anterior).toHaveFocus();
@@ -251,7 +251,7 @@ describe("Select - navegação por teclado", () => {
     const combobox = screen.getByRole("combobox");
     const proximo = screen.getByTestId("proximo");
 
-    combobox.focus();
+    act(() => combobox.focus());
     fireEvent.focusOut(combobox);
 
     expect(combobox).toHaveFocus();
@@ -270,7 +270,7 @@ describe("Select - navegação por teclado", () => {
 
     const combobox = screen.getByRole("combobox");
 
-    combobox.focus();
+    act(() => combobox.focus());
     fireEvent.focusOut(combobox, {
       relatedTarget: screen.getByTestId("proximo"),
     });
