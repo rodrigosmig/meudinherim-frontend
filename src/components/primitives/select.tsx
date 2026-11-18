@@ -128,7 +128,7 @@ export function Select({
             name={name}
             value={selectedValue}
             onBlur={onBlur}
-            closeMenuOnSelect={!isMulti}
+            closeMenuOnSelect
             formatCreateLabel={(input) => `Criar "${input}"`}
             onCreateOption={handleCreate}
             onChange={(selected: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
@@ -195,7 +195,7 @@ export function Select({
             name={name}
             value={selectedValue}
             onBlur={onBlur}
-            closeMenuOnSelect={!isMulti}
+            closeMenuOnSelect
             onChange={(selected: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
               if (isMulti) {
                 const selectedValues = (selected as MultiValue<SelectOption> ?? []).map((option) => option.value);
