@@ -1,5 +1,5 @@
 import { ApiFormErrorResponse, ApiResponse } from "./api";
-import { ContaAgendada } from "./conta-agendada";
+import { ContaAgendada, TipoPagamento } from "./conta-agendada";
 import { StatusContaAgendada } from "./enum/status-conta-agendada";
 import { TipoRelatorioPorCategoria } from "./enum/tipo-relatorio-por-categoria";
 
@@ -55,6 +55,15 @@ export interface RelatorioDetalhesLancamentosPorCategoriaData {
   lancamentos: ItemDetalhesLancamentoPorCategoria[];
 }
 
+export type DadosParcelaRelatorio = {
+  idParcela: string;
+  numeroDaParcela: number;
+  totalDeParcelas: number;
+  valorTotal: number;
+  idLancamento: string;
+  tipoPagamento: TipoPagamento;
+};
+
 export type ItemDetalhesLancamentoPorCategoria = {
   uuid: string;
   data: string;
@@ -66,6 +75,8 @@ export type ItemDetalhesLancamentoPorCategoria = {
     uuid: string;
     descricao: string;
   };
+  isParcelado: boolean;
+  dadosParcela: DadosParcelaRelatorio | null;
 };
 
 export type RelatorioContasAgendadasResponse =

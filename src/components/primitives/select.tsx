@@ -1,7 +1,7 @@
 import ReactSelect, { MultiValue, SingleValue } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { FieldError } from "react-hook-form";
-import { ElementType, useId, useState } from "react";
+import { ElementType, FocusEvent, useEffect, useId, useRef, useState } from "react";
 
 import Text from "./text";
 
@@ -46,9 +46,12 @@ export function Select({
   name,
   disabled = false,
 }: MultiSelectProps) {
-  const triggerId = id ?? useId();
+  const generatedId = useId();
+  const triggerId = id ?? generatedId;
   const isError = !!error;
   const [createdOptions, setCreatedOptions] = useState<SelectOption[]>([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const isGroupedOptions = (items: SelectOption[] | GroupedOption[]): items is GroupedOption[] => {
     const firstItem = items[0];
@@ -64,6 +67,42 @@ export function Select({
   const selectedValue = isMulti
     ? allOptions.filter((option) => Array.isArray(value) && value.includes(option.value))
     : allOptions.find((option) => option.value === value) ?? null;
+
+  const selectedOptionIndex =
+    !isMulti && typeof value === "string"
+      ? flatOptions.findIndex((option) => option.value === value)
+      : -1;
+
+  useEffect(() => {
+    if (!menuOpen || selectedOptionIndex < 0) return;
+
+    const frame = requestAnimationFrame(() => {
+      const list = containerRef.current?.querySelector<HTMLElement>('[role="listbox"]');
+      const option = list?.querySelectorAll<HTMLElement>('[role="option"]')[selectedOptionIndex];
+      if (!list || !option) return;
+
+      const centered =
+        option.offsetTop - list.clientHeight / 2 + option.clientHeight / 2;
+      const maxScrollTop = Math.max(0, list.scrollHeight - list.clientHeight);
+      list.scrollTop = Math.min(Math.max(0, centered), maxScrollTop);
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [menuOpen, selectedOptionIndex]);
+
+  function handleBlur(event: FocusEvent<HTMLElement>) {
+    onBlur?.();
+
+    // O react-select remove seus live regions no blur enquanto o
+    // document.activeElement está momentaneamente no body. O MutationObserver
+    // do Radix FocusScope interpreta a remoção e foca o container do diálogo,
+    // pulando os campos seguintes. Focar o próximo elemento antes dessa
+    // mutação preserva a ordem de Tab.
+    const relatedTarget = event.relatedTarget;
+    if (relatedTarget instanceof HTMLElement) {
+      relatedTarget.focus({ preventScroll: true });
+    }
+  }
 
   function handleCreate(inputValue: string) {
     const newOption: SelectOption = { value: inputValue, label: inputValue };
@@ -86,7 +125,7 @@ export function Select({
           {label}
         </label>
       )}
-      <div className="relative z-0 w-full focus-within:z-80">
+      <div ref={containerRef} className="relative z-0 w-full focus-within:z-80">
         {Icon && <Icon className="pointer-events-none absolute left-3 top-1/2 z-1 h-4 w-4 -translate-y-1/2 text-gray-500 md:h-5 md:w-5" />}
         {isCreatable ? (
           <CreatableSelect<SelectOption, boolean>
@@ -97,10 +136,13 @@ export function Select({
             unstyled
             menuPlacement="auto"
             menuPosition="fixed"
+            menuIsOpen={menuOpen}
+            onMenuOpen={() => setMenuOpen(true)}
+            onMenuClose={() => setMenuOpen(false)}
             name={name}
             value={selectedValue}
-            onBlur={onBlur}
-            closeMenuOnSelect={!isMulti}
+            onBlur={handleBlur}
+            closeMenuOnSelect
             formatCreateLabel={(input) => `Criar "${input}"`}
             onCreateOption={handleCreate}
             onChange={(selected: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
@@ -117,7 +159,7 @@ export function Select({
               container: () => "w-full",
               control: ({ isFocused, isDisabled }) =>
                 [
-                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs md:text-base",
+                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-base",
                   Icon ? "pl-10" : "",
                   isDisabled
                     ? "bg-gray-800/40 border-gray-700/40 opacity-60 cursor-not-allowed"
@@ -161,10 +203,13 @@ export function Select({
             unstyled
             menuPlacement="auto"
             menuPosition="fixed"
+            menuIsOpen={menuOpen}
+            onMenuOpen={() => setMenuOpen(true)}
+            onMenuClose={() => setMenuOpen(false)}
             name={name}
             value={selectedValue}
-            onBlur={onBlur}
-            closeMenuOnSelect={!isMulti}
+            onBlur={handleBlur}
+            closeMenuOnSelect
             onChange={(selected: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
               if (isMulti) {
                 const selectedValues = (selected as MultiValue<SelectOption> ?? []).map((option) => option.value);
@@ -179,7 +224,7 @@ export function Select({
               container: () => "w-full",
               control: ({ isFocused, isDisabled }) =>
                 [
-                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs md:text-base",
+                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-base",
                   Icon ? "pl-10" : "",
                   isDisabled
                     ? "bg-gray-800/40 border-gray-700/40 opacity-60 cursor-not-allowed"

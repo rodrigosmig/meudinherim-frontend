@@ -216,3 +216,11 @@ body {
   color: var(--color-gray-100) !important;
   border: 1px solid var(--color-cyan-300) !important;
 }
+
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

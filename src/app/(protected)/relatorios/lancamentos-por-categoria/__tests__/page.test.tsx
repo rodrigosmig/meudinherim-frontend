@@ -4,6 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import LancamentosPorCategoriaPage from "../page";
+import {
+  DadosParcelaRelatorio,
+  ItemDetalhesLancamentoPorCategoria,
+} from "@/types/relatorio";
 
 jest.mock("next/navigation", () => ({
   useParams: () => ({}),
@@ -143,6 +147,62 @@ const createDetalhesResponse = () => ({
   message: { codigo: 0, descricao: "Sucesso" },
   data: { lancamentos: [] },
 });
+
+const createDadosParcela = (
+  overrides: Partial<DadosParcelaRelatorio> = {},
+): DadosParcelaRelatorio => ({
+  idParcela: "parcela-1",
+  numeroDaParcela: 1,
+  totalDeParcelas: 3,
+  valorTotal: 300,
+  idLancamento: "lancamento-origem",
+  tipoPagamento: "CARTAO",
+  ...overrides,
+});
+
+const createDetalhe = (
+  overrides: Partial<ItemDetalhesLancamentoPorCategoria> = {},
+): ItemDetalhesLancamentoPorCategoria => ({
+  uuid: "lancamento-1",
+  data: "2026-11-05",
+  descricao: "Compra parcelada",
+  valor: 100,
+  tags: [],
+  tipo: "CARTAO",
+  contaOuCartao: { uuid: "cartao-1", descricao: "Cartão Visa" },
+  isParcelado: false,
+  dadosParcela: null,
+  ...overrides,
+});
+
+function mockDetalhes(lancamentos: ItemDetalhesLancamentoPorCategoria[]) {
+  fetchMock.mockImplementation((url: string) => {
+    if (String(url).includes("/detalhes")) {
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          message: { codigo: 0, descricao: "Sucesso" },
+          data: { lancamentos },
+        }),
+      });
+    }
+
+    return Promise.resolve({
+      ok: true,
+      status: 200,
+      json: async () => createReportResponse(),
+    });
+  });
+}
+
+async function openDetalhes() {
+  const user = userEvent.setup();
+
+  renderPage();
+  await screen.findByText("Salário");
+  await user.click(screen.getByRole("button", { name: "1" }));
+}
 
 const fetchMock = jest.fn();
 
@@ -508,5 +568,197 @@ describe("LancamentosPorCategoriaPage - estados e detalhes", () => {
     detalhesUrls.forEach((url) => {
       expect(url).not.toContain("apenasCategoriasExibidasEmRelatorios");
     });
+  });
+});
+
+describe("LancamentosPorCategoriaPage - detalhe das parcelas no modal", () => {
+  it("deve exibir a parcela e o total sob a descrição no modal de detalhes", async () => {
+    const descricao =
+      "Compra parcelada com uma descrição suficientemente longa para conferir a quebra de linha";
+
+    mockDetalhes([
+      createDetalhe({
+        descricao,
+        isParcelado: true,
+        dadosParcela: createDadosParcela({
+          numeroDaParcela: 7,
+          totalDeParcelas: 12,
+          valorTotal: 1234.56,
+        }),
+      }),
+    ]);
+
+    await openDetalhes();
+
+    const descricaoElemento = await screen.findByText(descricao);
+    const celulaDescricao = descricaoElemento.closest("td");
+    const detalhe = within(celulaDescricao as HTMLElement).getByText(
+      /Parcela 7\/12 • Total: R\$\s*1\.234,56/,
+    );
+
+    expect(detalhe).toBeVisible();
+    expect(
+      descricaoElemento.compareDocumentPosition(detalhe) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("não deve exibir detalhe de parcela em lançamento de conta", async () => {
+    mockDetalhes([
+      createDetalhe({
+        tipo: "CONTA",
+        contaOuCartao: { uuid: "conta-1", descricao: "Conta Corrente" },
+        isParcelado: false,
+        dadosParcela: null,
+      }),
+    ]);
+
+    await openDetalhes();
+
+    expect(await screen.findByText("Compra parcelada")).toBeVisible();
+    expect(screen.queryByText(/Parcela \d+\/\d+/)).not.toBeInTheDocument();
+  });
+
+  it("deve exibir o número de cada parcela nas linhas do período", async () => {
+    mockDetalhes([
+      createDetalhe({
+        uuid: "parcela-1",
+        isParcelado: true,
+        dadosParcela: createDadosParcela({ numeroDaParcela: 1 }),
+      }),
+      createDetalhe({
+        uuid: "parcela-2",
+        isParcelado: true,
+        dadosParcela: createDadosParcela({
+          idParcela: "parcela-2",
+          numeroDaParcela: 2,
+        }),
+      }),
+      createDetalhe({
+        uuid: "parcela-3",
+        isParcelado: true,
+        dadosParcela: createDadosParcela({
+          idParcela: "parcela-3",
+          numeroDaParcela: 3,
+        }),
+      }),
+    ]);
+
+    await openDetalhes();
+
+    expect(
+      await screen.findByText(/Parcela 1\/3 • Total: R\$\s*300,00/),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/Parcela 2\/3 • Total: R\$\s*300,00/),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/Parcela 3\/3 • Total: R\$\s*300,00/),
+    ).toBeVisible();
+  });
+
+  it("não deve exibir detalhe quando a linha parcelada não traz dadosParcela", async () => {
+    mockDetalhes([
+      createDetalhe({ isParcelado: true, dadosParcela: null }),
+    ]);
+
+    await openDetalhes();
+
+    expect(await screen.findByText("Compra parcelada")).toBeVisible();
+    expect(screen.queryByText(/Parcela \d+\/\d+/)).not.toBeInTheDocument();
+  });
+
+  it("deve manter as colunas e valores do modal de detalhes", async () => {
+    mockDetalhes([
+      createDetalhe({
+        tags: ["viagem"],
+        isParcelado: true,
+        dadosParcela: createDadosParcela({ numeroDaParcela: 2 }),
+      }),
+    ]);
+
+    await openDetalhes();
+    await screen.findByText(/Parcela 2\/3/);
+
+    ["Data", "Descrição", "Tipo", "Conta / Cartão", "Valor"].forEach(
+      (column) => {
+        expect(
+          screen.getByRole("columnheader", { name: column }),
+        ).toBeVisible();
+      },
+    );
+    expect(screen.getByText("05/11/2026")).toBeVisible();
+    expect(screen.getByText("Compra parcelada")).toBeVisible();
+    const celulaDescricao = screen
+      .getByText("Compra parcelada")
+      .closest("td");
+    expect(
+      within(celulaDescricao as HTMLElement).getByRole("button", {
+        name: "1 tag",
+      }),
+    ).toBeVisible();
+    expect(screen.getByText("Cartão", { selector: "td span" })).toBeVisible();
+    expect(screen.getByText("Cartão Visa")).toBeVisible();
+    expect(screen.getByText(/R\$\s*100,00/)).toBeVisible();
+    expect(
+      screen.getByText(/Parcela 2\/3 • Total: R\$\s*300,00/),
+    ).toBeVisible();
+  });
+
+  it("não deve exibir detalhe em lançamento de cartão não parcelado", async () => {
+    mockDetalhes([
+      createDetalhe({ uuid: "cartao-unico", descricao: "Compra à vista" }),
+      createDetalhe({
+        uuid: "cartao-com-dado-remanescente",
+        descricao: "Compra com dado remanescente",
+        isParcelado: false,
+        dadosParcela: createDadosParcela(),
+      }),
+    ]);
+
+    await openDetalhes();
+
+    expect(await screen.findByText("Compra à vista")).toBeVisible();
+    expect(screen.getByText("Compra com dado remanescente")).toBeVisible();
+    expect(screen.queryByText(/Parcela \d+\/\d+/)).not.toBeInTheDocument();
+  });
+
+  it("deve exibir parcela 1/1 quando a compra tem uma parcela", async () => {
+    mockDetalhes([
+      createDetalhe({
+        valor: 50,
+        isParcelado: true,
+        dadosParcela: createDadosParcela({
+          numeroDaParcela: 1,
+          totalDeParcelas: 1,
+          valorTotal: 50,
+        }),
+      }),
+    ]);
+
+    await openDetalhes();
+
+    expect(
+      await screen.findByText(/Parcela 1\/1 • Total: R\$\s*50,00/),
+    ).toBeVisible();
+  });
+
+  it("deve exibir o modal sem detalhe quando a resposta não traz os campos novos", async () => {
+    const lancamentoAntigo = {
+      uuid: "lancamento-antigo",
+      data: "2026-11-05",
+      descricao: "Compra à vista antiga",
+      valor: 100,
+      tags: [],
+      tipo: "CARTAO",
+      contaOuCartao: { uuid: "cartao-1", descricao: "Cartão Visa" },
+    } as ItemDetalhesLancamentoPorCategoria;
+
+    mockDetalhes([lancamentoAntigo]);
+
+    await openDetalhes();
+
+    expect(await screen.findByText("Compra à vista antiga")).toBeVisible();
+    expect(screen.queryByText(/Parcela \d+\/\d+/)).not.toBeInTheDocument();
   });
 });
