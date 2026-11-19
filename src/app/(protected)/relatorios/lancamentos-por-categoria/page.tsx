@@ -246,9 +246,16 @@ export default function LancamentosPorCategoriaPage() {
                   <Table.Tr key={lancamento.uuid} className="text-sm md:text-base">
                     <Table.Td className="whitespace-nowrap">{toBrDate(lancamento.data)}</Table.Td>
                     <Table.Td>
-                      <span className="inline-flex items-center gap-1.5">
-                        {lancamento.descricao}
-                        <TagsPopover tags={lancamento.tags} />
+                      <span className="flex flex-col">
+                        <span className="inline-flex items-center gap-1.5">
+                          {lancamento.descricao}
+                          <TagsPopover tags={lancamento.tags} />
+                        </span>
+                        {lancamento.isParcelado && lancamento.dadosParcela && (
+                          <span className="text-xs text-gray-400 font-normal">
+                            Parcela {lancamento.dadosParcela.numeroDaParcela}/{lancamento.dadosParcela.totalDeParcelas} • Total: {toCurrency(lancamento.dadosParcela.valorTotal)}
+                          </span>
+                        )}
                       </span>
                     </Table.Td>
                     <Table.Td>
